@@ -3,7 +3,8 @@
 Clone this repository and ensure you are inside the directory where this `README.md` file is located.
 
 # Prerequisites
-Install python 3.8 and ensure python3.8 is on path (if not, you will need to pass an explicit parameter when using make targets - this may also work for a different python version). You also need to ensure that pip and venv (both accessible via python -m) are available. If you are on linux, you may need to install the `python3.8-dev` package.
+* Download and install [python](https://www.python.org/downloads/)3.8 and ensure `python3.8` is on path (if not, you will need to pass an explicit parameter when using make targets - this may also work for a different python version). You also need to ensure that pip and venv (both accessible via _python`<version>` -m_) are available. If you are on linux, you may need to install the `python3.8-dev` package.
+* Install [Make](https://www.gnu.org/software/make/manual/make.html)
 
 # Setup
 Create a `.env` file (this is excluded from source control by .gitignore as it contains secret values) and set the following environment variables:
