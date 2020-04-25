@@ -1,4 +1,4 @@
-import setuptools
+import setuptools  # type: ignore
 
 
 with open("requirements.txt") as f:
