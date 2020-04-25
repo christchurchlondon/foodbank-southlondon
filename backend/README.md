@@ -3,7 +3,9 @@
 Clone this repository and ensure you are inside the directory where this `README.md` file is located.
 
 # Prerequisites
-* Download and install [python](https://www.python.org/downloads/)3.8 and ensure `python3.8` is on path (if not, you will need to pass an explicit parameter when using make targets - this may also work for a different python version). You also need to ensure that pip and venv (both accessible via _python\<version> -m_) are available. If you are on linux, you may need to install the `python3.8-dev` package.
+* Download and install [python](https://www.python.org/downloads/)3.8 and ensure `python3.8` is on path
+    * If not, you will need to pass an explicit parameter when using make targets - you can also do this to work with a different python version.
+    * You also need to ensure that pip and venv (both accessible via _python\<version> -m_) are available. If you are on linux, you may need to install the `python3.8-dev` package.
 * Install [Make](https://www.gnu.org/software/make/manual/make.html)
 
 # Setup
@@ -16,4 +18,4 @@ Install all dependencies inside a virtual environment (it will be created if it 
 
 # Usage
 * Launch the webserver with `make run`
-* Visit `http://localhost:5000` for the home page and http://localhost:5000/api/ & http://localhost:5000/bff for swagger definitions.
+* Visit http://localhost:5000 for the home page and http://localhost:5000/api/ & http://localhost:5000/bff for swagger definitions.
