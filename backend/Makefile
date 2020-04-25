@@ -27,7 +27,12 @@ install: venv ## (install the code locally including all development dependencie
 lint: ## (run flake8 and mypy)
 	. $(_VENV_ACTIVATE) && \
 	flake8 && \
-	mypy app.py setup.py api bff
+	mypy -p foodbank_southlondon
+
+.PHONY: run
+run: install ## (launch the webserver)
+	. $(_VENV_ACTIVATE) && \
+	launch
 
 .PHONY: venv
 venv: $(_VENV_ACTIVATE) ## (create a virtual env if it doesn't exist)

@@ -1,0 +1,5 @@
+flask
+flask-restx
+google-api-python-client
+google-auth
+python-dotenv
