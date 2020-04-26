@@ -1,5 +1,5 @@
 import flask
-import flask_restx
+import flask_restx  # type:ignore
 
 
 blueprint = flask.Blueprint("bff", __name__)

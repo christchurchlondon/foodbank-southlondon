@@ -3,3 +3,5 @@
 *.env
 *.mypy_cache
 *.venv
+*.vscode
+backend/foodbank-southlondon-ecd573527735.json

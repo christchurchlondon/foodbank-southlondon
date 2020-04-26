@@ -1,5 +1,7 @@
 class _Config(object):
     DEBUG = True
+    RESTX_MASK_SWAGGER = False
+    RESTX_VALIDATE = True
 
 
 class DevelopmentConfig(_Config):

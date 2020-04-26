@@ -12,6 +12,7 @@ Clone this repository and ensure you are inside the directory where this `README
 Create a `.env` file (this is excluded from source control by .gitignore as it contains secret values) and set the following environment variables:
 
 * FBSL_ENVIRONMENT - the name of the environment to load configuration for (dev, prod)
+* FBSL_SA_KEY_FILE_PATH - the path (absolute or relative to this folder) of the service acount key file that has access to read/write the shared google drive
 
 # Installation
 Install all dependencies inside a virtual environment (it will be created if it doesn't already exist) with `make install`
