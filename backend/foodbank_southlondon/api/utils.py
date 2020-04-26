@@ -1,53 +1,54 @@
+import math
 import time
 
 from google.oauth2.service_account import Credentials  # type:ignore
 import flask
 import gspread  # type:ignore
+import pandas as pd  # type:ignore
 import wrapt  # type:ignore
 
-
-# INTERNALS
-_SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
 # CONFIG VARIABLES
 _FBSL_CACHE_EXPIRY_SECONDS = "FBSL_CACHE_EXPIRY_SECONDS"
 _FBSL_SA_KEY_FILE_PATH = "FBSL_SA_KEY_FILE_PATH"
 
+# INTERNALS
+_SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+
 _cache_expiries = {}
+_caches = {}
 
 
-def _gspread_client():
+def _gsheet_to_df(spreadsheet_id):
     if "gc" not in flask.g:
-        flask.g.gc = gspread.authorize(Credentials.from_service_account_file(flask.current_app.config[_FBSL_SA_KEY_FILE_PATH], scopes=_SCOPES))
-    return flask.g.gc
+        credentials = Credentials.from_service_account_file(flask.current_app.config[_FBSL_SA_KEY_FILE_PATH], scopes=_SCOPES)
+        gc = flask.g.gc = gspread.authorize(credentials)
+    spreadsheet = gc.open_by_key(spreadsheet_id)
+    sheet = spreadsheet.get_worksheet(0)
+    data = sheet.get_all_values(value_render_option="UNFORMATTED_VALUE")
+    headers = data.pop(0)
+    return pd.DataFrame(data, columns=headers)
 
 
-def expiring_cache(*caches):
-    @wrapt.decorator
-    def wrapper(wrapped, instance, args, kwargs):
-        now = time.time()
-        for cache in caches:
-            cache_id = id(cache)
-            created = _cache_expiries.get(cache_id)
-            if created:
-                if (now - created) >= flask.current_app.config[_FBSL_CACHE_EXPIRY_SECONDS]:
-                    cache.clear()
-                else:
-                    continue
-            _cache_expiries[cache_id] = now
-        return wrapped(*args, **kwargs)
-    return wrapper
+def cache(name, spreadsheet_id, force_refresh=False):
+    now = time.time()
+    cache = _caches.get(name)
+    if force_refresh or cache is None or (now - _cache_expiries[name]) >= flask.current_app.config[_FBSL_CACHE_EXPIRY_SECONDS]:
+        cache = _caches[name] = _gsheet_to_df(spreadsheet_id)
+        _cache_expiries[name] = now
+    return cache
 
 
-def first_sheet(spreadsheet_id):
-    gc = _gspread_client()
-    return gc.open_by_key(spreadsheet_id).get_worksheet(0)
-
-
-def sheet_data_values(sheet, column=None):
-    if column is None:
-        data = sheet.get_all_values(value_render_option="UNFORMATTED_VALUE")
-    else:
-        data = sheet.col_values(column, value_render_option="UNFORMATTED_VALUE")
-    del data[0]
-    return data  # the big problem with this is we are returning a list of values/lists, not a list of dicts of values/lists
+@wrapt.decorator
+def paginate(wrapped, instance, args, kwargs):
+    data, page, per_page = wrapped(*args, **kwargs)
+    offset = (page - 1) * per_page
+    total_items = len(data.index)
+    data = data.sort_values("Request ID").iloc[offset: offset + per_page + 1]
+    return {
+        "page": page,
+        "per_page": per_page,
+        "total_pages": math.ceil(total_items / per_page),
+        "total_items": total_items,
+        "items": data.to_dict("records")
+    }

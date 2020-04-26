@@ -2,5 +2,6 @@ flask
 flask-restx
 google-auth
 gspread
+pandas
 python-dotenv
 wrapt
