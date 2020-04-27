@@ -9,7 +9,7 @@ Clone this repository and ensure you are inside the directory where this `README
 * Install [Make](https://www.gnu.org/software/make/manual/make.html)
 
 # Setup
-Create a `.env` file (this is excluded from source control by .gitignore as it contains secret values) and set the following environment variables:
+Set the following environment variables **OR** create a `.env` file (this is excluded from source control by .gitignore as it contains secret values):
 
 * FBSL_ENVIRONMENT - the name of the environment to load configuration for (dev, prod)
 

@@ -10,7 +10,7 @@ item = rest.model("Item", {
     "Comments": fields.String(required=False, description="Any item-specific comments", example="Full fat option if available")
 })
 
-list = rest.model("Type", {
+list = rest.model("List", {
     "Type": requests_models.request["Type"],
     "Comments": fields.String(required=False, description="Any generic list-wide comments", example="Lots of additions due to Easter"),
     "Items": fields.List(fields.Nested(item))
