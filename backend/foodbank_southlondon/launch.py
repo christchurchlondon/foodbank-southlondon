@@ -1,3 +1,4 @@
+import logging
 import os
 
 import click
@@ -22,7 +23,10 @@ _FBSL_ENVIRONMENT_ENV_VAR = "FBSL_ENVIRONMENT"
 def main():
     dotenv.load_dotenv(os.path.join(app.instance_path, "..", ".env"))
     environment = os.environ.get(_FBSL_ENVIRONMENT_ENV_VAR)
+    app.logger.setLevel(logging.INFO if environment == "prod" else logging.DEBUG)
+    app.logger.info(f"Loading environment, {environment} ...")
     app.config.from_object(config.CONFIGURATIONS[environment])
+    app.logger.info(f"Initialising APIs, attaching namespaces and registering blueprints  ...")
     api.rest.init_app(api.blueprint)
     api.rest.add_namespace(events.namespace)
     api.rest.add_namespace(lists.namespace)

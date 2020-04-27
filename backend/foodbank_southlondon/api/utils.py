@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Any, Callable, Dict, List
 import math
 import time
 
@@ -19,7 +19,7 @@ _cache_expiries: Dict[str, float] = {}
 _caches: Dict[str, pd.DataFrame] = {}
 
 
-def _gsheet(spreadsheet_id: str):
+def _gsheet(spreadsheet_id: str) -> gspread.Worksheet:
     gc = flask.g.get("gc")
     if gc is None:
         credentials = Credentials.from_service_account_file(flask.current_app.config[_FBSL_SA_KEY_FILE_PATH], scopes=_SCOPES)
@@ -29,45 +29,39 @@ def _gsheet(spreadsheet_id: str):
     return sheet
 
 
-def _gsheet_to_df(spreadsheet_id: str):
+def _gsheet_to_df(spreadsheet_id: str) -> pd.DataFrame:
     sheet = _gsheet(spreadsheet_id)
+    flask.current_app.logger.debug(f"Download gSheet, {sheet.spreadsheet.title} ({sheet.url}) ...")
     data = sheet.get_all_values()
     headers = data.pop(0)
     return pd.DataFrame(data, columns=headers)
 
 
-def append_row(spreadsheet_id: str, row: List):
+def append_row(spreadsheet_id: str, row: List) -> None:
     sheet = _gsheet(spreadsheet_id)
+    flask.current_app.logger.debug(f"Writing the row, {row} in {sheet.spreadsheet.title} ({sheet.url}) ...")
     sheet.append_row(row, value_input_option="USER_ENTERED")
 
 
-def cache(name: str, spreadsheet_id: str, expires_after: int = None, force_refresh: bool = False):
+def cache(name: str, spreadsheet_id: str, expires_after: int = None, force_refresh: bool = False) -> pd.DataFrame:
     now = time.time()
     cache = _caches.get(name)
     if force_refresh or cache is None or (expires_after and (now - _cache_expiries[name]) >= expires_after):
+        flask.current_app.logger.debug(f"Refreshing cache, {name} ...")
         cache = _caches[name] = _gsheet_to_df(spreadsheet_id)
         _cache_expiries[name] = now
     return cache
 
 
-def delete_cache(name: str):
+def delete_cache(name: str) -> None:
+    flask.current_app.logger.debug(f"Deleting cache, {name} ...")
     _caches.pop(name, None)
     _cache_expiries.pop(name, None)
 
 
-def upsert_row(spreadsheet_id: str, query: str, row: List, column: int = 1):
-    sheet = _gsheet(spreadsheet_id)
-    try:
-        row_number = sheet.find(query, in_column=column).row
-    except gspread.exceptions.CellNotFound:
-        append_row(spreadsheet_id, row)
-    else:
-        sheet.update(f"{row_number}:{row_number}", [row], value_input_option="USER_ENTERED")
-
-
-def paginate(*sort_by: str):
+def paginate(*sort_by: str) -> Callable:
     @wrapt.decorator
-    def wrapper(wrapped, instance, args, kwargs):
+    def wrapper(wrapped: Callable, instance: Any, args: List, kwargs: Dict) -> Dict[str, Any]:
         data, page, per_page = wrapped(*args, **kwargs)
         offset = (page - 1) * per_page
         total_items = len(data.index)
@@ -80,3 +74,14 @@ def paginate(*sort_by: str):
             "items": data.to_dict("records")
         }
     return wrapper
+
+
+def upsert_row(spreadsheet_id: str, query: str, row: List, column: int = 1) -> None:
+    sheet = _gsheet(spreadsheet_id)
+    try:
+        row_number = sheet.find(query, in_column=column).row
+    except gspread.exceptions.CellNotFound:
+        append_row(spreadsheet_id, row)
+    else:
+        flask.current_app.logger.debug(f"Overwriting row {row_number} with {row} in {sheet.spreadsheet.title} ({sheet.url}) ...")
+        sheet.update(f"{row_number}:{row_number}", [row], value_input_option="USER_ENTERED")

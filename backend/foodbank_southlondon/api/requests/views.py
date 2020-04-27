@@ -1,5 +1,8 @@
+from typing import Any, Dict, Tuple
+
 import flask
 import flask_restx  # type:ignore
+import pandas as pd  # type:ignore
 
 from foodbank_southlondon.api import rest, utils
 from foodbank_southlondon.api.requests import models, namespace, parsers
@@ -19,7 +22,7 @@ class Requests(flask_restx.Resource):
     @rest.expect(parsers.requests_params)
     @rest.marshal_with(models.page_of_requests)
     @utils.paginate("RequestID")
-    def get(self):
+    def get(self) -> Tuple[Dict, int, int]:
         """List all Client Requests."""
         params = parsers.requests_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
@@ -43,17 +46,17 @@ class Request(flask_restx.Resource):
     @rest.response(404, "Not found")
     @rest.expect(parsers.cache_params)
     @rest.marshal_with(models.request)
-    def get(self, request_id: str):
+    def get(self, request_id: str) -> Dict[str, Any]:
         """Get a single Client Request."""
         params = parsers.requests_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         data = cache(force_refresh=refresh_cache)
-        data = data[data["RequestID"].astype("str") == request_id]  # shouldn't need astype conversion
+        data = data[data["RequestID"].astype("str") == request_id]
         if data.empty:
             rest.abort(404, f"RequestID, {request_id} was not found.")
         return data.to_dict("records")[0]
 
 
-def cache(force_refresh: bool = False):
+def cache(force_refresh: bool = False) -> pd.DataFrame:
     return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_URI],
                        expires_after=flask.current_app.config[_FBSL_REQUESTS_CACHE_EXPIRY_SECONDS], force_refresh=force_refresh)

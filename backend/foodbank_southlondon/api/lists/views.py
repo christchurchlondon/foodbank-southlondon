@@ -1,7 +1,9 @@
+from typing import Any, Dict, List, Tuple
 import json
 
 import flask
 import flask_restx  # type:ignore
+import pandas as pd  # type:ignore
 
 from foodbank_southlondon.api import rest, utils
 from foodbank_southlondon.api.lists import models, namespace, parsers
@@ -21,7 +23,7 @@ class Lists(flask_restx.Resource):
 
     @rest.expect(parsers.cache_params)
     @rest.marshal_with(models.all_lists)
-    def get(self):
+    def get(self) -> Dict[str, Dict[str, Any]]:
         """List all Lists."""
         params = parsers.cache_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
@@ -30,9 +32,10 @@ class Lists(flask_restx.Resource):
 
     @rest.expect(models.list)
     @rest.response(201, "Created")
-    def post(self):
+    def post(self) -> Tuple[Dict, int]:
         """Create (or overwrite) a Shopping List."""
         data = flask.request.json
+        flask.current_app.logger.debug(f"Received request body, {data}")
         type = data["Type"]
         requests_data = request_views.cache(force_refresh=True)
         if requests_data[requests_data["Type"] == type].empty:
@@ -40,7 +43,7 @@ class Lists(flask_restx.Resource):
         data["Items"] = str(data["Items"])
         utils.upsert_row(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], type, list(data.values()))
         utils.delete_cache(_CACHE_NAME)
-        return None, 201
+        return ({}, 201)
 
 
 @namespace.route("/<string:type>")
@@ -49,12 +52,12 @@ class Request(flask_restx.Resource):
     @rest.response(404, "Not found")
     @rest.expect(parsers.cache_params)
     @rest.marshal_with(models.list)
-    def get(self, type: str):
+    def get(self, type: str) -> List:
         """Get a single Shopping List."""
         params = parsers.cache_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         data = cache(force_refresh=refresh_cache)
-        data = data[data["Type"].astype("str") == type]  # shouldn't need astype conversion
+        data = data[data["Type"].astype("str") == type]
         if data.empty:
             rest.abort(404, f"Type, {type} was not found.")
         list = data.to_dict("records")[0]
@@ -62,6 +65,6 @@ class Request(flask_restx.Resource):
         return list
 
 
-def cache(force_refresh: bool = False):
+def cache(force_refresh: bool = False) -> pd.DataFrame:
     return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_LISTS_GSHEET_URI],
                        expires_after=flask.current_app.config[_FBSL_LISTS_CACHE_EXPIRY_SECONDS], force_refresh=force_refresh)

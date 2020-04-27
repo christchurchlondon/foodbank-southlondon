@@ -1,5 +1,8 @@
+from typing import Dict, Tuple
+
 import flask
 import flask_restx  # type:ignore
+import pandas as pd  # type:ignore
 
 from foodbank_southlondon.api import rest, utils
 from foodbank_southlondon.api.events import models, namespace, parsers
@@ -20,7 +23,7 @@ class Events(flask_restx.Resource):
     @rest.expect(parsers.events_params)
     @rest.marshal_with(models.page_of_events)
     @utils.paginate("RequestID", "Timestamp")
-    def get(self):
+    def get(self) -> Tuple[pd.DataFrame, int, int]:
         """List all Events."""
         params = parsers.events_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
@@ -44,18 +47,19 @@ class Events(flask_restx.Resource):
 
     @rest.expect(models.event)
     @rest.response(201, "Created")
-    def post(self):
+    def post(self) -> Tuple[Dict, int]:
         """Create (log) an Event."""
         data = flask.request.json
+        flask.current_app.logger.debug(f"Received request body, {data}")
         request_id = data["RequestID"]
         requests_data = request_views.cache(force_refresh=True)
         if requests_data[requests_data["RequestID"] == request_id].empty:
             rest.abort(400, f"RequestID, {request_id} does not match any existing request.")
         utils.append_row(flask.current_app.config[_FBSL_EVENTS_GSHEET_URI], list(data.values()))
         utils.delete_cache(_CACHE_NAME)
-        return None, 201
+        return ({}, 201)
 
 
-def cache(force_refresh: bool = False):
+def cache(force_refresh: bool = False) -> pd.DataFrame:
     return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_EVENTS_GSHEET_URI],
                        expires_after=flask.current_app.config[_FBSL_EVENTS_CACHE_EXPIRY_SECONDS], force_refresh=force_refresh)
