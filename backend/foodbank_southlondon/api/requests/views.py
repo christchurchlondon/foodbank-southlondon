@@ -18,19 +18,19 @@ class Requests(flask_restx.Resource):
 
     @rest.expect(parsers.requests_params)
     @rest.marshal_with(models.page_of_requests)
-    @utils.paginate
+    @utils.paginate("RequestID")
     def get(self):
         """List all Client Requests."""
         params = parsers.requests_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
-        ref_numbers = params["ref_numbers"]
+        ref_nums = params["ref_nums"]
         last_req_only = params["last_req_only"]
         data = cache(force_refresh=refresh_cache)
-        if ref_numbers:
-            data = data[data["Reference Number"].isin(ref_numbers)]
+        if ref_nums:
+            data = data[data["Reference Number"].isin(ref_nums)]
         if last_req_only:
             data = (
-                data.assign(rank=data.groupby(["Reference Number"])["Request ID"].rank(method="first", ascending=False))
+                data.astype("str").assign(rank=data.groupby(["Reference Number"]).cumcount(ascending=False) + 1)
                 .query("rank == 1")
                 .drop("rank", axis=1)
             )
@@ -40,7 +40,7 @@ class Requests(flask_restx.Resource):
 @namespace.route("/<string:request_id>")
 class Request(flask_restx.Resource):
 
-    @rest.response(404, "Request not found")
+    @rest.response(404, "Not found")
     @rest.expect(parsers.cache_params)
     @rest.marshal_with(models.request)
     def get(self, request_id):
@@ -48,9 +48,9 @@ class Request(flask_restx.Resource):
         params = parsers.requests_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         data = cache(force_refresh=refresh_cache)
-        data = data[data["Request ID"].astype("str") == request_id]  # shouldn't need astype conversion
+        data = data[data["RequestID"].astype("str") == request_id]  # shouldn't need astype conversion
         if data.empty:
-            rest.abort(404, f"Request ID, {request_id} was not found.")
+            rest.abort(404, f"RequestID, {request_id} was not found.")
         return data.to_dict("records")[0]
 
 

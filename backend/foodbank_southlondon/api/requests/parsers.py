@@ -1,6 +1,6 @@
 from flask_restx import inputs  # type:ignore
 
-from foodbank_southlondon.api.parsers import pagination_params  # noqa: F401
+from foodbank_southlondon.api.parsers import cache_params, pagination_params  # noqa: F401
 
 
 requests_params = pagination_params.copy()
