@@ -6,6 +6,8 @@ import dotenv
 from foodbank_southlondon import api, app, bff, config
 from foodbank_southlondon.api import events, lists, requests
 import foodbank_southlondon.views  # noqa: F401
+import foodbank_southlondon.errors  # noqa: F401
+import foodbank_southlondon.api.errors  # noqa: F401
 import foodbank_southlondon.api.events.views  # noqa: F401
 import foodbank_southlondon.api.lists.views  # noqa: F401
 import foodbank_southlondon.api.requests.views  # noqa: F401

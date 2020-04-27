@@ -6,6 +6,7 @@ from foodbank_southlondon.api.requests import models, namespace, parsers
 
 
 # CONFIG VARIABLES
+_FBSL_REQUESTS_CACHE_EXPIRY_SECONDS = "FBSL_REQUESTS_CACHE_EXPIRY_SECONDS"
 _FBSL_REQUESTS_DRIVE_URI = "FBSL_REQUESTS_DRIVE_URI"
 
 # INTERNALS
@@ -26,22 +27,33 @@ class Requests(flask_restx.Resource):
         last_req_only = params["last_req_only"]
         data = cache(force_refresh=refresh_cache)
         if ref_numbers:
-            data = data[data["Reference Number"] in ref_numbers]
+            data = data[data["Reference Number"].isin(ref_numbers)]
         if last_req_only:
             data = (
                 data.assign(rank=data.groupby(["Reference Number"])["Request ID"].rank(method="first", ascending=False))
                 .query("rank == 1")
-                .drop("rank")
+                .drop("rank", axis=1)
             )
         return (data, params["page"], params["per_page"])
 
 
-@namespace.route("/<string:id>")
+@namespace.route("/<string:request_id>")
 class Request(flask_restx.Resource):
-    def get(self, id):
+
+    @rest.response(404, "Request not found")
+    @rest.expect(parsers.cache_params)
+    @rest.marshal_with(models.request)
+    def get(self, request_id):
         """Get a single Client Request."""
-        pass
+        params = parsers.requests_params.parse_args(flask.request)
+        refresh_cache = params["refresh_cache"]
+        data = cache(force_refresh=refresh_cache)
+        data = data[data["Request ID"].astype("str") == request_id]  # shouldn't need astype conversion
+        if data.empty:
+            rest.abort(404, f"Request ID, {request_id} was not found.")
+        return data.to_dict("records")[0]
 
 
 def cache(force_refresh=False):
-    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_DRIVE_URI], force_refresh=force_refresh)
+    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_DRIVE_URI],
+                       expires_after=flask.current_app.config[_FBSL_REQUESTS_CACHE_EXPIRY_SECONDS], force_refresh=force_refresh)

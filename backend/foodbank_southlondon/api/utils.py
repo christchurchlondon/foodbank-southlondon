@@ -9,7 +9,6 @@ import wrapt  # type:ignore
 
 
 # CONFIG VARIABLES
-_FBSL_CACHE_EXPIRY_SECONDS = "FBSL_CACHE_EXPIRY_SECONDS"
 _FBSL_SA_KEY_FILE_PATH = "FBSL_SA_KEY_FILE_PATH"
 
 # INTERNALS
@@ -30,10 +29,10 @@ def _gsheet_to_df(spreadsheet_id):
     return pd.DataFrame(data, columns=headers)
 
 
-def cache(name, spreadsheet_id, force_refresh=False):
+def cache(name, spreadsheet_id, expires_after=None, force_refresh=False):
     now = time.time()
     cache = _caches.get(name)
-    if force_refresh or cache is None or (now - _cache_expiries[name]) >= flask.current_app.config[_FBSL_CACHE_EXPIRY_SECONDS]:
+    if force_refresh or cache is None or (expires_after and (now - _cache_expiries[name]) >= expires_after):
         cache = _caches[name] = _gsheet_to_df(spreadsheet_id)
         _cache_expiries[name] = now
     return cache
