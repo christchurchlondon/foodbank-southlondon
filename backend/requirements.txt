@@ -1,5 +1,7 @@
 flask
 flask-restx
-google-api-python-client
 google-auth
+gspread
+pandas
 python-dotenv
+wrapt
