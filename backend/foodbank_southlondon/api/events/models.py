@@ -9,8 +9,8 @@ event = rest.model("Event", {
     "Timestamp": fields.DateTime(required=True, description="The timestamp when the event was recorded, in ISO 8601 format",
                                  example="2020-04-26T13:31:42Z"),
     "EventName": fields.String(required=True, description="The name of the event that occured", example="Shipping Label Printed",
-                                enum=["Shopping List Printed", "Shipping Label Printed", "Marked as Out for Delivery", "Marked as Delivered",
-                                      "Request Denied"]),
+                               enum=["Shopping List Printed", "Shipping Label Printed", "Marked as Out for Delivery", "Marked as Delivered",
+                                     "Request Denied"]),
     "EventDate": fields.String(required=False, description="The date when the event occurred", example="2020-04-01")
 })
 

@@ -54,9 +54,14 @@ def delete_cache(name):
     _cache_expiries.pop(name, None)
 
 
-def overwrite_sheet(spreadsheet_id, rows):
+def upsert_row(spreadsheet_id, query, row, column=1):
     sheet = _gsheet(spreadsheet_id)
-    sheet.update(sheet.title, rows, value_input_option="USER_ENTERED")
+    try:
+        row_number = sheet.find(query, in_column=column).row
+    except gspread.exceptions.CellNotFound:
+        append_row(spreadsheet_id, row)
+    else:
+        sheet.update(f"{row_number}:{row_number}", [row], value_input_option="USER_ENTERED")
 
 
 def paginate(*sort_by):
