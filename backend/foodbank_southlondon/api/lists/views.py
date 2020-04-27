@@ -49,7 +49,7 @@ class Request(flask_restx.Resource):
     @rest.response(404, "Not found")
     @rest.expect(parsers.cache_params)
     @rest.marshal_with(models.list)
-    def get(self, type):
+    def get(self, type: str):
         """Get a single Shopping List."""
         params = parsers.cache_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
@@ -62,6 +62,6 @@ class Request(flask_restx.Resource):
         return list
 
 
-def cache(force_refresh=False):
+def cache(force_refresh: bool = False):
     return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_LISTS_GSHEET_URI],
                        expires_after=flask.current_app.config[_FBSL_LISTS_CACHE_EXPIRY_SECONDS], force_refresh=force_refresh)

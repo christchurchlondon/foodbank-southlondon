@@ -1,6 +1,6 @@
 from flask_restx import fields  # type:ignore
 
-from foodbank_southlondon.api import models, rest
+from foodbank_southlondon.api import rest
 from foodbank_southlondon.api.requests import models as requests_models
 
 

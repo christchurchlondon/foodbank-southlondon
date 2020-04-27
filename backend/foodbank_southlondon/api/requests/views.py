@@ -43,7 +43,7 @@ class Request(flask_restx.Resource):
     @rest.response(404, "Not found")
     @rest.expect(parsers.cache_params)
     @rest.marshal_with(models.request)
-    def get(self, request_id):
+    def get(self, request_id: str):
         """Get a single Client Request."""
         params = parsers.requests_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
@@ -54,6 +54,6 @@ class Request(flask_restx.Resource):
         return data.to_dict("records")[0]
 
 
-def cache(force_refresh=False):
+def cache(force_refresh: bool = False):
     return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_URI],
                        expires_after=flask.current_app.config[_FBSL_REQUESTS_CACHE_EXPIRY_SECONDS], force_refresh=force_refresh)

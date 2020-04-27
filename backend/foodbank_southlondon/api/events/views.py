@@ -56,6 +56,6 @@ class Events(flask_restx.Resource):
         return None, 201
 
 
-def cache(force_refresh=False):
+def cache(force_refresh: bool = False):
     return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_EVENTS_GSHEET_URI],
                        expires_after=flask.current_app.config[_FBSL_EVENTS_CACHE_EXPIRY_SECONDS], force_refresh=force_refresh)
