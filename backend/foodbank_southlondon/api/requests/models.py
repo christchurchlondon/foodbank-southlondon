@@ -9,7 +9,7 @@ request = rest.model("Client Request", {
     "Reference Number": fields.String(required=True, description="The unique FoodBank Reference Number of the Client (consistent across requests)",
                                       example="H-00001-00001"),
     "Name": fields.String(required=True, description="The name of the Client", example="John Smith"),
-    "Type": fields.String(required=True, enum=["Single, Couple, Family of 4"], description="The type of request", example="Single")
+    "Type": fields.String(required=True, description="The type of request", example="Single", enum=["Single, Couple, Family of 4"])
 })
 
 page_of_requests = rest.inherit("A page of Client Requests", models.pagination, {
