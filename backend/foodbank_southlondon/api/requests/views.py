@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Tuple
 
 import flask
 import flask_restx  # type:ignore
@@ -40,10 +40,25 @@ class Requests(flask_restx.Resource):
         return (data, params["page"], params["per_page"])
 
 
+@namespace.route("/distinct/")
+class DistinctRequestsValues(flask_restx.Resource):
+
+    @rest.expect(parsers.distinct_requests_params)
+    @rest.marshal_with(models.distinct_values)
+    def get(self) -> Dict[str, List]:
+        """Get the distinct values of a Requests attribute."""
+        params = parsers.distinct_requests_params.parse_args(flask.request)
+        attribute = params["attribute"]
+        refresh_cache = params["refresh_cache"]
+        data = cache(force_refresh=refresh_cache)
+        data = data[attribute].unique()
+        return {"Values": list(data)}
+
+
 @namespace.route("/<string:request_id>")
 class Request(flask_restx.Resource):
 
-    @rest.response(404, "Not found")
+    @rest.response(404, "Not Found")
     @rest.expect(parsers.cache_params)
     @rest.marshal_with(models.request)
     def get(self, request_id: str) -> Dict[str, Any]:

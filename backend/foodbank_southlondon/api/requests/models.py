@@ -1,4 +1,4 @@
-from flask_restx import fields  # type:ignore
+from flask_restx import fields, marshal  # type:ignore
 
 from foodbank_southlondon.api import models, rest
 
@@ -14,4 +14,8 @@ request = rest.model("Client Request", {
 
 page_of_requests = rest.inherit("A page of Client Requests", models.pagination, {
     "items": fields.List(fields.Nested(request))
+})
+
+distinct_values = rest.model("Distinct Values", {
+    "Values": fields.List(fields.String(required=True, description="A distinct value of the requested attribute across the Requests data"))
 })

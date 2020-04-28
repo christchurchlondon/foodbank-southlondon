@@ -49,7 +49,7 @@ class Lists(flask_restx.Resource):
 @namespace.route("/<string:type>")
 class Request(flask_restx.Resource):
 
-    @rest.response(404, "Not found")
+    @rest.response(404, "Not Found")
     @rest.expect(parsers.cache_params)
     @rest.marshal_with(models.list)
     def get(self, type: str) -> List:
