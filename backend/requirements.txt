@@ -1,7 +1,9 @@
 flask
 flask-restx
+flask-weasyprint
 google-auth
 gspread
 pandas
 python-dotenv
+werkzeug
 wrapt
