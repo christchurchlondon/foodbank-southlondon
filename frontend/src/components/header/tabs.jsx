@@ -4,7 +4,7 @@ import Tab from './tab';
 export default class Tabs extends React.Component {
 
     handleTabClick(tab) {
-        console.log('tab clicked', tab);
+        this.props.onSelect(tab);
     }
 
     render() {

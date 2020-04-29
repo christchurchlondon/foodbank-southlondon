@@ -1,14 +1,25 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import Tabs from './tabs';
+import { setTab } from '../../redux/actions';
 
-export default function Header() {
+class Header extends React.Component {
 
-    // TODO handle tab click
+    handleTabSelect(tab) {
+        this.props.setTab(tab);
+    }
 
-    return (
-        <header>
-            <h1>Foodbank - South London</h1>
-            <Tabs />
-        </header>
-    );
+    render() {
+        return (
+            <header>
+                <h1>Foodbank - South London</h1>
+                <Tabs onSelect={ (tab) => this.handleTabSelect(tab) } />
+            </header>
+        );
+    };
 }
+
+export default connect(
+    null,
+    { setTab }
+)(Header)

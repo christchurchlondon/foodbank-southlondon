@@ -2,7 +2,7 @@ import { SET_TAB } from '../actions/types';
 
 
 const initialState = {
-    currentTab: ''
+    tab: ''
 };
 
 export default function(state = initialState, action) {
@@ -10,7 +10,9 @@ export default function(state = initialState, action) {
         case SET_TAB:
             return {
                 ...state,
-                currentTab: action.payload.tab
+                tab: action.payload.tab
             };
+        default:
+            return state;
     }
 }
