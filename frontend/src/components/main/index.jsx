@@ -4,6 +4,7 @@ import Header from '../header';
 import Requests from '../requests';
 import Lists from '../lists';
 import { getTab } from '../../redux/selectors';
+import './styles/index.css';
 
 
 class Main extends React.Component {
@@ -16,7 +17,9 @@ class Main extends React.Component {
         return (
             <div class="main">
                 <Header />
-                { contents }
+                <main>
+                    { contents }
+                </main>
             </div>
         );
     }
