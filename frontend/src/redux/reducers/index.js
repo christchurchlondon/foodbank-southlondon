@@ -1,4 +1,4 @@
 import { combineReducers } from 'redux';
-import tab from './tab';
+import header from './header';
 
-export default combineReducers({ tab });
+export default combineReducers({ header });
