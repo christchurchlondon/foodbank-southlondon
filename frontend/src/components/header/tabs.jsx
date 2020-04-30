@@ -15,7 +15,7 @@ export default class Tabs extends React.Component {
         return (
             <div className="tabs">
                 <Tab name={'Requests'} onClick={ () => this.handleTabClick('requests') } isSelected={this.isSelectedTab('requests')} />
-                <Tab name={'Lists'} onClick={ () => this.handleTabClick('lists') } isSelected={this.isSelectedTab('list')} />
+                <Tab name={'Lists'} onClick={ () => this.handleTabClick('lists') } isSelected={this.isSelectedTab('lists')} />
             </div>
         );
     }
