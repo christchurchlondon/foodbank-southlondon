@@ -6,6 +6,8 @@ import { getTab } from '../../redux/selectors';
 
 class Header extends React.Component {
 
+    // TODO remove tab from here?
+
     handleTabSelect(tab) {
         this.props.setTab(tab);
     }
@@ -28,4 +30,4 @@ const mapStateToProps = state => {
 export default connect(
     mapStateToProps,
     { setTab }
-)(Header)
+)(Header);
