@@ -15,12 +15,12 @@ class Main extends React.Component {
             : <Lists />;
 
         return (
-            <div class="main">
+            <main class="main">
                 <Header />
-                <main>
+                <div class="contents">
                     { contents }
-                </main>
-            </div>
+                </div>
+            </main>
         );
     }
 }

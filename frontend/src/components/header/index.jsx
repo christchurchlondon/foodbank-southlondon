@@ -7,7 +7,7 @@ import './styles/index.css';
 
 class Header extends React.Component {
 
-    // TODO remove tab from here?
+    // TODO remove state management from here?
 
     handleTabSelect(tab) {
         this.props.setTab(tab);
