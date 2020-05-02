@@ -1,13 +1,13 @@
 class _Config(object):
     DEBUG = True
 
+    FBSL_CATCH_ALL_LIST = "Family of 5+"
     FBSL_EVENTS_CACHE_EXPIRY_SECONDS = 0
     FBSL_LISTS_CACHE_EXPIRY_SECONDS = 0
     FBSL_REQUESTS_CACHE_EXPIRY_SECONDS = 0
     FBSL_SA_KEY_FILE_PATH = "foodbank-southlondon-ecd573527735.json"
 
     ERROR_404_HELP = False
-    RESTX_MASK_SWAGGER = False
     RESTX_VALIDATE = True
 
 

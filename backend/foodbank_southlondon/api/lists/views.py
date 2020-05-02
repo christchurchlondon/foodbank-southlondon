@@ -1,5 +1,4 @@
-from typing import Any, Dict, List, Tuple
-import json
+from typing import Any, Dict, Tuple
 
 import flask
 import flask_restx  # type:ignore
@@ -7,7 +6,6 @@ import pandas as pd  # type:ignore
 
 from foodbank_southlondon.api import rest, utils
 from foodbank_southlondon.api.lists import models, namespace, parsers
-from foodbank_southlondon.api.requests import views as request_views
 
 
 # CONFIG VARIABLES
@@ -22,47 +20,47 @@ _CACHE_NAME = "lists"
 class Lists(flask_restx.Resource):
 
     @rest.expect(parsers.cache_params)
-    @rest.marshal_with(models.all_lists)
-    def get(self) -> Dict[str, Dict[str, Any]]:
+    @rest.marshal_with(models.all_lists_items)
+    def get(self) -> Dict[str, Any]:
         """List all Lists."""
         params = parsers.cache_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         data = cache(force_refresh=refresh_cache)
-        return {"items": data.to_dict("records")}
+        notes = utils.gsheet_a1(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], 1)
+        print(data)
+        return {"Notes": notes, "items": data.to_dict("records")}
 
-    @rest.expect(models.list)
+    @rest.expect(models.all_lists_items)
     @rest.response(201, "Created")
     def post(self) -> Tuple[Dict, int]:
-        """Create (or overwrite) a Shopping List."""
+        """Overwrite the Shopping Lists."""
         data = flask.request.json
         flask.current_app.logger.debug(f"Received request body, {data}")
-        type = data["Type"]
-        requests_data = request_views.cache(force_refresh=True)
-        if requests_data[requests_data["Type"] == type].empty:
-            rest.abort(400, f"Type, {type} is not found amongst any existing requests.")
-        data["Items"] = str(data["Items"])
-        utils.upsert_row(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], type, list(data.values()))
+        utils.overwrite_rows(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], list(data.values()))
         utils.delete_cache(_CACHE_NAME)
         return ({}, 201)
 
 
-@namespace.route("/<string:type>")
-class Request(flask_restx.Resource):
+@namespace.route("/<string:list_name>")
+@namespace.doc(params={"list_name": f"The name of the list to retrieve. Should be one of: {models.LIST_NAMES}"})
+class List(flask_restx.Resource):
 
     @rest.response(404, "Not Found")
     @rest.expect(parsers.cache_params)
-    @rest.marshal_with(models.list)
-    def get(self, type: str) -> List:
+    @rest.marshal_with(models.one_list_items)
+    def get(self, list_name: str) -> Dict[str, Any]:
         """Get a single Shopping List."""
         params = parsers.cache_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         data = cache(force_refresh=refresh_cache)
-        data = data[data["Type"].astype("str") == type]
-        if data.empty:
-            rest.abort(404, f"Type, {type} was not found.")
-        list = data.to_dict("records")[0]
-        list["Items"] = json.loads(list["Items"].replace("'", "\""))
-        return list
+        if list_name not in models.LIST_NAMES:
+            rest.abort(404, f"List Name, {list_name} was not found.")
+        attribute = models.LIST_NAMES[list_name]
+        columns = {f"{attribute} - Quantity": "Quantity", f"{attribute} - Notes": "Notes"}
+        data = data[["Item Description", *columns]]
+        data.rename(columns=columns, inplace=True)
+        notes = utils.gsheet_a1(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], 1)
+        return {"Notes": notes, "items": data.to_dict("records")[0]}
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
