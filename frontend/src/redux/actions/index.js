@@ -24,14 +24,17 @@ export const setTab = tab => ({
 
 export const fetchRequests = filter => {
     return dispatch => {
-        dispatch(loadRequests());
+        dispatch(loadRequests(filter));
         return getRequests(filter)
             .then(response => dispatch(requestsLoaded(response)));
     };
 }
 
-export const loadRequests = () => ({
-    type: LOAD_REQUESTS
+export const loadRequests = filter => ({
+    type: LOAD_REQUESTS,
+    payload: {
+        filter
+    }
 });
 
 export const requestsLoaded = requests => ({

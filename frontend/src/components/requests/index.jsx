@@ -10,8 +10,18 @@ import RequestsActions from './actions';
 
 class Requests extends React.Component {
     
+    constructor(props) {
+        super(props);
+        this.fetchRequests = this.fetchRequests.bind(this);
+    }
+
     componentDidMount() {
-        this.props.fetchRequests();
+        // TODO only run if props.items is empty?
+        this.fetchRequests();
+    }
+
+    fetchRequests(filter = '') {
+        this.props.fetchRequests(filter);
     }
 
     isLoading() {
@@ -21,12 +31,13 @@ class Requests extends React.Component {
     render() {
 
         // TODO actions for child components
+        // TODO refresh button?
 
         const contents = this.isLoading()
             ? <Loading />
             : (
                 <div>
-                    <RequestsFilter />
+                    <RequestsFilter onSubmit={ v => this.fetchRequests(v) } value={this.props.filter} />
                     <RequestsList requests={ this.props.items } />
                     <RequestsActions />
                 </div>

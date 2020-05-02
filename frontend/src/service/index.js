@@ -16,8 +16,7 @@ export function getRequests(filter = '') {
     const url = endpoints.GET_REQUESTS + `?filter=${filter}`;
     // return fetchFromServer(url);
     return stall(1200)
-        .then(() => (new Array(25)).fill(null).map(_ => makeRequest()));
-        // .then(() => [1,2,3,4,5].map(_ => makeRequest()));
+        .then(() => getMockRequests(filter));
 }
 
 
@@ -28,11 +27,18 @@ async function stall(stallTime = 3000) {
     await new Promise(resolve => setTimeout(resolve, stallTime));
 }
 
-function makeRequest() {
-    const id = Math.floor(Math.random() * 1000);
+function getMockRequests(filter = '') {
+    const mockName = filter.trim().length > 0
+        ? filter.substr(0, 20)
+        : undefined;
+    return (new Array(25)).fill(null).map(_ => makeRequest(mockName))
+}
+
+function makeRequest(name = 'Request') {
+    const id = Math.floor(Math.random() * 100000);
     return {
         id,
-        name: `Request ${id}`,
+        name: `${name} ${id}`,
         referenceNumber: Math.floor(Math.random() * 5e5),
         type: '[ type ]'
         // More values?
