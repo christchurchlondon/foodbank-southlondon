@@ -37,6 +37,7 @@ class Requests(flask_restx.Resource):
                 .query("rank == 1")
                 .drop("rank", axis=1)
             )
+        data["edit_details_url"] = data["RequestID"].apply(_edit_details_url)
         return (data, params["page"], params["per_page"])
 
 
@@ -55,6 +56,7 @@ class Request(flask_restx.Resource):
         data = data[data["RequestID"].astype("str") == request_id]
         if data.empty:
             rest.abort(404, f"RequestID, {request_id} was not found.")
+        data["edit_details_url"] = data["RequestID"].apply(_edit_details_url)
         return data.to_dict("records")[0]
 
 
@@ -71,6 +73,10 @@ class DistinctRequestsValues(flask_restx.Resource):
         data = cache(force_refresh=refresh_cache)
         data = data[attribute].unique()
         return {"Values": list(data)}
+
+
+def _edit_details_url(request_id):
+    return f"https://docs.google.com/forms/d/e/{flask.current_app.config['FBSL_REQUESTS_FORM_URI']}/viewForm?edit2={request_id}"
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
