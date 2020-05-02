@@ -15,7 +15,7 @@ function fetchFromServer(url, method = 'GET') {
 export function getRequests(filter = '') {
     const url = endpoints.GET_REQUESTS + `?filter=${filter}`;
     // return fetchFromServer(url);
-    return new Promise(() => {})
+    return new Promise((a, b) => { return a(); })
         .then(() => [1,2,3]);
 }
 

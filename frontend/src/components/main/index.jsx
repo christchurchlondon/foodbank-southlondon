@@ -15,9 +15,9 @@ class Main extends React.Component {
             : <Lists />;
 
         return (
-            <main class="main">
+            <main className="main">
                 <Header />
-                <div class="contents">
+                <div className="contents">
                     { contents }
                 </div>
             </main>

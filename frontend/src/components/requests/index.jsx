@@ -13,7 +13,7 @@ class Requests extends React.Component {
 
         // TODO create component for this
         const requestItems = this.props.items
-            .map(item => <p>{ item }</p>);
+            .map(item => <p key={item}>{ item }</p>);
 
         return (
             <div>

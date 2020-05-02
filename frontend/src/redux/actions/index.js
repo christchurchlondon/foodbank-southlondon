@@ -26,6 +26,7 @@ export const fetchRequests = filter => {
     return dispatch => {
         dispatch(loadRequests());
         return fetch(filter)
+            .then(console.log)
             .then(response => dispatch(requestsLoaded(['request 1', 'request 2', 'request 3'])));
     };
 }
