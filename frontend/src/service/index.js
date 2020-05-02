@@ -15,8 +15,12 @@ function fetchFromServer(url, method = 'GET') {
 export function getRequests(filter = '') {
     const url = endpoints.GET_REQUESTS + `?filter=${filter}`;
     // return fetchFromServer(url);
-    return new Promise((a, b) => { return a(); })
-        .then(() => [1,2,3]);
+    return stall(800)
+        .then(() => [
+            'Request 1',
+            'Request 2',
+            'Request 3'
+        ]);
 }
 
 
