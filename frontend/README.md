@@ -4,7 +4,7 @@
 Basic UI, with mocked data, limited design and a mediocre colour scheme.
 
 ## Prerequisites
-* Download and install the latest LTS version of [nodejs](https://nodejs.org/en/download/)3.8 (this will install npm too)
+* Download and install the latest LTS version of [nodejs](https://nodejs.org/en/download/) (this will install npm too)
     * If you are on Ubuntu, see installation instructions [here](https://github.com/nodesource/distributions)
 * Install [pm2](https://pm2.keymetrics.io/) globally with `npm install pm2 -g`
     * You may need to run this as administrator.
