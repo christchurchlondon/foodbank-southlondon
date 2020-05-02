@@ -26,14 +26,14 @@ class Requests(flask_restx.Resource):
         """List all Client Requests."""
         params = parsers.requests_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
-        ref_nums = params["ref_nums"]
+        client_full_names = params["client_full_names"]
         last_req_only = params["last_req_only"]
         data = cache(force_refresh=refresh_cache)
-        if ref_nums:
-            data = data[data["Reference Number"].isin(ref_nums)]
+        if client_full_names:
+            data = data[data["Client Full Name"].isin(client_full_names)]
         if last_req_only:
             data = (
-                data.astype("str").assign(rank=data.groupby(["Reference Number"]).cumcount(ascending=False) + 1)
+                data.astype("str").assign(rank=data.groupby(["Client Full Name"]).cumcount(ascending=False) + 1)
                 .query("rank == 1")
                 .drop("rank", axis=1)
             )
@@ -44,7 +44,7 @@ class Requests(flask_restx.Resource):
 class DistinctRequestsValues(flask_restx.Resource):
 
     @rest.expect(parsers.distinct_requests_params)
-    @rest.marshal_with(models.distinct_values)
+    @rest.marshal_with(models.distinct_request_values)
     def get(self) -> Dict[str, List]:
         """Get the distinct values of a Requests attribute."""
         params = parsers.distinct_requests_params.parse_args(flask.request)
@@ -56,6 +56,7 @@ class DistinctRequestsValues(flask_restx.Resource):
 
 
 @namespace.route("/<string:request_id>")
+@namespace.doc(params={"request_id": "The id of the Client Request to retrieve."})
 class Request(flask_restx.Resource):
 
     @rest.response(404, "Not Found")

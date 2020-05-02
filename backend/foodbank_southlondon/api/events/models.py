@@ -10,7 +10,7 @@ event = rest.model("Event", {
                                  example="2020-04-26T13:31:42Z"),
     "EventName": fields.String(required=True, description="The name of the event that occured", example="Shipping Label Printed",
                                enum=["Shopping List Printed", "Shipping Label Printed", "Marked as Out for Delivery", "Marked as Delivered",
-                                     "Request Denied"]),
+                                     "Mark as Fullfilled with Trussell Trust", "Request Denied"]),
     "EventDate": fields.String(required=False, description="The date when the event occurred", example="2020-04-01")
 })
 

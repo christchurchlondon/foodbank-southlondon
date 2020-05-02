@@ -19,13 +19,13 @@ _cache_expiries: Dict[str, float] = {}
 _caches: Dict[str, pd.DataFrame] = {}
 
 
-def _gsheet(spreadsheet_id: str) -> gspread.Worksheet:
+def _gsheet(spreadsheet_id: str, index: int = 0) -> gspread.Worksheet:
     gc = flask.g.get("gc")
     if gc is None:
         credentials = Credentials.from_service_account_file(flask.current_app.config[_FBSL_SA_KEY_FILE_PATH], scopes=_SCOPES)
         gc = flask.g.gc = gspread.authorize(credentials)
     spreadsheet = gc.open_by_key(spreadsheet_id)
-    sheet = spreadsheet.get_worksheet(0)
+    sheet = spreadsheet.get_worksheet(index)
     return sheet
 
 
@@ -57,6 +57,11 @@ def delete_cache(name: str) -> None:
     flask.current_app.logger.debug(f"Deleting cache, {name} ...")
     _caches.pop(name, None)
     _cache_expiries.pop(name, None)
+
+
+def gsheet_a1(spreadsheet_id, index) -> str:
+    sheet = _gsheet(spreadsheet_id, index)
+    return sheet.acell("A1").value
 
 
 def overwrite_rows(spreadsheet_id: str, rows: List) -> None:

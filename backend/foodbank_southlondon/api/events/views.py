@@ -29,15 +29,13 @@ class Events(flask_restx.Resource):
         refresh_cache = params["refresh_cache"]
         req_ids = params["req_ids"]
         event_name = params["event_name"]
-        last_event_only = params["last_event_only"]
+        latest_event_only = params["latest_event_only"]
         data = cache(force_refresh=refresh_cache)
-        if event_name and last_event_only:
-            rest.abort(400, f"Only one of event_name and last_event_only can be provided.")
         if req_ids:
             data = data[data["RequestID"].isin(req_ids)]
         if event_name:
             data = data[data["EventName"] == event_name]
-        if last_event_only:
+        if latest_event_only:
             data = (
                 data.assign(rank=data.sort_values("Timestamp").groupby(["RequestID"]).cumcount(ascending=False) + 1)
                 .query("rank == 1")

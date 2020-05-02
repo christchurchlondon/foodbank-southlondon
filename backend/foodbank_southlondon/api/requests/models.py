@@ -23,9 +23,9 @@ request = rest.model("Client Request", {
     "Household Size": fields.String(required=True, description="The type of request", example="Single",
                                     enum=["Single", "Family of 2", "Family of 3", "Family of 4", "Family of 5", "Family of 6", "Family of 7",
                                           "Family of 8", "Family of 9+"]),
-    "Number of Adults": fields.Integer(required=True, description="The number of individuals living at the household that are aged 16 or over",
-                                       example=2),
-    "Number of Children": fields.Integer(required=False, description="The number of children living at the household", example=1),
+    "Number of Adults": fields.String(required=True, description="The number of individuals living at the household that are aged 16 or over",
+                                       example="2"),
+    "Number of Children": fields.String(required=False, description="The number of children living at the household", example="1"),
     "Age of Children": fields.String(required=True, description="The age range of the children living at the household", example="3-6"),
     "Dietary Requirements": fields.String(required=True, description="Whether the Client has any dietary requirements", example="No",
                                           enum=["Yes", "No", "Don't Know"]),
@@ -42,6 +42,6 @@ page_of_requests = rest.inherit("A page of Client Requests", models.pagination, 
     "items": fields.List(fields.Nested(request))
 })
 
-distinct_values = rest.model("Distinct Values", {
+distinct_request_values = rest.model("Distinct Client Request Values", {
     "Values": fields.List(fields.String(required=True, description="A distinct value of the requested attribute across the Requests data"))
 })

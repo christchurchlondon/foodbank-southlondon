@@ -21,12 +21,14 @@ class Lists(flask_restx.Resource):
 
     @rest.expect(parsers.cache_params)
     @rest.marshal_with(models.all_lists_items)
-    def get(self) -> Dict[str, Dict[str, Any]]:
+    def get(self) -> Dict[str, Any]:
         """List all Lists."""
         params = parsers.cache_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         data = cache(force_refresh=refresh_cache)
-        return {"items": data.to_dict("records")}
+        notes = utils.gsheet_a1(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], 1)
+        print(data)
+        return {"Notes": notes, "items": data.to_dict("records")}
 
     @rest.expect(models.all_lists_items)
     @rest.response(201, "Created")
@@ -39,23 +41,25 @@ class Lists(flask_restx.Resource):
         return ({}, 201)
 
 
-@namespace.route("/<string:type>")
+@namespace.route("/<string:list_name>")
+@namespace.doc(params={"list_name": f"The name of the list to retrieve. Should be one of: {models.LIST_NAMES}"})
 class List(flask_restx.Resource):
 
     @rest.response(404, "Not Found")
     @rest.expect(parsers.cache_params)
     @rest.marshal_with(models.one_list_items)
-    def get(self, type: str) -> Dict[str, Any]:
+    def get(self, list_name: str) -> Dict[str, Any]:
         """Get a single Shopping List."""
         params = parsers.cache_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         data = cache(force_refresh=refresh_cache)
-        if type not in models.LIST_NAMES:
-            rest.abort(404, f"Type, {type} was not found.")
-        columns = {f"{type} - Quantity": "Quantity", f"{type} - Notes": "Notes"}
+        if list_name not in models.LIST_NAMES:
+            rest.abort(404, f"List Name, {list_name} was not found.")
+        columns = {f"{list_name} - Quantity": "Quantity", f"{list_name} - Notes": "Notes"}
         data = data[["Item Description", *columns]]
-        data.rename(columns=columns)
-        return {type: data.to_dict("records")[0]}
+        data.rename(columns=columns, inplace=True)
+        notes = utils.gsheet_a1(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], 1)
+        return {"Notes": notes, "items": data.to_dict("records")[0]}
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
