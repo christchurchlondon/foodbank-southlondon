@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { STATUS_LOADING } from '../../constants';
 import { getRequestsState } from '../../redux/selectors';
 import { fetchRequests } from '../../redux/actions';
 import Loading from '../common/loading';
@@ -10,18 +11,20 @@ class Requests extends React.Component {
         this.props.fetchRequests();
     }
 
+    isLoading() {
+        return this.props.status === STATUS_LOADING;
+    }
+
     render() {
 
         // TODO create component for this
         const requestItems = this.props.items
             .map(item => <p key={item}>{ item }</p>);
 
-        // TODO make constants file for statuses
-        const contents = this.props.status === 'loading'
+        const contents = this.isLoading()
             ? <Loading />
             : (
                 <div>
-                    <h2>Requests</h2>
                     <p>TODO: Filters</p>
                     { requestItems }
                     <p>TODO: Actions</p>
@@ -30,6 +33,7 @@ class Requests extends React.Component {
 
         return (
             <div className="requests-container">
+                <h2>Requests</h2>
                 { contents }
             </div>
         );

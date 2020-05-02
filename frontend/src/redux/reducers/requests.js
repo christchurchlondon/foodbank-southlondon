@@ -1,4 +1,10 @@
 import {
+    STATUS_IDLE,
+    STATUS_LOADING,
+    STATUS_SUCCESS,
+    STATUS_FAILED
+} from '../../constants';
+import {
     LOAD_REQUESTS,
     REQUESTS_LOADED,
     LOAD_REQUESTS_FAILED
@@ -7,7 +13,7 @@ import {
 
 const initialState = {
     filter: '',
-    status: 'idle',    // idle / loading / success / failed
+    status: STATUS_IDLE,
     items: []
     // TODO userAction?
 };
@@ -18,19 +24,19 @@ export default function(state = initialState, action) {
         case LOAD_REQUESTS:
             return {
                 ...state,
-                status: 'loading',
+                status: STATUS_LOADING,
                 items: []
             };
         case REQUESTS_LOADED:
             return {
                 ...state,
-                status: 'success',
+                status: STATUS_SUCCESS,
                 items: action.payload.requests
             };
         case LOAD_REQUESTS_FAILED:
             return {
                 ...state,
-                status: 'failed'
+                status: STATUS_FAILED
             };
 
         default:
