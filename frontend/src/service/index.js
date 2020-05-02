@@ -17,7 +17,7 @@ export function getRequests(filter = '') {
     // return fetchFromServer(url);
     return stall(800)
         .then(() => [
-            'Request 1',
+            'Request 1',    // TODO: name, ref no, name, type...
             'Request 2',
             'Request 3'
         ]);
