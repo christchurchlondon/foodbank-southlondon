@@ -15,12 +15,9 @@ function fetchFromServer(url, method = 'GET') {
 export function getRequests(filter = '') {
     const url = endpoints.GET_REQUESTS + `?filter=${filter}`;
     // return fetchFromServer(url);
-    return stall(800)
-        .then(() => [
-            'Request 1',    // TODO: name, ref no, name, type...
-            'Request 2',
-            'Request 3'
-        ]);
+    return stall(1200)
+        .then(() => (new Array(25)).fill(null).map(_ => makeRequest()));
+        // .then(() => [1,2,3,4,5].map(_ => makeRequest()));
 }
 
 
@@ -28,5 +25,16 @@ export function getRequests(filter = '') {
 // API endpoint faking
 
 async function stall(stallTime = 3000) {
-  await new Promise(resolve => setTimeout(resolve, stallTime));
+    await new Promise(resolve => setTimeout(resolve, stallTime));
+}
+
+function makeRequest() {
+    const id = Math.floor(Math.random() * 1000);
+    return {
+        id,
+        name: `Request ${id}`,
+        referenceNumber: Math.floor(Math.random() * 5e5),
+        type: '[ type ]'
+        // More values?
+    };
 }

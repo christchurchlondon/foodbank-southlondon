@@ -4,6 +4,9 @@ import { STATUS_LOADING } from '../../constants';
 import { getRequestsState } from '../../redux/selectors';
 import { fetchRequests } from '../../redux/actions';
 import Loading from '../common/loading';
+import RequestsFilter from './filter';
+import RequestsList from './list';
+import RequestsActions from './actions';
 
 class Requests extends React.Component {
     
@@ -17,17 +20,15 @@ class Requests extends React.Component {
 
     render() {
 
-        // TODO create component for this
-        const requestItems = this.props.items
-            .map(item => <p key={item}>{ item }</p>);
+        // TODO actions for child components
 
         const contents = this.isLoading()
             ? <Loading />
             : (
                 <div>
-                    <p>TODO: Filters</p>
-                    { requestItems }
-                    <p>TODO: Actions</p>
+                    <RequestsFilter />
+                    <RequestsList requests={ this.props.items } />
+                    <RequestsActions />
                 </div>
             );
 
