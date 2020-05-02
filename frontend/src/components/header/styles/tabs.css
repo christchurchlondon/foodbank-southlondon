@@ -1,0 +1,7 @@
+/* https://coolors.co/240115-de3c4b-87f5fb-2f131e-cec3c1 */
+
+.tabs {
+    display: flex;
+    padding: 0 1rem;
+    border-bottom: .25rem solid #2f131e;
+}

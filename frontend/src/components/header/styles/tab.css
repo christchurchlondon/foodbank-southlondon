@@ -1,0 +1,17 @@
+/* https://coolors.co/240115-de3c4b-87f5fb-2f131e-cec3c1 */
+
+.tab {
+    padding: 1rem .5rem;
+    background-color: #cec3c1;
+    color: #2f131e;
+    cursor: pointer;
+}
+
+.tab:hover {
+    color: #240115;
+}
+
+.tab.selected {
+    background-color: #2f131e;
+    color: #cec3c1;
+}
