@@ -14,3 +14,5 @@ install:  ## (install the backend and frontend applications' dependencies)
 run: ## (start the backend and frontend applications)
 	make -C backend run
 	make -C frontend run
+
+# add a target that runs the webserver (if not already running) AND starts the machine's default internet browser with the website open
