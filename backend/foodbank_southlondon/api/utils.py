@@ -59,6 +59,12 @@ def delete_cache(name: str) -> None:
     _cache_expiries.pop(name, None)
 
 
+def overwrite_rows(spreadsheet_id: str, rows: List) -> None:
+    sheet = _gsheet(spreadsheet_id)
+    flask.current_app.logger.debug(f"Overwriting all rows with {len(rows)} new rows in {sheet.spreadsheet.title} ({sheet.url}) ...")
+    sheet.update(f"{sheet.title}", rows, value_input_option="USER_ENTERED")
+
+
 def paginate(*sort_by: str) -> Callable:
     @wrapt.decorator
     def wrapper(wrapped: Callable, instance: Any, args: List, kwargs: Dict) -> Dict[str, Any]:
@@ -74,14 +80,3 @@ def paginate(*sort_by: str) -> Callable:
             "items": data.to_dict("records")
         }
     return wrapper
-
-
-def upsert_row(spreadsheet_id: str, query: str, row: List, column: int = 1) -> None:
-    sheet = _gsheet(spreadsheet_id)
-    try:
-        row_number = sheet.find(query, in_column=column).row
-    except gspread.exceptions.CellNotFound:
-        append_row(spreadsheet_id, row)
-    else:
-        flask.current_app.logger.debug(f"Overwriting row {row_number} with {row} in {sheet.spreadsheet.title} ({sheet.url}) ...")
-        sheet.update(f"{row_number}:{row_number}", [row], value_input_option="USER_ENTERED")

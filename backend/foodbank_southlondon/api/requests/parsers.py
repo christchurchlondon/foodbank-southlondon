@@ -9,4 +9,5 @@ requests_params.add_argument("last_req_only", type=inputs.boolean, required=Fals
                              "will be fetched")
 
 distinct_requests_params = cache_params.copy()
-distinct_requests_params.add_argument("attribute", type=str, required=True, choices=["Type"], help="The attribute to get distinct values for.")
+distinct_requests_params.add_argument("attribute", type=str, required=True, choices=["Delivery Date"],
+                                      help="The attribute to get distinct values for.")
