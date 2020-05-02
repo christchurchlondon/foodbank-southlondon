@@ -1,17 +1,23 @@
 class _Config(object):
-    DEBUG = True
+    ERROR_404_HELP = False
 
     FBSL_CATCH_ALL_LIST = "Family of 5+"
     FBSL_EVENTS_CACHE_EXPIRY_SECONDS = 0
+    FBSL_EVENTS_GSHEET_URI = ""
     FBSL_LISTS_CACHE_EXPIRY_SECONDS = 0
+    FBSL_LISTS_GSHEET_URI = ""
     FBSL_REQUESTS_CACHE_EXPIRY_SECONDS = 0
+    FBSL_REQUESTS_FORM_URI = ""
+    FBSL_REQUESTS_GSHEET_URI = ""
     FBSL_SA_KEY_FILE_PATH = "foodbank-southlondon-ecd573527735.json"
 
-    ERROR_404_HELP = False
     RESTX_VALIDATE = True
 
 
 class DevelopmentConfig(_Config):
+    DEBUG = True
+    ENV = "development"
+
     FBSL_EVENTS_CACHE_EXPIRY_SECONDS = 60
     FBSL_EVENTS_GSHEET_URI = "1GfD-YA_9eMSMqu9eTZlCEC0wvsV6c0CRlMLRPOvWM48"
     FBSL_LISTS_CACHE_EXPIRY_SECONDS = 0
@@ -22,6 +28,9 @@ class DevelopmentConfig(_Config):
 
 
 class ProductionConfig(_Config):
+    DEBUG = False
+    ENV = "production"
+
     FBSL_EVENTS_CACHE_EXPIRY_SECONDS = 3600
     FBSL_EVENTS_GSHEET_URI = "1OAluin8tOIpYUxcm18gHJSc0z1tx4EdxY9I2bdB4zj4"
     FBSL_LISTS_CACHE_EXPIRY_SECONDS = 0

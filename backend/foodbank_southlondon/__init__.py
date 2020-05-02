@@ -1,4 +1,4 @@
 import flask
 
 
-app = flask.Flask(__name__, instance_relative_config=True, static_folder="static", template_folder="templates")
+app = flask.Flask(__name__, static_folder="../../frontend/build", template_folder="templates")

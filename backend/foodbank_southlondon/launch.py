@@ -21,7 +21,7 @@ _FBSL_ENVIRONMENT_ENV_VAR = "FBSL_ENVIRONMENT"
 
 @click.command()
 def main():
-    dotenv.load_dotenv(os.path.join(app.instance_path, "..", ".env"))
+    dotenv.load_dotenv(os.path.join(app.root_path, "..", ".env"))
     environment = os.environ.get(_FBSL_ENVIRONMENT_ENV_VAR)
     app.logger.setLevel(logging.INFO if environment == "prod" else logging.DEBUG)
     app.logger.info(f"Loading environment, {environment} ...")
