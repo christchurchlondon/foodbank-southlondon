@@ -1,22 +1,53 @@
 import fetch from 'cross-fetch';
 
 const endpoints = {
-    GET_REQUESTS: '/api/requests',
-    GET_LISTS: '/api/lists'
+    GET_REQUESTS: 'requests',
+    GET_LISTS: 'lists'
 };
 
 
 function fetchFromServer(url, method = 'GET') {
     // TODO use method?
     // handle response
-    return fetch(url);
+
+    const fullUrl = 'http://localhost:5000/api/' + url;
+
+    return fetch(fullUrl)
+        .then(response => response.json());
 }
 
 export function getRequests(filter = '') {
-    const url = endpoints.GET_REQUESTS + `?filter=${filter}`;
-    // return fetchFromServer(url);
-    return stall(1200)
-        .then(() => getMockRequests(filter));
+    const url = endpoints.GET_REQUESTS; // + `?filter=${filter}`;
+    return fetchFromServer(url)
+        .then(response => {
+
+            console.log(response);
+
+            // TODO add page info to response
+            return response.items.map(item => ({
+                id: item.request_id,
+                referenceNumber: item.reference_number,
+                fullName: item.client_full_name,
+                phoneNumber: item.phone_number,
+                delivery: {
+                    date: item.delivery_date,
+                    instructions: item.delivery_instructions
+                },
+                address: {
+                    line1: item.address_line_1,
+                    line2: item.address_line_2,
+                }
+            }));
+        });
+
+    // address: { line 1, line2, town, county, postcode },
+    // household details { adults, children, total, age of children }
+    // requirements { dietary, feminine, baby, pet food }
+    // extra information
+
+    // return stall(1200)
+    //     .then(() => getMockRequests(filter));
+
 }
 
 
