@@ -40,7 +40,10 @@ request = rest.model("ClientRequest", {
     "pet_food_required": fields.String(attribute="Pet Food Required?", required=True, description="Whether the Client requires pet food",
                                        example="Yes", enum=["Yes", "No", "Don't Know"]),
     "extra_information": fields.String(attribute="Extra Information", required=False, description="Any extra information to be noted",
-                                       example="No dairy")
+                                       example="No dairy"),
+    "edit_details_url": fields.String(required=True, description="The Google Forms edit response URL that can be used to update details of the Client"
+                                      "Request", example="https://docs.google.com/forms/d/e/1FAIpQLSfb94-4k-Pkf3ccBqd2WR-yzMBdmqdehYBbnN1HLrmE9caneA/"
+                                      "viewform?edit2=2_ABaOnueK_9ztK8RlxxBe6Jf0wvs9rAwoi30EwATe24VtNeMhgazghzzd4pgibH-HHn_RDZQ")
 })
 
 page_of_requests = rest.inherit("ClientRequestsPage", models.pagination, {
