@@ -30,7 +30,7 @@ lint: ## (run flake8 and mypy)
 	mypy -p foodbank_southlondon
 
 .PHONY: run
-run: install ## (launch the webserver)
+run: install ## (start the webserver)
 	. $(_VENV_ACTIVATE) && \
 	launch
 

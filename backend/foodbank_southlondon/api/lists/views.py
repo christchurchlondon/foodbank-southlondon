@@ -55,7 +55,8 @@ class List(flask_restx.Resource):
         data = cache(force_refresh=refresh_cache)
         if list_name not in models.LIST_NAMES:
             rest.abort(404, f"List Name, {list_name} was not found.")
-        columns = {f"{list_name} - Quantity": "Quantity", f"{list_name} - Notes": "Notes"}
+        attribute = models.LIST_NAMES[list_name]
+        columns = {f"{attribute} - Quantity": "Quantity", f"{attribute} - Notes": "Notes"}
         data = data[["Item Description", *columns]]
         data.rename(columns=columns, inplace=True)
         notes = utils.gsheet_a1(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], 1)

@@ -1,4 +1,4 @@
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 
 import flask
 import flask_restx  # type:ignore
@@ -56,6 +56,17 @@ class Events(flask_restx.Resource):
         utils.append_row(flask.current_app.config[_FBSL_EVENTS_GSHEET_URI], list(data.values()))
         utils.delete_cache(_CACHE_NAME)
         return ({}, 201)
+
+
+@namespace.route("/distinct/")
+class DistinctEventNameValues(flask_restx.Resource):
+
+    @rest.expect(parsers.distinct_events_params)
+    @rest.marshal_with(models.distinct_event_name_values)
+    def get(self) -> Dict[str, List]:
+        """Get the distinct options for an Events attribute."""
+        params = parsers.distinct_events_params.parse_args(flask.request)  # noqa: F841 - here as reminder; currently we only support 1 value
+        return {"Values": models.EVENT_NAMES}
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:

@@ -40,21 +40,6 @@ class Requests(flask_restx.Resource):
         return (data, params["page"], params["per_page"])
 
 
-@namespace.route("/distinct/")
-class DistinctRequestsValues(flask_restx.Resource):
-
-    @rest.expect(parsers.distinct_requests_params)
-    @rest.marshal_with(models.distinct_request_values)
-    def get(self) -> Dict[str, List]:
-        """Get the distinct values of a Requests attribute."""
-        params = parsers.distinct_requests_params.parse_args(flask.request)
-        attribute = params["attribute"]
-        refresh_cache = params["refresh_cache"]
-        data = cache(force_refresh=refresh_cache)
-        data = data[attribute].unique()
-        return {"Values": list(data)}
-
-
 @namespace.route("/<string:request_id>")
 @namespace.doc(params={"request_id": "The id of the Client Request to retrieve."})
 class Request(flask_restx.Resource):
@@ -71,6 +56,21 @@ class Request(flask_restx.Resource):
         if data.empty:
             rest.abort(404, f"RequestID, {request_id} was not found.")
         return data.to_dict("records")[0]
+
+
+@namespace.route("/distinct/")
+class DistinctRequestsValues(flask_restx.Resource):
+
+    @rest.expect(parsers.distinct_requests_params)
+    @rest.marshal_with(models.distinct_request_values)
+    def get(self) -> Dict[str, List]:
+        """Get the distinct values of a Requests attribute."""
+        params = parsers.distinct_requests_params.parse_args(flask.request)
+        attribute = params["attribute"]
+        refresh_cache = params["refresh_cache"]
+        data = cache(force_refresh=refresh_cache)
+        data = data[attribute].unique()
+        return {"Values": list(data)}
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
