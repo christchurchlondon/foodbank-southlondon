@@ -1,14 +1,25 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { getRequestsState } from '../../redux/selectors';
+import { fetchRequests } from '../../redux/actions';
 
 class Requests extends React.Component {
+    
+    componentDidMount() {
+        this.props.fetchRequests();
+    }
+
     render() {
+
+        // TODO create component for this
+        const requestItems = this.props.items
+            .map(item => <p>{ item }</p>);
+
         return (
             <div>
                 <h2>Requests</h2>
                 <p>TODO: Filters</p>
-                <p>TODO: List</p>
+                { requestItems }
                 <p>TODO: Actions</p>
             </div>
         );
@@ -20,6 +31,6 @@ const mapStateToProps = state => {
 }
 
 export default connect(
-    mapStateToProps
-    // TODO actions
+    mapStateToProps,
+    { fetchRequests }
 )(Requests);

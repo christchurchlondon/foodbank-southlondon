@@ -7,6 +7,11 @@ import {
     LISTS_LOADED,
     LOAD_LISTS_FAILED
 } from './types';
+import {
+    getRequests
+} from '../../service';
+
+// Tabs
 
 export const setTab = tab => ({
     type: SET_TAB,
@@ -15,11 +20,18 @@ export const setTab = tab => ({
     }
 });
 
-export const loadRequests = filter => ({
-    type: LOAD_REQUESTS,
-    payload: {
-        filter
-    }
+// Requests
+
+export const fetchRequests = filter => {
+    return dispatch => {
+        dispatch(loadRequests());
+        return fetch(filter)
+            .then(response => dispatch(requestsLoaded(['request 1', 'request 2', 'request 3'])));
+    };
+}
+
+export const loadRequests = () => ({
+    type: LOAD_REQUESTS
 });
 
 export const requestsLoaded = requests => ({
@@ -29,7 +41,7 @@ export const requestsLoaded = requests => ({
     }
 });
 
-export const LOAD_REQUESTS_FAILED = message => ({
+export const loadRequestsFailed = message => ({
     type: LOAD_REQUESTS_FAILED,
     payload: {
         message
