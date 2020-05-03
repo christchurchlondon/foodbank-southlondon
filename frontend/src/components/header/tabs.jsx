@@ -3,6 +3,11 @@ import { TAB_REQUESTS, TAB_LISTS } from '../../constants';
 import Tab from './tab';
 import './styles/tabs.css';
 
+const tabDefinitions = [
+    { id: TAB_REQUESTS, label: 'Requests' },
+    { id: TAB_LISTS, label: 'Lists' }
+];
+
 export default class Tabs extends React.Component {
 
     handleTabClick(tab) {
@@ -14,11 +19,6 @@ export default class Tabs extends React.Component {
     }
 
     render() {
-
-        const tabDefinitions = [
-            { id: TAB_REQUESTS, label: 'Requests' },
-            { id: TAB_LISTS, label: 'Lists' }
-        ];
 
         const tabs = tabDefinitions.map(({id, label}) => {
             return (
