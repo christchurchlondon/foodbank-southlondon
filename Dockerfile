@@ -9,9 +9,9 @@ RUN npm install && \
 
 FROM python:3.8-slim-buster
 
-WORKDIR /home/foodbank/backend
-
 RUN adduser --disabled-login --gecos "" foodbank
+
+WORKDIR /home/foodbank/backend
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
