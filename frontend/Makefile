@@ -7,7 +7,7 @@ help: ## display this help message
 
 .PHONY: build
 build: install ## build the frontend application files
-	npm run-script build
+	npm run build
 
 .PHONY: clean
 clean: ## clean up temp & local build files
