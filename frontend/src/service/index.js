@@ -9,21 +9,17 @@ const endpoints = {
 function fetchFromServer(url, method = 'GET') {
     // TODO use method?
     // handle response
-
-    const fullUrl = 'http://localhost:5000/api/' + url;
-
-    return fetch(fullUrl)
+    return fetch('/api/' + url)
         .then(response => response.json());
 }
 
-export function getRequests(filter = '') {
-    const url = endpoints.GET_REQUESTS; // + `?filter=${filter}`;
+export function getRequests(filter = '')  {
+    const url = endpoints.GET_REQUESTS; // TODO + `?filter=${filter}`;
     return fetchFromServer(url)
         .then(response => {
 
-            console.log(response);
-
             // TODO add page info to response
+
             return response.items.map(item => ({
                 id: item.request_id,
                 referenceNumber: item.reference_number,
@@ -36,42 +32,23 @@ export function getRequests(filter = '') {
                 address: {
                     line1: item.address_line_1,
                     line2: item.address_line_2,
-                }
+                    town: item.town,
+                    county: item.county,
+                    postcode: item.postcode
+                },
+                household: {
+                    adults: item.number_of_adults,
+                    children: item.number_of_children,
+                    total: item.household_size,
+                    ageOfChildren: item.age_of_children
+                },
+                requirements: {
+                    dietary: item.dietary_requirements,
+                    feminineProducts: item.feminine_products_required.toLowerCase() === 'true',
+                    babyProducts: item.dietary_requirements.toLowerCase() === 'true',
+                    petFood: item.dietary_requirements.toLowerCase() === 'true'
+                },
+                extraInformation: item.extra_information
             }));
         });
-
-    // address: { line 1, line2, town, county, postcode },
-    // household details { adults, children, total, age of children }
-    // requirements { dietary, feminine, baby, pet food }
-    // extra information
-
-    // return stall(1200)
-    //     .then(() => getMockRequests(filter));
-
-}
-
-
-
-// API endpoint faking
-
-async function stall(stallTime = 3000) {
-    await new Promise(resolve => setTimeout(resolve, stallTime));
-}
-
-function getMockRequests(filter = '') {
-    const mockName = filter.trim().length > 0
-        ? filter.substr(0, 20)
-        : undefined;
-    return (new Array(25)).fill(null).map(_ => makeRequest(mockName))
-}
-
-function makeRequest(name = 'Request') {
-    const id = Math.floor(Math.random() * 100000);
-    return {
-        id,
-        name: `${name} ${id}`,
-        referenceNumber: Math.floor(Math.random() * 5e5),
-        type: '[ type ]'
-        // More values?
-    };
 }
