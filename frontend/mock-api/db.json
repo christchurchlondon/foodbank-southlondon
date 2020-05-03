@@ -1,4 +1,35 @@
 {
+    "list": {
+        "notes": null,
+        "items": [
+            {
+                "item_description": "Egg",
+                "single_quantity": "6",
+                "single_notes": "",
+                "family_of_2_quantity": "6",
+                "family_of_2_notes": "",
+                "family_of_3_quantity": "12",
+                "family_of_3_notes": "",
+                "family_of_4_quantity": "12",
+                "family_of_4_notes": "",
+                "family_of_5+_quantity": "12",
+                "family_of_5+_notes": ""
+            },
+            {
+                "item_description": "Bread",
+                "single_quantity": "1",
+                "single_notes": "Small loaf if available",
+                "family_of_2_quantity": "1",
+                "family_of_2_notes": "Large loaf if available",
+                "family_of_3_quantity": "1",
+                "family_of_3_notes": "Large loaf if available",
+                "family_of_4_quantity": "2",
+                "family_of_4_notes": "",
+                "family_of_5+_quantity": "2",
+                "family_of_5+_notes": ""
+            }
+        ]
+    },
     "requests": {
         "items": [
             {
@@ -246,36 +277,5 @@
         "per_page": 10,
         "total_pages": 1000,
         "total_items": 10000
-    },
-    "lists": {
-        "notes": null,
-        "items": [
-            {
-                "item_description": "Egg",
-                "single_quantity": "6",
-                "single_notes": "",
-                "family_of_2_quantity": "6",
-                "family_of_2_notes": "",
-                "family_of_3_quantity": "12",
-                "family_of_3_notes": "",
-                "family_of_4_quantity": "12",
-                "family_of_4_notes": "",
-                "family_of_5+_quantity": "12",
-                "family_of_5+_notes": ""
-            },
-            {
-                "item_description": "Bread",
-                "single_quantity": "1",
-                "single_notes": "Small loaf if available",
-                "family_of_2_quantity": "1",
-                "family_of_2_notes": "Large loaf if available",
-                "family_of_3_quantity": "1",
-                "family_of_3_notes": "Large loaf if available",
-                "family_of_4_quantity": "2",
-                "family_of_4_notes": "",
-                "family_of_5+_quantity": "2",
-                "family_of_5+_notes": ""
-            }
-        ]
     }
 }

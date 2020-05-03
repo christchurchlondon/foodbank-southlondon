@@ -8,7 +8,8 @@ import {
     LOAD_LISTS_FAILED
 } from './types';
 import {
-    getRequests
+    getRequests,
+    getLists
 } from '../../service';
 
 // Tabs
@@ -50,6 +51,16 @@ export const loadRequestsFailed = message => ({
         message
     }
 });
+
+// Lists
+
+export const fetchLists = () => {
+    return dispatch => {
+        dispatch(loadLists());
+        return getLists()
+            .then(response => dispatch(listsLoaded(response)))
+    }
+}
 
 export const loadLists = () => ({
     type: LOAD_LISTS

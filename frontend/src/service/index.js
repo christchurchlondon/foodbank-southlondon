@@ -2,7 +2,7 @@ import fetch from 'cross-fetch';
 
 const endpoints = {
     GET_REQUESTS: 'requests',
-    GET_LISTS: 'lists'
+    GET_LISTS: 'list'
 };
 
 
@@ -52,3 +52,15 @@ export function getRequests(filter = '')  {
             }));
         });
 }
+
+export function getLists() {
+    return fetchFromServer(endpoints.GET_LISTS)
+        .then(response => {
+            return response.items.map(item => {
+                return {
+                    description: item.item_description
+                }
+            })
+        });
+}
+
