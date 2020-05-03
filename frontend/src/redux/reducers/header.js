@@ -2,7 +2,7 @@ import { SET_TAB } from '../actions/types';
 
 
 const initialState = {
-    tab: 'requests'
+    tab: 'requests'    // TODO constants for these
 };
 
 export default function(state = initialState, action) {

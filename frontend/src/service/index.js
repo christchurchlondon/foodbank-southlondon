@@ -2,7 +2,7 @@ import fetch from 'cross-fetch';
 
 const endpoints = {
     GET_REQUESTS: 'requests',
-    GET_LISTS: 'list'
+    GET_LISTS: 'lists'
 };
 
 
