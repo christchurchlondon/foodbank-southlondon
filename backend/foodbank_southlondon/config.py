@@ -41,7 +41,6 @@ class ProductionConfig(_Config):
 
 
 CONFIGURATIONS = {
-    None: _Config,
     "dev": DevelopmentConfig,
     "prod": ProductionConfig
 }
