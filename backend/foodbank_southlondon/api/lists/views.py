@@ -27,8 +27,7 @@ class Lists(flask_restx.Resource):
         refresh_cache = params["refresh_cache"]
         data = cache(force_refresh=refresh_cache)
         notes = utils.gsheet_a1(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], 1)
-        print(data)
-        return {"Notes": notes, "items": data.to_dict("records")}
+        return {"notes": notes, "items": data.to_dict("records")}
 
     @rest.expect(models.all_lists_items)
     @rest.response(201, "Created")
@@ -55,12 +54,12 @@ class List(flask_restx.Resource):
         data = cache(force_refresh=refresh_cache)
         if list_name not in models.LIST_NAMES:
             rest.abort(404, f"List Name, {list_name} was not found.")
-        attribute = models.LIST_NAMES[list_name]
-        columns = {f"{attribute} - Quantity": "Quantity", f"{attribute} - Notes": "Notes"}
-        data = data[["Item Description", *columns]]
+        columns = {f"{list_name}_quantity": "quantity", f"{list_name}_notes": "notes"}
+        print(data)
+        data = data[["item_description", *columns]]
         data.rename(columns=columns, inplace=True)
         notes = utils.gsheet_a1(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], 1)
-        return {"Notes": notes, "items": data.to_dict("records")[0]}
+        return {"notes": notes, "items": data.to_dict("records")[0]}
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
