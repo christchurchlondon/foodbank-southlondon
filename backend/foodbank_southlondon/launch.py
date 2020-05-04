@@ -1,7 +1,6 @@
 import logging
 import os
 
-import click
 import dotenv
 
 from foodbank_southlondon import api, app, bff, config

@@ -21,7 +21,7 @@ class Requests(flask_restx.Resource):
 
     @rest.expect(parsers.requests_params)
     @rest.marshal_with(models.page_of_requests)
-    @utils.paginate("RequestID")
+    @utils.paginate("Client Full Name", "request_id")
     def get(self) -> Tuple[Dict, int, int]:
         """List all Client Requests."""
         params = parsers.requests_params.parse_args(flask.request)
@@ -29,20 +29,21 @@ class Requests(flask_restx.Resource):
         client_full_names = params["client_full_names"]
         last_req_only = params["last_req_only"]
         data = cache(force_refresh=refresh_cache)
+        client_full_name_attribute = "Client Full Name"
         if client_full_names:
-            data = data[data["Client Full Name"].isin(client_full_names)]
+            data = data[data[client_full_name_attribute].isin(client_full_names)]
         if last_req_only:
             data = (
-                data.astype("str").assign(rank=data.groupby(["Client Full Name"]).cumcount(ascending=False) + 1)
+                data.assign(rank=data.groupby([client_full_name_attribute]).cumcount(ascending=False) + 1)
                 .query("rank == 1")
                 .drop("rank", axis=1)
             )
-        data["edit_details_url"] = data["RequestID"].apply(_edit_details_url)
+        data["edit_details_url"] = data["request_id"].apply(_edit_details_url)
         return (data, params["page"], params["per_page"])
 
 
 @namespace.route("/<string:request_id>")
-@namespace.doc(params={"request_id": "The id of the Client Request to retrieve."})
+@namespace.doc(params={"request_id": "The request_id to retrieve."})
 class Request(flask_restx.Resource):
 
     @rest.response(404, "Not Found")
@@ -52,11 +53,12 @@ class Request(flask_restx.Resource):
         """Get a single Client Request."""
         params = parsers.requests_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
+        request_id_attribute = "request_id"
         data = cache(force_refresh=refresh_cache)
-        data = data[data["RequestID"].astype("str") == request_id]
+        data = data[data[request_id_attribute] == request_id]
         if data.empty:
-            rest.abort(404, f"RequestID, {request_id} was not found.")
-        data["edit_details_url"] = data["RequestID"].apply(_edit_details_url)
+            rest.abort(404, f"{request_id_attribute}, {request_id} was not found.")
+        data["edit_details_url"] = data[request_id_attribute].apply(_edit_details_url)
         return data.to_dict("records")[0]
 
 
@@ -72,7 +74,7 @@ class DistinctRequestsValues(flask_restx.Resource):
         refresh_cache = params["refresh_cache"]
         data = cache(force_refresh=refresh_cache)
         data = data[attribute].unique()
-        return {"Values": list(data)}
+        return {"values": sorted(data)}
 
 
 def _edit_details_url(request_id):

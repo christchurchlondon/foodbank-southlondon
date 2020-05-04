@@ -16,7 +16,6 @@ class _Config(object):
 
 class DevelopmentConfig(_Config):
     DEBUG = True
-    ENV = "development"
 
     FBSL_EVENTS_CACHE_EXPIRY_SECONDS = 60
     FBSL_EVENTS_GSHEET_URI = "1GfD-YA_9eMSMqu9eTZlCEC0wvsV6c0CRlMLRPOvWM48"
@@ -29,7 +28,6 @@ class DevelopmentConfig(_Config):
 
 class ProductionConfig(_Config):
     DEBUG = False
-    ENV = "production"
 
     FBSL_EVENTS_CACHE_EXPIRY_SECONDS = 3600
     FBSL_EVENTS_GSHEET_URI = "1OAluin8tOIpYUxcm18gHJSc0z1tx4EdxY9I2bdB4zj4"
