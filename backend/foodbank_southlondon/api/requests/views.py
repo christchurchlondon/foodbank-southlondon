@@ -26,13 +26,18 @@ class Requests(flask_restx.Resource):
         """List all Client Requests."""
         params = parsers.requests_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
-        client_full_names = params["client_full_names"]
-        last_req_only = params["last_req_only"]
+        client_full_names = set(client_full_name.strip() for client_full_name in (params["client_full_names"] or ()))
+        postcodes = set(postcode.strip() for postcode in (params["postcodes"] or ()))
+        last_request_only = params["last_request_only"]
         data = cache(force_refresh=refresh_cache)
         client_full_name_attribute = "Client Full Name"
-        if client_full_names:
+        if client_full_names and not postcodes:
             data = data[data[client_full_name_attribute].isin(client_full_names)]
-        if last_req_only:
+        elif postcodes and not client_full_names:
+            data = data[data["Postcode"].isin(postcodes)]
+        elif client_full_names and postcodes:
+            data = data[data[client_full_name_attribute].isin(client_full_names) | data["Postcode"].isin(postcodes)]
+        if last_request_only:
             data = (
                 data.assign(rank=data.groupby([client_full_name_attribute]).cumcount(ascending=False) + 1)
                 .query("rank == 1")
@@ -42,24 +47,26 @@ class Requests(flask_restx.Resource):
         return (data, params["page"], params["per_page"])
 
 
-@namespace.route("/<string:request_id>")
-@namespace.doc(params={"request_id": "The request_id to retrieve."})
-class Request(flask_restx.Resource):
+@namespace.route("/<string:request_ids>")
+@namespace.doc(params={"request_ids": "A comma separated list of request_id values to retrieve."})
+class RequestsByID(flask_restx.Resource):
 
     @rest.response(404, "Not Found")
     @rest.expect(parsers.cache_params)
     @rest.marshal_with(models.request)
-    def get(self, request_id: str) -> Dict[str, Any]:
-        """Get a single Client Request."""
+    def get(self, request_ids: str) -> Dict[str, Any]:
+        """Get all Client Requests by provided request_id values."""
+        request_id_values = set(request_id.strip() for request_id in request_ids.split(","))
         params = parsers.requests_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         request_id_attribute = "request_id"
         data = cache(force_refresh=refresh_cache)
-        data = data[data[request_id_attribute] == request_id]
-        if data.empty:
-            rest.abort(404, f"{request_id_attribute}, {request_id} was not found.")
+        data = data[data[request_id_attribute].isin(request_id_values)]
+        missing_request_ids = request_id_values.difference(data[request_id_attribute].unique())
+        if missing_request_ids:
+            rest.abort(404, f"{request_id_attribute}, the following request_id values {missing_request_ids} were not found.")
         data["edit_details_url"] = data[request_id_attribute].apply(_edit_details_url)
-        return data.to_dict("records")[0]
+        return data.to_dict("records")
 
 
 @namespace.route("/distinct/")

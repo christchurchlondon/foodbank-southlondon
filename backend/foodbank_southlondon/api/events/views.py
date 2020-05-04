@@ -27,7 +27,7 @@ class Events(flask_restx.Resource):
         """List all Events."""
         params = parsers.events_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
-        request_ids = params["request_ids"]
+        request_ids = set(request_id for request_id in (params["request_ids"] or ()))
         event_name = params["event_name"]
         latest_event_only = params["latest_event_only"]
         data = cache(force_refresh=refresh_cache)
