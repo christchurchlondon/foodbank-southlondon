@@ -22,7 +22,7 @@ class Events(flask_restx.Resource):
 
     @rest.expect(parsers.events_params)
     @rest.marshal_with(models.page_of_events)
-    @utils.paginate("event_timestamp", "request_id")
+    @utils.paginate("event_timestamp", "request_id", ascending=False)
     def get(self) -> Tuple[pd.DataFrame, int, int]:
         """List all Events."""
         params = parsers.events_params.parse_args(flask.request)

@@ -71,14 +71,14 @@ def overwrite_rows(spreadsheet_id: str, rows: List) -> None:
     sheet.update(f"{sheet.title}", rows, value_input_option="USER_ENTERED")
 
 
-def paginate(*sort_by: str) -> Callable:
+def paginate(*sort_by: str, ascending: bool = True) -> Callable:
     @wrapt.decorator
     def wrapper(wrapped: Callable, instance: Any, args: List, kwargs: Dict) -> Dict[str, Any]:
         data, page, per_page = wrapped(*args, **kwargs)
         per_page = max(min(per_page, flask.current_app.config[_FBSL_MAX_PAGE_SIZE]), 0)
         offset = (page - 1) * per_page
         total_items = len(data.index)
-        data = data.sort_values(list(sort_by)).iloc[offset: offset + per_page]
+        data = data.sort_values(list(sort_by), ascending=ascending).iloc[offset: offset + per_page]
         return {
             "page": page,
             "per_page": per_page,

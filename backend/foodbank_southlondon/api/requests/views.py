@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Dict, List, Tuple
 
 import flask
 import flask_restx  # type:ignore
@@ -48,9 +48,10 @@ class Requests(flask_restx.Resource):
 class RequestsByID(flask_restx.Resource):
 
     @rest.response(404, "Not Found")
-    @rest.expect(parsers.cache_params)
-    @rest.marshal_with(models.request)
-    def get(self, request_ids: str) -> Dict[str, Any]:
+    @rest.expect(parsers.pagination_params)
+    @rest.marshal_with(models.page_of_requests)
+    @utils.paginate("Client Full Name", "request_id")
+    def get(self, request_ids: str) -> Tuple[Dict, int, int]:
         """Get all Client Requests by provided request_id values."""
         request_id_values = set(request_id.strip() for request_id in request_ids.split(","))
         params = parsers.requests_params.parse_args(flask.request)
@@ -62,7 +63,7 @@ class RequestsByID(flask_restx.Resource):
         if missing_request_ids:
             rest.abort(404, f"{request_id_attribute}, the following request_id values {missing_request_ids} were not found.")
         df["edit_details_url"] = df[request_id_attribute].apply(_edit_details_url)
-        return df.to_dict("records")
+        return (df, params["page"], params["per_page"])
 
 
 @namespace.route("/distinct/")

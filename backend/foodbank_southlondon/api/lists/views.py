@@ -22,15 +22,15 @@ class Lists(flask_restx.Resource):
     @rest.expect(parsers.cache_params)
     @rest.marshal_with(models.all_lists_items)
     def get(self) -> Dict[str, Any]:
-        """List all Lists."""
+        """List all Shopping Lists."""
         params = parsers.cache_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         df = cache(force_refresh=refresh_cache)
         notes = utils.gsheet_a1(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], 1)
         return {"notes": notes, "items": df.to_dict("records")}
 
-    @rest.expect(models.all_lists_items)
     @rest.response(201, "Created")
+    @rest.expect(models.all_lists_items)
     def post(self) -> Tuple[Dict, int]:
         """Overwrite the Shopping Lists."""
         data = flask.request.json
