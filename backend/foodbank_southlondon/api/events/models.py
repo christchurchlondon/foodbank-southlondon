@@ -17,8 +17,8 @@ EVENT_NAMES = (
 
 event = rest.model("Event", {
     "request_id": requests_models.request["request_id"],
-    "timestamp": fields.DateTime(required=True, description="The timestamp when the event was recorded, in ISO 8601 format",
-                                 example="2020-04-26T13:31:42Z"),
+    "event_timestamp": fields.DateTime(required=True, description="The timestamp when the event was recorded, in ISO 8601 format",
+                                       example="2020-04-26T13:31:42Z"),
     "event_name": fields.String(required=True, description="The name of the event that occured", example="Print Shipping Label", enum=EVENT_NAMES),
     "event_date": fields.String(required=False, description="The date when the event occurred", example="2020-04-01")
 })

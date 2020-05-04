@@ -6,7 +6,7 @@ import pandas as pd  # type:ignore
 
 from foodbank_southlondon.api import rest, utils
 from foodbank_southlondon.api.events import models, namespace, parsers
-from foodbank_southlondon.api.requests import views as request_views
+from foodbank_southlondon.api.requests import views as requests_views
 
 
 # CONFIG VARIABLES
@@ -22,7 +22,7 @@ class Events(flask_restx.Resource):
 
     @rest.expect(parsers.events_params)
     @rest.marshal_with(models.page_of_events)
-    @utils.paginate("timestamp", "request_id")
+    @utils.paginate("event_timestamp", "request_id", ascending=False)
     def get(self) -> Tuple[pd.DataFrame, int, int]:
         """List all Events."""
         params = parsers.events_params.parse_args(flask.request)
@@ -30,18 +30,18 @@ class Events(flask_restx.Resource):
         request_ids = set(request_id for request_id in (params["request_ids"] or ()))
         event_name = params["event_name"]
         latest_event_only = params["latest_event_only"]
-        data = cache(force_refresh=refresh_cache)
+        df = cache(force_refresh=refresh_cache)
+        request_id_attribute = "request_id"
         if request_ids:
-            data = data[data["request_id"].isin(request_ids)]
+            df = df[df[request_id_attribute].isin(request_ids)]
         if event_name:
-            data = data[data["event_name"] == event_name]
+            df = df[df["event_name"] == event_name]
         if latest_event_only:
-            data = (
-                data.assign(rank=data.sort_values("timestamp").groupby(["request_id"]).cumcount(ascending=False) + 1)
-                .query("rank == 1")
+            df = (
+                df.assign(rank=df.sort_values("event_timestamp").groupby([request_id_attribute]).cumcount(ascending=False) + 1).query("rank == 1")
                 .drop("rank", axis=1)
             )
-        return (data, params["page"], params["per_page"])
+        return (df, params["page"], params["per_page"])
 
     @rest.expect(models.event)
     @rest.response(201, "Created")
@@ -50,8 +50,8 @@ class Events(flask_restx.Resource):
         data = flask.request.json
         flask.current_app.logger.debug(f"Received request body, {data}")
         request_id = data["request_id"]
-        requests_data = request_views.cache(force_refresh=True)
-        if requests_data[requests_data["request_id"] == request_id].empty:
+        requests_df = requests_views.cache(force_refresh=True)
+        if requests_df[requests_df["request_id"] == request_id].empty:
             rest.abort(400, f"request_id, {request_id} does not match any existing request.")
         utils.append_row(flask.current_app.config[_FBSL_EVENTS_GSHEET_URI], list(data.values()))
         utils.delete_cache(_CACHE_NAME)
