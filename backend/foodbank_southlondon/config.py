@@ -1,5 +1,7 @@
 class _Config(object):
+    BUNDLE_ERRORS = True
     ERROR_404_HELP = False
+    RESTX_VALIDATE = True
 
     FBSL_BASE_URL = ""
     FBSL_CATCH_ALL_LIST = "Family of 5+"
@@ -7,12 +9,11 @@ class _Config(object):
     FBSL_EVENTS_GSHEET_URI = ""
     FBSL_LISTS_CACHE_EXPIRY_SECONDS = 0
     FBSL_LISTS_GSHEET_URI = ""
+    FBSL_MAX_PAGE_SIZE = 500
     FBSL_REQUESTS_CACHE_EXPIRY_SECONDS = 0
     FBSL_REQUESTS_FORM_URI = ""
     FBSL_REQUESTS_GSHEET_URI = ""
     FBSL_SA_KEY_FILE_PATH = "foodbank-southlondon-ecd573527735.json"
-
-    RESTX_VALIDATE = True
 
 
 class DevelopmentConfig(_Config):
