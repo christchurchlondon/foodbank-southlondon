@@ -2,6 +2,7 @@ from typing import Any, Dict
 
 import flask
 import flask_restx  # type:ignore
+import numpy as np  # type:ignore
 import pandas as pd  # type:ignore
 import requests
 
@@ -34,14 +35,14 @@ class Events(flask_restx.Resource):
         requests_df = pd.DataFrame(requests_data["items"])
         if not requests_df.empty:
             request_ids = requests_df["request_id"].unique()
-            event_attributes = ("request_id", "timestamp", "event_name", "event_date")
+            event_attributes = ("request_id", "event_timestamp", "event_name", "event_date")
             events_data = requests.get(f"{api_base_url}events/", params={"latest_event_only": True, "per_page": per_page,
                                                                          "refresh_cache": refresh_cache, "request_ids": ",".join(request_ids)},
                                        headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"}).json()
             events_df = pd.DataFrame(events_data["items"], columns=event_attributes)
-            df = pd.merge(requests_df, events_df, left_on="request_id", right_on="request_id", how="left")
+            df = pd.merge(requests_df, events_df, on="request_id", how="left")
+            df.replace({np.nan: None}, inplace=True)
             items = df.to_dict("records")
-            print(items)
         return {
             "page": requests_data["page"],
             "per_page": requests_data["per_page"],
