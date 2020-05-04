@@ -1,6 +1,7 @@
 class _Config(object):
     ERROR_404_HELP = False
 
+    FBSL_BASE_URL = ""
     FBSL_CATCH_ALL_LIST = "Family of 5+"
     FBSL_EVENTS_CACHE_EXPIRY_SECONDS = 0
     FBSL_EVENTS_GSHEET_URI = ""
@@ -17,6 +18,7 @@ class _Config(object):
 class DevelopmentConfig(_Config):
     DEBUG = True
 
+    FBSL_BASE_URL = "http://localhost:5000"
     FBSL_EVENTS_CACHE_EXPIRY_SECONDS = 60
     FBSL_EVENTS_GSHEET_URI = "1GfD-YA_9eMSMqu9eTZlCEC0wvsV6c0CRlMLRPOvWM48"
     FBSL_LISTS_CACHE_EXPIRY_SECONDS = 0
@@ -29,6 +31,7 @@ class DevelopmentConfig(_Config):
 class ProductionConfig(_Config):
     DEBUG = False
 
+    FBSL_BASE_URL = "http://localhost:8080"
     FBSL_EVENTS_CACHE_EXPIRY_SECONDS = 3600
     FBSL_EVENTS_GSHEET_URI = "1OAluin8tOIpYUxcm18gHJSc0z1tx4EdxY9I2bdB4zj4"
     FBSL_LISTS_CACHE_EXPIRY_SECONDS = 0

@@ -6,7 +6,7 @@ import pandas as pd  # type:ignore
 
 from foodbank_southlondon.api import rest, utils
 from foodbank_southlondon.api.events import models, namespace, parsers
-from foodbank_southlondon.api.requests import views as request_views
+from foodbank_southlondon.api.requests import views as requests_views
 
 
 # CONFIG VARIABLES
@@ -50,7 +50,7 @@ class Events(flask_restx.Resource):
         data = flask.request.json
         flask.current_app.logger.debug(f"Received request body, {data}")
         request_id = data["request_id"]
-        requests_data = request_views.cache(force_refresh=True)
+        requests_data = requests_views.cache(force_refresh=True)
         if requests_data[requests_data["request_id"] == request_id].empty:
             rest.abort(400, f"request_id, {request_id} does not match any existing request.")
         utils.append_row(flask.current_app.config[_FBSL_EVENTS_GSHEET_URI], list(data.values()))
