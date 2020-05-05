@@ -66,7 +66,12 @@ class DistinctEventNameValues(flask_restx.Resource):
     def get(self) -> Dict[str, List]:
         """Get the distinct options for an Events attribute."""
         params = parsers.distinct_events_params.parse_args(flask.request)  # noqa: F841 - here as reminder; currently we only support 1 value
-        return {"values": list(models.EVENT_NAMES)}
+        values = [{
+            "event_name": event_name,
+            "event_date_expected": True if event_name.startswith("Mark") else False,
+            "confirmation_expected": True if not event_name.startswith("Print") else False
+        } for event_name in models.EVENT_NAMES]
+        return {"values": values}
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:

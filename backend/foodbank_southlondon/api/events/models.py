@@ -9,8 +9,8 @@ EVENT_NAMES = (
     "Print Shopping List",
     "Print Shipping Label",
     "Print Driver Overview",
-    "Marked as Out for Delivery",
-    "Marked as Delivered",
+    "Mark as Out for Delivery",
+    "Mark as Delivered",
     "Mark as Fullfilled with Trussell Trust"
 )
 
@@ -27,6 +27,12 @@ page_of_events = rest.inherit("EventsPage", models.pagination, {
     "items": fields.List(fields.Nested(event))
 })
 
+_distinct_event_name_value = rest.model("DistinctEventNameValue", {
+    "event_name": fields.String(required=True, description="A valid event_name value"),
+    "event_date_expected": fields.Boolean(required=True, description="Whether this event_name expects an event_date.", example=True),
+    "confirmation_expected": fields.Boolean(required=True, description="Whether this event_name expects special confirmation.", example=False)
+})
+
 distinct_event_name_values = rest.model("DistinctEventNameValues", {
-    "values": fields.List(fields.String(required=True, description="A valid event_name value"))
+    "values": fields.List(fields.Nested(_distinct_event_name_value))
 })

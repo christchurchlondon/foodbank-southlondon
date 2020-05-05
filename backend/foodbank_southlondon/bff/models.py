@@ -48,7 +48,7 @@ _status = rest.inherit("Status", _event, {
 
 action = rest.model("Action", {
     "request_ids": fields.List(requests_models.request["request_id"]),
-    "event_names": fields.List(events_models.event["event_name"]),
+    "event_name": events_models.event["event_name"],
     "event_date": events_models.event["event_date"]
 })
 
