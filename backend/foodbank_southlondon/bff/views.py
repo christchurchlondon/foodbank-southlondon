@@ -18,6 +18,7 @@ def _api_base_url() -> str:
 
 
 def _get(url: str, **kwargs: Any) -> Dict[str, Any]:
+    print(kwargs.get("params"))
     r = requests.get(url, **kwargs)
     if not r.ok:
         r.raise_for_status()
@@ -74,14 +75,16 @@ class Status(flask_restx.Resource):
         """List Client Request summary and status information."""
         params = parsers.status_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
-        client_full_names = params["client_full_names"]
-        postcodes = params["postcodes"]
-        page = params["page"]
+        delivery_dates = ",".join(params["delivery_dates"])
+        client_full_names = ",".join(params["client_full_names"] or ())
+        postcodes = ",".join(params["postcodes"] or ())
+        reference_numbers = ",".join(params["reference_numbers"] or ())
         per_page = params["per_page"]
         api_base_url = _api_base_url()
         items = []
         requests_data = _get(f"{api_base_url}requests/",
-                             params={"client_full_names": client_full_names, "page": page, "per_page": per_page, "postcodes": postcodes,
+                             params={"client_full_names": client_full_names, "delivery_dates": delivery_dates, "page": params["page"],
+                                     "per_page": per_page, "postcodes": postcodes, "reference_numbers": reference_numbers,
                                      "refresh_cache": refresh_cache},
                              headers={"X-Fields": "items{request_id, client_full_name, reference_number, postcode, delivery_date}, "
                                       "page, per_page, total_items, total_pages"})
