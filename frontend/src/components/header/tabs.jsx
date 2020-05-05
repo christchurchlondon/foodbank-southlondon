@@ -20,9 +20,10 @@ export default class Tabs extends React.Component {
 
     render() {
 
-        const tabs = tabDefinitions.map(({id, label}) => {
+        const tabs = tabDefinitions.map(({id, label}, index) => {
             return (
                 <Tab
+                    key={index}
                     name={label}
                     isSelected={this.isSelectedTab(id)}
                     onClick={ () => this.handleTabClick(id) }

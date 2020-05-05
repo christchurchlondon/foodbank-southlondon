@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { STATUS_LOADING } from '../../constants';
+import { STATUS_LOADING, STATUS_FAILED, STATUS_SUCCESS } from '../../constants';
 import { getRequestsState } from '../../redux/selectors';
 import { fetchRequests } from '../../redux/actions';
 import Loading from '../common/loading';
+import Error from '../common/error';
 import RequestsFilter from './filter';
 import RequestsList from './list';
 import RequestsActions from './actions';
@@ -28,20 +29,36 @@ class Requests extends React.Component {
         return this.props.status === STATUS_LOADING;
     }
 
+    isFailed() {
+        return this.props.status === STATUS_FAILED;
+    }
+
+    isSuccessful() {
+        return this.props.status === STATUS_SUCCESS;
+    }
+
+    getContents() {
+        if (this.isLoading()) return <Loading />;
+        if (this.isFailed()) return <Error message={'Unable to load requests'} />;
+        return this.getRequestsContents();
+    }
+
+    getRequestsContents() {
+        return (
+            <div>
+                <RequestsFilter onSubmit={ v => this.fetchRequests(v) } value={this.props.filter} />
+                <RequestsList requests={ this.props.items } />
+                <RequestsActions />
+            </div>
+        );
+    }
+
     render() {
 
         // TODO actions for child components
         // TODO refresh button?
 
-        const contents = this.isLoading()
-            ? <Loading />
-            : (
-                <div>
-                    <RequestsFilter onSubmit={ v => this.fetchRequests(v) } value={this.props.filter} />
-                    <RequestsList requests={ this.props.items } />
-                    <RequestsActions />
-                </div>
-            );
+        const contents = this.getContents();
 
         return (
             <div className="requests-container">
