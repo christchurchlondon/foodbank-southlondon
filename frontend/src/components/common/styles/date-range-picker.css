@@ -1,0 +1,12 @@
+
+.date-range-picker {
+    display: inline-flex;
+}
+
+.date-range-picker label {
+    margin-right: .5rem;
+}
+
+.date-range-picker input[type=text] {
+    margin-right: .5rem;
+}
