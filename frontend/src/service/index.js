@@ -58,7 +58,29 @@ export function getLists() {
         .then(response => {
             return response.items.map(item => {
                 return {
-                    description: item.item_description
+                    description: item.item_description,
+                    householdSizes: {
+                        single: {
+                            quantity: item.single_quantity,
+                            notes: item.single_notes
+                        },
+                        familyOf2: {
+                            quantity: item.family_of_2_quantity,
+                            notes: item.family_of_2_notes
+                        },
+                        familyOf3: {
+                            quantity: item.family_of_3_quantity,
+                            notes: item.family_of_3_notes
+                        },
+                        familyOf4: {
+                            quantity: item.family_of_4_quantity,
+                            notes: item.family_of_4_notes
+                        },
+                        familyOf5Plus: {
+                            quantity: item['family_of_5+_quantity'],
+                            notes: item['family_of_5+_notes']
+                        },
+                    }
                 }
             })
         });

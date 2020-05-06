@@ -1,0 +1,19 @@
+
+.list-item-notes {
+    position: relative;
+}
+
+.list-item-notes .toggle {
+    cursor: pointer;
+}
+
+.list-item-notes .list-item-notes-text {
+    position: absolute;
+    top: 0;
+    left: 4rem;
+    z-index: 1;
+    border: 1px solid grey;
+    padding: .5rem;
+    background: #fff;
+    color: #000;
+}

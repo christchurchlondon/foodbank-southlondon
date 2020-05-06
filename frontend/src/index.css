@@ -37,16 +37,21 @@ table {
     margin: 0 0 1rem;
 }
 
+thead {
+    font-weight: 500;
+    border-bottom: 1px solid #2f131e;
+}
+
 th, td {
     padding: .5rem;
     text-align: left;
 }
 
-th:first-child, td:first-child {
+th:first-child, td:first-child, th.first, td.first {
     padding-left: 0;
 }
 
-th:last-child, td:last-child {
+th:last-child, td:last-child, th.last, td.last {
     padding-right: 0;
 }
 
@@ -54,12 +59,7 @@ th.numerical, td.numerical {
     text-align: right;
 }
 
-th {
-    font-weight: 500;
-    border-bottom: 1px solid #2f131e;
-}
-
-tr:nth-child(even) {
+tbody tr:nth-child(even) {
     background: rgba(138, 246, 251, 0.2);
 }
 
