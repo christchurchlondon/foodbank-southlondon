@@ -5,6 +5,9 @@ export default class RequestsList extends React.Component {
     render() {
 
         // TODO show full data
+        // ref #, name, postcode, delivery date, latest status, tickboxes
+
+        // TODO add page number, extend button, clickable rows
 
         const tableRows = this.props.requests.map(request => {
             return (

@@ -12,6 +12,9 @@ export default class RequestsFilter extends React.Component {
     }
 
     render() {
+
+        // TODO add other filtering (name, ref #, postcode)
+
         return (
             <div className="requests-filter panel">
                 <label>Filters:</label>

@@ -2,6 +2,7 @@
 .requests-actions {
     display: flex;
     flex-direction: row;
+    justify-content: flex-end;
     align-items: center;
 }
 
@@ -11,5 +12,5 @@
 }
 
 .requests-actions button {
-    margin-left: auto;
+    margin-left: 1rem;
 }
