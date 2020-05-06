@@ -1,3 +1,4 @@
+authlib
 flask
 flask-restx
 flask-weasyprint

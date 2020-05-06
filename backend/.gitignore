@@ -4,4 +4,5 @@
 *.mypy_cache
 *.venv
 *.vscode
-foodbank-southlondon-ecd573527735.json
+client-secret.*
+sa-key.*

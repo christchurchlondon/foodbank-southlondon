@@ -3,7 +3,7 @@ import os
 
 import dotenv
 
-from foodbank_southlondon import api, app, bff, config
+from foodbank_southlondon import api, app, bff, config, oauth
 from foodbank_southlondon.api import events, lists, requests
 import foodbank_southlondon.views  # noqa: F401
 import foodbank_southlondon.errors  # noqa: F401
@@ -25,6 +25,9 @@ def main():
     app.logger.info(f"Loading environment, {environment} ...")
     app.config.from_object(config.CONFIGURATIONS[environment])
     app.logger.info(f"Initialising APIs, attaching namespaces and registering blueprints  ...")
+    oauth.register(name="google", server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+                   client_kwargs={"scope": "openid email profile"})
+    oauth.init_app(app)
     api.rest.init_app(api.blueprint)
     api.rest.add_namespace(events.namespace)
     api.rest.add_namespace(lists.namespace)
