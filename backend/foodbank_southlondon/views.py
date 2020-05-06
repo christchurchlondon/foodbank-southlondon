@@ -1,11 +1,17 @@
 from typing import Union
 
 import flask
+import googleapiclient
 import werkzeug
 
-from foodbank_southlondon import app, oauth
+from foodbank_southlondon import app, oauth, utils
 
 
+# CONFIG VARIABLES
+_FBSL_GSUITE_GROUP_ADDRESS = "FBSL_GSUITE_GROUP_ADDRESS"
+
+
+# INTERNALS
 _USER_SESSION_VAR = "user"
 
 
@@ -18,9 +24,16 @@ def catch_all(path: str) -> Union[flask.Response, str]:
 
 
 @app.route("/auth")
-def auth() -> werkzeug.Response:
+def auth() -> Union[str, werkzeug.Response]:
     token = oauth.google.authorize_access_token()
-    flask.session[_USER_SESSION_VAR] = oauth.google.parse_id_token(token)
+    user = oauth.google.parse_id_token(token)
+    try:
+        utils.gsuite_members_resource().get(groupKey=flask.current_app.config[_FBSL_GSUITE_GROUP_ADDRESS], memberKey=user["email"]).execute()
+    except googleapiclient.errors.HttpError as error:
+        if error.resp.status == 404:
+            return "Permission Denied. Go back to <a href=/>Home</a>."
+        raise
+    flask.session[_USER_SESSION_VAR] = user
     return flask.redirect("/")
 
 

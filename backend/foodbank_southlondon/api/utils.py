@@ -2,30 +2,25 @@ from typing import Any, Callable, Dict, List
 import math
 import time
 
-from google.oauth2.service_account import Credentials  # type:ignore
 import flask
 import gspread  # type:ignore
 import pandas as pd  # type:ignore
 import wrapt  # type:ignore
 
+from foodbank_southlondon import utils
+
 
 # CONFIG VARIABLES
-_FBSL_SA_KEY_FILE_PATH = "FBSL_SA_KEY_FILE_PATH"
 _FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
 
-# INTERNALS
-_SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
 _cache_expiries: Dict[str, float] = {}
 _caches: Dict[str, pd.DataFrame] = {}
 
 
 def _gsheet(spreadsheet_id: str, index: int = 0) -> gspread.Worksheet:
-    gc = flask.g.get("gc")
-    if gc is None:
-        credentials = Credentials.from_service_account_file(flask.current_app.config[_FBSL_SA_KEY_FILE_PATH], scopes=_SCOPES)
-        gc = flask.g.gc = gspread.authorize(credentials)
-    spreadsheet = gc.open_by_key(spreadsheet_id)
+    gspread_client = utils.gspread_client()
+    spreadsheet = gspread_client.open_by_key(spreadsheet_id)
     sheet = spreadsheet.get_worksheet(index)
     return sheet
 
