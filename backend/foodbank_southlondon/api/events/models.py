@@ -20,7 +20,7 @@ event = rest.model("Event", {
     "event_timestamp": fields.DateTime(required=True, description="The timestamp when the event was recorded, in ISO 8601 format",
                                        example="2020-04-26T13:31:42Z"),
     "event_name": fields.String(required=True, description="The name of the event that occured", example="Print Shipping Label", enum=EVENT_NAMES),
-    "event_date": fields.String(required=False, description="The date when the event occurred", example="2020-04-01")
+    "event_data": fields.String(required=False, description="The data recorded with the event (blank, a date or quantity)", example="2020-04-01")
 })
 
 page_of_events = rest.inherit("EventsPage", models.pagination, {
@@ -29,8 +29,9 @@ page_of_events = rest.inherit("EventsPage", models.pagination, {
 
 _distinct_event_name_value = rest.model("DistinctEventNameValue", {
     "event_name": fields.String(required=True, description="A valid event_name value"),
-    "event_date_expected": fields.Boolean(required=True, description="Whether this event_name expects an event_date.", example=True),
-    "confirmation_expected": fields.Boolean(required=True, description="Whether this event_name expects special confirmation.", example=False)
+    "confirmation_expected": fields.Boolean(required=True, description="Whether this event_name expects special confirmation.", example=False),
+    "date_expected": fields.Boolean(required=True, description="Whether this event_name expects a date to be captured.", example=True),
+    "quantity_expected": fields.Boolean(required=True, description="Whether this event_name expects a quantity to be captured.", example=True)
 })
 
 distinct_event_name_values = rest.model("DistinctEventNameValues", {

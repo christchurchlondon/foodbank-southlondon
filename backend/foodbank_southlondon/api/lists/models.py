@@ -25,7 +25,7 @@ _all_lists_item = rest.model("AllShoppingListsItem", _all_lists_item_fields)
 
 _one_list_item = rest.model("ShoppingListItem", {
     "item_description": _item_description_field,
-    "quantity": fields.String(required=False, description="The quantity of the item for the requested Household Size", example="3"),
+    "quantity": fields.String(required=False, description="The quantity of the item for the requested Household Size", example="1L"),
     "notes": fields.String(required=False, description=f"Item-specific notes for the requested Household Size", example="Free range if available")
 })
 

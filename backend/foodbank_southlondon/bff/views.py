@@ -18,7 +18,6 @@ def _api_base_url() -> str:
 
 
 def _get(url: str, **kwargs: Any) -> Dict[str, Any]:
-    print(kwargs.get("params"))
     r = requests.get(url, **kwargs)
     if not r.ok:
         r.raise_for_status()
@@ -46,15 +45,18 @@ class Details(flask_restx.Resource):
         params = parsers.status_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         api_base_url = _api_base_url()
-        requests_items = _get(f"{api_base_url}/requests/{request_id}", params={"refresh_cache": refresh_cache})["items"]
-        if not requests_items:
-            rest.abort(400, f"request_id, {request_id} does not match any existing request.")
+        try:
+            requests_items = _get(f"{api_base_url}/requests/{request_id}", params={"refresh_cache": refresh_cache})["items"]
+        except requests.exceptions.HTTPError as error:
+            if error.response.status_code == 404:
+                rest.abort(404, f"request_id, {request_id} does not match any existing request.")
+            raise
         request_data = requests_items[0]
         # both of these next requests could theoretically return more than one page (would be crazy) - we don't worry about paginating in this case
         events_items = _get(f"{api_base_url}/events/", params={"refresh_cache": refresh_cache, "request_ids": request_id})["items"]
         similar_request_items = _get(f"{api_base_url}/requests/", params={"client_full_names": request_data["client_full_name"],
                                                                           "postcodes": request_data["postcode"], "refresh_cache": refresh_cache},
-                                     headers={"X-Fields": "items{request_id, timestamp, client_full_name, postcode}"})["items"]
+                                     headers={"X-Fields": "items{request_id, timestamp, client_full_name, postcode, reference_number}"})["items"]
         for index, request in enumerate(similar_request_items):
             if request["request_id"] == request_id:
                 del similar_request_items[index]
@@ -75,10 +77,10 @@ class Status(flask_restx.Resource):
         """List Client Request summary and status information."""
         params = parsers.status_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
-        delivery_dates = ",".join(params["delivery_dates"])
-        client_full_names = ",".join(params["client_full_names"] or ())
-        postcodes = ",".join(params["postcodes"] or ())
-        reference_numbers = ",".join(params["reference_numbers"] or ())
+        delivery_dates = ",".join(params["delivery_dates"] or ()) or None
+        client_full_names = ",".join(params["client_full_names"] or ()) or None
+        postcodes = ",".join(params["postcodes"] or ()) or None
+        reference_numbers = ",".join(params["reference_numbers"] or ()) or None
         per_page = params["per_page"]
         api_base_url = _api_base_url()
         items = []
@@ -91,7 +93,7 @@ class Status(flask_restx.Resource):
         requests_df = pd.DataFrame(requests_data["items"])
         if not requests_df.empty:
             request_ids = requests_df["request_id"].unique()
-            event_attributes = ("request_id", "event_timestamp", "event_name", "event_date")
+            event_attributes = ("request_id", "event_timestamp", "event_name", "event_data")
             events_data = _get(f"{api_base_url}events/", params={"latest_event_only": True, "per_page": per_page,
                                                                  "refresh_cache": refresh_cache, "request_ids": ",".join(request_ids)},
                                headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"})

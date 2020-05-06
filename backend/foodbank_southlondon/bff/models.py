@@ -26,7 +26,7 @@ def _clone_fields_without_attribute(model: flask_restx.Model) -> Dict:
 _event = rest.model("EventSummary", {
     "event_timestamp": events_models.event["event_timestamp"],
     "event_name": events_models.event["event_name"],
-    "event_date": events_models.event["event_date"]
+    "event_data": events_models.event["event_data"]
 })
 
 _request = rest.model("ClientRequest", _clone_fields_without_attribute(requests_models.request))
@@ -35,7 +35,8 @@ _similar_request_summary = rest.model("SimilarClientRequestSummary", {
     "request_id": requests_models.request["request_id"],
     "timestamp": _clone_field_without_attribute(requests_models.request["timestamp"]),
     "client_full_name": _clone_field_without_attribute(requests_models.request["client_full_name"]),
-    "postcode": _clone_field_without_attribute(requests_models.request["postcode"])
+    "postcode": _clone_field_without_attribute(requests_models.request["postcode"]),
+    "reference_number": _clone_field_without_attribute(requests_models.request["reference_number"])
 })
 
 _status = rest.inherit("Status", _event, {
@@ -49,7 +50,7 @@ _status = rest.inherit("Status", _event, {
 action = rest.model("Action", {
     "request_ids": fields.List(requests_models.request["request_id"]),
     "event_name": events_models.event["event_name"],
-    "event_date": events_models.event["event_date"]
+    "event_data": events_models.event["event_data"]
 })
 
 details = rest.model("ClientRequestDetails", {
