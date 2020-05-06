@@ -1,4 +1,5 @@
 import React from 'react';
+import './styles/controls.css';
 
 
 export default function ListsControls(props) {
