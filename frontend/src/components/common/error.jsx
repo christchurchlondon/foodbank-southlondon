@@ -1,4 +1,5 @@
 import React from 'react';
+import './styles/error.scss';
 
 export default function Error(props) {
     // TODO more styling, add icon

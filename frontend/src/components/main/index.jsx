@@ -5,7 +5,7 @@ import Header from '../header';
 import Requests from '../requests';
 import Lists from '../lists';
 import { getTab } from '../../redux/selectors';
-import './styles/index.css';
+import './styles/index.scss';
 
 
 class Main extends React.Component {

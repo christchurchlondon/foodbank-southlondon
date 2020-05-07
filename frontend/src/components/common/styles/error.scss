@@ -1,5 +1,6 @@
+@import 'styles/include';
 
 .error {
-    padding: .5rem;
+    padding: $pad-half;
     background-color: rgba(222, 60, 75, 0.2);
 }

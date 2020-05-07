@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import Tabs from './tabs';
 import { setTab } from '../../redux/actions';
 import { getTab } from '../../redux/selectors';
-import './styles/index.css';
 
 class Header extends React.Component {
 

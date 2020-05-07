@@ -1,7 +1,7 @@
 import React from 'react';
 import { TAB_REQUESTS, TAB_LISTS } from '../../constants';
 import Tab from './tab';
-import './styles/tabs.css';
+import './styles/tabs.scss';
 
 const tabDefinitions = [
     { id: TAB_REQUESTS, label: 'Requests' },

@@ -1,6 +1,6 @@
 import React from 'react';
 import DateRangePicker from '../common/date-range-picker';
-import './styles/filter.css';
+import './styles/filter.scss';
 
 
 export default class RequestsFilter extends React.Component {

@@ -1,0 +1,22 @@
+@import 'styles/include';
+
+.tab {
+    margin-right: .25rem;
+    padding: $pad-standard $pad-half;
+    background-color: $colour-button-bg-secondary;
+    color: $colour-button-text-secondary;
+    cursor: pointer;
+}
+
+.tab:hover {
+    color: $colour-dark-purple;
+}
+
+.tab.selected {
+    background-color: $colour-button-bg-primary;
+    color: $colour-button-text-primary;
+}
+
+.tab.selected:hover {
+    color: $colour-white;
+}

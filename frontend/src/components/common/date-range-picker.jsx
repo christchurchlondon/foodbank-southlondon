@@ -2,7 +2,7 @@ import React from 'react';
 import DatePicker from 'react-datepicker';
 import { DATE_FORMAT_UI } from '../../constants';
 import 'react-datepicker/dist/react-datepicker.css';
-import './styles/date-range-picker.css';
+import './styles/date-range-picker.scss';
 
 
 export default class DateRangePicker extends React.Component {

@@ -1,5 +1,5 @@
 import React from 'react';
-import './styles/actions.css';
+import './styles/actions.scss';
 
 export default class RequestsActions extends React.Component {
 

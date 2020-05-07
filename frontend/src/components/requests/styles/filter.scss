@@ -1,5 +1,6 @@
+@import 'styles/include';
 
 .requests-filter label {
     display: inline-block;
-    margin-right: 1rem;
+    margin-right: $pad-half;
 }

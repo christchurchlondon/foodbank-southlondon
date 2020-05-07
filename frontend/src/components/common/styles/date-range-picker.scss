@@ -1,12 +1,15 @@
+@import 'styles/include';
+
 
 .date-range-picker {
     display: inline-flex;
 }
 
 .date-range-picker label {
-    margin-right: .5rem;
+    margin-right: $pad-half;
 }
 
 .date-range-picker input[type=text] {
-    margin-right: .5rem;
+    margin-right: $pad-half;
+    width: 75px;
 }
