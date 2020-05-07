@@ -3,25 +3,24 @@ from typing import Optional
 import os
 
 
-_google_client_secret = os.environ.get("FBSL_CLIENT_SECRET")
-
-
 class _Config(object):
     BUNDLE_ERRORS = True
     DEBUG: Optional[bool] = None
     ERROR_404_HELP = False
     GOOGLE_CLIENT_ID = ""
-    GOOGLE_CLIENT_SECRET = _google_client_secret
+    GOOGLE_CLIENT_SECRET = os.environ.get("FBSL_CLIENT_SECRET")
     RESTX_VALIDATE = True
     SECRET_KEY = os.urandom(16)
 
     FBSL_BASE_URL = ""
-    FBSL_CATCH_ALL_LIST = "Family of 5+"
+    FBSL_CATCH_ALL_LIST = "family_of_5+"
     FBSL_EVENTS_GSHEET_URI = ""
     FBSL_GSUITE_IMPERSONATE_ADDRESS = ""
     FBSL_GSUITE_GROUP_ADDRESS = ""
     FBSL_LISTS_GSHEET_URI = ""
     FBSL_MAX_PAGE_SIZE = 500
+    FBSL_MAX_ACTION_REQUEST_IDS = 20
+    assert FBSL_MAX_ACTION_REQUEST_IDS < FBSL_MAX_PAGE_SIZE
     FBSL_REQUESTS_FORM_URI = ""
     FBSL_REQUESTS_GSHEET_URI = ""
     FBSL_SA_KEY = os.environ.get("FBSL_SA_KEY")
