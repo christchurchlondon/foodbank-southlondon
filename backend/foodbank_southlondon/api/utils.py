@@ -7,7 +7,7 @@ import gspread  # type:ignore
 import pandas as pd  # type:ignore
 import wrapt  # type:ignore
 
-from foodbank_southlondon import utils
+from foodbank_southlondon import helpers
 
 
 # CONFIG VARIABLES
@@ -19,7 +19,7 @@ _caches: Dict[str, pd.DataFrame] = {}
 
 
 def _gsheet(spreadsheet_id: str, index: int = 0) -> gspread.Worksheet:
-    gspread_client = utils.gspread_client()
+    gspread_client = helpers.gspread_client()
     spreadsheet = gspread_client.open_by_key(spreadsheet_id)
     sheet = spreadsheet.get_worksheet(index)
     return sheet
