@@ -1,9 +1,13 @@
+authlib
 flask
 flask-restx
 flask-weasyprint
+google-api-python-client
 google-auth
 gspread
+numpy
 pandas
 python-dotenv
+requests
 werkzeug
 wrapt

@@ -1,30 +1,26 @@
 from typing import Any, Callable, Dict, List
 import math
-import time
+import datetime
 
-from google.oauth2.service_account import Credentials  # type:ignore
 import flask
 import gspread  # type:ignore
 import pandas as pd  # type:ignore
 import wrapt  # type:ignore
 
+from foodbank_southlondon import helpers
+
 
 # CONFIG VARIABLES
-_FBSL_SA_KEY_FILE_PATH = "FBSL_SA_KEY_FILE_PATH"
+_FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
 
-# INTERNALS
-_SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
-_cache_expiries: Dict[str, float] = {}
+_caches_updated: Dict[str, datetime.datetime] = {}
 _caches: Dict[str, pd.DataFrame] = {}
 
 
 def _gsheet(spreadsheet_id: str, index: int = 0) -> gspread.Worksheet:
-    gc = flask.g.get("gc")
-    if gc is None:
-        credentials = Credentials.from_service_account_file(flask.current_app.config[_FBSL_SA_KEY_FILE_PATH], scopes=_SCOPES)
-        gc = flask.g.gc = gspread.authorize(credentials)
-    spreadsheet = gc.open_by_key(spreadsheet_id)
+    gspread_client = helpers.gspread_client()
+    spreadsheet = gspread_client.open_by_key(spreadsheet_id)
     sheet = spreadsheet.get_worksheet(index)
     return sheet
 
@@ -43,20 +39,18 @@ def append_row(spreadsheet_id: str, row: List) -> None:
     sheet.append_row(row, value_input_option="USER_ENTERED")
 
 
-def cache(name: str, spreadsheet_id: str, expires_after: int = None, force_refresh: bool = False) -> pd.DataFrame:
-    now = time.time()
+def cache(name: str, spreadsheet_id: str, force_refresh: bool = False) -> pd.DataFrame:
+    now = datetime.datetime.now(datetime.timezone.utc)
     cache = _caches.get(name)
-    if force_refresh or cache is None or (expires_after and (now - _cache_expiries[name]) >= expires_after):
-        flask.current_app.logger.debug(f"Refreshing cache, {name} ...")
-        cache = _caches[name] = _gsheet_to_df(spreadsheet_id)
-        _cache_expiries[name] = now
+    if cache is not None:
+        file_metadata = helpers.drive_files_resource().get(fileId=spreadsheet_id, supportsAllDrives=True, fields="modifiedTime").execute()
+        file_modified_time = datetime.datetime.fromisoformat(file_metadata["modifiedTime"].replace("Z", "+00:00"))
+        if _caches_updated[name] >= file_modified_time:
+            return cache
+    flask.current_app.logger.debug(f"Refreshing cache, {name} ...")
+    _caches_updated[name] = now
+    cache = _caches[name] = _gsheet_to_df(spreadsheet_id)
     return cache
-
-
-def delete_cache(name: str) -> None:
-    flask.current_app.logger.debug(f"Deleting cache, {name} ...")
-    _caches.pop(name, None)
-    _cache_expiries.pop(name, None)
 
 
 def gsheet_a1(spreadsheet_id, index) -> str:
@@ -70,17 +64,18 @@ def overwrite_rows(spreadsheet_id: str, rows: List) -> None:
     sheet.update(f"{sheet.title}", rows, value_input_option="USER_ENTERED")
 
 
-def paginate(*sort_by: str) -> Callable:
+def paginate(*sort_by: str, ascending: bool = True) -> Callable:
     @wrapt.decorator
     def wrapper(wrapped: Callable, instance: Any, args: List, kwargs: Dict) -> Dict[str, Any]:
         data, page, per_page = wrapped(*args, **kwargs)
+        per_page = max(min(per_page, flask.current_app.config[_FBSL_MAX_PAGE_SIZE]), 0)
         offset = (page - 1) * per_page
         total_items = len(data.index)
-        data = data.sort_values(list(sort_by)).iloc[offset: offset + per_page]
+        data = data.sort_values(list(sort_by), ascending=ascending).iloc[offset: offset + per_page]
         return {
             "page": page,
             "per_page": per_page,
-            "total_pages": math.ceil(total_items / per_page),
+            "total_pages": 0 if per_page == 0 else math.ceil(total_items / per_page),
             "total_items": total_items,
             "items": data.to_dict("records")
         }

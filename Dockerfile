@@ -9,9 +9,9 @@ RUN npm install && \
 
 FROM python:3.8-slim-buster
 
-WORKDIR /home/foodbank/backend
-
 RUN adduser --disabled-login --gecos "" foodbank
+
+WORKDIR /home/foodbank/backend
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
@@ -23,6 +23,6 @@ RUN .venv/bin/pip install -e .
 
 COPY --from=builder /home/foodbank/frontend /home/foodbank/frontend
 
-EXPOSE 5000
+EXPOSE 8080
 USER foodbank
-CMD .venv/bin/gunicorn -b :5000 --access-logfile - --error-logfile - "foodbank_southlondon.launch:main()"
+CMD .venv/bin/gunicorn -b :8080 --access-logfile - --error-logfile - "foodbank_southlondon.launch:main()"
