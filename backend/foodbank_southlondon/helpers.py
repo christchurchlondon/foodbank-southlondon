@@ -18,6 +18,14 @@ def credentials(*scopes: str) -> Credentials:
     return Credentials.from_service_account_info(json.loads(flask.current_app.config[_FBSL_SA_KEY]), scopes=list(scopes))
 
 
+def drive_files_resource() -> discovery.Resource:
+    drive_files_resource = flask.g.get("drive_files_resource")
+    if drive_files_resource is None:
+        creds = credentials("https://www.googleapis.com/auth/drive.metadata.readonly")
+        drive_files_resource = flask.g.drive_files_resource = discovery.build("drive", "v3", credentials=creds).files()
+    return drive_files_resource
+
+
 def gspread_client() -> gspread.Client:
     gspread_client = flask.g.get("gspread_client")
     if gspread_client is None:

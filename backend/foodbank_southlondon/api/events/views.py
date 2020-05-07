@@ -10,7 +10,6 @@ from foodbank_southlondon.api.requests import views as requests_views
 
 
 # CONFIG VARIABLES
-_FBSL_EVENTS_CACHE_EXPIRY_SECONDS = "FBSL_EVENTS_CACHE_EXPIRY_SECONDS"
 _FBSL_EVENTS_GSHEET_URI = "FBSL_EVENTS_GSHEET_URI"
 
 # INTERNALS
@@ -54,7 +53,6 @@ class Events(flask_restx.Resource):
         if requests_df[requests_df["request_id"] == request_id].empty:
             rest.abort(400, f"request_id, {request_id} does not match any existing request.")
         utils.append_row(flask.current_app.config[_FBSL_EVENTS_GSHEET_URI], list(data.values()))
-        utils.delete_cache(_CACHE_NAME)
         return ({}, 201)
 
 
@@ -76,5 +74,4 @@ class DistinctEventNameValues(flask_restx.Resource):
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
-    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_EVENTS_GSHEET_URI],
-                       expires_after=flask.current_app.config[_FBSL_EVENTS_CACHE_EXPIRY_SECONDS], force_refresh=force_refresh)
+    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_EVENTS_GSHEET_URI], force_refresh=force_refresh)

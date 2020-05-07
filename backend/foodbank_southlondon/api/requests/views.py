@@ -9,7 +9,6 @@ from foodbank_southlondon.api.requests import models, namespace, parsers
 
 
 # CONFIG VARIABLES
-_FBSL_REQUESTS_CACHE_EXPIRY_SECONDS = "FBSL_REQUESTS_CACHE_EXPIRY_SECONDS"
 _FBSL_REQUESTS_GSHEET_URI = "FBSL_REQUESTS_GSHEET_URI"
 
 # INTERNALS
@@ -89,5 +88,4 @@ def _edit_details_url(request_id):
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
-    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_URI],
-                       expires_after=flask.current_app.config[_FBSL_REQUESTS_CACHE_EXPIRY_SECONDS], force_refresh=force_refresh)
+    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_URI], force_refresh=force_refresh)

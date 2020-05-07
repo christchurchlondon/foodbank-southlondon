@@ -1,6 +1,6 @@
 from typing import Any, Callable, Dict, List
 import math
-import time
+import datetime
 
 import flask
 import gspread  # type:ignore
@@ -14,7 +14,7 @@ from foodbank_southlondon import helpers
 _FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
 
 
-_cache_expiries: Dict[str, float] = {}
+_caches_updated: Dict[str, datetime.datetime] = {}
 _caches: Dict[str, pd.DataFrame] = {}
 
 
@@ -39,20 +39,18 @@ def append_row(spreadsheet_id: str, row: List) -> None:
     sheet.append_row(row, value_input_option="USER_ENTERED")
 
 
-def cache(name: str, spreadsheet_id: str, expires_after: int = None, force_refresh: bool = False) -> pd.DataFrame:
-    now = time.time()
+def cache(name: str, spreadsheet_id: str, force_refresh: bool = False) -> pd.DataFrame:
+    now = datetime.datetime.now(datetime.timezone.utc)
     cache = _caches.get(name)
-    if force_refresh or cache is None or (expires_after and (now - _cache_expiries[name]) >= expires_after):
-        flask.current_app.logger.debug(f"Refreshing cache, {name} ...")
-        cache = _caches[name] = _gsheet_to_df(spreadsheet_id)
-        _cache_expiries[name] = now
+    if cache is not None:
+        file_metadata = helpers.drive_files_resource().get(fileId=spreadsheet_id, supportsAllDrives=True, fields="modifiedTime").execute()
+        file_modified_time = datetime.datetime.fromisoformat(file_metadata["modifiedTime"].replace("Z", "+00:00"))
+        if _caches_updated[name] >= file_modified_time:
+            return cache
+    flask.current_app.logger.debug(f"Refreshing cache, {name} ...")
+    _caches_updated[name] = now
+    cache = _caches[name] = _gsheet_to_df(spreadsheet_id)
     return cache
-
-
-def delete_cache(name: str) -> None:
-    flask.current_app.logger.debug(f"Deleting cache, {name} ...")
-    _caches.pop(name, None)
-    _cache_expiries.pop(name, None)
 
 
 def gsheet_a1(spreadsheet_id, index) -> str:

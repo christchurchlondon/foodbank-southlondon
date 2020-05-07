@@ -9,7 +9,6 @@ from foodbank_southlondon.api.lists import models, namespace, parsers
 
 
 # CONFIG VARIABLES
-_FBSL_LISTS_CACHE_EXPIRY_SECONDS = "FBSL_LISTS_CACHE_EXPIRY_SECONDS"
 _FBSL_LISTS_GSHEET_URI = "FBSL_LISTS_GSHEET_URI"
 
 # INTERNALS
@@ -36,7 +35,6 @@ class Lists(flask_restx.Resource):
         data = flask.request.json
         flask.current_app.logger.debug(f"Received request body, {data}")
         utils.overwrite_rows(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], list(data.values()))
-        utils.delete_cache(_CACHE_NAME)
         return ({}, 201)
 
 
@@ -62,5 +60,4 @@ class List(flask_restx.Resource):
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
-    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_LISTS_GSHEET_URI],
-                       expires_after=flask.current_app.config[_FBSL_LISTS_CACHE_EXPIRY_SECONDS], force_refresh=force_refresh)
+    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_LISTS_GSHEET_URI], force_refresh=force_refresh)
