@@ -3,12 +3,15 @@ from typing import Optional
 import os
 
 
+_google_client_secret = os.environ.get("FBSL_CLIENT_SECRET")
+
+
 class _Config(object):
     BUNDLE_ERRORS = True
     DEBUG: Optional[bool] = None
     ERROR_404_HELP = False
     GOOGLE_CLIENT_ID = ""
-    GOOGLE_CLIENT_SECRET = os.environ.get("FBSL_CLIENT_SECRET")
+    GOOGLE_CLIENT_SECRET = _google_client_secret
     RESTX_VALIDATE = True
     SECRET_KEY = os.urandom(16)
 
