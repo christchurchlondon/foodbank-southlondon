@@ -1,5 +1,6 @@
 import React from 'react';
-import './styles/item-notes.css';
+import './styles/item-notes.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
 export default class ListItemNotes extends React.Component {
@@ -31,7 +32,9 @@ export default class ListItemNotes extends React.Component {
 
         return (
             <span className="list-item-notes">
-                <span className="toggle" onClick={ () => this.toggle() }>[notes]</span>
+                <span className="toggle" onClick={ () => this.toggle() }>
+                    <FontAwesomeIcon icon="comment" />
+                </span>
                 { notesText }
             </span>
         );
