@@ -31,7 +31,7 @@ lint: ## run flake8 and mypy
 
 .PHONY: run
 run: install ## run the flask locally using the builtin flask webserver [DEV]
-	export FLASK_APP=foodbank_southlondon.launch:main && \
+	export FLASK_APP=foodbank_southlondon.launch:main FBSL_ENVIRONMENT=dev FLASK_ENV=development && \
 	. $(_VENV_ACTIVATE) && \
 	flask run
 

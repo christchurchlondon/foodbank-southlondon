@@ -19,12 +19,14 @@ _FBSL_ENVIRONMENT_ENV_VAR = "FBSL_ENVIRONMENT"
 
 
 def main():
-    dotenv.load_dotenv(os.path.join(app.root_path, "..", ".env"))
     environment = os.environ.get(_FBSL_ENVIRONMENT_ENV_VAR)
     app.logger.setLevel(logging.INFO if environment == "prod" else logging.DEBUG)
+    env_file_path = os.path.join(app.root_path, "..", f"{environment}.env")
+    app.logger.info(f"Loading .env file, {env_file_path}...")
+    dotenv.load_dotenv(env_file_path)
     app.logger.info(f"Loading environment, {environment} ...")
     app.config.from_object(config.CONFIGURATIONS[environment])
-    app.logger.info(f"Initialising APIs, attaching namespaces and registering blueprints  ...")
+    app.logger.info(f"Initialising APIs, OAuth, attaching namespaces and registering blueprints  ...")
     oauth.register(name="google", server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
                    client_kwargs={"scope": "openid email profile"})
     oauth.init_app(app)

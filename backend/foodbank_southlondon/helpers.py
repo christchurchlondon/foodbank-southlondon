@@ -1,4 +1,5 @@
 from typing import Any, Callable, Dict, List
+import json
 
 from google.oauth2.service_account import Credentials  # type:ignore
 from googleapiclient import discovery  # type:ignore
@@ -9,12 +10,12 @@ import wrapt  # type:ignore
 
 # CONFIG VARIABLES
 _FBSL_GSUITE_IMPERSONATE_ADDRESS = "FBSL_GSUITE_IMPERSONATE_ADDRESS"
-_FBSL_SA_KEY_FILE_PATH = "FBSL_SA_KEY_FILE_PATH"
+_FBSL_SA_KEY = "FBSL_SA_KEY"
 _FBSL_USER_SESSION_VAR = "FBSL_USER_SESSION_VAR"
 
 
 def credentials(*scopes: str) -> Credentials:
-    return Credentials.from_service_account_file(flask.current_app.config[_FBSL_SA_KEY_FILE_PATH], scopes=list(scopes))
+    return Credentials.from_service_account_info(json.loads(flask.current_app.config[_FBSL_SA_KEY]), scopes=list(scopes))
 
 
 def gspread_client() -> gspread.Client:

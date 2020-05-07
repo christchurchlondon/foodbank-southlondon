@@ -4,5 +4,3 @@
 *.mypy_cache
 *.venv
 *.vscode
-client-secret.*
-sa-key.*
