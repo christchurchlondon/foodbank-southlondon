@@ -1,3 +1,5 @@
+@import 'styles/include';
+
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -12,7 +14,7 @@ code {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    margin: 0 0 1rem;
+    margin: 0 0 $pad-standard;
 }
 
 h1 {
@@ -24,26 +26,26 @@ h2 {
 }
 
 p {
-    margin: 0 0 .5rem;
+    margin: 0 0 $pad-half;
 }
 
 input {
     border: none;
-    padding: .5rem;
+    padding: $pad-half;
 }
 
 table {
     width: 100%;
-    margin: 0 0 1rem;
+    margin: 0 0 $pad-standard;
 }
 
 thead {
     font-weight: 500;
-    border-bottom: 1px solid #2f131e;
+    border-bottom: 1px solid $colour-border-primary;
 }
 
 th, td {
-    padding: .5rem;
+    padding: $pad-half;
     text-align: left;
 }
 
@@ -64,23 +66,29 @@ tbody tr:nth-child(even) {
 }
 
 button {
-    padding: .5rem 1rem;
-    background-color: #2f131e;
-    color: #cec3c1;
+    padding: $pad-half $pad-standard;
+    background-color: $colour-button-bg;
+    color: $colour-button-text;
     border: none;
     border-radius: 0;
     font-size: 1rem;
     line-height: 1;
+    cursor: pointer;
 }
 
-button.alt {
-    background-color: #87f5fb;
-    color: #2f131e;
+button.primary {
+    background-color: $colour-button-bg-primary;
+    color: $colour-button-text-primary;
+}
+
+button.secondary {
+    background-color: $colour-button-bg-secondary;
+    color: $colour-button-text-secondary;
 }
 
 .panel {
-    margin: 0 0 1rem;
-    padding: 1rem;
-    background-color: #cec3c1;
+    margin: 0 0 $pad-standard;
+    padding: $pad-standard;
+    background-color: $colour-background-primary;
 }
 
