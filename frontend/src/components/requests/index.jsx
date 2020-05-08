@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { STATUS_LOADING, STATUS_FAILED, STATUS_SUCCESS } from '../../constants';
 import { getRequestsState } from '../../redux/selectors';
-import { fetchRequests } from '../../redux/actions';
+import { fetchRequests, fetchSingleRequest } from '../../redux/actions';
 import Loading from '../common/loading';
 import Error from '../common/error';
 import RequestsFilter from './filter';
@@ -23,6 +23,10 @@ class Requests extends React.Component {
 
     fetchRequests(filters = {}) {
         this.props.fetchRequests(filters);
+    }
+
+    selectRequest(id) {
+        this.props.fetchSingleRequest(id);
     }
 
     isLoading() {
@@ -60,14 +64,15 @@ class Requests extends React.Component {
 
         const contents = this.getContents();
 
-        // TODO
-        const popup = null;
+        // TODO show popup selection
+        // const popup = (this.props.selection.status === STATUS_LOADING || !!props.selection.item)
+        //     ? <p>ADD NEW COMPONENT</p>
+        //     : null;
 
         return (
             <div className="requests-container">
                 <h2>Requests</h2>
                 { contents }
-                { popup }
             </div>
         );
     }
@@ -79,5 +84,5 @@ const mapStateToProps = state => {
 
 export default connect(
     mapStateToProps,
-    { fetchRequests }
+    { fetchRequests, fetchSingleRequest }
 )(Requests);

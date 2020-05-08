@@ -7,14 +7,21 @@ import {
 import {
     LOAD_REQUESTS,
     REQUESTS_LOADED,
-    LOAD_REQUESTS_FAILED
+    LOAD_REQUESTS_FAILED,
+    SELECT_REQUEST,
+    REQUEST_SELECTION_LOADED,
+    SELECT_REQUEST_FAILED
 } from '../actions/types';
 
 
 const initialState = {
     filter: '',
     status: STATUS_IDLE,
-    items: []
+    items: [],
+    selection: {
+        status: STATUS_IDLE,
+        item: null
+    }
     // TODO userAction?
 };
 
@@ -38,6 +45,33 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 status: STATUS_FAILED
+            };
+        case SELECT_REQUEST:
+            return {
+                ...state,
+                selection: {
+                    ...state.selection,
+                    status: STATUS_LOADING,
+                    item: null
+                }
+            };
+        case REQUEST_SELECTION_LOADED:
+            return {
+                ...state,
+                selection: {
+                    ...state.selection,
+                    status: STATUS_SUCCESS,
+                    item: action.payload.request
+                }
+            };
+        case SELECT_REQUEST_FAILED:
+            return {
+                ...state,
+                selection: {
+                    ...state.selection,
+                    status: STATUS_FAILED,
+                    item: null
+                }
             };
 
         default:

@@ -3,12 +3,16 @@ import {
     LOAD_REQUESTS,
     REQUESTS_LOADED,
     LOAD_REQUESTS_FAILED,
+    SELECT_REQUEST,
+    REQUEST_SELECTION_LOADED,
+    SELECT_REQUEST_FAILED,
     LOAD_LISTS,
     LISTS_LOADED,
     LOAD_LISTS_FAILED
 } from './types';
 import {
     getRequests,
+    getSingleRequest,
     getLists
 } from '../../service';
 
@@ -30,7 +34,7 @@ export const fetchRequests = filters => {
             .then(response => dispatch(requestsLoaded(response)))
             .catch(() => dispatch(loadRequestsFailed()));
     };
-}
+};
 
 export const loadRequests = filters => ({
     type: LOAD_REQUESTS,
@@ -50,6 +54,34 @@ export const loadRequestsFailed = () => ({
     type: LOAD_REQUESTS_FAILED
 });
 
+export const fetchSingleRequest = id => {
+    return dispatch => {
+        dispatch(selectRequest(id));
+        return getSingleRequest(id)
+            .then(response => dispatch(requestSelectionLoaded(response)))
+            .catch(() => selectRequestFailed());
+    };
+};
+
+export const selectRequest = id => ({
+    type: SELECT_REQUEST,
+    payload: {
+        id
+    }
+});
+
+export const requestSelectionLoaded = request => ({
+    type: REQUEST_SELECTION_LOADED,
+    payload: {
+        request
+    }
+});
+
+export const selectRequestFailed = () => {
+    type: SELECT_REQUEST_FAILED
+};
+
+
 // Lists
 
 export const fetchLists = () => {
@@ -58,7 +90,7 @@ export const fetchLists = () => {
         return getLists()
             .then(response => dispatch(listsLoaded(response)))
             .catch(() => loadListsFailed())
-    }
+    };
 }
 
 export const loadLists = () => ({

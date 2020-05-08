@@ -1,8 +1,9 @@
 import fetch from 'cross-fetch';
 
 const endpoints = {
-    GET_REQUESTS: 'requests',
-    GET_LISTS: 'lists'
+    GET_REQUESTS: 'requests/',
+    GET_SINGLE_REQUEST: 'bff/details',
+    GET_LISTS: 'lists/'
 };
 
 
@@ -60,6 +61,13 @@ export function getRequests(filters = {})  {
                 extraInformation: item.extra_information
             }));
         });
+}
+
+export function getSingleRequest(id) {
+    return fetchFromServer(endpoints.GET_SINGLE_REQUEST + '/' + id)
+
+    // TODO object property handling
+
 }
 
 export function getLists() {
