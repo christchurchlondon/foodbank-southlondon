@@ -22,11 +22,7 @@ class Requests extends React.Component {
     }
 
     fetchRequests(filters = {}) {
-
-
-        console.log(filters);
-
-        // TODO pass filters up
+        // TODO pass filters up, use in query
         this.props.fetchRequests('');
     }
 

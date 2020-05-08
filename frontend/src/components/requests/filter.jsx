@@ -46,9 +46,15 @@ export default class RequestsFilter extends React.Component {
                 <label>Filters:</label>
                 <DateRangePicker />
                 <label className="and">and</label>
-                <FilterField label="Name" onChange={ this.onNameChange } />
-                <FilterField label="Ref #" onChange={ this.onReferenceNumberChange } />
-                <FilterField label="Postcode" onChange={ this.onPostcodeChange } />
+                <FilterField label="Name"
+                    value={ this.state.name }
+                    onChange={ this.onNameChange } />
+                <FilterField label="Ref #"
+                    value={ this.state.referenceNumber }
+                    onChange={ this.onReferenceNumberChange } />
+                <FilterField label="Postcode"
+                    value={ this.state.postcode }
+                    onChange={ this.onPostcodeChange } />
                 <button onClick={ () => this.submit() }>Go</button>
             </div>
         );
