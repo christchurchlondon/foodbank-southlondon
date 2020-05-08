@@ -57,9 +57,3 @@ class ProductionConfig(_Config):
     FBSL_GSUITE_GROUP_ADDRESS = "foodbank-users@christchurchlondon.org"
     FBSL_REQUESTS_FORM_URI = "1nSPgge024rIYUBxnVx3lNhJok8DuBcg8ZlehhZDfjFc"
     FBSL_REQUESTS_GSHEET_URI = "1TDM35lGcVPcf0HJda-V7l2QLH9R0EMHP8mbLdZcpb5k-4CqM7P8"
-
-
-CONFIGURATIONS = {
-    "development": DevelopmentConfig(),
-    "production": ProductionConfig()
-}

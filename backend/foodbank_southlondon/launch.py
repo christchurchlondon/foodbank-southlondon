@@ -25,7 +25,8 @@ def main():
     app.logger.info(f"Loading .env file, {env_file_path}...")
     dotenv.load_dotenv(env_file_path)
     app.logger.info(f"Loading environment, {environment} ...")
-    app.config.from_object(config.CONFIGURATIONS[environment])
+    configurations = {"development": config.DevelopmentConfig(), "production": config.ProductionConfig()}
+    app.config.from_object(configurations[environment])
     app.logger.info(f"Initialising APIs, OAuth, attaching namespaces and registering blueprints  ...")
     oauth.register(name="google", server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
                    client_kwargs={"scope": "openid email profile"})
