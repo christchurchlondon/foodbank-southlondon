@@ -154,8 +154,7 @@ class Status(flask_restx.Resource):
                                params={"latest_event_only": True, "per_page": per_page, "refresh_cache": refresh_cache,
                                        "request_ids": ",".join(request_ids)})
             events_df = pd.DataFrame(events_data["items"], columns=event_attributes)
-            df = pd.merge(requests_df, events_df, on="request_id", how="left")
-            df.replace({np.nan: None}, inplace=True)
+            df = pd.merge(requests_df, events_df, on="request_id", how="left").replace({np.nan: None})
             items = df.to_dict("records")
         return {
             "page": requests_data["page"],
