@@ -21,8 +21,13 @@ class Requests extends React.Component {
         this.fetchRequests();
     }
 
-    fetchRequests(filter = '') {
-        this.props.fetchRequests(filter);
+    fetchRequests(filters = {}) {
+
+
+        console.log(filters);
+
+        // TODO pass filters up
+        this.props.fetchRequests('');
     }
 
     isLoading() {

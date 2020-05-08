@@ -6,22 +6,38 @@ import './styles/filter.scss';
 
 export default class RequestsFilter extends React.Component {
 
-    keyDownHandler(event) {
-        if (event.keyCode === 13) {
-            this.props.onSubmit(event.target.value);
-        }
+    constructor(props) {
+        super(props);
+        this.onNameChange = this.onNameChange.bind(this);
+        this.onReferenceNumberChange = this.onReferenceNumberChange.bind(this);
+        this.onPostcodeChange = this.onPostcodeChange.bind(this);
+        this.submit = this.submit.bind(this);
+
+        this.state = {
+            name: props.name,
+            referenceNumber: props.referenceNumber,
+            postcode: props.postcode
+        };
     }
 
     onNameChange(name) {
-        // TODO
+        this.setState({ name });
     }
 
     onReferenceNumberChange(referenceNumber) {
-        // TODO
+        this.setState({ referenceNumber });
     }
 
     onPostcodeChange(postcode) {
-        // TODO
+        this.setState({ postcode });
+    }
+
+    submit() {
+        this.props.onSubmit({
+            name: this.state.name,
+            referenceNumber: this.state.referenceNumber,
+            postcode: this.state.postcode
+        });
     }
 
     render() {
@@ -33,6 +49,7 @@ export default class RequestsFilter extends React.Component {
                 <FilterField label="Name" onChange={ this.onNameChange } />
                 <FilterField label="Ref #" onChange={ this.onReferenceNumberChange } />
                 <FilterField label="Postcode" onChange={ this.onPostcodeChange } />
+                <button onClick={ () => this.submit() }>Go</button>
             </div>
         );
     }

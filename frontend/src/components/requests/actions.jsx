@@ -9,6 +9,9 @@ export default class RequestsActions extends React.Component {
     }    
 
     render() {
+
+        // TODO populate these from the endpoint
+
         return (
             <div className="requests-actions panel">
 
@@ -20,7 +23,7 @@ export default class RequestsActions extends React.Component {
                     <option value="action-3">Action 3</option>
                 </select>
 
-                <button onClick={ this.doAction }>Go</button>
+                <button onClick={ this.doAction }>Submit</button>
 
             </div>
         );
