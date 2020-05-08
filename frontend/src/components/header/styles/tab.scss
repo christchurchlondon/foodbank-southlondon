@@ -1,7 +1,8 @@
 @import 'include';
 
 .tab {
-    margin-right: .25rem;
+    display: inline-block;
+    margin-right: $pad-half / 2;
     padding: $pad-standard $pad-half;
     background-color: $colour-button-bg-secondary;
     color: $colour-button-text-secondary;

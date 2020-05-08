@@ -1,7 +1,13 @@
 @import 'include';
 
+.header {
+    display: flex;
+    align-items: flex-end;
+    border-bottom: .25rem solid $colour-button-bg-primary;
+}
+
 .logo {
     margin: 0 $pad-standard;
-    height: 150px;
-    width: 200px;
+    height: 120px;
+    width: 160px;
 }
