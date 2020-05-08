@@ -24,7 +24,7 @@ export default function(state = initialState, action) {
         case LOAD_REQUESTS:
             return {
                 ...state,
-                filter: action.payload.filter,
+                filters: action.payload.filters,
                 status: STATUS_LOADING,
                 items: []
             };

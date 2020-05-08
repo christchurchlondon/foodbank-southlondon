@@ -13,9 +13,11 @@ export default class DateRangePicker extends React.Component {
         super(props);
         this.setStartDate = this.setStartDate.bind(this);
         this.setEndDate = this.setEndDate.bind(this);
+        this.onChange = this.onChange.bind(this);
         this.state = {
-            startDate: '',
-            endDate: ''
+            test: 'value 1',
+            startDate: null,
+            endDate: null
         };
     }
 
@@ -23,11 +25,18 @@ export default class DateRangePicker extends React.Component {
 
         // TODO if start date > end date, end date = start date
 
-        this.setState({ startDate: date });
+        this.setState({ startDate: date }, () => this.onChange());
     }
 
     setEndDate(date) {
-        this.setState({ endDate: date });
+        this.setState({ endDate: date }, () => this.onChange());
+    }
+
+    onChange() {
+        this.props.onChange({
+            start: this.state.startDate,
+            end: this.state.endDate
+        });
     }
 
     render() {

@@ -13,7 +13,16 @@ function fetchFromServer(url, method = 'GET') {
         .then(response => response.json());
 }
 
-export function getRequests(filter = '')  {
+export function getRequests(filters = {})  {
+
+    // TODO convert payload to URL
+    // {
+    //     dates: { start, end },
+    //     name,
+    //     referenceNumber,
+    //     postcode
+    // }
+
     const url = endpoints.GET_REQUESTS; // TODO + `?filter=${filter}`;
     return fetchFromServer(url)
         .then(response => {
