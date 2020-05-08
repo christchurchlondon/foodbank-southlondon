@@ -82,7 +82,7 @@ class Actions(flask_restx.Resource):
             return_value = ({}, 201)
         now = f"{datetime.datetime.utcnow().isoformat()}Z"
         for request_id in request_ids:
-            requests.post(f"{api_base_url}events/", cookies=cookies, data={"request_id": request_id, "event_timestamp": now, "event_name": event_name,
+            requests.post(f"{api_base_url}events/", cookies=cookies, json={"request_id": request_id, "event_timestamp": now, "event_name": event_name,
                                                                            "event_data": event_data})
         return return_value
 
