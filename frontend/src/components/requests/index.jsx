@@ -60,10 +60,14 @@ class Requests extends React.Component {
 
         const contents = this.getContents();
 
+        // TODO
+        const popup = null;
+
         return (
             <div className="requests-container">
                 <h2>Requests</h2>
                 { contents }
+                { popup }
             </div>
         );
     }
