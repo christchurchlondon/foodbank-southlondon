@@ -1,0 +1,11 @@
+@import 'styles/include';
+
+.filter-field {
+    margin: 0 $pad-standard;
+    display: inline-flex;
+    flex-direction: column;
+}
+
+.filter-field label {
+    margin-bottom: $pad-half;
+}

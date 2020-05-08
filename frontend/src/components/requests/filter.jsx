@@ -1,5 +1,6 @@
 import React from 'react';
 import DateRangePicker from '../common/date-range-picker';
+import FilterField from './filter-field';
 import './styles/filter.scss';
 
 
@@ -11,17 +12,28 @@ export default class RequestsFilter extends React.Component {
         }
     }
 
+    onNameChange(name) {
+        // TODO
+    }
+
+    onReferenceNumberChange(referenceNumber) {
+        // TODO
+    }
+
+    onPostcodeChange(postcode) {
+        // TODO
+    }
+
     render() {
-
-        // TODO add other filtering (name, ref #, postcode)
-
         return (
             <div className="requests-filter panel">
                 <label>Filters:</label>
                 <DateRangePicker />
+                <label className="and">and</label>
+                <FilterField label="Name" onChange={ this.onNameChange } />
+                <FilterField label="Ref #" onChange={ this.onReferenceNumberChange } />
+                <FilterField label="Postcode" onChange={ this.onPostcodeChange } />
             </div>
         );
     }
 }
-
-
