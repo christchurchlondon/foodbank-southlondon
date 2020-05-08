@@ -56,10 +56,9 @@ make deploy
 
 ### Environment Variables
 Whether you are running the application in development or production, you will need to have the following environment variables set ahead of running the backend application:
-* FBSL_ENVIRONMENT - **dev** (**prod** is set automatically when make deploy is invoked)
 * FLASK_ENV - **development** (**production** is set automatically when make deploy is invoked)
 
-The following two variables can be set as you would normally set environment variables OR you can store them in a file called **dev.env** or **prod.env** inside the *backend* directory and they will be excluded from source control.
+The following two variables can be set as you would normally set environment variables OR you can store them in a file called **development.env** or **production.env** inside the *backend* directory and they will be excluded from source control.
 * FBSL_CLIENT_SECRET - the Google Cloud Platform OAuth 2.0 Client Secret that has domain-wide delegation and permission to query the GSuite Admin SDK
 * FBSL_SA_KEY - the Google Cloud Platform service account key that has permission to the google sheets data storage
 

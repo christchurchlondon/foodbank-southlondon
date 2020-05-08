@@ -15,12 +15,12 @@ import foodbank_southlondon.bff.views  # noqa: F401
 
 
 # ENVIRONMENT VARIABLES
-_FBSL_ENVIRONMENT_ENV_VAR = "FBSL_ENVIRONMENT"
+_FLASK_ENV_ENV_VAR = "FLASK_ENV"
 
 
 def main():
-    environment = os.environ.get(_FBSL_ENVIRONMENT_ENV_VAR)
-    app.logger.setLevel(logging.INFO if environment == "prod" else logging.DEBUG)
+    environment = os.environ.get(_FLASK_ENV_ENV_VAR)
+    app.logger.setLevel(logging.INFO if environment == "production" else logging.DEBUG)
     env_file_path = os.path.join(app.root_path, "..", f"{environment}.env")
     app.logger.info(f"Loading .env file, {env_file_path}...")
     dotenv.load_dotenv(env_file_path)

@@ -8,7 +8,6 @@ class _Config(object):
     DEBUG: Optional[bool] = None
     ERROR_404_HELP = False
     GOOGLE_CLIENT_ID = ""
-    GOOGLE_CLIENT_SECRET = os.environ.get("FBSL_CLIENT_SECRET")
     RESTX_VALIDATE = True
     SECRET_KEY = os.urandom(16)
 
@@ -23,8 +22,15 @@ class _Config(object):
     assert FBSL_MAX_ACTION_REQUEST_IDS < FBSL_MAX_PAGE_SIZE
     FBSL_REQUESTS_FORM_URI = ""
     FBSL_REQUESTS_GSHEET_URI = ""
-    FBSL_SA_KEY = os.environ.get("FBSL_SA_KEY")
     FBSL_USER_SESSION_VAR = "user"
+
+    @property
+    def GOOGLE_CLIENT_SECRET(self):
+        return os.environ.get("FBSL_CLIENT_SECRET")
+
+    @property
+    def FBSL_SA_KEY(self):
+        return os.environ.get("FBSL_SA_KEY")
 
 
 class DevelopmentConfig(_Config):
@@ -54,6 +60,6 @@ class ProductionConfig(_Config):
 
 
 CONFIGURATIONS = {
-    "dev": DevelopmentConfig,
-    "prod": ProductionConfig
+    "development": DevelopmentConfig(),
+    "production": ProductionConfig()
 }

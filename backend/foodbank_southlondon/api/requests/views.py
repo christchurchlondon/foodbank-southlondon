@@ -38,7 +38,7 @@ class Requests(flask_restx.Resource):
             df = df[df[name_attribute].isin(client_full_names) | df["Postcode"].isin(postcodes) | df["Reference Number"].isin(reference_numbers)]
         if last_request_only:
             df = df.assign(rank=df.groupby([name_attribute]).cumcount(ascending=False) + 1).query("rank == 1").drop("rank", axis=1)
-        df["edit_details_url"] = df["request_id"].apply(_edit_details_url)
+        df["edit_details_url"] = df["request_id"].map(_edit_details_url)
         return (df, params["page"], params["per_page"])
 
 
@@ -61,7 +61,7 @@ class RequestsByID(flask_restx.Resource):
         missing_request_ids = request_id_values.difference(df[request_id_attribute].unique())
         if missing_request_ids:
             rest.abort(404, f"{request_id_attribute}, the following request_id values {missing_request_ids} were not found.")
-        df["edit_details_url"] = df[request_id_attribute].apply(_edit_details_url)
+        df["edit_details_url"] = df[request_id_attribute].map(_edit_details_url)
         return (df, params["page"], params["per_page"])
 
 
