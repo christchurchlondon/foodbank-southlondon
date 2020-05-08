@@ -41,6 +41,9 @@ export default class RequestsFilter extends React.Component {
     }
 
     render() {
+
+        // TODO handle date picker changes
+
         return (
             <div className="requests-filter panel">
                 <label>Filters:</label>
