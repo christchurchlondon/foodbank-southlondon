@@ -5,6 +5,7 @@ import {
     LOAD_REQUESTS_FAILED,
     SELECT_REQUEST,
     REQUEST_SELECTION_LOADED,
+    CLEAR_REQUEST_SELECTION,
     SELECT_REQUEST_FAILED,
     LOAD_LISTS,
     LISTS_LOADED,
@@ -76,6 +77,10 @@ export const requestSelectionLoaded = request => ({
         request
     }
 });
+
+export const clearRequestSelection = () => {
+    type: CLEAR_REQUEST_SELECTION
+};
 
 export const selectRequestFailed = () => {
     type: SELECT_REQUEST_FAILED
