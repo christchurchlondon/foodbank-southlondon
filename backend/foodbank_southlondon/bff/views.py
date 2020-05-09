@@ -11,6 +11,9 @@ import weasyprint  # type:ignore
 from foodbank_southlondon.api.lists import models as lists_models
 from foodbank_southlondon.bff import models, parsers, rest
 
+import logging
+logging.getLogger("weasyprint").addHandler(logging.StreamHandler())
+
 
 # CONFIG VARIABLES
 _FBSL_BASE_URL = "FBSL_BASE_URL"
@@ -43,7 +46,8 @@ class Actions(flask_restx.Resource):
     @staticmethod
     def _generate_driver_overview_pdf(requests_items):
         template_name = "driver-overview"
-        html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", requests_items=requests_items))
+        today = datetime.datetime.now().strftime("%d/%m/%Y")
+        html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", requests_items=requests_items, date=today), encoding="utf8")
         document = html.render()
         return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, template_name)
 

@@ -1,5 +1,33 @@
 <!DOCTYPE html>
 <html>
-    <title>Test</title>
-    <h1>Test PDF</h1>
+    <title>Driver Overview</title>
+    <h1>Driver Overview</h1>
+    <table>
+        <tr>
+            <td colspan="5">{{ date }}</td>
+            <td><img src="{{ url_for('static', filename='foodbank-logo.jpg', _external=True)}}"></td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Contact</th>
+            <th>Delivery Date</th>
+            <th>Instructions</th>
+            <th>Delivered?</th>
+        </tr>
+        {% for request in requests_items %}
+        <tr>
+            <td>{{ request['client_full_name'] }}</td>
+            <td>{{ request['address_line_1'] }}, {{ request['postcode'] }}</td>
+            <td>{{ request['phone_number'] }}</td>
+            <td>{{ request['delivery_date'] }}</td>
+            <td>{{ request['delivery_instructions'] }}</td>
+            <td></td>
+        </tr>
+        {% endfor %}
+        <br>
+        <tr>
+            <td colspan="6">⚠️ PLEASE RETURN THIS SHEET TO THE LAMBETH FOODBANK WAREHOUSE AT THE END OF YOUR SHIFT ⚠️</td>
+        </tr>
+    </table>
 </html>

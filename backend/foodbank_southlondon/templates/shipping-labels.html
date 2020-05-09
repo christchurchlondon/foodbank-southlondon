@@ -1,5 +1,24 @@
 <!DOCTYPE html>
 <html>
-    <title>Test</title>
-    <h1>Test PDF</h1>
+    <title>Shipping Labels</title>
+    <table>
+        <tr>
+            <td>{{ request['client_full_name'] }}</td>
+            <td>{{ request['phone_number'] }}</td>
+            <td>{{ request['delivery_date'] }}</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                {{ request['address_line_1'] }}<br>
+                {{ request['address_line_2'] }}<br>
+                {{ request['town'] }}<br>
+                {{ request['county'] }}<br>
+                {{ request['postcode'] }}
+            </td>
+        </tr>
+        <tr>
+            <td>{{ request['delivery_instructions'] }}</td>
+            <td>Label {{ page }} of {{ total_pages }}</td>
+        </tr>
+    </table>
 </html>
