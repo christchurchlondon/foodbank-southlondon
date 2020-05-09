@@ -9,7 +9,6 @@ from foodbank_southlondon.api.lists import models, namespace, parsers
 
 
 # CONFIG VARIABLES
-_FBSL_LISTS_CACHE_EXPIRY_SECONDS = "FBSL_LISTS_CACHE_EXPIRY_SECONDS"
 _FBSL_LISTS_GSHEET_URI = "FBSL_LISTS_GSHEET_URI"
 
 # INTERNALS
@@ -36,7 +35,6 @@ class Lists(flask_restx.Resource):
         data = flask.request.json
         flask.current_app.logger.debug(f"Received request body, {data}")
         utils.overwrite_rows(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], list(data.values()))
-        utils.delete_cache(_CACHE_NAME)
         return ({}, 201)
 
 
@@ -55,12 +53,10 @@ class List(flask_restx.Resource):
         if list_name not in models.LIST_NAMES:
             rest.abort(404, f"List Name, {list_name} was not found.")
         columns = {f"{list_name}_quantity": "quantity", f"{list_name}_notes": "notes"}
-        df = df[["item_description", *columns]]
-        df.rename(columns=columns, inplace=True)
+        df = df.loc[:, ["item_description", *columns]].rename(columns=columns)
         notes = utils.gsheet_a1(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], 1)
         return {"notes": notes, "items": df.to_dict("records")[0]}
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
-    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_LISTS_GSHEET_URI],
-                       expires_after=flask.current_app.config[_FBSL_LISTS_CACHE_EXPIRY_SECONDS], force_refresh=force_refresh)
+    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_LISTS_GSHEET_URI], force_refresh=force_refresh)

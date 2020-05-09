@@ -9,7 +9,6 @@ from foodbank_southlondon.api.requests import models, namespace, parsers
 
 
 # CONFIG VARIABLES
-_FBSL_REQUESTS_CACHE_EXPIRY_SECONDS = "FBSL_REQUESTS_CACHE_EXPIRY_SECONDS"
 _FBSL_REQUESTS_GSHEET_URI = "FBSL_REQUESTS_GSHEET_URI"
 
 # INTERNALS
@@ -33,13 +32,13 @@ class Requests(flask_restx.Resource):
         last_request_only = params["last_request_only"]
         df = cache(force_refresh=refresh_cache)
         if delivery_dates:
-            df = df[df["Delivery Date"].isin(delivery_dates)]
+            df = df.loc[df["Delivery Date"].isin(delivery_dates)]
         name_attribute = "Client Full Name"
         if client_full_names or postcodes or reference_numbers:
-            df = df[df[name_attribute].isin(client_full_names) | df["Postcode"].isin(postcodes) | df["Reference Number"].isin(reference_numbers)]
+            df = df.loc[df[name_attribute].isin(client_full_names) | df["Postcode"].isin(postcodes) | df["Reference Number"].isin(reference_numbers)]
         if last_request_only:
             df = df.assign(rank=df.groupby([name_attribute]).cumcount(ascending=False) + 1).query("rank == 1").drop("rank", axis=1)
-        df["edit_details_url"] = df["request_id"].apply(_edit_details_url)
+        df = df.assign(edit_details_url=df["request_id"].map(_edit_details_url))
         return (df, params["page"], params["per_page"])
 
 
@@ -58,11 +57,11 @@ class RequestsByID(flask_restx.Resource):
         refresh_cache = params["refresh_cache"]
         request_id_attribute = "request_id"
         df = cache(force_refresh=refresh_cache)
-        df = df[df[request_id_attribute].isin(request_id_values)]
+        df = df.loc[df[request_id_attribute].isin(request_id_values)]
         missing_request_ids = request_id_values.difference(df[request_id_attribute].unique())
         if missing_request_ids:
-            rest.abort(404, f"{request_id_attribute}, the following request_id values {missing_request_ids} were not found.")
-        df["edit_details_url"] = df[request_id_attribute].apply(_edit_details_url)
+            rest.abort(404, f"the following request_id values {missing_request_ids} were not found.")
+        df = df.assign(edit_details_url=df[request_id_attribute].map(_edit_details_url))
         return (df, params["page"], params["per_page"])
 
 
@@ -79,7 +78,7 @@ class DistinctRequestsValues(flask_restx.Resource):
         refresh_cache = params["refresh_cache"]
         df = cache(force_refresh=refresh_cache)
         if delivery_dates:
-            df = df[df["Delivery Date"].isin(delivery_dates)]
+            df = df.loc[df["Delivery Date"].isin(delivery_dates)]
         distinct_values = df[attribute].unique()
         return {"values": sorted(distinct_values)}
 
@@ -89,5 +88,4 @@ def _edit_details_url(request_id):
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
-    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_URI],
-                       expires_after=flask.current_app.config[_FBSL_REQUESTS_CACHE_EXPIRY_SECONDS], force_refresh=force_refresh)
+    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_URI], force_refresh=force_refresh)
