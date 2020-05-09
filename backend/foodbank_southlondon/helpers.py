@@ -10,6 +10,7 @@ import wrapt  # type:ignore
 
 # CONFIG VARIABLES
 _FBSL_GSUITE_IMPERSONATE_ADDRESS = "FBSL_GSUITE_IMPERSONATE_ADDRESS"
+_FBSL_PROTECT_API = "FBSL_PROTECT_API"
 _FBSL_SA_KEY = "FBSL_SA_KEY"
 _FBSL_USER_SESSION_VAR = "FBSL_USER_SESSION_VAR"
 
@@ -45,6 +46,6 @@ def gsuite_members_resource() -> discovery.Resource:
 
 @wrapt.decorator
 def login_required(wrapped: Callable, instance: Any, args: List, kwargs: Dict) -> Any:
-    if not flask.session.get(flask.current_app.config[_FBSL_USER_SESSION_VAR]):
+    if flask.current_app.config[_FBSL_PROTECT_API] and not flask.session.get(flask.current_app.config[_FBSL_USER_SESSION_VAR]):
         flask.abort(403, "Permission Denied.")
     return wrapped(*args, **kwargs)

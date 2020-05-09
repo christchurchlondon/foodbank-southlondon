@@ -1,5 +1,90 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <style>
+            @page {
+                margin: 0.5cm;
+            }
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 12px;
+                line-height: 1.5em;
+            }
+            table {
+                border-collapse: collapse;
+            }
+            table, td, th {
+                border: 1px solid black;
+            }
+            td {
+                padding: 0.5em;
+            }
+            tr.spacer td {
+                background-color: lightgrey;
+                height: 0.5em;
+            }
+        </style>
+    </head>
     <title>Shopping Lists</title>
-    <h1>Test PDF</h1>
+    <body>
+        <h1>CLIENT SHOPPING LIST</h1>
+        <table>
+            <tr>
+                <td colspan="2"><b>REFERENCE #:</b> {{ request['reference_number'] }}</td>
+                <td colspan="2"><img src="{{ url_for('static', filename='logo.jpg', _external=True)}}"></td>
+            </tr>
+            <tr>
+                <td colspan="2"><b>NAME:</b> {{ request['client_full_name'] }}</td>
+                <td colspan="2"><b>CONTACT:</b> {{ request['phone_number'] }}</td>
+            </tr>
+            <tr>
+                <td colspan="2"><b>ADDRESS:</b> {{ request['address_line_1'] }}, {{ request['postcode'] }}</td>
+                <td colspan="2"><b>EXTRA INFORMATION:</b> {{ request['extra_information'] }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <b>HOUSEHOLD SIZE:</b> {{ request['household_size'] }}<br>
+                    <b>GENDER:</b> {{ request['gender'] }}<br>
+                    <b>NUMBER OF ADULTS:</b> {{ request['number_of_adults'] }}<br>
+                    <b>NUMBER OF CHILDREN:</b> {{ request['number_of_children'] }}<br>
+                    <b>AGE OF CHILDREN:</b> {{ request['age_of_children'] }}
+                </td>
+                <td colspan="2">
+                    <b>FEMININE PRODUCTS REQUIRED:</b> {{ request['feminine_products_required'] }}<br>
+                    <b>BABY PRODUCTS REQUIRED:</b> {{ request['baby_products_required'] }}<br>
+                    <b>PET FOOD REQUIRED:</b> {{ request['pet_food_required'] }}<br>
+                    <b>DIETARY REQUIREMENTS:</b> {{ request['dietary_requirements'] }}
+                </td>
+            </tr>
+            <tr class="spacer"><td colspan="4"></td></tr>
+            <tr>
+                <th>Item Description</th>
+                <th>Quantity</th>
+                <th>Notes</th>
+                <th>Completed?</th>
+            </tr>
+            {% for item in list["items"] %}
+            <tr>
+                <td>{{ item['item_description'] }}</td>
+                <td>{{ item['quantity'] }}</td>
+                <td>{{ item['notes'] }}</td>
+                <td></td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="4">
+                    <b>Warehouse Manager Notes</b><br>
+                    {{ list['notes'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Date Packed:</b><br>
+                    <b>Packer Name:</b><br>
+                    <b>Packer Signature:</b>
+                </td>
+                <td colspan="3"></td>
+            </tr>
+        </table>
+    </body>
 </html>

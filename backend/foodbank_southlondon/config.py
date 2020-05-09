@@ -20,6 +20,7 @@ class _Config(object):
     FBSL_MAX_ACTION_REQUEST_IDS = 20
     FBSL_MAX_PAGE_SIZE = 500
     assert FBSL_MAX_ACTION_REQUEST_IDS < FBSL_MAX_PAGE_SIZE
+    FBSL_PROTECT_API = None
     FBSL_REQUESTS_FORM_URI = ""
     FBSL_REQUESTS_GSHEET_URI = ""
     FBSL_USER_SESSION_VAR = "user"
@@ -42,6 +43,7 @@ class DevelopmentConfig(_Config):
     FBSL_LISTS_GSHEET_URI = "1Hor0i7K_W99LFXw-Grpf1mIY2MjDUNGnfV2ByNGf1gQ"
     FBSL_GSUITE_IMPERSONATE_ADDRESS = "ac@adamcunnington.info"
     FBSL_GSUITE_GROUP_ADDRESS = "foodbank-southlondon@adamcunnington.info"
+    FBSL_PROTECT_API = False
     FBSL_REQUESTS_FORM_URI = "1kaRXNMym-MIG73c1Ti6chRtBwUkVYYXhbpD5Hgu9DUs"
     FBSL_REQUESTS_GSHEET_URI = "1eMiA6DAYmYJVYwNvxj18yRiSBImCXu6WiCD-4CqM7P8"
 
@@ -55,5 +57,6 @@ class ProductionConfig(_Config):
     FBSL_LISTS_GSHEET_URI = "1D0TcNW7pTMGgKYDogS4YDVJqEBAavu3GfXHu_iGlSmU"
     FBSL_GSUITE_IMPERSONATE_ADDRESS = "tech@christchurchlondon.org"
     FBSL_GSUITE_GROUP_ADDRESS = "foodbank-users@christchurchlondon.org"
+    FBSL_PROTECT_API = True
     FBSL_REQUESTS_FORM_URI = "1nSPgge024rIYUBxnVx3lNhJok8DuBcg8ZlehhZDfjFc"
     FBSL_REQUESTS_GSHEET_URI = "1TDM35lGcVPcf0HJda-V7l2QLH9R0EMHP8mbLdZcpb5k-4CqM7P8"

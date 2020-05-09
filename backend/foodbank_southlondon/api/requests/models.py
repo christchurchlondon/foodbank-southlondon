@@ -22,6 +22,7 @@ request = rest.model("ClientRequest", {
     "postcode": fields.String(attribute="Postcode", required=True, description="The postcode of the address", example="SW9 1AF"),
     "delivery_instructions": fields.String(attribute="Delivery Instructions", required=False, description="Delivery instructions for the driver",
                                            example="Please buzz flat 1"),
+    "gender": fields.String(attribute="Gender", required=True, description="The provided gender of the Client", example="Male"),
     "household_size": fields.String(attribute="Household Size", required=True, description="The type of request", example="Single",
                                     enum=["Single", "Family of 2", "Family of 3", "Family of 4", "Family of 5", "Family of 6", "Family of 7",
                                           "Family of 8", "Family of 9+"]),
