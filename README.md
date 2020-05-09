@@ -48,6 +48,7 @@ To install the application in a production environment, you need a different set
 #### Prerequisites
 * Install **Make** - Mac (builtin in *[Xcode](https://developer.apple.com/xcode/)*) | Ubuntu (builtin)
 * Install **Docker** [Mac] (https://docs.docker.com/docker-for-mac/install/ | ) [Ubuntu] (https://docs.docker.com/engine/install/ubuntu/)
+* Install **WeasyPrint's Dependencies** - [All Platforms](https://weasyprint.readthedocs.io/en/stable/install.html#)
 * Clone this repository
 
 #### Run
