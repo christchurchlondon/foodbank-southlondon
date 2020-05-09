@@ -33,10 +33,10 @@ def _gsheet_to_df(spreadsheet_id: str) -> pd.DataFrame:
     return pd.DataFrame(data, columns=headers)
 
 
-def append_row(spreadsheet_id: str, row: List) -> None:
+def append_rows(spreadsheet_id: str, rows: List) -> None:
     sheet = _gsheet(spreadsheet_id)
-    flask.current_app.logger.debug(f"Writing the row, {row} in {sheet.spreadsheet.title} ({sheet.url}) ...")
-    sheet.append_row(row, value_input_option="USER_ENTERED")
+    flask.current_app.logger.debug(f"Writing {len(rows)} rows, in {sheet.spreadsheet.title} ({sheet.url}) ...")
+    sheet.append_rows(rows, value_input_option="USER_ENTERED")
 
 
 def cache(name: str, spreadsheet_id: str, force_refresh: bool = False) -> pd.DataFrame:

@@ -16,6 +16,7 @@ from foodbank_southlondon.bff import models, parsers, rest
 _FBSL_BASE_URL = "FBSL_BASE_URL"
 _FBSL_CATCH_ALL_LIST = "FBSL_CATCH_ALL_LIST"
 _FBSL_MAX_ACTION_REQUEST_IDS = "FBSL_MAX_ACTION_REQUEST_IDS"
+_FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
 
 
 def _api_base_url() -> str:
@@ -29,10 +30,41 @@ def _get(url: str, **kwargs: Any) -> Dict[str, Any]:
     return r.json()
 
 
+def _post(url: str, **kwargs: Any) -> Dict:
+    r = requests.post(url, **kwargs)
+    if not r.ok:
+        r.raise_for_status()
+    return r.json()
+
+
 @rest.route("/actions/")
 class Actions(flask_restx.Resource):
 
+    def _generate_shopping_list_pdfs(self, requests_items, api_base_url, cookies):
+        lists: Dict[str, Dict[str, str]] = {}
+        catch_all_list_name = flask.current_app.config[_FBSL_CATCH_ALL_LIST]
+        pages = []
+        args = None
+        template_name = "shopping-list"
+        for request in requests_items:
+            household_size = request["household_size"]
+            list = lists.get(household_size)
+            if list is None:
+                list_name = household_size if household_size in lists_models.LIST_NAMES else catch_all_list_name
+                list = lists[household_size] = _get(f"{api_base_url}lists/{list_name}", cookies=cookies)
+            html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", request=request, list=list))
+            document = html.render()
+            if not args:
+                args = (document.metadata, document.url_fetcher, document._font_config)
+            pages.extend(document.pages)
+        pdf = weasyprint.Document(pages, *args).write_pdf()
+        response = flask.make_response((pdf, 201))
+        response.headers["Content-Type"] = "application/pdf"
+        response.headers["Content-Disposition"] = f"inline; filename=\"{template_name}.pdf\""
+        return response
+
     @rest.response(201, "Created")
+    @rest.response(400, "Bad Request")
     @rest.response(404, "Not Found")
     @rest.expect(models.action)
     def post(self) -> Union[flask.Response, Tuple[Dict, int]]:
@@ -54,26 +86,7 @@ class Actions(flask_restx.Resource):
                 rest.abort(404, error.response.json()["message"])
             raise
         if event_name == "Print Shopping List":
-            lists: Dict[str, Dict[str, str]] = {}
-            catch_all_list_name = flask.current_app.config[_FBSL_CATCH_ALL_LIST]
-            pages = []
-            args = None
-            for request in requests_items:
-                household_size = request["household_size"]
-                list = lists.get(household_size)
-                if list is None:
-                    list_name = household_size if household_size in lists_models.LIST_NAMES else catch_all_list_name
-                    list = lists[household_size] = _get(f"{api_base_url}lists/{list_name}", cookies=cookies)
-                html = weasyprint.HTML(string=flask.render_template("shopping-list.html"))
-                document = html.render()
-                if not args:
-                    args = (document.metadata, document.url_fetcher, document._font_config)
-                pages.extend(document.pages)
-            pdf = weasyprint.Document(pages, *args).write_pdf()
-            response = flask.make_response(pdf)
-            response.headers["Content-Type"] = "application/pdf"
-            response.headers["Content-Disposition"] = "inline; filename=\"shopping-list.pdf\""
-            return_value = response
+            return_value = self._generate_shopping_list_pdfs(requests_items, api_base_url, cookies)
         elif event_name == "Print Shipping Label":
             pass
         elif event_name == "Print Driver Overview":
@@ -81,9 +94,8 @@ class Actions(flask_restx.Resource):
         else:
             return_value = ({}, 201)
         now = f"{datetime.datetime.utcnow().isoformat()}Z"
-        for request_id in request_ids:
-            requests.post(f"{api_base_url}events/", cookies=cookies, json={"request_id": request_id, "event_timestamp": now, "event_name": event_name,
-                                                                           "event_data": event_data})
+        _post(f"{api_base_url}events/", cookies=cookies, json={"items": [{"request_id": request_id, "event_timestamp": now, "event_name": event_name,
+                                                                          "event_data": event_data} for request_id in request_ids]})
         return return_value
 
 
@@ -106,19 +118,22 @@ class Details(flask_restx.Resource):
                 rest.abort(404, f"request_id, {request_id} does not match any existing request.")
             raise
         request_data = requests_items[0]
-        # both of these next requests could theoretically return more than one page (would be crazy) - we don't worry about paginating in this case
-        events_items = _get(f"{api_base_url}/events/", cookies=cookies, params={"refresh_cache": refresh_cache, "request_ids": request_id})["items"]
-        similar_request_items = _get(f"{api_base_url}requests/", cookies=cookies,
-                                     headers={"X-Fields": "items{request_id, timestamp, client_full_name, postcode, reference_number}"},
-                                     params={"client_full_names": request_data["client_full_name"], "postcodes": request_data["postcode"],
-                                             "refresh_cache": refresh_cache})["items"]
+        max_per_page = flask.current_app.config[_FBSL_MAX_PAGE_SIZE]
+        events_data = _get(f"{api_base_url}/events/", cookies=cookies, params={"refresh_cache": refresh_cache, "request_ids": request_id,
+                                                                               "per_page": max_per_page})
+        similar_request_data = _get(f"{api_base_url}requests/", cookies=cookies,
+                                    headers={"X-Fields": "items{request_id, timestamp, client_full_name, postcode, reference_number}, total_pages"},
+                                    params={"client_full_names": request_data["client_full_name"], "postcodes": request_data["postcode"],
+                                            "refresh_cache": refresh_cache})
+        assert (events_data["total_pages"] == 1 and similar_request_data["total_pages"] == 1)
+        similar_request_items = similar_request_data["items"]
         for index, request in enumerate(similar_request_items):
             if request["request_id"] == request_id:
                 del similar_request_items[index]
                 break
         return {
             "request": request_data,
-            "events": events_items,
+            "events": events_data["items"],
             "similar_request_ids": similar_request_items
         }
 

@@ -42,17 +42,22 @@ class Events(flask_restx.Resource):
             )
         return (df, params["page"], params["per_page"])
 
-    @rest.expect(models.event)
+    @rest.expect(models.all_events)
+    @rest.response(400, "Bad Request")
     @rest.response(201, "Created")
     def post(self) -> Tuple[Dict, int]:
-        """Create (log) an Event."""
+        """Create (log) Events."""
         data = flask.request.json
         flask.current_app.logger.debug(f"Received request body, {data}")
-        request_id = data["request_id"]
+        items = data["items"]
+        if not items:
+            rest.abort(400, "The body, items must not be empty.")
+        items_df = pd.DataFrame(items)
         requests_df = requests_views.cache(force_refresh=True)
-        if requests_df[requests_df["request_id"] == request_id].empty:
-            rest.abort(400, f"request_id, {request_id} does not match any existing request.")
-        utils.append_row(flask.current_app.config[_FBSL_EVENTS_GSHEET_URI], list(data.values()))
+        missing_request_ids = set(items_df["request_id"].unique()).difference(requests_df["request_id"].unique())
+        if missing_request_ids:
+            rest.abort(400, f"the following request_id values {missing_request_ids} were not found.")
+        utils.append_rows(flask.current_app.config[_FBSL_EVENTS_GSHEET_URI], [list(item.values()) for item in items])
         return ({}, 201)
 
 
