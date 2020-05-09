@@ -13,6 +13,14 @@
             h1 {
                 line-height: 3rem;
             }
+            img {
+                display: block;
+                float: right;
+                height: 120px;
+                margin-bottom: 1rem;
+                object-fit: cover;
+                width: 192px;
+            }
             table {
                 border-collapse: collapse;
             }
@@ -21,10 +29,11 @@
             }
             td, th {
                 padding: 0.5rem;
+                vertical-align: top;
             }
             th {
                 text-decoration: underline;
-                font-size: 1.25em;
+                font-size: 1.25rem;
             }
             tr.spacer td {
                 background-color: lightgrey;
@@ -34,12 +43,10 @@
     </head>
     <title>Shopping Lists</title>
     <body>
+        <img src="{{ url_for('static', filename='logo.jpg', _external=True)}}">
         <h1>CLIENT SHOPPING LIST</h1>
+        <b>REFERENCE #:</b> {{ request['reference_number'] }}
         <table>
-            <tr>
-                <td colspan="2"><b>REFERENCE #:</b> {{ request['reference_number'] }}</td>
-                <td colspan="2"><img src="{{ url_for('static', filename='logo.jpg', _external=True)}}"></td>
-            </tr>
             <tr>
                 <td colspan="2"><b>NAME:</b> {{ request['client_full_name'] }}</td>
                 <td colspan="2"><b>CONTACT:</b> {{ request['phone_number'] }}</td>
