@@ -46,7 +46,7 @@ class Actions(flask_restx.Resource):
     @staticmethod
     def _generate_driver_overview_pdf(requests_items):
         template_name = "driver-overview"
-        today = datetime.datetime.now().strftime("%d/%m/%Y")
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
         html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", requests_items=requests_items, date=today), encoding="utf8")
         document = html.render()
         return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, template_name)

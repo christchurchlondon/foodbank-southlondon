@@ -23,6 +23,8 @@
             }
             table {
                 border-collapse: collapse;
+                table-layout: fixed;
+                width: 100%
             }
             table, td, th {
                 border: 0.1rem solid black;
@@ -33,7 +35,7 @@
             }
             th {
                 text-decoration: underline;
-                font-size: 1.25rem;
+                font-size: 1rem;
             }
             tr.spacer td {
                 background-color: lightgrey;
@@ -49,17 +51,16 @@
         <table>
             <tr>
                 <td colspan="2"><b>NAME:</b> {{ request['client_full_name'] }}</td>
-                <td colspan="2"><b>CONTACT:</b> {{ request['phone_number'] }}</td>
+                <td colspan="2"><b>CONTACT:</b> {{ request['phone_number'] or '' }}</td>
             </tr>
             <tr>
                 <td colspan="2">
                     <b>ADDRESS</b><br>
-                    {{ request['address_line_1'] }}
-                    {{ request['postcode'] }}
+                    {{ request['address_line_1'] }}, {{ request['postcode'] }}
                 </td>
                 <td colspan="2">
                     <b>EXTRA INFORMATION</b><br>
-                    {{ request['extra_information'] }}
+                    {{ request['extra_information'] or '' }}
                 </td>
             </tr>
             <tr>
@@ -85,12 +86,15 @@
                 <th>Completed?</th>
             </tr>
             {% for item in list["items"] %}
+                {% set quantity = item['quantity'] %}
+                {% if quantity != 0 %}
             <tr>
                 <td>{{ item['item_description'] }}</td>
                 <td>{{ item['quantity'] }}</td>
-                <td>{{ item['notes'] }}</td>
+                <td>{{ item['notes'] or '' }}</td>
                 <td></td>
             </tr>
+                {% endif %}
             {% endfor %}
             <tr class="spacer"><td colspan="4"></td></tr>
             <tr>

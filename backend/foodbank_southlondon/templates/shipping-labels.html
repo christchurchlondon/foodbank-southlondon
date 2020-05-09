@@ -1,25 +1,47 @@
 <!DOCTYPE html>
 <html>
     <title>Shipping Labels</title>
+    <head>
+        <style>
+            @page {
+                margin: 0.1cm;
+                size: 20cm 6.2cm;
+            }
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 11px;
+                line-height: 1.5rem;
+            }
+            table {
+                border: 0.1rem solid black;
+                table-layout: fixed;
+                width: 100%
+            }
+            td.bottom {
+                vertical-align: bottom;
+            }
+            td.right {
+                text-align: right;
+            }
+        </style>
+    </head>
     <body>
         <table>
             <tr>
-                <td>{{ request['client_full_name'] }}</td>
-                <td>{{ request['phone_number'] }}</td>
-                <td>{{ request['delivery_date'] }}</td>
+                <td><b>NAME:</b> {{ request['client_full_name'] }}</td>
+                <td colspan="2"><b>CONTACT:</b> {{ request['phone_number'] or '' }}</td>
+                <td class="right"><b>DELIVERY DATE:</b> {{ request['delivery_date'] }}</td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td>
                     {{ request['address_line_1'] }}<br>
-                    {{ request['address_line_2'] }}<br>
-                    {{ request['town'] }}<br>
-                    {{ request['county'] }}<br>
+                    {{ request['address_line_2'] or '' }}<br>
+                    {{ request['town'] or '' }}<br>
+                    {{ request['county'] or '' }}<br>
                     {{ request['postcode'] }}
                 </td>
-            </tr>
-            <tr>
-                <td>{{ request['delivery_instructions'] }}</td>
-                <td>Label {{ page }} of {{ total_pages }}</td>
+                <td colspan="2"><b>DELIVERY INSTRUCTIONS:</b> {{ request['delivery_instructions'] or '' }}</td>
+                <td class="bottom right">Parcel {{ page }} of {{ total_pages }}</td>
             </tr>
         </table>
     </body>

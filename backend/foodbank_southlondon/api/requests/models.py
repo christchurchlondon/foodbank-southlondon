@@ -14,7 +14,7 @@ request = rest.model("ClientRequest", {
     "phone_number": fields.String(attribute="Phone Number", required=False, description="The Client's contact phone number", example="07123 456 789"),
     "delivery_date": fields.String(attribute="Delivery Date", required=True, description="The date that the food parcel should be delivered in the "
                                    "format of DD/MM/YYYY", example="23/04/2020"),
-    "address_line_1": fields.String(attribute="Addresss Line 1", required=True, description="The first line of the address",
+    "address_line_1": fields.String(attribute="Address Line 1", required=True, description="The first line of the address",
                                     example="8 Terrace Mews"),
     "address_line_2": fields.String(attribute="Address Line 2", required=False, description="The second line of the address", example="Portswood"),
     "town": fields.String(attribute="Town", required=False, description="The town of the address", example="Solihull"),
