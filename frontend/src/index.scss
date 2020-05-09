@@ -65,6 +65,14 @@ tbody tr:nth-child(even) {
     background: rgba(138, 246, 251, 0.2);
 }
 
+table.selectable {
+    cursor: pointer;
+}
+
+table.selectable tr:hover {
+    background-color: rgba(138, 246, 251, 0.4);
+}
+
 button {
     padding: $pad-half $pad-standard;
     background-color: $colour-button-bg;

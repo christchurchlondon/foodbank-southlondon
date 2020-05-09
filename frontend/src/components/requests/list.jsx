@@ -11,7 +11,7 @@ export default class RequestsList extends React.Component {
 
         const tableRows = this.props.requests.map(request => {
             return (
-                <tr key={request.id}>
+                <tr key={request.id} onClick={ () => this.props.onSelect(request.id) }>
                     <td>{ request.fullName }</td>
                     <td>{ request.referenceNumber }</td>
                     <td>[last status]</td>
@@ -21,7 +21,7 @@ export default class RequestsList extends React.Component {
         });
 
         return (
-            <table>
+            <table className="requests-list selectable">
                 <thead>
                     <tr>
                         <th>Name</th>
