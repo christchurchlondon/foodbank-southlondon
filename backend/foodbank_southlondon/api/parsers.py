@@ -6,4 +6,4 @@ cache_params.add_argument("refresh_cache", type=inputs.boolean, required=False, 
 
 pagination_params = cache_params.copy()
 pagination_params.add_argument("page", type=int, required=False, default=1, help="Page number")
-pagination_params.add_argument("per_page", type=int, required=False, default=10, help="Maximum items per page (max=100)")
+pagination_params.add_argument("per_page", type=int, required=False, default=50, help="Maximum items per page")

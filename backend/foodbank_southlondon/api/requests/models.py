@@ -4,7 +4,7 @@ from foodbank_southlondon.api import models, rest
 
 
 request = rest.model("ClientRequest", {
-    "request_id": fields.String(attribute="RequestID", required=True, description="The unique ID of the Client Request",
+    "request_id": fields.String(required=True, description="The unique ID of the Client Request",
                                 example="ACYDBNgidDBRKTk_WpZiWnVOKVzOzbPPXzO3NxqUlTK9cNXuEfpOLTRRT5YV2dnscmWOucg"),
     "timestamp": fields.String(attribute="Timestamp", required=True, description="The timestamp of the form submission in the format of "
                                "DD/MM/YYYY HH:MM:SS", example="30/04/2020 18:27:57"),

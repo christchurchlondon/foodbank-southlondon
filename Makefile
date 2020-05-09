@@ -13,7 +13,7 @@ clean: ## clean up temp & local build files (FRONTEND make clean + BACKEND make 
 .PHONY: deploy
 deploy: ## run the application in production using gunicorn inside docker (docker build & docker run)
 	docker build -t foodbank-southlondon:latest .
-	docker run --restart=always -p 8000:5000 -e FBSL_ENVIRONMENT=prod foodbank-southlondon:latest
+	docker run --restart=always -p 80:8080 -e FBSL_ENVIRONMENT=prod -e FLASK_ENV=production foodbank-southlondon:latest
 
 .PHONY: install
 install:  ## install the frontend and backend applications' dependencies locally (FRONTEND make install & BACKEND make install)
