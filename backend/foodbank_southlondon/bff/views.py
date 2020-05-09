@@ -11,6 +11,9 @@ import weasyprint  # type:ignore
 from foodbank_southlondon.api.lists import models as lists_models
 from foodbank_southlondon.bff import models, parsers, rest
 
+import logging
+logging.getLogger("weasyprint").addHandler(logging.StreamHandler())
+
 
 # CONFIG VARIABLES
 _FBSL_BASE_URL = "FBSL_BASE_URL"
@@ -40,12 +43,21 @@ def _post(url: str, **kwargs: Any) -> Dict:
 @rest.route("/actions/")
 class Actions(flask_restx.Resource):
 
-    def _generate_shopping_list_pdfs(self, requests_items, api_base_url, cookies):
+    @staticmethod
+    def _generate_driver_overview_pdf(requests_items):
+        template_name = "driver-overview"
+        today = datetime.datetime.now().strftime("%d/%m/%Y")
+        html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", requests_items=requests_items, date=today), encoding="utf8")
+        document = html.render()
+        return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, template_name)
+
+    @staticmethod
+    def _generate_shopping_list_pdf(requests_items, api_base_url, cookies):
         lists: Dict[str, Dict[str, str]] = {}
         catch_all_list_name = flask.current_app.config[_FBSL_CATCH_ALL_LIST]
+        template_name = "shopping-lists"
         pages = []
-        args = None
-        template_name = "shopping-list"
+        document = None
         for request in requests_items:
             household_size = request["household_size"]
             list = lists.get(household_size)
@@ -54,10 +66,24 @@ class Actions(flask_restx.Resource):
                 list = lists[household_size] = _get(f"{api_base_url}lists/{list_name}", cookies=cookies)
             html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", request=request, list=list))
             document = html.render()
-            if not args:
-                args = (document.metadata, document.url_fetcher, document._font_config)
             pages.extend(document.pages)
-        pdf = weasyprint.Document(pages, *args).write_pdf()
+        return Actions._make_pdf_response(pages, document.metadata, document.url_fetcher, document._font_config, template_name)
+
+    @staticmethod
+    def _generate_shipping_label_pdf(request_items, quantity):
+        template_name = "shipping-labels"
+        pages = []
+        document = None
+        for request in request_items:
+            for index in range(quantity):
+                html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", request=request, page=index + 1, total_pages=quantity))
+                document = html.render()
+                pages.extend(document.pages)
+        return Actions._make_pdf_response(pages, document.metadata, document.url_fetcher, document._font_config, template_name)
+
+    @staticmethod
+    def _make_pdf_response(pages, metadata, url_fetcher, font_config, template_name):
+        pdf = weasyprint.Document(pages, metadata, url_fetcher, font_config).write_pdf()
         response = flask.make_response((pdf, 201))
         response.headers["Content-Type"] = "application/pdf"
         response.headers["Content-Disposition"] = f"inline; filename=\"{template_name}.pdf\""
@@ -86,11 +112,13 @@ class Actions(flask_restx.Resource):
                 rest.abort(404, error.response.json()["message"])
             raise
         if event_name == "Print Shopping List":
-            return_value = self._generate_shopping_list_pdfs(requests_items, api_base_url, cookies)
+            return_value = self._generate_shopping_list_pdf(requests_items, api_base_url, cookies)
         elif event_name == "Print Shipping Label":
-            pass
+            if not event_data.isdigit():
+                rest.abort(400, "When event_name is \"Print Shipping Label\", event_data is expected to be an integer quantity of pages to print.")
+            return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
         elif event_name == "Print Driver Overview":
-            pass
+            return_value = self._generate_driver_overview_pdf(requests_items)
         else:
             return_value = ({}, 201)
         now = f"{datetime.datetime.utcnow().isoformat()}Z"
