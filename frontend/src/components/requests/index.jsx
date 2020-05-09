@@ -10,6 +10,7 @@ import Error from '../common/error';
 import RequestsFilter from './filter';
 import RequestsList from './list';
 import RequestsActions from './actions';
+import RequestSelection from './selection';
 
 class Requests extends React.Component {
     
@@ -63,6 +64,13 @@ class Requests extends React.Component {
         );
     }
 
+    getRequestSelection() {
+        return <RequestSelection
+            status={ this.props.selection.status }
+            item={ this.props.selection.item }
+            onClose={ this.clearSelection } />
+    }
+
     render() {
 
         // TODO actions for child components
@@ -70,17 +78,13 @@ class Requests extends React.Component {
 
         const contents = this.getContents();
 
-        // TODO show popup selection in its own component
-        // const popup = (this.props.selection.status === STATUS_LOADING || !!props.selection.item)
-        //     ? <p>ADD NEW COMPONENT</p>
-        //     : null;
-
-        // TODO clear selection on close
+        const selection = this.getRequestSelection();
 
         return (
             <div className="requests-container">
                 <h2>Requests</h2>
                 { contents }
+                { selection }
             </div>
         );
     }

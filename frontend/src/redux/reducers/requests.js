@@ -10,6 +10,7 @@ import {
     LOAD_REQUESTS_FAILED,
     SELECT_REQUEST,
     REQUEST_SELECTION_LOADED,
+    CLEAR_REQUEST_SELECTION,
     SELECT_REQUEST_FAILED
 } from '../actions/types';
 
@@ -71,6 +72,14 @@ export default function(state = initialState, action) {
                     ...state.selection,
                     status: STATUS_FAILED,
                     item: null
+                }
+            };
+        case CLEAR_REQUEST_SELECTION:
+            return {
+                ...state,
+                selection: {
+                    ...state.selection,
+                    status: STATUS_IDLE
                 }
             };
 

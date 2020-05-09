@@ -78,13 +78,13 @@ export const requestSelectionLoaded = request => ({
     }
 });
 
-export const clearRequestSelection = () => {
+export const clearRequestSelection = () => ({
     type: CLEAR_REQUEST_SELECTION
-};
+});
 
-export const selectRequestFailed = () => {
+export const selectRequestFailed = () => ({
     type: SELECT_REQUEST_FAILED
-};
+});
 
 
 // Lists
