@@ -38,6 +38,9 @@ export function getSingleRequest(id) {
     return fetchFromServer(endpoints.GET_SINGLE_REQUEST + '/' + id)
         .then(response => {
             const item = response.items[0];
+
+            // TODO add event history etc
+
             return responseItemToRequest(item);
         });
     // TODO error if response.items is empty?

@@ -1,6 +1,16 @@
 @import 'include';
 
 .error {
-    padding: $pad-half;
+    display: flex;
+    padding: $pad-standard;
     background-color: rgba(222, 60, 75, 0.2);
+}
+
+.error-icon {
+    color: $colour-rusty-red;
+    margin-right: $pad-standard;
+}
+
+.error-message {
+    margin: 0;
 }

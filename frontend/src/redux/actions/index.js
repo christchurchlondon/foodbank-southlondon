@@ -32,7 +32,7 @@ export const fetchRequests = filters => {
     return dispatch => {
         dispatch(loadRequests(filters));
         return getRequests(filters)
-            .then(response => dispatch(requestsLoaded(response)))
+            .then(result => dispatch(requestsLoaded(result)))
             .catch(() => dispatch(loadRequestsFailed()));
     };
 };
@@ -59,7 +59,7 @@ export const fetchSingleRequest = id => {
     return dispatch => {
         dispatch(selectRequest(id));
         return getSingleRequest(id)
-            .then(response => dispatch(requestSelectionLoaded(response)))
+            .then(result => dispatch(requestSelectionLoaded(result)))
             .catch(() => selectRequestFailed());
     };
 };
@@ -93,7 +93,7 @@ export const fetchLists = () => {
     return dispatch => {
         dispatch(loadLists());
         return getLists()
-            .then(response => dispatch(listsLoaded(response)))
+            .then(result => dispatch(listsLoaded(result)))
             .catch(() => loadListsFailed())
     };
 }
