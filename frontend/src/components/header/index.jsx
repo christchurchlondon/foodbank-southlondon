@@ -17,7 +17,7 @@ class Header extends React.Component {
     render() {
         return (
             <header className="header">
-                <img class="logo" src={logo} />
+                <img className="logo" src={logo} alt="Lambeth Foodbank" />
                 <Tabs onSelect={ (tab) => this.handleTabSelect(tab) } selected={ this.props.tab } />
             </header>
         );

@@ -16,3 +16,19 @@
     padding: $pad-standard;
     background: $colour-white;
 }
+
+.popup-header {
+    display: flex;
+    align-items: center;
+    margin: 0 0 $pad-standard;
+}
+
+.popup-header h3 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.popup-header .close {
+    margin: 0 0 0 auto;
+}

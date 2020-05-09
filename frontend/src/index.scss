@@ -94,6 +94,10 @@ button.secondary {
     color: $colour-button-text-secondary;
 }
 
+button.btn-small {
+    padding: $pad-half / 2 $pad-half;
+}
+
 .panel {
     margin: 0 0 $pad-standard;
     padding: $pad-standard;

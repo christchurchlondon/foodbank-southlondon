@@ -17,6 +17,7 @@ class Requests extends React.Component {
     constructor(props) {
         super(props);
         this.fetchRequests = this.fetchRequests.bind(this);
+        this.clearSelection = this.clearSelection.bind(this);
     }
 
     componentDidMount() {
@@ -68,7 +69,7 @@ class Requests extends React.Component {
         return <RequestSelection
             status={ this.props.selection.status }
             item={ this.props.selection.item }
-            onClose={ this.clearSelection } />
+            onClose={ () => this.clearSelection() } />
     }
 
     render() {

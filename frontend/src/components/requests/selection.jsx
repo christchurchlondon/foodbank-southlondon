@@ -20,15 +20,17 @@ export default class RequestSelection extends React.Component {
     }
 
     close() {
-        this.props.onClear();
+        this.props.onClose();
     }
 
     render() {
 
         if (this.isIdle()) return null;
 
+        // TODO loading state
+
         return (
-            <Popup title='Request Details'>
+            <Popup title='Request Details' onClose={ this.close }>
                 <p>Request details will go here</p>
             </Popup>
         );

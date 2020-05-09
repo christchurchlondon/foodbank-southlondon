@@ -1,6 +1,6 @@
 import React from 'react';
 import './styles/item-notes.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
 export default class ListItemNotes extends React.Component {
