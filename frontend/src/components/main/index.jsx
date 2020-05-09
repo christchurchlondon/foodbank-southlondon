@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { TAB_REQUESTS } from '../../constants';
 import Header from '../header';
 import Requests from '../requests';
 import Lists from '../lists';
@@ -10,7 +11,7 @@ import './styles/index.css';
 class Main extends React.Component {
     render() {
 
-        const contents = this.props.tab === 'requests'
+        const contents = this.props.tab === TAB_REQUESTS
             ? <Requests />
             : <Lists />;
 

@@ -8,7 +8,8 @@ import {
     LOAD_LISTS_FAILED
 } from './types';
 import {
-    getRequests
+    getRequests,
+    getLists
 } from '../../service';
 
 // Tabs
@@ -26,7 +27,8 @@ export const fetchRequests = filter => {
     return dispatch => {
         dispatch(loadRequests(filter));
         return getRequests(filter)
-            .then(response => dispatch(requestsLoaded(response)));
+            .then(response => dispatch(requestsLoaded(response)))
+            .catch(() => dispatch(loadRequestsFailed()));
     };
 }
 
@@ -44,12 +46,20 @@ export const requestsLoaded = requests => ({
     }
 });
 
-export const loadRequestsFailed = message => ({
-    type: LOAD_REQUESTS_FAILED,
-    payload: {
-        message
-    }
+export const loadRequestsFailed = () => ({
+    type: LOAD_REQUESTS_FAILED
 });
+
+// Lists
+
+export const fetchLists = () => {
+    return dispatch => {
+        dispatch(loadLists());
+        return getLists()
+            .then(response => dispatch(listsLoaded(response)))
+            .catch(() => loadListsFailed())
+    }
+}
 
 export const loadLists = () => ({
     type: LOAD_LISTS
@@ -62,9 +72,6 @@ export const listsLoaded = lists => ({
     }
 });
 
-export const loadListsFailed = message => ({
-    type: LOAD_LISTS_FAILED,
-    payload: {
-        message
-    }
+export const loadListsFailed = () => ({
+    type: LOAD_LISTS_FAILED
 });

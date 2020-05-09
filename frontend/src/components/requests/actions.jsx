@@ -1,6 +1,12 @@
 import React from 'react';
+import './styles/actions.css';
 
 export default class RequestsActions extends React.Component {
+
+    doAction() {
+        // TODO
+        console.log('Action button clicked');
+    }    
 
     render() {
         return (
@@ -14,7 +20,7 @@ export default class RequestsActions extends React.Component {
                     <option value="action-3">Action 3</option>
                 </select>
 
-                <button>GO</button>
+                <button onClick={ this.doAction }>Go</button>
 
             </div>
         );

@@ -1,6 +1,7 @@
 /* https://coolors.co/240115-de3c4b-87f5fb-2f131e-cec3c1 */
 
 .tab {
+    margin-right: .25rem;
     padding: 1rem .5rem;
     background-color: #cec3c1;
     color: #2f131e;

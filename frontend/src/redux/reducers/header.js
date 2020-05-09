@@ -1,8 +1,9 @@
+import { TAB_REQUESTS } from '../../constants';
 import { SET_TAB } from '../actions/types';
 
 
 const initialState = {
-    tab: 'requests'
+    tab: TAB_REQUESTS
 };
 
 export default function(state = initialState, action) {

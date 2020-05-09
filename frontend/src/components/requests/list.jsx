@@ -4,12 +4,12 @@ export default class RequestsList extends React.Component {
 
     render() {
 
-        // TODO get more column names
+        // TODO show full data
 
         const tableRows = this.props.requests.map(request => {
             return (
                 <tr key={request.id}>
-                    <td>{ request.name }</td>
+                    <td>{ request.fullName }</td>
                     <td>{ request.referenceNumber }</td>
                     <td>[last status]</td>
                     <td>[checkbox]</td>

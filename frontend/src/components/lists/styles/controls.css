@@ -1,0 +1,10 @@
+
+.lists-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.lists-controls button {
+    margin-left: auto;
+}

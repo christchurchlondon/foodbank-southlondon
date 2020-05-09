@@ -1,5 +1,15 @@
 
+.requests-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
 .requests-actions label {
     display: inline-block;
     margin-right: 1rem;
+}
+
+.requests-actions button {
+    margin-left: auto;
 }

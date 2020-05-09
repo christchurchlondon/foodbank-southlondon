@@ -29,10 +29,17 @@ p {
 
 input {
     border: none;
+    padding: .5rem;
 }
 
 table {
     width: 100%;
+    margin: 0 0 1rem;
+}
+
+thead {
+    font-weight: 500;
+    border-bottom: 1px solid #2f131e;
 }
 
 th, td {
@@ -40,11 +47,11 @@ th, td {
     text-align: left;
 }
 
-th:first-child, td:first-child {
+th:first-child, td:first-child, th.first, td.first {
     padding-left: 0;
 }
 
-th:last-child, td:last-child {
+th:last-child, td:last-child, th.last, td.last {
     padding-right: 0;
 }
 
@@ -52,13 +59,23 @@ th.numerical, td.numerical {
     text-align: right;
 }
 
-th {
-    font-weight: 500;
-    border-bottom: 1px solid #2f131e;
+tbody tr:nth-child(even) {
+    background: rgba(138, 246, 251, 0.2);
 }
 
-tr:nth-child(even) {
-    background: rgba(138, 246, 251, 0.2);
+button {
+    padding: .5rem 1rem;
+    background-color: #2f131e;
+    color: #cec3c1;
+    border: none;
+    border-radius: 0;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+button.alt {
+    background-color: #87f5fb;
+    color: #2f131e;
 }
 
 .panel {
