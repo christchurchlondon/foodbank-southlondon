@@ -53,8 +53,7 @@ class List(flask_restx.Resource):
         if list_name not in models.LIST_NAMES:
             rest.abort(404, f"List Name, {list_name} was not found.")
         columns = {f"{list_name}_quantity": "quantity", f"{list_name}_notes": "notes"}
-        df = df[["item_description", *columns]]
-        df.rename(columns=columns, inplace=True)
+        df = df.loc[:, ["item_description", *columns]].rename(columns=columns)
         notes = utils.gsheet_a1(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], 1)
         return {"notes": notes, "items": df.to_dict("records")[0]}
 

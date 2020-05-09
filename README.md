@@ -31,6 +31,7 @@ To install both the frontend and backend dependencies, run the following command
 ```
 make install
 ```
+
 *Note: to install dependencies for only the frontend or backend, you can run the same command from inside the frontend or backend directories.*
 
 #### Run
@@ -38,6 +39,7 @@ To run both the frontend and backend applications, run the following command fro
 ```
 make run
 ```
+
 *Note: to run just the frontend or backend applications, you can run the same command from inside the frontend or backend directories.*
 
 ### Production
@@ -55,14 +57,11 @@ make deploy
 ```
 
 ### Environment Variables
-Whether you are running the application in development or production, you will need to have the following environment variables set ahead of running the backend application:
-* FBSL_ENVIRONMENT - **dev** (**prod** is set automatically when make deploy is invoked)
-* FLASK_ENV - **development** (**production** is set automatically when make deploy is invoked)
+The following two variables can be set as you would normally set environment variables OR you can store them in a file called **development.env** or **production.env** inside the *backend* directory and they will be excluded from source control.
+* **FBSL_CLIENT_SECRET** - the Google Cloud Platform OAuth 2.0 Client Secret that has domain-wide delegation and permission to query the GSuite Admin SDK
+* **FBSL_SA_KEY** - the Google Cloud Platform service account key that has permission to the google sheets data storage
 
-The following two variables can be set as you would normally set environment variables OR you can store them in a file called **dev.env** or **prod.env** inside the *backend* directory and they will be excluded from source control.
-* FBSL_CLIENT_SECRET - the Google Cloud Platform OAuth 2.0 Client Secret that has domain-wide delegation and permission to query the GSuite Admin SDK
-* FBSL_SA_KEY - the Google Cloud Platform service account key that has permission to the google sheets data storage
-
+*Note: **FLASK_ENV** is set automatically by `make run` / `make deploy` - it is vitally important that this variable is set before the application runs (i.e. cannot be inside a .env file).*
 
 ## Contributing
 To contribute, please pull from master, work on a feature branch and then raise a pull request to merge into master. The pull request requires an approval before it can be merged.

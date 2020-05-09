@@ -8,21 +8,29 @@ class _Config(object):
     DEBUG: Optional[bool] = None
     ERROR_404_HELP = False
     GOOGLE_CLIENT_ID = ""
-    GOOGLE_CLIENT_SECRET = os.environ.get("FBSL_CLIENT_SECRET")
     RESTX_VALIDATE = True
     SECRET_KEY = os.urandom(16)
 
     FBSL_BASE_URL = ""
-    FBSL_CATCH_ALL_LIST = "Family of 5+"
+    FBSL_CATCH_ALL_LIST = "family_of_5+"
     FBSL_EVENTS_GSHEET_URI = ""
     FBSL_GSUITE_IMPERSONATE_ADDRESS = ""
     FBSL_GSUITE_GROUP_ADDRESS = ""
     FBSL_LISTS_GSHEET_URI = ""
+    FBSL_MAX_ACTION_REQUEST_IDS = 20
     FBSL_MAX_PAGE_SIZE = 500
+    assert FBSL_MAX_ACTION_REQUEST_IDS < FBSL_MAX_PAGE_SIZE
     FBSL_REQUESTS_FORM_URI = ""
     FBSL_REQUESTS_GSHEET_URI = ""
-    FBSL_SA_KEY = os.environ.get("FBSL_SA_KEY")
     FBSL_USER_SESSION_VAR = "user"
+
+    @property
+    def GOOGLE_CLIENT_SECRET(self):
+        return os.environ.get("FBSL_CLIENT_SECRET")
+
+    @property
+    def FBSL_SA_KEY(self):
+        return os.environ.get("FBSL_SA_KEY")
 
 
 class DevelopmentConfig(_Config):
@@ -49,9 +57,3 @@ class ProductionConfig(_Config):
     FBSL_GSUITE_GROUP_ADDRESS = "foodbank-users@christchurchlondon.org"
     FBSL_REQUESTS_FORM_URI = "1nSPgge024rIYUBxnVx3lNhJok8DuBcg8ZlehhZDfjFc"
     FBSL_REQUESTS_GSHEET_URI = "1TDM35lGcVPcf0HJda-V7l2QLH9R0EMHP8mbLdZcpb5k-4CqM7P8"
-
-
-CONFIGURATIONS = {
-    "dev": DevelopmentConfig,
-    "prod": ProductionConfig
-}
