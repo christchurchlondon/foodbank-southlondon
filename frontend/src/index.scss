@@ -34,6 +34,10 @@ input {
     padding: $pad-half;
 }
 
+select:focus {
+    outline: none;
+}
+
 table {
     width: 100%;
     margin: 0 0 $pad-standard;
@@ -84,18 +88,28 @@ button {
     cursor: pointer;
 }
 
-button.primary {
+button.primary:not(:disabled) {
     background-color: $colour-button-bg-primary;
     color: $colour-button-text-primary;
 }
 
-button.secondary {
+button.secondary:not(:disabled) {
     background-color: $colour-button-bg-secondary;
     color: $colour-button-text-secondary;
 }
 
 button.btn-small {
     padding: $pad-half / 2 $pad-half;
+}
+
+button:disabled {
+    cursor: default;
+    background-color: $colour-button-bg-disabled;
+    color: $colour-button-text-disabled;
+}
+
+button:focus {
+    outline: none;
 }
 
 .panel {

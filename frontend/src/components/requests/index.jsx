@@ -45,6 +45,10 @@ class Requests extends React.Component {
         this.props.clearRequestSelection();
     }
 
+    submitAction(action) {
+        console.log('submit action', action);
+    }
+
     isLoading() {
         return this.props.status === STATUS_LOADING;
     }
@@ -68,7 +72,10 @@ class Requests extends React.Component {
             <div>
                 <RequestsFilter onSubmit={ v => this.fetchRequests(v) } value={this.props.filter} />
                 <RequestsList requests={ this.props.items } onSelect={ id => this.selectRequest(id) } />
-                <RequestsActions status={ this.props.events.status } events={ this.props.events.items } />
+                <RequestsActions
+                    status={ this.props.events.status }
+                    events={ this.props.events.items }
+                    onAction={ action => this.submitAction(action) } />
             </div>
         );
     }
@@ -82,7 +89,6 @@ class Requests extends React.Component {
 
     render() {
 
-        // TODO actions for child components
         // TODO refresh button?
 
         const contents = this.getContents();

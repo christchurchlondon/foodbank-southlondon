@@ -24,10 +24,12 @@ $colour-border-primary: $colour-dark-sienna;
 $colour-button-bg: $colour-dark-sienna;
 $colour-button-bg-primary: $colour-dark-sienna;
 $colour-button-bg-secondary: $colour-pale-silver;
+$colour-button-bg-disabled: darken($colour-pale-silver, 50);
 
 $colour-button-text: $colour-white;
 $colour-button-text-primary: $colour-pale-silver;
 $colour-button-text-secondary: $colour-dark-sienna;
+$colour-button-text-disabled: lighten($colour-button-text, 50);
 
 $colour-text: #444;
 $colour-text-secondary: #888;
