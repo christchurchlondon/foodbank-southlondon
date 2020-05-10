@@ -12,19 +12,15 @@ export default class RequestsActions extends React.Component {
 
         // TODO populate these from the endpoint
 
+        const options = this.props.events.map((event, index) => {
+            return <option key={index} value={event}>{ event }</option>;
+        });
+
         return (
             <div className="requests-actions panel">
-
                 <label>Select action</label>
-
-                <select>
-                    <option value="action-1">Action 1</option>
-                    <option value="action-2">Action 2</option>
-                    <option value="action-3">Action 3</option>
-                </select>
-
+                <select>{ options }</select>
                 <button onClick={ this.doAction }>Submit</button>
-
             </div>
         );
     }

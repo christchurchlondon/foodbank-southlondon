@@ -3,7 +3,8 @@ import fetch from 'cross-fetch';
 const endpoints = {
     GET_REQUESTS: 'requests/',
     GET_SINGLE_REQUEST: 'requests/',
-    GET_LISTS: 'lists/'
+    GET_LISTS: 'lists/',
+    GET_EVENTS: 'events/distinct/?attribute=event_name'
 };
 
 
@@ -77,6 +78,11 @@ export function getLists() {
                 }
             })
         });
+}
+
+export function getEvents() {
+    return fetchFromServer(endpoints.GET_EVENTS)
+        .then(response => response.values.map(v => v.event_name));
 }
 
 function responseItemToRequest(item) {

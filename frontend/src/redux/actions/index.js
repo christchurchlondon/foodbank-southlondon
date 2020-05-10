@@ -9,13 +9,18 @@ import {
     SELECT_REQUEST_FAILED,
     LOAD_LISTS,
     LISTS_LOADED,
-    LOAD_LISTS_FAILED
+    LOAD_LISTS_FAILED,
+    LOAD_EVENTS,
+    EVENTS_LOADED,
+    LOAD_EVENTS_FAILED
 } from './types';
 import {
     getRequests,
     getSingleRequest,
-    getLists
+    getLists,
+    getEvents
 } from '../../service';
+
 
 // Tabs
 
@@ -25,6 +30,7 @@ export const setTab = tab => ({
         tab
     }
 });
+
 
 // Requests
 
@@ -111,4 +117,34 @@ export const listsLoaded = lists => ({
 
 export const loadListsFailed = () => ({
     type: LOAD_LISTS_FAILED
+});
+
+
+// Events
+
+export const fetchEvents = () => {
+    return dispatch => {
+        dispatch(loadEvents())
+        return getEvents()
+            .then(result => dispatch(eventsLoaded(result)))
+            .catch(() => loadEventsFailed());
+    };
+};
+
+export const loadEvents = () => ({
+    type: LOAD_EVENTS
+});
+
+export const eventsLoaded = events => ({
+    type: EVENTS_LOADED,
+    payload: {
+        events
+    }
+});
+
+export const loadEventsFailed = message => ({
+    type: LOAD_EVENTS_FAILED,
+    payload: {
+        message
+    }
 });

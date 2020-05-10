@@ -3,7 +3,10 @@ import { connect } from 'react-redux';
 import { STATUS_LOADING, STATUS_FAILED, STATUS_SUCCESS } from '../../constants';
 import { getRequestsState } from '../../redux/selectors';
 import {
-    fetchRequests, fetchSingleRequest, clearRequestSelection
+    fetchRequests,
+    fetchSingleRequest,
+    clearRequestSelection,
+    fetchEvents
 } from '../../redux/actions';
 import Loading from '../common/loading';
 import Error from '../common/error';
@@ -23,10 +26,15 @@ class Requests extends React.Component {
     componentDidMount() {
         // TODO only run if props.items is empty?
         this.fetchRequests();
+        this.fetchEvents();
     }
 
     fetchRequests(filters = {}) {
         this.props.fetchRequests(filters);
+    }
+
+    fetchEvents() {
+        this.props.fetchEvents();
     }
 
     selectRequest(id) {
@@ -60,7 +68,7 @@ class Requests extends React.Component {
             <div>
                 <RequestsFilter onSubmit={ v => this.fetchRequests(v) } value={this.props.filter} />
                 <RequestsList requests={ this.props.items } onSelect={ id => this.selectRequest(id) } />
-                <RequestsActions />
+                <RequestsActions status={ this.props.events.status } events={ this.props.events.items } />
             </div>
         );
     }
@@ -96,6 +104,10 @@ const mapStateToProps = state => {
 }
 
 export default connect(
-    mapStateToProps,
-    { fetchRequests, fetchSingleRequest, clearRequestSelection }
+    mapStateToProps, {
+        fetchRequests,
+        fetchSingleRequest,
+        clearRequestSelection,
+        fetchEvents
+    }
 )(Requests);

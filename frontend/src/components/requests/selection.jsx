@@ -7,6 +7,7 @@ import {
 import Error from '../common/error';
 import Loading from '../common/loading';
 import Popup from '../common/popup';
+import './styles/selection.scss';
 
 
 export default class RequestSelection extends React.Component {
@@ -103,6 +104,7 @@ export default class RequestSelection extends React.Component {
     }
 
     getAddressString(item) {
+        // TODO formatter function
         const address = item.address;
         return [
             address.line1, address.line2, address.town, address.county, address.postcode
@@ -110,6 +112,7 @@ export default class RequestSelection extends React.Component {
     }
 
     getHouseholdString(item) {
+        // TODO formatter function
         const house = item.household;
         return `${house.total} occupants (${house.adults} adults, ${house.children} children)`
     }

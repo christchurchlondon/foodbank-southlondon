@@ -11,7 +11,10 @@ import {
     SELECT_REQUEST,
     REQUEST_SELECTION_LOADED,
     CLEAR_REQUEST_SELECTION,
-    SELECT_REQUEST_FAILED
+    SELECT_REQUEST_FAILED,
+    LOAD_EVENTS,
+    EVENTS_LOADED,
+    LOAD_EVENTS_FAILED
 } from '../actions/types';
 
 
@@ -22,8 +25,11 @@ const initialState = {
     selection: {
         status: STATUS_IDLE,
         item: null
+    },
+    events: {
+        status: STATUS_IDLE,
+        items: []
     }
-    // TODO userAction?
 };
 
 export default function(state = initialState, action) {
@@ -80,6 +86,33 @@ export default function(state = initialState, action) {
                 selection: {
                     ...state.selection,
                     status: STATUS_IDLE
+                }
+            };
+        case LOAD_EVENTS:
+            return {
+                ...state,
+                events: {
+                    ...state.events,
+                    status: STATUS_LOADING,
+                    items: []
+                }
+            };
+        case EVENTS_LOADED:
+            return {
+                ...state,
+                events: {
+                    ...state.events,
+                    status: STATUS_SUCCESS,
+                    items: action.payload.events
+                }
+            };
+        case LOAD_EVENTS_FAILED:
+            return {
+                ...state,
+                events: {
+                    ...state.events,
+                    status: STATUS_FAILED,
+                    items: []
                 }
             };
 
