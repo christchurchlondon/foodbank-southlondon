@@ -50,8 +50,9 @@ export function getSingleRequest(id) {
 export function getLists() {
     return fetchFromServer(endpoints.GET_LISTS)
         .then(response => {
-            return response.items.map(item => {
+            return response.items.map((item, id) => {
                 return {
+                    id: id,
                     description: item.item_description,
                     householdSizes: {
                         single: {

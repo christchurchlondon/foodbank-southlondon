@@ -10,6 +10,8 @@ import {
     LOAD_LISTS,
     LISTS_LOADED,
     LOAD_LISTS_FAILED,
+    TOGGLE_LIST_SELECTION,
+    CLEAR_LIST_SELECTION,
     LOAD_EVENTS,
     EVENTS_LOADED,
     LOAD_EVENTS_FAILED
@@ -119,6 +121,17 @@ export const loadListsFailed = () => ({
     type: LOAD_LISTS_FAILED
 });
 
+export const toggleListSelection = (id, type) => ({
+    type: TOGGLE_LIST_SELECTION,
+    payload: {
+        id,
+        type
+    }
+});
+
+export const clearListSelection = () => ({
+    type: CLEAR_LIST_SELECTION
+})
 
 // Events
 
