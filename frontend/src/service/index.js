@@ -1,48 +1,70 @@
 import fetch from 'cross-fetch';
+import { format } from 'date-fns';
+import { DATE_FORMAT_REQUEST } from '../constants';
 
 const endpoints = {
-    GET_REQUESTS: 'requests/',
-    GET_SINGLE_REQUEST: 'requests/',
-    GET_LISTS: 'lists/',
-    GET_EVENTS: 'events/distinct/?attribute=event_name'
+    GET_REQUESTS: 'bff/status?page=1&perpage=50',
+    GET_SINGLE_REQUEST: 'bff/details/',
+    GET_LISTS: 'api/lists/',
+    GET_EVENTS: 'api/events/distinct/?attribute=event_name'
 };
 
 
 function fetchFromServer(url, method = 'GET') {
     // TODO use method?
     // handle response
-    return fetch('/api/' + url)
+    return fetch(url)
         .then(response => response.json());
+}
+
+function encodeParams(params) {
+    return '' // '?'
+        + Object.entries(params)
+            .map(param => param.map(_ => _ || '').map(encodeURIComponent).join('='))
+            .join('&');
+}
+
+function formatDate(date) {
+    return format(date, DATE_FORMAT_REQUEST);
 }
 
 export function getRequests(filters = {})  {
 
-    // TODO convert payload to URL
-    // {
-    //     dates: { start, end },
-    //     name,
-    //     referenceNumber,
-    //     postcode
-    // }
+    // TODO refactor dates
+    let dates = [];
+    (filters.dates || {}).start && dates.push(formatDate(filters.dates.start));
+    (filters.dates || {}).end && dates.push(formatDate(filters.dates.end));
 
-    const url = endpoints.GET_REQUESTS; // TODO + `?filter=${filter}`;
+    const params = {
+        delivery_dates: dates.join(','),
+        client_full_names: filters.name,
+        reference_numbers: filters.referenceNumber,
+        postcodes: filters.postcode
+    };
+
+    const url = endpoints.GET_REQUESTS + encodeParams(params);
     return fetchFromServer(url)
         .then(response => {
 
             // TODO add page info to response
 
-            return response.items.map(responseItemToRequest);
+            return response.items.map(item => ({
+                id: item.request_id,
+                fullName: item.client_full_name,
+                referenceNumber: item.reference_number,
+                deliveryDate: item.delivery_date,
+                eventData: item.event_data,
+                eventName: item.event_name,
+                postcode: item.postcode
+            }));
         });
 }
 
 export function getSingleRequest(id) {
-    return fetchFromServer(endpoints.GET_SINGLE_REQUEST + '/' + id)
+    return fetchFromServer(endpoints.GET_SINGLE_REQUEST + id)
         .then(response => {
-            const item = response.items[0];
-
             // TODO add event history etc
-
-            return responseItemToRequest(item);
+            return responseItemToRequest(response.request);
         });
     // TODO error if response.items is empty?
 }
