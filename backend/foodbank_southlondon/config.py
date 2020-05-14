@@ -50,13 +50,13 @@ class DevelopmentConfig(_Config):
 
 class ProductionConfig(_Config):
     DEBUG = False
-    GOOGLE_CLIENT_ID = "263170890363-rhsbplt11sk409p6o7qh1566nt1ra8bj.apps.googleusercontent.com"
+    GOOGLE_CLIENT_ID = "555689098172-2hmfl06vftk660n1a1cvcpu5kuh5l243.apps.googleusercontent.com"
 
-    FBSL_BASE_URL = "http://localhost"
+    FBSL_BASE_URL = "https://foodbankapp.christchurchlondon.org"
     FBSL_EVENTS_GSHEET_URI = "1OAluin8tOIpYUxcm18gHJSc0z1tx4EdxY9I2bdB4zj4"
     FBSL_LISTS_GSHEET_URI = "1D0TcNW7pTMGgKYDogS4YDVJqEBAavu3GfXHu_iGlSmU"
-    FBSL_GSUITE_IMPERSONATE_ADDRESS = "tech@christchurchlondon.org"
-    FBSL_GSUITE_GROUP_ADDRESS = "foodbank-users@christchurchlondon.org"
+    FBSL_GSUITE_IMPERSONATE_ADDRESS = "ed@christchurchlondon.org"
+    FBSL_GSUITE_GROUP_ADDRESS = "foodbankapp-users@christchurchlondon.org"
     FBSL_PROTECT_API = True
     FBSL_REQUESTS_FORM_URI = "1nSPgge024rIYUBxnVx3lNhJok8DuBcg8ZlehhZDfjFc"
     FBSL_REQUESTS_GSHEET_URI = "1TDM35lGcVPcf0HJda-V7l2QLH9R0EMHP8mbLdZcpb5k-4CqM7P8"
