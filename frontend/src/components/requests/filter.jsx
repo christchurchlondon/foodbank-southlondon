@@ -18,9 +18,9 @@ export default class RequestsFilter extends React.Component {
             dates: {
                 start: null, end: null     // TODO
             },
-            name: props.name,
-            referenceNumber: props.referenceNumber,
-            postcode: props.postcode
+            name: props.name || '',
+            referenceNumber: props.referenceNumber || '',
+            postcode: props.postcode || ''
         };
     }
 
