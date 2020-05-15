@@ -1,5 +1,5 @@
 import fetch from 'cross-fetch';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { DATE_FORMAT_REQUEST } from '../constants';
 
 const endpoints = {
@@ -28,7 +28,7 @@ function formatDate(date) {
     return format(date, DATE_FORMAT_REQUEST);
 }
 
-export function getRequests(filters = {})  {
+export function getRequests(filters = {}) {
 
     // TODO refactor dates
     let dates = [];
@@ -48,11 +48,19 @@ export function getRequests(filters = {})  {
 
             // TODO add page info to response
 
+            // response.items.forEach(i => {
+            //     console.log(i.delivery_date);
+            //     try {
+            //         console.log(parse(i.delivery_date, DATE_FORMAT_REQUEST));
+            //     }
+            //     catch(e) { console.log(e) };
+            // });
+
             return response.items.map(item => ({
                 id: item.request_id,
                 fullName: item.client_full_name,
                 referenceNumber: item.reference_number,
-                deliveryDate: item.delivery_date,
+                deliveryDate: parse(item.delivery_date, DATE_FORMAT_REQUEST, new Date()),
                 eventData: item.event_data,
                 eventName: item.event_name,
                 postcode: item.postcode

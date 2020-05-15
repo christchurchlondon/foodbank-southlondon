@@ -1,4 +1,6 @@
 import React from 'react';
+import { format } from 'date-fns';
+import { DATE_FORMAT_UI } from '../../constants';
 
 export default class RequestsList extends React.Component {
 
@@ -12,9 +14,10 @@ export default class RequestsList extends React.Component {
         const tableRows = this.props.requests.map(request => {
             return (
                 <tr key={request.id} onClick={ () => this.props.onSelect(request.id) }>
-                    <td>{ request.fullName }</td>
                     <td>{ request.referenceNumber }</td>
-                    <td>[last status]</td>
+                    <td>{ request.fullName }</td>
+                    <td>{ request.postcode }</td>
+                    <td>{ format(request.deliveryDate, DATE_FORMAT_UI) }</td>
                     <td>[checkbox]</td>
                 </tr>
             );
@@ -24,9 +27,10 @@ export default class RequestsList extends React.Component {
             <table className="requests-list selectable">
                 <thead>
                     <tr>
-                        <th>Name</th>
                         <th>Reference #</th>
-                        <th>Last Status</th>
+                        <th>Name</th>
+                        <th>Postcode</th>
+                        <th>Delivery Date</th>
                         <th></th>
                     </tr>
                 </thead>
