@@ -4,10 +4,15 @@ import { DATE_FORMAT_UI } from '../../constants';
 
 export default class RequestsList extends React.Component {
 
-    render() {
+    handleCheckAllClick(event) {
 
-        // TODO show full data
-        // ref #, name, postcode, delivery date, latest status, tickboxes
+    }
+
+    handleCheckboxClick(event) {
+        event.stopPropagation();
+    }
+
+    render() {
 
         // TODO add page number, extend button, clickable rows
 
@@ -18,7 +23,9 @@ export default class RequestsList extends React.Component {
                     <td>{ request.fullName }</td>
                     <td>{ request.postcode }</td>
                     <td>{ format(request.deliveryDate, DATE_FORMAT_UI) }</td>
-                    <td>[checkbox]</td>
+                    <td>
+                        <input type="checkbox" onClick={ this.handleCheckboxClick } />
+                    </td>
                 </tr>
             );
         });
@@ -31,7 +38,9 @@ export default class RequestsList extends React.Component {
                         <th>Name</th>
                         <th>Postcode</th>
                         <th>Delivery Date</th>
-                        <th></th>
+                        <th>
+                            <input type="checkbox" onClick={ this.handleCheckAllClick } />
+                        </th>
                     </tr>
                 </thead>
                 <tbody>

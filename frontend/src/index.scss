@@ -69,11 +69,11 @@ tbody tr:nth-child(even) {
     background: rgba(138, 246, 251, 0.2);
 }
 
-table.selectable {
+table.selectable tbody tr {
     cursor: pointer;
 }
 
-table.selectable tr:hover {
+table.selectable tbody tr:hover {
     background-color: rgba(138, 246, 251, 0.4);
 }
 
