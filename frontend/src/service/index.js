@@ -48,14 +48,6 @@ export function getRequests(filters = {}) {
 
             // TODO add page info to response
 
-            // response.items.forEach(i => {
-            //     console.log(i.delivery_date);
-            //     try {
-            //         console.log(parse(i.delivery_date, DATE_FORMAT_REQUEST));
-            //     }
-            //     catch(e) { console.log(e) };
-            // });
-
             return response.items.map(item => ({
                 id: item.request_id,
                 fullName: item.client_full_name,

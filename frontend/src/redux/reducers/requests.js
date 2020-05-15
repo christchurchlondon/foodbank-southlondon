@@ -12,6 +12,8 @@ import {
     REQUEST_SELECTION_LOADED,
     CLEAR_REQUEST_SELECTION,
     SELECT_REQUEST_FAILED,
+    TOGGLE_REQUEST,
+    TOGGLE_ALL_REQUESTS,
     LOAD_EVENTS,
     EVENTS_LOADED,
     LOAD_EVENTS_FAILED
@@ -47,6 +49,10 @@ export default function(state = initialState, action) {
                 ...state,
                 status: STATUS_SUCCESS,
                 items: action.payload.requests
+                    .map(request => ({
+                        data: request,
+                        checked: false
+                    }))
             };
         case LOAD_REQUESTS_FAILED:
             return {
@@ -87,6 +93,25 @@ export default function(state = initialState, action) {
                     ...state.selection,
                     status: STATUS_IDLE
                 }
+            };
+        case TOGGLE_REQUEST:
+            return {
+                ...state,
+                items: state.items
+                    .map(item => {
+                        return (item.data.id === action.payload.id)
+                            ? { ...item, checked: !item.checked }
+                            : item;
+                    })
+            };
+        case TOGGLE_ALL_REQUESTS:
+            const checked = state.items.some(i => !i.checked);
+            return {
+                ...state,
+                items: state.items.map(item => ({
+                    ...item,
+                    checked
+                }))
             };
         case LOAD_EVENTS:
             return {

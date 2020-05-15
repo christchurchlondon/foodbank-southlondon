@@ -7,6 +7,8 @@ import {
     REQUEST_SELECTION_LOADED,
     CLEAR_REQUEST_SELECTION,
     SELECT_REQUEST_FAILED,
+    TOGGLE_REQUEST,
+    TOGGLE_ALL_REQUESTS,
     LOAD_LISTS,
     LISTS_LOADED,
     LOAD_LISTS_FAILED,
@@ -94,6 +96,16 @@ export const selectRequestFailed = () => ({
     type: SELECT_REQUEST_FAILED
 });
 
+export const toggleRequest = id => ({
+    type: TOGGLE_REQUEST,
+    payload: {
+        id
+    }
+});
+
+export const toggleAllRequests = () => ({
+    type: TOGGLE_ALL_REQUESTS
+});
 
 // Lists
 

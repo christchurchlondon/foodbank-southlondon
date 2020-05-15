@@ -4,6 +4,8 @@ import { STATUS_LOADING, STATUS_FAILED, STATUS_SUCCESS } from '../../constants';
 import { getRequestsState } from '../../redux/selectors';
 import {
     fetchRequests,
+    toggleRequest,
+    toggleAllRequests,
     fetchSingleRequest,
     clearRequestSelection,
     fetchEvents
@@ -35,6 +37,14 @@ class Requests extends React.Component {
 
     fetchEvents() {
         this.props.fetchEvents();
+    }
+
+    toggleRequest(id) {
+        this.props.toggleRequest(id);
+    }
+
+    toggleAllRequests() {
+        this.props.toggleAllRequests();
     }
 
     selectRequest(id) {
@@ -71,7 +81,11 @@ class Requests extends React.Component {
         return (
             <div>
                 <RequestsFilter onSubmit={ v => this.fetchRequests(v) } value={this.props.filter} />
-                <RequestsList requests={ this.props.items } onSelect={ id => this.selectRequest(id) } />
+                <RequestsList
+                    requests={ this.props.items }
+                    onSelect={ id => this.selectRequest(id) }
+                    onToggle={ id => this.toggleRequest(id) }
+                    onToggleAll={ () => this.toggleAllRequests() } />
                 <RequestsActions
                     status={ this.props.events.status }
                     events={ this.props.events.items }
@@ -112,6 +126,8 @@ const mapStateToProps = state => {
 export default connect(
     mapStateToProps, {
         fetchRequests,
+        toggleRequest,
+        toggleAllRequests,
         fetchSingleRequest,
         clearRequestSelection,
         fetchEvents

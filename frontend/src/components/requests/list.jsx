@@ -4,8 +4,12 @@ import { DATE_FORMAT_UI } from '../../constants';
 
 export default class RequestsList extends React.Component {
 
-    handleCheckAllClick(event) {
+    toggle(id) {
+        this.props.onToggle(id);
+    }
 
+    toggleAll() {
+        this.props.onToggleAll();
     }
 
     handleCheckboxClick(event) {
@@ -16,7 +20,8 @@ export default class RequestsList extends React.Component {
 
         // TODO add page number, extend button, clickable rows
 
-        const tableRows = this.props.requests.map(request => {
+        const tableRows = this.props.requests.map(item => {
+            const request = item.data;
             return (
                 <tr key={request.id} onClick={ () => this.props.onSelect(request.id) }>
                     <td>{ request.referenceNumber }</td>
@@ -24,11 +29,16 @@ export default class RequestsList extends React.Component {
                     <td>{ request.postcode }</td>
                     <td>{ format(request.deliveryDate, DATE_FORMAT_UI) }</td>
                     <td>
-                        <input type="checkbox" onClick={ this.handleCheckboxClick } />
+                        <input type="checkbox"
+                            onChange={ () => this.toggle(request.id) }
+                            onClick={ this.handleCheckboxClick }
+                            checked={ item.checked } />
                     </td>
                 </tr>
             );
         });
+
+        const allChecked = this.props.requests.every(item => item.checked);
 
         return (
             <table className="requests-list selectable">
@@ -39,7 +49,10 @@ export default class RequestsList extends React.Component {
                         <th>Postcode</th>
                         <th>Delivery Date</th>
                         <th>
-                            <input type="checkbox" onClick={ this.handleCheckAllClick } />
+                            <input type="checkbox"
+                                onChange={ () => this.toggleAll() }
+                                onClick={ this.handleCheckboxClick }
+                                checked={ allChecked }/>
                         </th>
                     </tr>
                 </thead>
