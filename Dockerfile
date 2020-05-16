@@ -27,6 +27,6 @@ RUN .venv/bin/pip install -e .
 
 COPY --from=builder /home/foodbank/frontend /home/foodbank/frontend
 
-EXPOSE 8080
+EXPOSE $PORT
 USER foodbank
-CMD .venv/bin/gunicorn -b :8080 --access-logfile - --error-logfile - "foodbank_southlondon.launch:main()"
+CMD .venv/bin/gunicorn -b :$PORT --access-logfile - --error-logfile - "foodbank_southlondon.launch:main()"
