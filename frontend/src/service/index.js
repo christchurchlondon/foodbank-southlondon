@@ -19,10 +19,9 @@ function fetchFromServer(url, method = 'GET', body = null) {
 }
 
 function encodeParams(params) {
-    return '?'
-        + Object.entries(params)
-            .map(param => param.map(_ => _ || '').map(encodeURIComponent).join('='))
-            .join('&');
+    return '?' + Object.entries(params)
+        .map(param => param.map(_ => _ || '').map(encodeURIComponent).join('='))
+        .join('&');
 }
 
 function formatDate(date) {

@@ -32,3 +32,12 @@
 .popup-header .close {
     margin: 0 0 0 auto;
 }
+
+.popup-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.popup-button {
+    margin-left: $pad-half;
+}

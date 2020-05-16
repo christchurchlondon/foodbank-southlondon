@@ -16,7 +16,12 @@ import {
     TOGGLE_ALL_REQUESTS,
     LOAD_EVENTS,
     EVENTS_LOADED,
-    LOAD_EVENTS_FAILED
+    LOAD_EVENTS_FAILED,
+    OPEN_SUBMIT_DIALOG,
+    CLOSE_SUBMIT_DIALOG,
+    SUBMIT_EVENT,
+    EVENT_SUBMIT_COMPLETE,
+    EVENT_SUBMIT_FAILED
 } from '../actions/types';
 
 
@@ -29,8 +34,10 @@ const initialState = {
         item: null
     },
     events: {
-        status: STATUS_IDLE,
-        items: []
+        loadingStatus: STATUS_IDLE,
+        items: [],
+        dialog: null,
+        updateStatus: STATUS_IDLE
     }
 };
 
@@ -118,7 +125,7 @@ export default function(state = initialState, action) {
                 ...state,
                 events: {
                     ...state.events,
-                    status: STATUS_LOADING,
+                    loadingStatus: STATUS_LOADING,
                     items: []
                 }
             };
@@ -127,7 +134,7 @@ export default function(state = initialState, action) {
                 ...state,
                 events: {
                     ...state.events,
-                    status: STATUS_SUCCESS,
+                    loadingStatus: STATUS_SUCCESS,
                     items: action.payload.events
                 }
             };
@@ -136,10 +143,34 @@ export default function(state = initialState, action) {
                 ...state,
                 events: {
                     ...state.events,
-                    status: STATUS_FAILED,
+                    loadingStatus: STATUS_FAILED,
                     items: []
                 }
             };
+        case OPEN_SUBMIT_DIALOG:
+            return {
+                ...state,
+                events: {
+                    ...state.events,
+                    dialog: {
+                        quantity: true,
+                        date: true
+                    }
+                }
+            };
+        case CLOSE_SUBMIT_DIALOG:
+            return {
+                ...state,
+                events: {
+                    ...state.events,
+                    dialog: null
+                }
+            };
+        case SUBMIT_EVENT:
+        case EVENT_SUBMIT_COMPLETE:
+        case EVENT_SUBMIT_FAILED:
+            // TODO
+            return state;
 
         default:
             return state;

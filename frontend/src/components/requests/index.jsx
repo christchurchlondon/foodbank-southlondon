@@ -8,7 +8,10 @@ import {
     toggleAllRequests,
     fetchSingleRequest,
     clearRequestSelection,
-    fetchEvents
+    fetchEvents,
+    triggerSubmitEvent,
+    confirmSubmitEvent,
+    cancelSubmitEvent
 } from '../../redux/actions';
 import Loading from '../common/loading';
 import Error from '../common/error';
@@ -16,6 +19,8 @@ import RequestsFilter from './filter';
 import RequestsList from './list';
 import RequestsActions from './actions';
 import RequestSelection from './selection';
+import RequestsEventDialog from './event-dialog';
+
 
 class Requests extends React.Component {
     
@@ -23,6 +28,8 @@ class Requests extends React.Component {
         super(props);
         this.fetchRequests = this.fetchRequests.bind(this);
         this.clearSelection = this.clearSelection.bind(this);
+        this.confirmEventSubmission = this.confirmEventSubmission.bind(this);
+        this.cancelEventSubmission = this.cancelEventSubmission.bind(this);
     }
 
     componentDidMount() {
@@ -55,8 +62,19 @@ class Requests extends React.Component {
         this.props.clearRequestSelection();
     }
 
+    // Rename?
     submitAction(action) {
-        console.log('submit action', action);
+        // TODO get ids from state?
+        this.props.triggerSubmitEvent(action, []);
+    }
+
+    confirmEventSubmission() {
+        // TODO get values from state
+        this.props.confirmSubmitEvent({}, []);
+    }
+
+    cancelEventSubmission() {
+        this.props.cancelSubmitEvent();
     }
 
     isLoading() {
@@ -87,7 +105,7 @@ class Requests extends React.Component {
                     onToggle={ id => this.toggleRequest(id) }
                     onToggleAll={ () => this.toggleAllRequests() } />
                 <RequestsActions
-                    status={ this.props.events.status }
+                    status={ this.props.events.loadingStatus }
                     events={ this.props.events.items }
                     onAction={ action => this.submitAction(action) } />
             </div>
@@ -101,6 +119,13 @@ class Requests extends React.Component {
             onClose={ () => this.clearSelection() } />
     }
 
+    getEventDialog() {
+        return <RequestsEventDialog
+            details={ this.props.events.dialog }
+            onConfirm={ this.confirmEventSubmission }
+            onCancel={ this.cancelEventSubmission } />;
+    }
+
     render() {
 
         // TODO refresh button?
@@ -109,11 +134,14 @@ class Requests extends React.Component {
 
         const selection = this.getRequestSelection();
 
+        const eventDialog = this.getEventDialog();
+
         return (
             <div className="requests-container">
                 <h2>Requests</h2>
                 { contents }
                 { selection }
+                { eventDialog }
             </div>
         );
     }
@@ -130,6 +158,9 @@ export default connect(
         toggleAllRequests,
         fetchSingleRequest,
         clearRequestSelection,
-        fetchEvents
+        fetchEvents,
+        triggerSubmitEvent,
+        confirmSubmitEvent,
+        cancelSubmitEvent
     }
 )(Requests);

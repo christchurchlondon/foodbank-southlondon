@@ -7,11 +7,12 @@ export default class RequestsActions extends React.Component {
         super(props);
         this.handleChange = this.handleChange.bind(this);
         this.doAction = this.doAction.bind(this);
-        this.state = { value: '' };
+        this.state = { value: null };
     }
 
     handleChange(event) {
-        this.setState({ value: event.target.value });
+        const value = this.props.events.find(e => e.name === event.target.value);
+        this.setState({ value });
     }
 
     doAction() {
@@ -23,7 +24,7 @@ export default class RequestsActions extends React.Component {
     render() {
 
         const options = this.props.events.map((event, index) => {
-            return <option key={index} value={event}>{ event.name }</option>;
+            return <option key={index} value={event.name}>{ event.name }</option>;
         });
 
         return (

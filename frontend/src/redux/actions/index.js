@@ -217,7 +217,7 @@ export const closeSubmitDialog = () => ({
 export const sendEvent = (event, ids, data) => {
     return dispatch => {
         dispatch(submitEvent(event));
-        return submitEvent(event, ids, data)
+        return postEvent(event, ids, data)
             .then(() => eventSubmitComplete())
             .catch(() => eventSubmitFailed());
     };

@@ -34,7 +34,24 @@ export default class Popup extends React.Component {
         }
     }
 
+    getButtons() {
+        return (this.props.buttons || [])
+            .map((button, index) => {
+                return (
+                    <button key={index}
+                        className={'popup-button ' + button.className}
+                        disabled={ button.disabled }
+                        onClick={ button.onClick }>
+                        { button.label }
+                    </button>
+                );
+            });
+    }
+
     render() {
+
+        const buttons = this.getButtons();
+
         return (
             <div className="popup-wrapper" onClick={ this.close }>
                 <div className="popup-box" onClick={ this.boxClickHandler }>
@@ -47,8 +64,8 @@ export default class Popup extends React.Component {
                     <main>
                         { this.props.children }
                     </main>
-                    <footer>
-
+                    <footer className="popup-footer">
+                        { buttons }
                     </footer>
                 </div>
             </div>
