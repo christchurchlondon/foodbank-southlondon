@@ -12,7 +12,7 @@ export default class RequestsEventDialog extends React.Component {
     }
 
     confirm() {
-        this.props.onConfirm();
+        this.props.onConfirm(this.props.details.event.name);
     }
 
     cancel() {

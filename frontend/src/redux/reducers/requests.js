@@ -153,8 +153,7 @@ export default function(state = initialState, action) {
                 events: {
                     ...state.events,
                     dialog: {
-                        quantity: true,
-                        date: true
+                        event: action.payload.event
                     }
                 }
             };

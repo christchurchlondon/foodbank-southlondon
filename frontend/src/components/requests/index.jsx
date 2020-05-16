@@ -28,6 +28,7 @@ class Requests extends React.Component {
         super(props);
         this.fetchRequests = this.fetchRequests.bind(this);
         this.clearSelection = this.clearSelection.bind(this);
+        this.submitAction = this.submitAction.bind(this);
         this.confirmEventSubmission = this.confirmEventSubmission.bind(this);
         this.cancelEventSubmission = this.cancelEventSubmission.bind(this);
     }
@@ -63,18 +64,22 @@ class Requests extends React.Component {
     }
 
     // Rename?
-    submitAction(action) {
-        // TODO get ids from state?
-        this.props.triggerSubmitEvent(action, []);
+    submitAction(event) {
+        this.props.triggerSubmitEvent(event, this.getSelectedIds());
     }
 
-    confirmEventSubmission() {
-        // TODO get values from state
-        this.props.confirmSubmitEvent({}, []);
+    confirmEventSubmission(event, data) {
+        this.props.confirmSubmitEvent(event, this.getSelectedIds(), data);
     }
 
     cancelEventSubmission() {
         this.props.cancelSubmitEvent();
+    }
+
+    getSelectedIds() {
+        return this.props.items
+            .filter(item => item.checked)
+            .map(item => item.data.id);
     }
 
     isLoading() {

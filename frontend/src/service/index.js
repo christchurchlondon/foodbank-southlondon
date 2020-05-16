@@ -12,9 +12,13 @@ const endpoints = {
 
 
 function fetchFromServer(url, method = 'GET', body = null) {
-    // TODO use method?
-    // handle response
-    return fetch(url, { method, body })
+
+    if (body) console.log(body);
+
+    return fetch(url, {
+            method,
+            body: body ? JSON.stringify(body) : null
+        })
         .then(response => response.json());
 }
 
