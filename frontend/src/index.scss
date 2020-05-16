@@ -29,6 +29,15 @@ p {
     margin: 0 0 $pad-half;
 }
 
+a {
+    text-decoration: none;
+    color: $colour-anchor;
+}
+
+a:hover {
+    color: $colour-anchor-hover;
+}
+
 input {
     border: none;
     padding: $pad-half;
