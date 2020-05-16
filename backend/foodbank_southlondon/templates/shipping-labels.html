@@ -1,25 +1,83 @@
 <!DOCTYPE html>
 <html>
     <title>Shipping Labels</title>
+    <head>
+        <link rel="stylesheet" type="text/css" href="https://meyerweb.com/eric/tools/css/reset/reset.css">
+        <style>
+            @page {
+                margin: 0;
+                size: 20cm 6.2cm;
+            }
+            b {
+                font-weight: bold;
+            }
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 0.4cm;
+                line-height: 1.25rem;
+                margin: 0.3cm;
+            }
+            h2 {
+                font-size: 2.75rem;
+                line-height: 1rem;
+            }
+            table {
+                border: 0.05cm solid black;
+                border-collapse: collapse;
+                height: 5.6cm;
+                table-layout: fixed;
+                width: 100%
+            }
+            td {
+                overflow: hidden;
+                padding-left: 0.1cm;
+                padding-right: 0.1cm;
+                page-break-inside: avoid;
+            }
+            td.left {
+                width: 25%;
+            }
+            tr.bottom td {
+                height: 1.8cm;
+                padding-bottom: 0.3cm;
+                vertical-align: bottom;
+            }
+            tr.middle td {
+                height: 2.2cm;
+                padding-top: 0.1cm;
+                vertical-align: top;
+                width: 50%;
+            }
+            tr.top td {
+                height: 1cm;
+                padding-top: 0.1cm;
+                vertical-align: top;
+            }
+            td.right {
+                text-align: right;
+                width: 25%
+            }
+        </style>
+    </head>
     <body>
         <table>
-            <tr>
-                <td>{{ request['client_full_name'] }}</td>
-                <td>{{ request['phone_number'] }}</td>
-                <td>{{ request['delivery_date'] }}</td>
+            <tr class="top">
+                <td class="left"><b>NAME:</b> {{ request['client_full_name'] }}</td>
+                <td class="centre"><b>CONTACT:</b> {{ request['phone_number'] or '' }}</td>
+                <td class="right"><b>DELIVER:</b> {{ request['delivery_date'] }}</td>
             </tr>
-            <tr>
-                <td colspan="2">
-                    {{ request['address_line_1'] }}<br>
-                    {{ request['address_line_2'] }}<br>
-                    {{ request['town'] }}<br>
-                    {{ request['county'] }}<br>
-                    {{ request['postcode'] }}
+            <tr class="middle">
+                <td>
+                    <b>{{ request['address_line_1'] }}</b><br>
+                    {{ request['address_line_2'] or '' }}<br>
+                    {{ request['town'] or '' }}<br>
+                    {{ request['county'] or '' }}
                 </td>
+                <td colspan="2"><b>DELIVERY INSTRUCTIONS:</b> {{ request['delivery_instructions'] or '' }}</td>
             </tr>
-            <tr>
-                <td>{{ request['delivery_instructions'] }}</td>
-                <td>Label {{ page }} of {{ total_pages }}</td>
+            <tr class="bottom">
+                <td><h2>{{ request['postcode'] }}</h2></td>
+                <td class="right" colspan="2">Parcel {{ page }} of {{ total_pages }}</td>
             </tr>
         </table>
     </body>

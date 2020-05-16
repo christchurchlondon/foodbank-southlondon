@@ -16,6 +16,10 @@ WORKDIR /home/foodbank/backend
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
+RUN apt-get update && \
+    apt-get install -y libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev && \
+    apt-get autoremove
+
 RUN python -m venv .venv && \
     .venv/bin/pip install --upgrade pip gunicorn
 COPY backend .
@@ -23,6 +27,6 @@ RUN .venv/bin/pip install -e .
 
 COPY --from=builder /home/foodbank/frontend /home/foodbank/frontend
 
-EXPOSE 8080
+EXPOSE $PORT
 USER foodbank
-CMD .venv/bin/gunicorn -b :8080 --access-logfile - --error-logfile - "foodbank_southlondon.launch:main()"
+CMD .venv/bin/gunicorn -b :$PORT --access-logfile - --error-logfile - "foodbank_southlondon.launch:main()"

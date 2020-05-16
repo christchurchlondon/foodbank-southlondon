@@ -34,7 +34,7 @@ make install
 
 *Note: to install dependencies for only the frontend or backend, you can run the same command from inside the frontend or backend directories.*
 
-#### Run
+#### Run Locally
 To run both the frontend and backend applications, run the following command from inside the repository root directory:
 ```
 make run
@@ -51,11 +51,22 @@ To install the application in a production environment, you need a different set
 * Install **WeasyPrint's Dependencies** - [All Platforms](https://weasyprint.readthedocs.io/en/stable/install.html#)
 * Clone this repository
 
-#### Run
-To build the docker image and run a container, run the following command from inside the repository root directory:
+#### Run Locally
+To build the docker image and run a container locally with the latest version tag, run the following command from inside the repository root directory:
 ```
-make deploy
+make docker
 ```
+
+#### Run in Production
+The production application is hosted by Heroku. You must meet the following pre-requisite as well as being able to login to Heroku:
+* Install **Heroku CLI** - [All Platforms](https://devcenter.heroku.com/articles/heroku-cli#download-and-install)
+
+To make the application available for deployment in Heroku, run the following command from inside the repository root directory:
+```
+make dist
+```
+
+Once pushed, you can manage the deployment from the [Heroku Dashboard](https://dashboard.heroku.com/apps/foodbank-southlondon/deploy/heroku-container).
 
 ### Environment Variables
 The following two variables can be set as you would normally set environment variables OR you can store them in a file called **development.env** or **production.env** inside the *backend* directory and they will be excluded from source control.
