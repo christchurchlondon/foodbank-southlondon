@@ -18,7 +18,7 @@ export default class RequestsActions extends React.Component {
         if (!!this.state.value) {
             this.props.onAction(this.state.value);
         }
-    }    
+    }
 
     render() {
 
