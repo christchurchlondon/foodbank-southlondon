@@ -84,8 +84,8 @@ class Actions(flask_restx.Resource):
 
     @staticmethod
     def _make_pdf_response(pages, metadata, url_fetcher, font_config, template_name):
-        pdf = weasyprint.Document(pages, metadata, url_fetcher, font_config).write_pdf("test.pdf")
-        response = flask.make_response(({}, 201))
+        pdf = weasyprint.Document(pages, metadata, url_fetcher, font_config).write_pdf()
+        response = flask.make_response((pdf, 201))
         response.headers["Content-Type"] = "application/pdf"
         response.headers["Content-Disposition"] = f"inline; filename=\"{template_name}.pdf\""
         return response
