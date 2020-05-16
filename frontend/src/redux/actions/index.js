@@ -16,13 +16,19 @@ import {
     CLEAR_LIST_SELECTION,
     LOAD_EVENTS,
     EVENTS_LOADED,
-    LOAD_EVENTS_FAILED
+    LOAD_EVENTS_FAILED,
+    OPEN_SUBMIT_DIALOG,
+    CLOSE_SUBMIT_DIALOG,
+    SUBMIT_EVENT,
+    EVENT_SUBMIT_COMPLETE,
+    EVENT_SUBMIT_FAILED
 } from './types';
 import {
     getRequests,
     getSingleRequest,
     getLists,
-    getEvents
+    getEvents,
+    postEvent
 } from '../../service';
 
 
@@ -172,4 +178,59 @@ export const loadEventsFailed = message => ({
     payload: {
         message
     }
+});
+
+export const triggerSubmitEvent = (event, ids) => {
+    return dispatch => {
+        if (event.requiresConfirmation) {
+            dispatch(openSubmitDialog(event, ids));
+        } else {
+            dispatch(sendEvent(event, ids));
+        }
+    };
+};
+
+export const openSubmitDialog = event => ({
+    type: OPEN_SUBMIT_DIALOG,
+    payload: {
+        event
+    }
+});
+
+export const confirmSubmitEvent = (event, ids, data) => {
+    return dispatch => {
+        dispatch(sendEvent(event, ids, data));
+        dispatch(closeSubmitDialog());
+    };
+};
+
+export const cancelSubmitEvent = () => {
+    return dispatch => {
+        dispatch(closeSubmitDialog());
+    };
+};
+
+export const closeSubmitDialog = () => ({
+    type: CLOSE_SUBMIT_DIALOG
+});
+
+export const sendEvent = (event, ids, data) => {
+    return dispatch => {
+        dispatch(submitEvent(event));
+        return submitEvent(event, ids, data)
+            .then(() => eventSubmitComplete())
+            .catch(() => eventSubmitFailed());
+    };
+};
+
+export const submitEvent = event => ({
+    type: SUBMIT_EVENT
+});
+
+export const eventSubmitComplete = () => ({
+    type: EVENT_SUBMIT_COMPLETE
+});
+
+export const eventSubmitFailed = () => ({
+    type: EVENT_SUBMIT_FAILED
 });

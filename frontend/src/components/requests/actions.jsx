@@ -23,7 +23,7 @@ export default class RequestsActions extends React.Component {
     render() {
 
         const options = this.props.events.map((event, index) => {
-            return <option key={index} value={event}>{ event }</option>;
+            return <option key={index} value={event}>{ event.name }</option>;
         });
 
         return (

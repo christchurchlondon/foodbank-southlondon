@@ -3,22 +3,23 @@ import { format, parse } from 'date-fns';
 import { DATE_FORMAT_REQUEST } from '../constants';
 
 const endpoints = {
-    GET_REQUESTS: 'bff/status?page=1&perpage=50',
+    GET_REQUESTS: 'bff/status',
     GET_SINGLE_REQUEST: 'bff/details/',
     GET_LISTS: 'api/lists/',
-    GET_EVENTS: 'api/events/distinct/?attribute=event_name'
+    GET_EVENTS: 'api/events/distinct/?attribute=event_name',
+    SUBMIT_EVENT: 'bff/actions/'
 };
 
 
-function fetchFromServer(url, method = 'GET') {
+function fetchFromServer(url, method = 'GET', body = null) {
     // TODO use method?
     // handle response
-    return fetch(url)
+    return fetch(url, { method, body })
         .then(response => response.json());
 }
 
 function encodeParams(params) {
-    return '' // '?'
+    return '?'
         + Object.entries(params)
             .map(param => param.map(_ => _ || '').map(encodeURIComponent).join('='))
             .join('&');
@@ -36,6 +37,8 @@ export function getRequests(filters = {}) {
     (filters.dates || {}).end && dates.push(formatDate(filters.dates.end));
 
     const params = {
+        page: 1,
+        perpage: 50,
         delivery_dates: dates.join(','),
         client_full_names: filters.name,
         reference_numbers: filters.referenceNumber,
@@ -105,7 +108,21 @@ export function getLists() {
 
 export function getEvents() {
     return fetchFromServer(endpoints.GET_EVENTS)
-        .then(response => response.values.map(v => v.event_name));
+        .then(response => response.values.map(v => ({
+            name: v.event_name,
+            requiresConfirmation: v.confirmation_expected,
+            requiresDate: v.date_expected,
+            requiresQuantity: v.quantity_expected
+        })));
+}
+
+export function postEvent(event, ids, data = null) {
+    const requestBody = {
+        event_name: event,
+        request_ids: ids,
+        event_data: data
+    };
+    return fetchFromServer(endpoints.SUBMIT_EVENT, 'POST', requestBody);
 }
 
 function responseItemToRequest(item) {
