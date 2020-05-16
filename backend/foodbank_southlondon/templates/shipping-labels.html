@@ -5,8 +5,11 @@
         <link rel="stylesheet" type="text/css" href="https://meyerweb.com/eric/tools/css/reset/reset.css">
         <style>
             @page {
-                margin: 0;
+                margin: 0.2cm;
                 size: 20cm 6.2cm;
+            }
+            * {
+                box-sizing: border-box;
             }
             b {
                 font-weight: bold;
@@ -14,48 +17,41 @@
             body {
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 font-size: 0.4cm;
-                line-height: 1.25rem;
-                margin: 0.3cm;
+                line-height: 1.25em;
             }
             h2 {
-                font-size: 2.75rem;
-                line-height: 1rem;
+                font-size: 2.7em;
+                line-height: 1em;
             }
             table {
                 border: 0.05cm solid black;
                 border-collapse: collapse;
-                height: 5.6cm;
+                height: 5.8cm;
                 table-layout: fixed;
                 width: 100%
             }
             td {
                 overflow: hidden;
-                padding-left: 0.1cm;
-                padding-right: 0.1cm;
-                page-break-inside: avoid;
-            }
-            td.left {
-                width: 25%;
+                padding: 0.1cm;
             }
             tr.bottom td {
-                height: 1.8cm;
-                padding-bottom: 0.3cm;
+                height: 30%;
                 vertical-align: bottom;
             }
-            tr.middle td {
-                height: 2.2cm;
-                padding-top: 0.1cm;
-                vertical-align: top;
-                width: 50%;
+            td.left {
+                width: 36%;
             }
-            tr.top td {
-                height: 1cm;
-                padding-top: 0.1cm;
+            tr.middle td {
+                height: 49%;
                 vertical-align: top;
             }
             td.right {
                 text-align: right;
                 width: 25%
+            }
+            tr.top td {
+                height: 20%;
+                vertical-align: top;
             }
         </style>
     </head>
@@ -63,7 +59,7 @@
         <table>
             <tr class="top">
                 <td class="left"><b>NAME:</b> {{ request['client_full_name'] }}</td>
-                <td class="centre"><b>CONTACT:</b> {{ request['phone_number'] or '' }}</td>
+                <td><b>CONTACT:</b> {{ request['phone_number'] or '' }}</td>
                 <td class="right"><b>DELIVER:</b> {{ request['delivery_date'] }}</td>
             </tr>
             <tr class="middle">

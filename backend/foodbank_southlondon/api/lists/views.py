@@ -55,7 +55,7 @@ class List(flask_restx.Resource):
         columns = {f"{list_name}_quantity": "quantity", f"{list_name}_notes": "notes"}
         df = df.loc[:, ["item_description", *columns]].rename(columns=columns)
         notes = utils.gsheet_a1(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], 1)
-        return {"notes": notes, "items": df.to_dict("records")[0]}
+        return {"notes": notes, "items": df.to_dict("records")}
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
