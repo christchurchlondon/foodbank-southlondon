@@ -1,5 +1,10 @@
 @import 'include';
 
+.request-details .top-controls {
+    display: flex;
+    justify-content: flex-end;
+}
+
 .request-details .row label {
     color: $colour-text-secondary;
 }
