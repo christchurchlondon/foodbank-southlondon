@@ -53,7 +53,7 @@ class Actions(flask_restx.Resource):
 
     @staticmethod
     def _generate_shopping_list_pdf(requests_items, api_base_url, cookies):
-        lists: Dict[str, Dict[str, str]] = {}
+        lists: Dict[str, Dict[str, Any]] = {}
         catch_all_list_name = flask.current_app.config[_FBSL_CATCH_ALL_LIST]
         template_name = "shopping-lists"
         pages = []

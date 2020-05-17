@@ -3,21 +3,21 @@
     <head>
         <style>
             @page {
-                margin: 0.5cm;
+                margin: 0.2cm;
             }
             body {
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 font-size: 12px;
-                line-height: 1.5rem;
+                line-height: 1.25rem;
             }
             h1 {
-                line-height: 3rem;
+                line-height: 2rem;
             }
             img {
                 display: block;
                 float: right;
                 height: 120px;
-                margin-bottom: 1rem;
+                margin-bottom: 0.25rem;
                 object-fit: cover;
                 width: 192px;
             }
@@ -29,17 +29,23 @@
             table, td, th {
                 border: 0.1rem solid black;
             }
-            td, th {
-                padding: 0.5rem;
+            td {
+                overflow: hidden;
+                padding: 0.2rem;
                 vertical-align: top;
             }
             th {
+                padding: 0.1rem 0.2rem;
+                font-size: 0.75rem;
                 text-decoration: underline;
-                font-size: 1rem;
+            }
+            tr.compact td {
+                padding: 0.05rem 0.2rem;
+                line-height: 1rem;
             }
             tr.spacer td {
                 background-color: lightgrey;
-                height: 0.5rem;
+                height: 0.2rem;
             }
         </style>
     </head>
@@ -87,10 +93,10 @@
             </tr>
             {% for item in list["items"] %}
                 {% set quantity = item['quantity'] %}
-                {% if quantity != 0 %}
-            <tr>
+                {% if quantity != "0" %}
+            <tr class="compact">
                 <td>{{ item['item_description'] }}</td>
-                <td>{{ item['quantity'] }}</td>
+                <td>{{ quantity }}</td>
                 <td>{{ item['notes'] or '' }}</td>
                 <td></td>
             </tr>
