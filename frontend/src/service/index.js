@@ -12,9 +12,6 @@ const endpoints = {
 
 
 function fetchFromServer(url, method = 'GET', body = null) {
-
-    if (body) console.log(body);
-
     return fetch(url, {
             method,
             body: body ? JSON.stringify(body) : null
@@ -119,11 +116,15 @@ export function getEvents() {
         })));
 }
 
-export function postEvent(event, ids, data = null) {
+export function postEvent(event, ids, data = {}) {
+
+    const date = (data && data.date) ? formatDate(data.date) : null;
+    const eventData = date || data.quantity;
+
     const requestBody = {
         event_name: event,
         request_ids: ids,
-        // event_data: data
+        event_data: eventData
     };
     return fetchFromServer(endpoints.SUBMIT_EVENT, 'POST', requestBody);
 }
