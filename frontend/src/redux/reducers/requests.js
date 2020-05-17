@@ -166,10 +166,38 @@ export default function(state = initialState, action) {
                 }
             };
         case SUBMIT_EVENT:
+            return {
+                ...state,
+                events: {
+                    ...state.events,
+                    dialog: {
+                        ...state.events.dialog,
+                        updateStatus: STATUS_LOADING
+                    }
+                }
+            };
         case EVENT_SUBMIT_COMPLETE:
+            return {
+                ...state,
+                events: {
+                    ...state.events,
+                    dialog: {
+                        ...state.events.dialog,
+                        updateStatus: STATUS_SUCCESS
+                    }
+                }
+            };
         case EVENT_SUBMIT_FAILED:
-            // TODO
-            return state;
+            return {
+                ...state,
+                events: {
+                    ...state.events,
+                    dialog: {
+                        ...state.events.dialog,
+                        updateStatus: STATUS_FAILED
+                    }
+                }
+            };
 
         default:
             return state;
