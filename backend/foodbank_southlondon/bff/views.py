@@ -159,8 +159,6 @@ class Details(flask_restx.Resource):
         similar_request_data = _get(f"{api_base_url}requests/", cookies=flask.request.cookies,
                                     headers={"X-Fields": "items{request_id, timestamp, client_full_name, postcode, reference_number}, total_pages"},
                                     params=params)
-        print(events_data)
-        print(similar_request_data)
         assert (events_data["total_pages"] <= 1 and similar_request_data["total_pages"] <= 1)
         similar_request_items = similar_request_data["items"]
         for index, request in enumerate(similar_request_items):
