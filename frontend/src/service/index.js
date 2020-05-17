@@ -66,8 +66,14 @@ export function getRequests(filters = {}) {
 export function getSingleRequest(id) {
     return fetchFromServer(endpoints.GET_SINGLE_REQUEST + id)
         .then(response => {
-            // TODO add event history etc
-            return responseItemToRequest(response.request);
+            const details = responseItemToRequest(response.request);
+            const events = response.events.map(event => ({
+                name: event.event_name,
+                data: event.event_data,
+                // TODO handle as a date?
+                timestamp: parse(event.event_timestamp.substr(0, 10), DATE_FORMAT_REQUEST, new Date())
+            }));
+            return { details, events };
         });
     // TODO error if response.items is empty?
 }
@@ -102,7 +108,7 @@ export function getLists() {
                         },
                     }
                 }
-            })
+            });
         });
 }
 
