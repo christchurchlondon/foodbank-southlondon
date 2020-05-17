@@ -123,7 +123,7 @@ export function postEvent(event, ids, data = null) {
     const requestBody = {
         event_name: event,
         request_ids: ids,
-        event_data: data
+        // event_data: data
     };
     return fetchFromServer(endpoints.SUBMIT_EVENT, 'POST', requestBody);
 }
