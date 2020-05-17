@@ -158,7 +158,8 @@ function responseItemToRequest(item) {
             babyProducts: item.dietary_requirements.toLowerCase() === 'true',
             petFood: item.dietary_requirements.toLowerCase() === 'true'
         },
-        extraInformation: item.extra_information
+        extraInformation: item.extra_information,
+        editUrl: item.edit_details_url
     };
 }
 

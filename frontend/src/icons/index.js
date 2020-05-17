@@ -1,7 +1,7 @@
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
-    faComment, faExclamationCircle, faTimes
+    faComment, faEdit, faExclamationCircle, faTimes
 } from '@fortawesome/free-solid-svg-icons'
 
 // Add more icons here when required
@@ -9,6 +9,7 @@ import {
 export default function setupIcons() {
     library.add(
         faComment,
+        faEdit,
         faExclamationCircle,
         faTimes
     );

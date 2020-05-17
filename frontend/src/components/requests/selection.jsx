@@ -1,4 +1,5 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     STATUS_IDLE,
     STATUS_LOADING,
@@ -43,6 +44,9 @@ export default class RequestSelection extends React.Component {
         const item = this.props.item;
         return (
             <div className="request-details">
+                <div className="top-controls">
+                    { this.getEditLink(item) }
+                </div>
                 <div className="row">
                     <label>ID</label>
                     <p>{ item.request_id }</p>
@@ -119,6 +123,14 @@ export default class RequestSelection extends React.Component {
 
     flagToString(value) {
         return !!value ? 'Yes' : 'No';
+    }
+
+    getEditLink(item) {
+        return (
+            <a href={item.editUrl} target="_blank">
+                Edit <FontAwesomeIcon icon="edit" />
+            </a>
+        );
     }
 
     render() {
