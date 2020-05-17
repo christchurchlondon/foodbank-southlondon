@@ -1,0 +1,13 @@
+@import 'include';
+
+.event-dialog-contents p {
+    margin: 0 0 $pad-standard;
+}
+
+.event-dialog-contents label {
+    margin-right: $pad-standard;
+}
+
+.event-dialog-contents input {
+    border: 1px solid #eee;
+}

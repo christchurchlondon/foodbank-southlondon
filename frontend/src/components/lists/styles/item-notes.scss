@@ -1,19 +1,22 @@
+@import 'include';
+
 
 .list-item-notes {
     position: relative;
 }
 
 .list-item-notes .toggle {
+    margin-left: $pad-half;
     cursor: pointer;
 }
 
 .list-item-notes .list-item-notes-text {
     position: absolute;
     top: 0;
-    left: 4rem;
+    left: 2rem;
     z-index: 1;
-    border: 1px solid grey;
-    padding: .5rem;
-    background: #fff;
+    border: 1px solid $colour-border-primary;
+    padding: $pad-half;
+    background-color: #fff;
     color: #000;
 }

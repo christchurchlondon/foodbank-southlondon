@@ -1,5 +1,5 @@
 import React from 'react';
-import './styles/comments.css';
+import './styles/comments.scss';
 
 
 export default function ListsComments(props) {

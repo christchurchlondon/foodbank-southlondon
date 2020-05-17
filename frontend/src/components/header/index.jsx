@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import Tabs from './tabs';
 import { setTab } from '../../redux/actions';
 import { getTab } from '../../redux/selectors';
-import './styles/index.css';
+import logo from '../../assets/logo.jpg';
+import './styles/index.scss';
 
 class Header extends React.Component {
 
@@ -16,8 +17,9 @@ class Header extends React.Component {
     render() {
         return (
             <header className="header">
-                <h1>Foodbank - South London</h1>
+                <img className="logo" src={logo} alt="Lambeth Foodbank" />
                 <Tabs onSelect={ (tab) => this.handleTabSelect(tab) } selected={ this.props.tab } />
+                <a className="logout" href="/logout">Log out</a>
             </header>
         );
     };

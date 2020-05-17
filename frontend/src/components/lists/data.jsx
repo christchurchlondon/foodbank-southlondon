@@ -4,31 +4,61 @@ import ListItemNotes from './item-notes';
 
 export default class ListsData extends React.Component {
 
+    selectComment(id, type) {
+        this.props.onSelect(id, type);
+    }
+
     render() {
 
+        const { id, type } = this.props.selectedComment || { id: null, type: null };
+
         const tableRows = this.props.data.map((item, index) => {
+
+            const [singleSelected, twoSelected, threeSelected, fourSelected, fivePlusSelected]
+                = ['1', '2', '3', '4', '5+'].map(t => index === id && t === type);
+
             return (
                 <tr key={index}>
                     <td>{item.description}</td>
                     <td>
                         { item.householdSizes.single.quantity }
-                        <ListItemNotes notes={item.householdSizes.single.notes} />
+                        <ListItemNotes
+                            selected={singleSelected}
+                            onToggle={ () => this.selectComment(index, '1') }
+                            notes={item.householdSizes.single.notes}
+                            onSelect={ this.selectComment } />
                     </td>
                     <td>
                         { item.householdSizes.familyOf2.quantity }
-                        <ListItemNotes notes={item.householdSizes.familyOf2.notes} />
+                        <ListItemNotes
+                            selected={twoSelected}
+                            onToggle={ () => this.selectComment(index, '2') }
+                            notes={item.householdSizes.familyOf2.notes}
+                            onSelect={ this.selectComment } />
                     </td>
                     <td>
                         { item.householdSizes.familyOf3.quantity }
-                        <ListItemNotes notes={item.householdSizes.familyOf3.notes} />
+                        <ListItemNotes
+                            selected={threeSelected}
+                            onToggle={ () => this.selectComment(index, '3') }
+                            notes={item.householdSizes.familyOf3.notes}
+                            onSelect={ this.selectComment } />
                     </td>
                     <td>
                         { item.householdSizes.familyOf4.quantity }
-                        <ListItemNotes notes={item.householdSizes.familyOf4.notes} />
+                        <ListItemNotes
+                            selected={fourSelected}
+                            onToggle={ () => this.selectComment(index, '4') }
+                            notes={item.householdSizes.familyOf4.notes}
+                            onSelect={ this.selectComment } />
                     </td>
                     <td>
                         { item.householdSizes.familyOf5Plus.quantity }
-                        <ListItemNotes notes={item.householdSizes.familyOf5Plus.notes} />
+                        <ListItemNotes
+                            selected={fivePlusSelected}
+                            onToggle={ () => this.selectComment(index, '5+') }
+                            notes={item.householdSizes.familyOf5Plus.notes}
+                            onSelect={ this.selectComment } />
                     </td>
                 </tr>
             );

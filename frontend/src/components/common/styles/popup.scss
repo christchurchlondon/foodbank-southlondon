@@ -1,0 +1,44 @@
+@import 'include';
+
+.popup-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    background: rgba(0, 0, 0, .3);
+}
+
+.popup-box {
+    width: 500px;
+    margin: $pad-standard auto;
+    padding: $pad-standard;
+    background: $colour-white;
+}
+
+.popup-header {
+    display: flex;
+    align-items: center;
+    margin: 0 0 $pad-standard;
+}
+
+.popup-header h3 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.popup-header .close {
+    margin: 0 0 0 auto;
+}
+
+.popup-footer {
+    margin-top: $pad-standard;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.popup-button {
+    margin-left: $pad-half;
+}

@@ -1,0 +1,45 @@
+
+// Padding
+
+$pad-double: 2rem;
+$pad-standard: 1rem;
+$pad-half: .5rem;
+
+
+// Colours
+
+$colour-dark-purple: #240115;
+$colour-rusty-red: #de3c4b;
+$colour-electric-blue: #87f5fb;
+$colour-dark-sienna: #2f131e;
+$colour-pale-silver: #cec3c1;
+$colour-white: #fff;
+
+
+
+$colour-background-primary: $colour-pale-silver;
+$colour-background-secondary: $colour-dark-sienna;
+
+$colour-border-primary: $colour-dark-sienna;
+
+$colour-button-bg: $colour-dark-sienna;
+$colour-button-bg-primary: $colour-dark-sienna;
+$colour-button-bg-secondary: $colour-pale-silver;
+$colour-button-bg-disabled: darken($colour-pale-silver, 50);
+
+$colour-button-text: $colour-white;
+$colour-button-text-primary: $colour-pale-silver;
+$colour-button-text-secondary: $colour-dark-sienna;
+$colour-button-text-disabled: lighten($colour-button-text, 50);
+
+$colour-text: #444;
+$colour-text-secondary: #888;
+
+$colour-anchor: $colour-dark-sienna;
+$colour-anchor-hover: $colour-dark-purple;
+
+// $colour-button-primary-hover: $colour-dark-purple;
+
+
+// $colour-trim
+

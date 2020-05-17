@@ -1,5 +1,6 @@
 import React from 'react';
-import './styles/item-notes.css';
+import './styles/item-notes.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
 export default class ListItemNotes extends React.Component {
@@ -7,14 +8,19 @@ export default class ListItemNotes extends React.Component {
     constructor(props) {
         super(props);
         this.toggle = this.toggle.bind(this);
-        this.state = { show: false };
     }
 
-    toggle() {
+    isSelectedComment() {
+        return !!this.props.selected;
+    }
 
-        // TODO manage this rendering via Redux?
+    toggle(event) {
+        this.props.onToggle();
+        event.nativeEvent.stopImmediatePropagation();
+    }
 
-        this.setState({ show: !this.state.show });
+    handleNoteClick(event) {
+        event.nativeEvent.stopImmediatePropagation();
     }
 
     render() {
@@ -23,15 +29,15 @@ export default class ListItemNotes extends React.Component {
 
         if (notes.trim().length === 0) return null;
 
-        // TODO speech bubble icon
-
-        const notesText = this.state.show
-            ? <div className="list-item-notes-text">{ this.props.notes }</div>
+        const notesText = this.props.selected
+            ? <div className="list-item-notes-text" onClick={this.handleNoteClick}>{ this.props.notes }</div>
             : null;
 
         return (
             <span className="list-item-notes">
-                <span className="toggle" onClick={ () => this.toggle() }>[notes]</span>
+                <span className="toggle" onClick={ this.toggle }>
+                    <FontAwesomeIcon icon="comment" />
+                </span>
                 { notesText }
             </span>
         );

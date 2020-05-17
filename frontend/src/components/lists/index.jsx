@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {
     STATUS_LOADING, STATUS_SUCCESS, STATUS_FAILED
 } from '../../constants';
-import { fetchLists } from '../../redux/actions';
+import { fetchLists, toggleListSelection, clearListSelection } from '../../redux/actions';
 import { getListsState } from '../../redux/selectors';
 import Loading from '../common/loading';
 import Error from '../common/error';
@@ -13,8 +13,19 @@ import ListsControls from './controls';
 
 class Lists extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.select = this.select.bind(this);
+        this.clearSelection = this.clearSelection.bind(this);
+    }
+
     componentDidMount() {
         this.fetchLists();
+        document.addEventListener('click', this.clearSelection, false);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('click', this.clearSelection, false);
     }
 
     fetchLists() {
@@ -24,6 +35,14 @@ class Lists extends React.Component {
     save() {
         // TODO
         console.log('Save button clicked!');
+    }
+
+    select(id, type) {
+        this.props.toggleListSelection(id, type);
+    }
+
+    clearSelection() {
+        this.props.clearListSelection();
     }
 
     isLoading() {
@@ -48,7 +67,10 @@ class Lists extends React.Component {
         return (
             <div>
                 <ListsComments />
-                <ListsData data={this.props.items} />
+                <ListsData
+                    data={this.props.items}
+                    selectedComment={this.props.selectedComment}
+                    onSelect={ this.select } />
                 <ListsControls onSave={ () => this.save() } />
             </div>
         );
@@ -73,5 +95,5 @@ const mapStateToProps = state => {
 
 export default connect(
     mapStateToProps,
-    { fetchLists }
+    { fetchLists, toggleListSelection, clearListSelection }
 )(Lists);
