@@ -151,11 +151,17 @@ class Details(flask_restx.Resource):
         max_per_page = flask.current_app.config[_FBSL_MAX_PAGE_SIZE]
         events_data = _get(f"{api_base_url}/events/", cookies=flask.request.cookies,
                            params={"refresh_cache": refresh_cache, "request_ids": request_id, "per_page": max_per_page})
+        params = {"refresh_cache": refresh_cache}
+        for attribute in ("client_full_name", "postcode"):
+            value = request_data[attribute]
+            if value:
+                params[f"{attribute}s"] = value
         similar_request_data = _get(f"{api_base_url}requests/", cookies=flask.request.cookies,
                                     headers={"X-Fields": "items{request_id, timestamp, client_full_name, postcode, reference_number}, total_pages"},
-                                    params={"client_full_names": request_data["client_full_name"], "postcodes": request_data["postcode"],
-                                            "refresh_cache": refresh_cache})
-        assert (events_data["total_pages"] == 1 and similar_request_data["total_pages"] == 1)
+                                    params=params)
+        print(events_data)
+        print(similar_request_data)
+        assert (events_data["total_pages"] <= 1 and similar_request_data["total_pages"] <= 1)
         similar_request_items = similar_request_data["items"]
         for index, request in enumerate(similar_request_items):
             if request["request_id"] == request_id:
