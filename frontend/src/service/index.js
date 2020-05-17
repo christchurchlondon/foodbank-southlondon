@@ -77,7 +77,7 @@ export function getLists() {
         .then(response => {
             return response.items.map((item, id) => {
                 return {
-                    id: id,
+                    id: id,    // Change?
                     description: item.item_description,
                     householdSizes: {
                         single: {
