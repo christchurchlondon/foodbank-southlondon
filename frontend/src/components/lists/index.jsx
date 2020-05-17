@@ -82,7 +82,6 @@ class Lists extends React.Component {
 
         return (
             <div className="lists-container">
-                <h2>Lists</h2>
                 { contents }
             </div>
         );

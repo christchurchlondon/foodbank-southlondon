@@ -3,7 +3,7 @@ import { TAB_REQUESTS, TAB_LISTS } from '../../constants';
 import Tab from './tab';
 
 const tabDefinitions = [
-    { id: TAB_REQUESTS, label: 'Requests' },
+    { id: TAB_REQUESTS, label: 'Clients' },
     { id: TAB_LISTS, label: 'Lists' }
 ];
 

@@ -143,7 +143,6 @@ class Requests extends React.Component {
 
         return (
             <div className="requests-container">
-                <h2>Requests</h2>
                 { contents }
                 { selection }
                 { eventDialog }
