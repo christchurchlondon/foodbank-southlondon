@@ -31,6 +31,7 @@
             }
             td {
                 overflow: hidden;
+                overflow-wrap: break-word;
                 padding: 0.2rem;
                 vertical-align: top;
             }
@@ -53,6 +54,8 @@
     <body>
         <img src="{{ url_for('static', filename='logo.jpg', _external=True)}}">
         <h1>CLIENT SHOPPING LIST</h1>
+        {% set postcode = request['postcode'] %}
+        <h2>POSTCODE: {{ postcode }}</h2>
         <b>REFERENCE #:</b> {{ request['reference_number'] }}
         <table>
             <tr>
@@ -62,7 +65,7 @@
             <tr>
                 <td colspan="2">
                     <b>ADDRESS</b><br>
-                    {{ request['address_line_1'] }}, {{ request['postcode'] }}
+                    {{ request['address_line_1'] }}, {{ postcode }}
                 </td>
                 <td colspan="2">
                     <b>EXTRA INFORMATION</b><br>
