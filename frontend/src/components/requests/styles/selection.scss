@@ -8,3 +8,10 @@
 .request-details .row label {
     color: $colour-text-secondary;
 }
+
+.event-wrap {
+    margin-top: $pad-standard;
+    max-height: 150px;
+    overflow-y: scroll;
+    border: 1px solid $colour-border-secondary;
+}

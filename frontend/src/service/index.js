@@ -1,6 +1,6 @@
 import fetch from 'cross-fetch';
 import { format, parse } from 'date-fns';
-import { DATE_FORMAT_REQUEST } from '../constants';
+import { DATE_FORMAT_REQUEST, DATE_FORMAT_TIMESTAMP } from '../constants';
 
 const endpoints = {
     GET_REQUESTS: 'bff/status',
@@ -70,8 +70,7 @@ export function getSingleRequest(id) {
             const events = response.events.map(event => ({
                 name: event.event_name,
                 data: event.event_data,
-                // TODO handle as a date?
-                timestamp: parse(event.event_timestamp.substr(0, 10), DATE_FORMAT_REQUEST, new Date())
+                timestamp: parse(event.event_timestamp.substr(0, 19).replace('T', ' '), DATE_FORMAT_TIMESTAMP, new Date())
             }));
             return { details, events };
         });

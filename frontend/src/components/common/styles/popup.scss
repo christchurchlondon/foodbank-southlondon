@@ -11,7 +11,8 @@
 }
 
 .popup-box {
-    width: 500px;
+    width: 600px;
+    max-height: calc(100% - $pad-double);
     margin: $pad-standard auto;
     padding: $pad-standard;
     background: $colour-white;
