@@ -10,6 +10,7 @@ from foodbank_southlondon import app, oauth, helpers
 # CONFIG VARIABLES
 _FBSL_GSUITE_GROUP_ADDRESS = "FBSL_GSUITE_GROUP_ADDRESS"
 _FBSL_USER_SESSION_VAR = "FBSL_USER_SESSION_VAR"
+_PREFERRED_URL_SCHEME = "PREFERRED_URL_SCHEME"
 
 
 @app.route("/", defaults={"path": ""})
@@ -36,10 +37,10 @@ def auth() -> Union[Tuple[str, int], werkzeug.Response]:
 
 @app.route("/login")
 def login() -> werkzeug.Response:
-    return oauth.google.authorize_redirect(flask.url_for("auth", _external=True))
+    return oauth.google.authorize_redirect(flask.url_for("auth", _external=True, _scheme=flask.current_app.config[_PREFERRED_URL_SCHEME]))
 
 
 @app.route("/logout")
 def logout() -> werkzeug.Response:
     flask.session.pop(flask.current_app.config[_FBSL_USER_SESSION_VAR], None)
-    return flask.redirect("http://christchurchlondon.org")
+    return flask.redirect("https://christchurchlondon.org")

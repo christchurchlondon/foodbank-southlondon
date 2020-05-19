@@ -149,7 +149,7 @@ class Details(flask_restx.Resource):
             raise
         request_data = requests_items[0]
         max_per_page = flask.current_app.config[_FBSL_MAX_PAGE_SIZE]
-        events_data = _get(f"{api_base_url}/events/", cookies=flask.request.cookies,
+        events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
                            params={"refresh_cache": refresh_cache, "request_ids": request_id, "per_page": max_per_page})
         params = {"refresh_cache": refresh_cache}
         for attribute in ("client_full_name", "postcode"):

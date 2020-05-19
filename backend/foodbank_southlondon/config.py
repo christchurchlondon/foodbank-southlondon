@@ -8,6 +8,7 @@ class _Config(object):
     DEBUG: Optional[bool] = None
     ERROR_404_HELP = False
     GOOGLE_CLIENT_ID = ""
+    PREFERRED_URL_SCHEME = "http"
     RESTX_VALIDATE = True
     SECRET_KEY = os.urandom(16)
 
@@ -51,6 +52,7 @@ class DevelopmentConfig(_Config):
 class ProductionConfig(_Config):
     DEBUG = False
     GOOGLE_CLIENT_ID = "555689098172-2hmfl06vftk660n1a1cvcpu5kuh5l243.apps.googleusercontent.com"
+    PREFERRED_URL_SCHEME = "https"
 
     FBSL_BASE_URL = "https://foodbankapp.christchurchlondon.org"
     FBSL_EVENTS_GSHEET_URI = "1OAluin8tOIpYUxcm18gHJSc0z1tx4EdxY9I2bdB4zj4"
