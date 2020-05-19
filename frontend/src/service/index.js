@@ -11,12 +11,17 @@ const endpoints = {
 };
 
 
-function fetchFromServer(url, method = 'GET', body = null) {
-    return fetch(url, {
-            method,
-            body: body ? JSON.stringify(body) : null
-        })
+function performFetch(url) {
+    return fetch(url)
         .then(response => response.json());
+}
+
+function performPost(url, data = {}) {
+    return fetch(url, {
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        method: 'POST',
+        body: JSON.stringify(data)
+    }).then(response => response.json())
 }
 
 function encodeParams(params) {
@@ -46,7 +51,7 @@ export function getRequests(filters = {}) {
     };
 
     const url = endpoints.GET_REQUESTS + encodeParams(params);
-    return fetchFromServer(url)
+    return performFetch(url)
         .then(response => {
 
             // TODO add page info to response
@@ -64,7 +69,7 @@ export function getRequests(filters = {}) {
 }
 
 export function getSingleRequest(id) {
-    return fetchFromServer(endpoints.GET_SINGLE_REQUEST + id)
+    return performFetch(endpoints.GET_SINGLE_REQUEST + id)
         .then(response => {
             const details = responseItemToRequest(response.request);
             const events = response.events.map(event => ({
@@ -78,7 +83,7 @@ export function getSingleRequest(id) {
 }
 
 export function getLists() {
-    return fetchFromServer(endpoints.GET_LISTS)
+    return performFetch(endpoints.GET_LISTS)
         .then(response => {
             return response.items.map((item, id) => {
                 return {
@@ -112,7 +117,7 @@ export function getLists() {
 }
 
 export function getEvents() {
-    return fetchFromServer(endpoints.GET_EVENTS)
+    return performFetch(endpoints.GET_EVENTS)
         .then(response => response.values.map(v => ({
             name: v.event_name,
             requiresConfirmation: v.confirmation_expected,
@@ -131,7 +136,7 @@ export function postEvent(event, ids, data = {}) {
         request_ids: ids,
         event_data: eventData
     };
-    return fetchFromServer(endpoints.SUBMIT_EVENT, 'POST', requestBody);
+    return performPost(endpoints.SUBMIT_EVENT, requestBody);
 }
 
 function responseItemToRequest(item) {
