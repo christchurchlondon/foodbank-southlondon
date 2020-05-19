@@ -110,6 +110,7 @@ class Requests extends React.Component {
                     onToggle={ id => this.toggleRequest(id) }
                     onToggleAll={ () => this.toggleAllRequests() } />
                 <RequestsActions
+                    disabled={ !this.getSelectedIds().length }
                     status={ this.props.events.loadingStatus }
                     events={ this.props.events.items }
                     onAction={ action => this.submitAction(action) } />
