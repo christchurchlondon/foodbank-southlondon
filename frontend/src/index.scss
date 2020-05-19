@@ -75,6 +75,10 @@ th:last-child, td:last-child, th.last, td.last {
     padding-right: 0;
 }
 
+table.padded th, table.padded td {
+    padding: $pad-half;
+}
+
 th.numerical, td.numerical {
     text-align: right;
 }
@@ -89,6 +93,11 @@ table.selectable tbody tr {
 
 table.selectable tbody tr:hover {
     background-color: rgba(138, 246, 251, 0.4);
+}
+
+table .empty-row {
+    text-align: center;
+    color: $colour-text-secondary;
 }
 
 button {

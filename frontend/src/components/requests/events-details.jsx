@@ -1,6 +1,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { DATE_FORMAT_UI_LONG } from '../../constants';
+import './styles/events-details.scss';
 
 
 export default function RequestEventsDetails(props) {
@@ -16,7 +17,7 @@ export default function RequestEventsDetails(props) {
         : <tr><td className="empty-row" colSpan="3">No events</td></tr>;
 
     return (
-        <table className="event-details">
+        <table className="events-details padded">
             <thead>
                 <tr>
                     <th>Name</th>
