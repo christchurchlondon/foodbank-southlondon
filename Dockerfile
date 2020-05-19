@@ -4,7 +4,7 @@ WORKDIR /home/foodbank/frontend
 
 COPY frontend .
 RUN npm install && \
-    npm run-script build
+    npm run build
 
 
 FROM python:3.8-slim-buster
