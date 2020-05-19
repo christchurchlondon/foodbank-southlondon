@@ -134,7 +134,7 @@ export function postEvent(event, ids, data = {}) {
     const requestBody = {
         event_name: event,
         request_ids: ids,
-        event_data: eventData
+        event_data: eventData || ''
     };
     return performPost(endpoints.SUBMIT_EVENT, requestBody);
 }
