@@ -4,7 +4,7 @@
 **/.mypy_cache/
 **/.venv
 **/.vscode
-**/*.env
+**/backend/*.env
 **/build/
 **/Makefile
 **/node_modules/

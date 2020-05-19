@@ -8,7 +8,7 @@ class _Config(object):
     DEBUG: Optional[bool] = None
     ERROR_404_HELP = False
     GOOGLE_CLIENT_ID = ""
-    PREFERRED_URL_SCHEME = "http"
+    PREFERRED_URL_SCHEME = None
     RESTX_VALIDATE = True
     SECRET_KEY = os.urandom(16)
 
@@ -38,6 +38,7 @@ class _Config(object):
 class DevelopmentConfig(_Config):
     DEBUG = True
     GOOGLE_CLIENT_ID = "99797708931-48j5pomhhh4lss7bfhg50ke5l34ah3ar.apps.googleusercontent.com"
+    PREFERRED_URL_SCHEME = "http"
 
     FBSL_BASE_URL = "http://localhost:5000"
     FBSL_EVENTS_GSHEET_URI = "1GfD-YA_9eMSMqu9eTZlCEC0wvsV6c0CRlMLRPOvWM48"

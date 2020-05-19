@@ -37,7 +37,7 @@ def auth() -> Union[Tuple[str, int], werkzeug.Response]:
 
 @app.route("/login")
 def login() -> werkzeug.Response:
-    return oauth.google.authorize_redirect(flask.url_for("auth", _external=True, _scheme=flask.current_app.config[_PREFERRED_URL_SCHEME]))
+    return oauth.google.authorize_redirect(flask.url_for("auth", _external=True))
 
 
 @app.route("/logout")

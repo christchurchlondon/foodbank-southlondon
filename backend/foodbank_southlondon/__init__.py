@@ -2,6 +2,18 @@ from authlib.integrations import flask_client  # type:ignore
 import flask
 
 
+class _ReverseProxied(object):
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        scheme = environ.get("HTTP_X_FORWARDED_PROTO")
+        if scheme:
+            environ["wsgi.url_scheme"] = scheme
+        return self.app(environ, start_response)
+
+
 app = flask.Flask(__name__, static_folder="../../frontend/build", static_url_path="/", template_folder="templates")
+app.wsgi_app = _ReverseProxied(app.wsgi_app)
 
 oauth = flask_client.OAuth()
