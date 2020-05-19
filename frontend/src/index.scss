@@ -50,6 +50,7 @@ select:focus {
 table {
     width: 100%;
     margin: 0 0 $pad-standard;
+    color: $colour-text;
 }
 
 thead {
@@ -62,12 +63,20 @@ th, td {
     text-align: left;
 }
 
+th {
+    color: $colour-text-secondary;
+}
+
 th:first-child, td:first-child, th.first, td.first {
     padding-left: 0;
 }
 
 th:last-child, td:last-child, th.last, td.last {
     padding-right: 0;
+}
+
+table.padded th, table.padded td {
+    padding: $pad-half;
 }
 
 th.numerical, td.numerical {
@@ -84,6 +93,11 @@ table.selectable tbody tr {
 
 table.selectable tbody tr:hover {
     background-color: rgba(138, 246, 251, 0.4);
+}
+
+table .empty-row {
+    text-align: center;
+    color: $colour-text-secondary;
 }
 
 button {

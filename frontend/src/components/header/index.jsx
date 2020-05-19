@@ -18,7 +18,7 @@ class Header extends React.Component {
         return (
             <header className="header">
                 <img className="logo" src={logo} alt="Lambeth Foodbank" />
-                <Tabs onSelect={ (tab) => this.handleTabSelect(tab) } selected={ this.props.tab } />
+                <Tabs onSelect={ tab => this.handleTabSelect(tab) } selected={ this.props.tab } />
                 <a className="logout" href="/logout">Log out</a>
             </header>
         );

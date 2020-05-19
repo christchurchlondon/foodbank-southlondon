@@ -1,6 +1,6 @@
 import fetch from 'cross-fetch';
 import { format, parse } from 'date-fns';
-import { DATE_FORMAT_REQUEST } from '../constants';
+import { DATE_FORMAT_REQUEST, DATE_FORMAT_TIMESTAMP } from '../constants';
 
 const endpoints = {
     GET_REQUESTS: 'bff/status',
@@ -11,12 +11,17 @@ const endpoints = {
 };
 
 
-function fetchFromServer(url, method = 'GET', body = null) {
-    return fetch(url, {
-            method,
-            body: body ? JSON.stringify(body) : null
-        })
+function performFetch(url) {
+    return fetch(url)
         .then(response => response.json());
+}
+
+function performPost(url, data = {}) {
+    return fetch(url, {
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        method: 'POST',
+        body: JSON.stringify(data)
+    }).then(response => response.json())
 }
 
 function encodeParams(params) {
@@ -46,7 +51,7 @@ export function getRequests(filters = {}) {
     };
 
     const url = endpoints.GET_REQUESTS + encodeParams(params);
-    return fetchFromServer(url)
+    return performFetch(url)
         .then(response => {
 
             // TODO add page info to response
@@ -64,20 +69,25 @@ export function getRequests(filters = {}) {
 }
 
 export function getSingleRequest(id) {
-    return fetchFromServer(endpoints.GET_SINGLE_REQUEST + id)
+    return performFetch(endpoints.GET_SINGLE_REQUEST + id)
         .then(response => {
-            // TODO add event history etc
-            return responseItemToRequest(response.request);
+            const details = responseItemToRequest(response.request);
+            const events = response.events.map(event => ({
+                name: event.event_name,
+                data: event.event_data,
+                timestamp: parse(event.event_timestamp.substr(0, 19).replace('T', ' '), DATE_FORMAT_TIMESTAMP, new Date())
+            }));
+            return { details, events };
         });
     // TODO error if response.items is empty?
 }
 
 export function getLists() {
-    return fetchFromServer(endpoints.GET_LISTS)
+    return performFetch(endpoints.GET_LISTS)
         .then(response => {
             return response.items.map((item, id) => {
                 return {
-                    id: id,
+                    id: id,    // Change?
                     description: item.item_description,
                     householdSizes: {
                         single: {
@@ -102,12 +112,12 @@ export function getLists() {
                         },
                     }
                 }
-            })
+            });
         });
 }
 
 export function getEvents() {
-    return fetchFromServer(endpoints.GET_EVENTS)
+    return performFetch(endpoints.GET_EVENTS)
         .then(response => response.values.map(v => ({
             name: v.event_name,
             requiresConfirmation: v.confirmation_expected,
@@ -124,9 +134,9 @@ export function postEvent(event, ids, data = {}) {
     const requestBody = {
         event_name: event,
         request_ids: ids,
-        event_data: eventData
+        event_data: eventData || ''
     };
-    return fetchFromServer(endpoints.SUBMIT_EVENT, 'POST', requestBody);
+    return performPost(endpoints.SUBMIT_EVENT, requestBody);
 }
 
 function responseItemToRequest(item) {

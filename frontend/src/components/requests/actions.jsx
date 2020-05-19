@@ -27,6 +27,8 @@ export default class RequestsActions extends React.Component {
             return <option key={index} value={event.name}>{ event.name }</option>;
         });
 
+        const disableButton = this.props.disabled || !this.state.value;
+
         return (
             <div className="requests-actions panel">
                 <label>Select action</label>
@@ -34,7 +36,7 @@ export default class RequestsActions extends React.Component {
                     <option> - Select - </option>
                     { options }
                 </select>
-                <button disabled={ !this.state.value } onClick={ this.doAction }>Submit</button>
+                <button disabled={ disableButton } onClick={ this.doAction }>Submit</button>
             </div>
         );
     }

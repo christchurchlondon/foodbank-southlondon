@@ -8,6 +8,7 @@ import {
 import Error from '../common/error';
 import Loading from '../common/loading';
 import Popup from '../common/popup';
+import EventsDetails from './events-details';
 import './styles/selection.scss';
 
 
@@ -41,7 +42,7 @@ export default class RequestSelection extends React.Component {
     }
 
     getRequestDetails() {
-        const item = this.props.item;
+        const item = this.props.item.details;
         return (
             <div className="request-details">
                 <div className="top-controls">
@@ -127,9 +128,20 @@ export default class RequestSelection extends React.Component {
 
     getEditLink(item) {
         return (
-            <a href={item.editUrl} target="_blank">
+            <a href={item.editUrl} target="_blank" rel="noopener noreferrer">
                 Edit <FontAwesomeIcon icon="edit" />
             </a>
+        );
+    }
+
+    getEventsDetails() {
+        if (!this.props.item) return null;
+
+        // TODO max height container for events
+        return (
+            <div className="event-wrap">
+                <EventsDetails events={ this.props.item.events } />
+            </div>
         );
     }
 
@@ -138,10 +150,12 @@ export default class RequestSelection extends React.Component {
         if (this.isIdle()) return null;
 
         const contents = this.getContents();
+        const events = this.getEventsDetails();
 
         return (
             <Popup title='Request Details' onClose={ this.close }>
                 { contents }
+                { events }
             </Popup>
         );
     }

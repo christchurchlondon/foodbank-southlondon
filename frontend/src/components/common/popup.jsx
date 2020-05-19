@@ -48,10 +48,14 @@ export default class Popup extends React.Component {
             });
     }
 
-    render() {
-
+    getFooter() {
         const buttons = this.getButtons();
+        return buttons.length > 0
+            ? <footer className="popup-footer">{ buttons }</footer>
+            : null;
+    }
 
+    render() {
         return (
             <div className="popup-wrapper" onClick={ this.close }>
                 <div className="popup-box" onClick={ this.boxClickHandler }>
@@ -64,9 +68,7 @@ export default class Popup extends React.Component {
                     <main>
                         { this.props.children }
                     </main>
-                    <footer className="popup-footer">
-                        { buttons }
-                    </footer>
+                    { this.getFooter() }
                 </div>
             </div>
         );
