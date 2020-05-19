@@ -3,10 +3,12 @@
 .tab {
     display: inline-block;
     margin-right: $pad-half / 2;
-    padding: $pad-standard $pad-half;
+    padding: $pad-standard;
     background-color: $colour-button-bg-secondary;
     color: $colour-button-text-secondary;
     cursor: pointer;
+    border-top-right-radius: $pad-half / 2;
+    border-top-left-radius: $pad-half / 2;
 }
 
 .tab:hover {

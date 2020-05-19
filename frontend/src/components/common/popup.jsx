@@ -56,9 +56,6 @@ export default class Popup extends React.Component {
     }
 
     render() {
-
-        const buttons = this.getButtons();
-
         return (
             <div className="popup-wrapper" onClick={ this.close }>
                 <div className="popup-box" onClick={ this.boxClickHandler }>

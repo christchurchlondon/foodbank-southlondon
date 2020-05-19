@@ -50,6 +50,7 @@ select:focus {
 table {
     width: 100%;
     margin: 0 0 $pad-standard;
+    color: $colour-text;
 }
 
 thead {
@@ -60,6 +61,10 @@ thead {
 th, td {
     padding: $pad-half;
     text-align: left;
+}
+
+th {
+    color: $colour-text-secondary;
 }
 
 th:first-child, td:first-child, th.first, td.first {

@@ -128,7 +128,7 @@ export default class RequestSelection extends React.Component {
 
     getEditLink(item) {
         return (
-            <a href={item.editUrl} target="_blank">
+            <a href={item.editUrl} target="_blank" rel="noopener noreferrer">
                 Edit <FontAwesomeIcon icon="edit" />
             </a>
         );
