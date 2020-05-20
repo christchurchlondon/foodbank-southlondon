@@ -29,7 +29,6 @@ def _api_base_url() -> str:
 
 
 def _get(url: str, **kwargs: Any) -> Dict[str, Any]:
-    print(url)
     r = requests.get(url, **kwargs)
     if not r.ok:
         r.raise_for_status()
