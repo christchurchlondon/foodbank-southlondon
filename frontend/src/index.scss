@@ -2,15 +2,9 @@
 
 body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-        sans-serif;
+    font-family: 'Source Sans Pro', arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -84,7 +78,8 @@ th.numerical, td.numerical {
 }
 
 tbody tr:nth-child(even) {
-    background: rgba(138, 246, 251, 0.2);
+    // background: rgba(138, 246, 251, 0.2);
+    background: rgba(91, 159, 227, 0.2);
 }
 
 table.selectable tbody tr {
@@ -92,7 +87,8 @@ table.selectable tbody tr {
 }
 
 table.selectable tbody tr:hover {
-    background-color: rgba(138, 246, 251, 0.4);
+    background: rgba(91, 159, 227, 0.4);
+    // background-color: rgba(138, 246, 251, 0.4);
 }
 
 table .empty-row {

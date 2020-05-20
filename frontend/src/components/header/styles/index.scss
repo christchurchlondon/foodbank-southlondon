@@ -3,12 +3,11 @@
 .header {
     display: flex;
     align-items: flex-end;
-    border-bottom: .25rem solid $colour-button-bg-primary;
+    border-bottom: .25rem solid $colour-tab-primary;
 }
 
 .logo {
-    margin: 0 $pad-standard;
-    height: 120px;
+    margin: $pad-half $pad-standard;
     width: 160px;
 }
 
