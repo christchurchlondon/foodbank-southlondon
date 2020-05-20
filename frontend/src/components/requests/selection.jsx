@@ -5,6 +5,7 @@ import {
     STATUS_LOADING,
     STATUS_FAILED
 } from '../../constants';
+import { capitalise } from '../../helpers';
 import Error from '../common/error';
 import Loading from '../common/loading';
 import Popup from '../common/popup';
@@ -121,9 +122,7 @@ export default class RequestSelection extends React.Component {
         reqs.babyProducts && list.push('baby products');
         reqs.petFood && list.push('pet food');
 
-        const text = list.length ? list.join(', ') : 'none';
-        // TODO formatter function
-        return text.charAt(0).toUpperCase() + text.slice(1);
+        return capitalise(list.length ? list.join(', ') : 'none');
     }
 
     getEditLink(item) {
