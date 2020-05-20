@@ -3,6 +3,9 @@ from typing import Optional
 import os
 
 
+_port = os.environ.get("PORT")
+
+
 class _Config(object):
     BUNDLE_ERRORS = True
     DEBUG: Optional[bool] = None
@@ -55,7 +58,7 @@ class ProductionConfig(_Config):
     GOOGLE_CLIENT_ID = "555689098172-2hmfl06vftk660n1a1cvcpu5kuh5l243.apps.googleusercontent.com"
     PREFERRED_URL_SCHEME = "https"
 
-    FBSL_BASE_DOMAIN = "localhost"
+    FBSL_BASE_DOMAIN = "localhost" if _port is None else f"localhost:{_port}"
     FBSL_EVENTS_GSHEET_URI = "1OAluin8tOIpYUxcm18gHJSc0z1tx4EdxY9I2bdB4zj4"
     FBSL_LISTS_GSHEET_URI = "1D0TcNW7pTMGgKYDogS4YDVJqEBAavu3GfXHu_iGlSmU"
     FBSL_GSUITE_IMPERSONATE_ADDRESS = "ed@christchurchlondon.org"
