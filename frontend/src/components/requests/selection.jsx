@@ -89,16 +89,8 @@ export default class RequestSelection extends React.Component {
                     <p>{ item.requirements.dietary }</p>
                 </div>
                 <div className="row">
-                    <label>Feminine Products Required?</label>
-                    <p>{ this.flagToString(item.requirements.feminineProducts) }</p>
-                </div>
-                <div className="row">
-                    <label>Baby Products Required?</label>
-                    <p>{ this.flagToString(item.requirements.babyProducts) }</p>
-                </div>
-                <div className="row">
-                    <label>Pet Food Required?</label>
-                    <p>{ this.flagToString(item.requirements.petFood) }</p>
+                    <label>Other requirements</label>
+                    <p>{ this.getOtherRequirementsText(item) }</p>
                 </div>
                 <div className="row">
                     <label>Extra Information</label>
@@ -122,8 +114,16 @@ export default class RequestSelection extends React.Component {
         return `${house.total} occupants (${house.adults} adults, ${house.children} children)`
     }
 
-    flagToString(value) {
-        return !!value ? 'Yes' : 'No';
+    getOtherRequirementsText(item) {
+        const reqs = item.requirements;
+        const list = [];
+        reqs.feminineProducts && list.push('feminine products');
+        reqs.babyProducts && list.push('baby products');
+        reqs.petFood && list.push('pet food');
+
+        const text = list.length ? list.join(', ') : 'none';
+        // TODO formatter function
+        return text.charAt(0).toUpperCase() + text.slice(1);
     }
 
     getEditLink(item) {

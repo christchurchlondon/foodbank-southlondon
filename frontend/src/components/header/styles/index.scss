@@ -1,6 +1,7 @@
 @import 'include';
 
 .header {
+    height: 115px;
     display: flex;
     align-items: flex-end;
     border-bottom: .25rem solid $colour-tab-primary;

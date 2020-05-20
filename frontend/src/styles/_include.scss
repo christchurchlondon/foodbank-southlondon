@@ -8,13 +8,6 @@ $pad-half: .5rem;
 
 // Colours
 
-// $colour-dark-purple: #240115;
-// $colour-rusty-red: #de3c4b;
-// $colour-electric-blue: #87f5fb;
-// $colour-dark-sienna: #2f131e;
-// $colour-pale-silver: #cec3c1;
-
-
 $colour-main: #5bac26;
 $colour-main-bold: #008751;
 $colour-background: #f2f3eb;
@@ -30,7 +23,7 @@ $colour-background-primary: $colour-background;
 $colour-background-secondary: $colour-main;
 
 $colour-border-primary: $colour-accent;
-$colour-border-secondary: $colour-accent-bold;
+$colour-border-secondary: $colour-background;
 
 $colour-button-bg: $colour-main;
 $colour-button-bg-primary: $colour-main-bold;
