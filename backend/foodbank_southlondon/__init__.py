@@ -1,12 +1,14 @@
+from typing import Callable, Dict
+
 from authlib.integrations import flask_client  # type:ignore
 import flask
 
 
 class _ReverseProxied(object):
-    def __init__(self, app):
+    def __init__(self, app: Callable) -> None:
         self.app = app
 
-    def __call__(self, environ, start_response):
+    def __call__(self, environ: Dict, start_response: Callable) -> Callable:
         scheme = environ.get("HTTP_X_FORWARDED_PROTO")
         if scheme:
             environ["wsgi.url_scheme"] = scheme

@@ -55,7 +55,7 @@ class ProductionConfig(_Config):
     GOOGLE_CLIENT_ID = "555689098172-2hmfl06vftk660n1a1cvcpu5kuh5l243.apps.googleusercontent.com"
     PREFERRED_URL_SCHEME = "https"
 
-    FBSL_BASE_URL = "https://foodbankapp.christchurchlondon.org"
+    FBSL_BASE_URL = "https://localhost"
     FBSL_EVENTS_GSHEET_URI = "1OAluin8tOIpYUxcm18gHJSc0z1tx4EdxY9I2bdB4zj4"
     FBSL_LISTS_GSHEET_URI = "1D0TcNW7pTMGgKYDogS4YDVJqEBAavu3GfXHu_iGlSmU"
     FBSL_GSUITE_IMPERSONATE_ADDRESS = "ed@christchurchlondon.org"
