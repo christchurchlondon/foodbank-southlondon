@@ -16,17 +16,20 @@ logging.getLogger("weasyprint").addHandler(logging.StreamHandler())
 
 
 # CONFIG VARIABLES
-_FBSL_BASE_URL = "FBSL_BASE_URL"
+_FBSL_BASE_DOMAIN = "FBSL_BASE_DOMAIN"
 _FBSL_CATCH_ALL_LIST = "FBSL_CATCH_ALL_LIST"
 _FBSL_MAX_ACTION_REQUEST_IDS = "FBSL_MAX_ACTION_REQUEST_IDS"
 _FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
+_PREFERRED_URL_SCHEME = "PREFERRED_URL_SCHEME"
 
 
 def _api_base_url() -> str:
-    return flask.current_app.config[_FBSL_BASE_URL] + "/api/"
+    scheme = "https" if flask.request.is_secure else "http"
+    return f"{scheme}://{flask.current_app.config[_FBSL_BASE_DOMAIN]}/api/"
 
 
 def _get(url: str, **kwargs: Any) -> Dict[str, Any]:
+    print(url)
     r = requests.get(url, **kwargs)
     if not r.ok:
         r.raise_for_status()
