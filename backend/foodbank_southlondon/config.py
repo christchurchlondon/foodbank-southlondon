@@ -8,11 +8,11 @@ class _Config(object):
     DEBUG: Optional[bool] = None
     ERROR_404_HELP = False
     GOOGLE_CLIENT_ID = ""
-    PREFERRED_URL_SCHEME = None
+    PREFERRED_URL_SCHEME = ""
     RESTX_VALIDATE = True
     SECRET_KEY = os.urandom(16)
 
-    FBSL_BASE_URL = ""
+    FBSL_BASE_DOMAIN = ""
     FBSL_CATCH_ALL_LIST = "family_of_5+"
     FBSL_EVENTS_GSHEET_URI = ""
     FBSL_GSUITE_IMPERSONATE_ADDRESS = ""
@@ -21,7 +21,7 @@ class _Config(object):
     FBSL_MAX_ACTION_REQUEST_IDS = 20
     FBSL_MAX_PAGE_SIZE = 500
     assert FBSL_MAX_ACTION_REQUEST_IDS < FBSL_MAX_PAGE_SIZE
-    FBSL_PROTECT_API = None
+    FBSL_PROTECT_API: Optional[bool] = None
     FBSL_REQUESTS_FORM_URI = ""
     FBSL_REQUESTS_GSHEET_URI = ""
     FBSL_USER_SESSION_VAR = "user"
@@ -40,7 +40,7 @@ class DevelopmentConfig(_Config):
     GOOGLE_CLIENT_ID = "99797708931-48j5pomhhh4lss7bfhg50ke5l34ah3ar.apps.googleusercontent.com"
     PREFERRED_URL_SCHEME = "http"
 
-    FBSL_BASE_URL = "http://localhost:5000"
+    FBSL_BASE_DOMAIN = "localhost:5000"
     FBSL_EVENTS_GSHEET_URI = "1GfD-YA_9eMSMqu9eTZlCEC0wvsV6c0CRlMLRPOvWM48"
     FBSL_LISTS_GSHEET_URI = "1Hor0i7K_W99LFXw-Grpf1mIY2MjDUNGnfV2ByNGf1gQ"
     FBSL_GSUITE_IMPERSONATE_ADDRESS = "ac@adamcunnington.info"
@@ -55,7 +55,7 @@ class ProductionConfig(_Config):
     GOOGLE_CLIENT_ID = "555689098172-2hmfl06vftk660n1a1cvcpu5kuh5l243.apps.googleusercontent.com"
     PREFERRED_URL_SCHEME = "https"
 
-    FBSL_BASE_URL = "https://localhost"
+    FBSL_BASE_DOMAIN = "localhost"
     FBSL_EVENTS_GSHEET_URI = "1OAluin8tOIpYUxcm18gHJSc0z1tx4EdxY9I2bdB4zj4"
     FBSL_LISTS_GSHEET_URI = "1D0TcNW7pTMGgKYDogS4YDVJqEBAavu3GfXHu_iGlSmU"
     FBSL_GSUITE_IMPERSONATE_ADDRESS = "ed@christchurchlondon.org"
