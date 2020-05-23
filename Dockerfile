@@ -29,4 +29,4 @@ COPY --from=builder /home/foodbank/frontend /home/foodbank/frontend
 
 EXPOSE $PORT
 USER foodbank
-CMD .venv/bin/gunicorn -b :$PORT --access-logfile - --error-logfile - --workers 16 "foodbank_southlondon.launch:main()"
+CMD .venv/bin/gunicorn -b :$PORT --access-logfile - --error-logfile - --workers 8 "foodbank_southlondon.launch:main()"
