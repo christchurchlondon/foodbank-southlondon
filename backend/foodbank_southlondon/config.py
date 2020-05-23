@@ -13,7 +13,6 @@ class _Config(object):
     GOOGLE_CLIENT_ID = ""
     PREFERRED_URL_SCHEME = ""
     RESTX_VALIDATE = True
-    SECRET_KEY = os.urandom(16)
 
     FBSL_BASE_DOMAIN = ""
     FBSL_CATCH_ALL_LIST = "family_of_5+"
@@ -30,12 +29,16 @@ class _Config(object):
     FBSL_USER_SESSION_VAR = "user"
 
     @property
+    def FBSL_SA_KEY(self):
+        return os.environ.get("FBSL_SA_KEY")
+
+    @property
     def GOOGLE_CLIENT_SECRET(self):
         return os.environ.get("FBSL_CLIENT_SECRET")
 
     @property
-    def FBSL_SA_KEY(self):
-        return os.environ.get("FBSL_SA_KEY")
+    def SECRET_KEY(self):
+        return os.environ.get("FBSL_CLIENT_SECRET")
 
 
 class DevelopmentConfig(_Config):
@@ -65,4 +68,4 @@ class ProductionConfig(_Config):
     FBSL_GSUITE_GROUP_ADDRESS = "foodbankapp-users@christchurchlondon.org"
     FBSL_PROTECT_API = True
     FBSL_REQUESTS_FORM_URI = "1nSPgge024rIYUBxnVx3lNhJok8DuBcg8ZlehhZDfjFc"
-    FBSL_REQUESTS_GSHEET_URI = "1TDM35lGcVPcf0HJda-V7l2QLH9R0EMHP8mbLdZcpb5k-4CqM7P8"
+    FBSL_REQUESTS_GSHEET_URI = "1TDM35lGcVPcf0HJda-V7l2QLH9R0EMHP8mbLdZcpb5k"
