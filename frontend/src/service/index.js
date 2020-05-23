@@ -140,7 +140,10 @@ export function getEvents() {
             name: v.event_name,
             requiresConfirmation: v.confirmation_expected,
             requiresDate: v.date_expected,
-            requiresQuantity: v.quantity_expected
+            requiresQuantity: v.quantity_expected,
+
+            // TODO get this added to data
+            isDownload: v.event_name.toLowerCase().includes('print')
         })));
 }
 
@@ -150,13 +153,12 @@ export function postEvent(event, ids, data = {}) {
     const eventData = date || data.quantity;
 
     const requestBody = {
-        event_name: event,
+        event_name: event.name,
         request_ids: ids,
         event_data: eventData || ''
     };
 
-    // TODO get property from events endpoint for this
-    if (event.toLowerCase().includes('print')) {
+    if (event.isDownload) {
         return performDownload(endpoints.SUBMIT_EVENT, requestBody);
     } else {
         return performPost(endpoints.SUBMIT_EVENT, requestBody);

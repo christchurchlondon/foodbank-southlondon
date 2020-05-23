@@ -185,7 +185,7 @@ export const triggerSubmitEvent = (event, ids) => {
         if (event.requiresConfirmation) {
             dispatch(openSubmitDialog(event, ids));
         } else {
-            dispatch(sendEvent(event.name, ids));
+            dispatch(sendEvent(event, ids));
         }
     };
 };
