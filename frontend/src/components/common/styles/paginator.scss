@@ -1,0 +1,54 @@
+@import 'include';
+
+
+.paginator {
+
+    display: inline-flex;
+    padding: $pad-standard 0;
+    align-items: flex-end;
+
+    .page {
+        margin: 0 $pad-half / 2;
+        padding: $pad-half 0;
+        display: inline-block;
+        min-width: $pad-double;
+        background-color: $colour-tab;
+        color: $colour-tab-text;
+        text-align: center;
+        cursor: pointer;
+
+        &:hover {
+            color: $colour-tab-text-hover;
+        }
+
+        &.selected {
+            background-color: $colour-tab-primary;
+            color: $colour-tab-primary-text;
+        }
+
+        &.disabled {
+            color: $colour-tab-text-disabled;
+            cursor: default;
+        }
+
+        &:first-child {
+            margin-left: 0;
+        }
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    .page-spacer {
+        display: inline-block;
+        min-width: $pad-double;
+        margin: 0 $pad-half / 2;
+        text-align: center;
+        padding: $pad-half 0;
+    }
+
+    .page-spacer:before {
+        content: '...';
+    }
+}
