@@ -128,6 +128,7 @@ class Requests extends React.Component {
     getEventDialog() {
         return <RequestsEventDialog
             details={ this.props.events.dialog }
+            status={ this.props.events.updateStatus }
             onConfirm={ this.confirmEventSubmission }
             onCancel={ this.cancelEventSubmission } />;
     }

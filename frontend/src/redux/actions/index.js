@@ -185,7 +185,7 @@ export const triggerSubmitEvent = (event, ids) => {
         if (event.requiresConfirmation) {
             dispatch(openSubmitDialog(event, ids));
         } else {
-            dispatch(sendEvent(event, ids));
+            dispatch(sendEvent(event.name, ids));
         }
     };
 };
@@ -218,8 +218,8 @@ export const sendEvent = (event, ids, data) => {
     return dispatch => {
         dispatch(submitEvent(event));
         return postEvent(event, ids, data)
-            .then(() => eventSubmitComplete())
-            .catch(() => eventSubmitFailed());
+            .then(() => dispatch(eventSubmitComplete()))
+            .catch(() => dispatch(eventSubmitFailed()));
     };
 };
 
