@@ -218,8 +218,8 @@ export const sendEvent = (event, ids, data) => {
     return dispatch => {
         dispatch(submitEvent(event));
         return postEvent(event, ids, data)
-            .then(() => eventSubmitComplete())
-            .catch(() => eventSubmitFailed());
+            .then(() => dispatch(eventSubmitComplete()))
+            .catch(() => dispatch(eventSubmitFailed()));
     };
 };
 

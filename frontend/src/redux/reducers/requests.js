@@ -170,10 +170,7 @@ export default function(state = initialState, action) {
                 ...state,
                 events: {
                     ...state.events,
-                    dialog: {
-                        ...state.events.dialog,
-                        updateStatus: STATUS_LOADING
-                    }
+                    updateStatus: STATUS_LOADING
                 }
             };
         case EVENT_SUBMIT_COMPLETE:
@@ -181,10 +178,7 @@ export default function(state = initialState, action) {
                 ...state,
                 events: {
                     ...state.events,
-                    dialog: {
-                        ...state.events.dialog,
-                        updateStatus: STATUS_SUCCESS
-                    }
+                    updateStatus: STATUS_SUCCESS
                 }
             };
         case EVENT_SUBMIT_FAILED:
@@ -192,10 +186,7 @@ export default function(state = initialState, action) {
                 ...state,
                 events: {
                     ...state.events,
-                    dialog: {
-                        ...state.events.dialog,
-                        updateStatus: STATUS_FAILED
-                    }
+                    updateStatus: STATUS_FAILED
                 }
             };
 

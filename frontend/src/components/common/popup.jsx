@@ -55,15 +55,23 @@ export default class Popup extends React.Component {
             : null;
     }
 
+    getCloseButton() {
+        return this.props.canClose === false
+            ? null
+            : (
+                <button className="close btn-small" onClick={ this.close }>
+                    <FontAwesomeIcon icon="times" />
+                </button>
+            );
+    }
+
     render() {
         return (
             <div className="popup-wrapper" onClick={ this.close }>
                 <div className="popup-box" onClick={ this.boxClickHandler }>
                     <header className="popup-header">
                         <h3>{ this.props.title }</h3>
-                        <button className="close btn-small" onClick={ this.close }>
-                            <FontAwesomeIcon icon="times" />
-                        </button>
+                        { this.getCloseButton() }
                     </header>
                     <main>
                         { this.props.children }

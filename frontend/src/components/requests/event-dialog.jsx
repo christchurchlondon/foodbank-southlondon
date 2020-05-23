@@ -1,7 +1,9 @@
 import React from 'react';
 import DatePicker from 'react-datepicker';
 import Popup from '../common/popup';
-import { DATE_FORMAT_UI } from '../../constants';
+import Error from '../common/error';
+import Loading from '../common/loading';
+import { DATE_FORMAT_UI, STATUS_FAILED, STATUS_LOADING } from '../../constants';
 import 'react-datepicker/dist/react-datepicker.css';
 import './styles/event-dialog.scss';
 
@@ -28,7 +30,7 @@ export default class RequestsEventDialog extends React.Component {
             quantity: this.state.quantity
         };
 
-        this.props.onConfirm(this.props.details.event.name, params);
+        this.props.onConfirm(this.props.details.event, params);
     }
 
     cancel() {
@@ -90,7 +92,27 @@ export default class RequestsEventDialog extends React.Component {
         return true;
     }
 
+    requiresStatusDialog() {
+        return [ STATUS_LOADING, STATUS_FAILED ].includes(this.props.status);
+    }
+
+    getStatusDialogContents() {
+        const contents = this.props.status === STATUS_LOADING
+            ? <Loading />
+            : <Error />;
+        return (
+            <Popup title="Event Submission" canClose={ false }>
+                { contents }
+            </Popup>
+        );
+    }
+
     render() {
+
+        if (this.requiresStatusDialog()) {
+            return this.getStatusDialogContents();
+        }
+
         if (!this.props.details) return null;
 
         const buttons = [

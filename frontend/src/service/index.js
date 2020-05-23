@@ -24,6 +24,24 @@ function performPost(url, data = {}) {
     }).then(response => response.json())
 }
 
+function performDownload(url, data = {}) {
+    return fetch(url, {
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        method: 'POST',
+        body: JSON.stringify(data)
+    })
+        .then(response => response.blob())
+        .then(blob => {
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = "label.pdf";
+            document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+            a.click();    
+            a.remove();  //afterwards we remove the element again         
+        });
+}
+
 function encodeParams(params) {
     return '?' + Object.entries(params)
         .map(param => param.map(_ => _ || '').map(encodeURIComponent).join('='))
@@ -122,7 +140,10 @@ export function getEvents() {
             name: v.event_name,
             requiresConfirmation: v.confirmation_expected,
             requiresDate: v.date_expected,
-            requiresQuantity: v.quantity_expected
+            requiresQuantity: v.quantity_expected,
+
+            // TODO get this added to data
+            isDownload: v.event_name.toLowerCase().includes('print')
         })));
 }
 
@@ -132,11 +153,16 @@ export function postEvent(event, ids, data = {}) {
     const eventData = date || data.quantity;
 
     const requestBody = {
-        event_name: event,
+        event_name: event.name,
         request_ids: ids,
         event_data: eventData || ''
     };
-    return performPost(endpoints.SUBMIT_EVENT, requestBody);
+
+    if (event.isDownload) {
+        return performDownload(endpoints.SUBMIT_EVENT, requestBody);
+    } else {
+        return performPost(endpoints.SUBMIT_EVENT, requestBody);
+    }
 }
 
 function responseItemToRequest(item) {
