@@ -33,12 +33,7 @@ function performDownload(url, data = {}) {
         .then(response => response.blob())
         .then(blob => {
             var url = window.URL.createObjectURL(blob);
-            var a = document.createElement('a');
-            a.href = url;
-            a.download = "label.pdf";
-            document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
-            a.click();    
-            a.remove();  //afterwards we remove the element again         
+            window.open(url);
         });
 }
 
@@ -138,7 +133,7 @@ export function getEvents() {
     return performFetch(endpoints.GET_EVENTS)
         .then(response => response.values.map(v => ({
             name: v.event_name,
-            requiresConfirmation: v.confirmation_expected,
+            requiresConfirmation: v.confirmation_expected || v.date_expected || v.quantity_expected,
             requiresDate: v.date_expected,
             requiresQuantity: v.quantity_expected,
 

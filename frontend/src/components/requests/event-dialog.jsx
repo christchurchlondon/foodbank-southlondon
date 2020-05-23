@@ -15,11 +15,28 @@ export default class RequestsEventDialog extends React.Component {
         this.confirm = this.confirm.bind(this);
         this.cancel = this.cancel.bind(this);
         this.close = this.close.bind(this);
+        this.updateDate = this.updateDate.bind(this);
+        this.updateQuantity = this.updateQuantity.bind(this);
+        this.keyDownHandler = this.keyDownHandler.bind(this);
 
         this.state = {
             date: null,
             quantity: null
         };
+    }
+
+    componentDidMount() {
+        document.addEventListener('keydown', this.keyDownHandler, false);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.keyDownHandler, false);
+    }
+
+    keyDownHandler(event) {
+        if (event.keyCode === 13) {
+            this.confirm();
+        }
     }
 
     confirm() {
