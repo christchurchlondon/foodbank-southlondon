@@ -3,11 +3,11 @@
 .error {
     display: flex;
     padding: $pad-standard;
-    background-color: rgba(222, 60, 75, 0.2);
+    background-color: lighten($colour-danger, 30);
 }
 
 .error-icon {
-    color: $colour-rusty-red;
+    color: $colour-danger;
     margin-right: $pad-standard;
 }
 

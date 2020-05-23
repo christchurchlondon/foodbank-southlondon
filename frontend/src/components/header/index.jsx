@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Tabs from './tabs';
 import { setTab } from '../../redux/actions';
 import { getTab } from '../../redux/selectors';
-import logo from '../../assets/logo.jpg';
+import logo from '../../assets/logo.png';
 import './styles/index.scss';
 
 class Header extends React.Component {

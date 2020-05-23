@@ -24,16 +24,16 @@ export default class RequestsList extends React.Component {
             const request = item.data;
             return (
                 <tr key={request.id} onClick={ () => this.props.onSelect(request.id) }>
-                    <td>{ request.referenceNumber }</td>
-                    <td>{ request.fullName }</td>
-                    <td>{ request.postcode }</td>
-                    <td>{ format(request.deliveryDate, DATE_FORMAT_UI) }</td>
                     <td>
                         <input type="checkbox"
                             onChange={ () => this.toggle(request.id) }
                             onClick={ this.handleCheckboxClick }
                             checked={ item.checked } />
                     </td>
+                    <td>{ request.fullName }</td>
+                    <td>{ request.postcode }</td>
+                    <td>{ format(request.deliveryDate, DATE_FORMAT_UI) }</td>
+                    <td>{ request.referenceNumber }</td>
                 </tr>
             );
         });
@@ -41,19 +41,19 @@ export default class RequestsList extends React.Component {
         const allChecked = this.props.requests.every(item => item.checked);
 
         return (
-            <table className="requests-list selectable">
+            <table className="requests-list selectable padded">
                 <thead>
                     <tr>
-                        <th>Reference #</th>
-                        <th>Name</th>
-                        <th>Postcode</th>
-                        <th>Delivery Date</th>
                         <th>
                             <input type="checkbox"
                                 onChange={ () => this.toggleAll() }
                                 onClick={ this.handleCheckboxClick }
                                 checked={ allChecked }/>
                         </th>
+                        <th>Name</th>
+                        <th>Postcode</th>
+                        <th>Delivery Date</th>
+                        <th>Reference #</th>
                     </tr>
                 </thead>
                 <tbody>
