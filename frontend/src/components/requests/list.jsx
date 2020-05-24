@@ -16,9 +16,16 @@ export default class RequestsList extends React.Component {
         event.stopPropagation();
     }
 
-    render() {
+    extractEvent(event) {
+        if (!event.name) return '';
+        console.log(event.date)
+        const date = format(event.date, DATE_FORMAT_UI);
+        return !!event.data
+            ? `${ event.name } (${ event.data }) @ ${ date }`
+            : `${ event.name } @ ${ date }`;
+    }
 
-        // TODO add page number, extend button, clickable rows
+    render() {
 
         const tableRows = this.props.requests.map(item => {
             const request = item.data;
@@ -34,6 +41,7 @@ export default class RequestsList extends React.Component {
                     <td>{ request.postcode }</td>
                     <td>{ format(request.deliveryDate, DATE_FORMAT_UI) }</td>
                     <td>{ request.referenceNumber }</td>
+                    <td>{ this.extractEvent(request.event) }</td>
                 </tr>
             );
         });
@@ -54,6 +62,7 @@ export default class RequestsList extends React.Component {
                         <th>Postcode</th>
                         <th>Delivery Date</th>
                         <th>Reference #</th>
+                        <th>Last Status</th>
                     </tr>
                 </thead>
                 <tbody>

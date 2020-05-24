@@ -47,6 +47,15 @@ function formatDate(date) {
     return format(date, DATE_FORMAT_REQUEST);
 }
 
+function parseDate(text) {
+    return parse(text, DATE_FORMAT_REQUEST, new Date())
+}
+
+function parseTimestamp(timestamp) {
+    if (!timestamp) return null;
+    return parse(timestamp.substr(0, 19).replace('T', ' '), DATE_FORMAT_TIMESTAMP, new Date());
+}
+
 export function getRequests(filters = {}, page = 1) {
 
     // TODO refactor dates
@@ -71,9 +80,8 @@ export function getRequests(filters = {}, page = 1) {
                 id: item.request_id,
                 fullName: item.client_full_name,
                 referenceNumber: item.reference_number,
-                deliveryDate: parse(item.delivery_date, DATE_FORMAT_REQUEST, new Date()),
-                eventData: item.event_data,
-                eventName: item.event_name,
+                deliveryDate: parseDate(item.delivery_date),
+                event: extractEvent(item),
                 postcode: item.postcode
             }));
 
@@ -92,7 +100,7 @@ export function getSingleRequest(id) {
             const events = response.events.map(event => ({
                 name: event.event_name,
                 data: event.event_data,
-                timestamp: parse(event.event_timestamp.substr(0, 19).replace('T', ' '), DATE_FORMAT_TIMESTAMP, new Date())
+                timestamp: parseTimestamp(event.event_timestamp)
             }));
             return { details, events };
         });
@@ -126,7 +134,7 @@ export function getLists() {
                         familyOf5Plus: {
                             quantity: item['family_of_5+_quantity'],
                             notes: item['family_of_5+_notes']
-                        },
+                        }
                     }
                 }
             });
@@ -193,6 +201,17 @@ function responseItemToRequest(item) {
         },
         extraInformation: item.extra_information,
         editUrl: item.edit_details_url
+    };
+}
+
+function extractEvent(item) {
+
+    const name = item.event_name;
+    const data = item.event_data;
+    const date = parseTimestamp(item.event_timestamp);
+
+    return {
+        name, data, date
     };
 }
 
