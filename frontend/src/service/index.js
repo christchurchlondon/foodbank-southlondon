@@ -67,8 +67,6 @@ export function getRequests(filters = {}, page = 1) {
     return performFetch(url)
         .then(response => {
 
-            // TODO add page info to response
-
             const result = response.items.map(item => ({
                 id: item.request_id,
                 fullName: item.client_full_name,
@@ -142,9 +140,7 @@ export function getEvents() {
             requiresConfirmation: v.confirmation_expected || v.date_expected || v.quantity_expected,
             requiresDate: v.date_expected,
             requiresQuantity: v.quantity_expected,
-
-            // TODO get this added to data
-            isDownload: v.event_name.toLowerCase().includes('print')
+            isDownload: v.returns_pdf
         })));
 }
 
