@@ -9,7 +9,13 @@ import {
     LISTS_LOADED,
     LOAD_LISTS_FAILED,
     TOGGLE_LIST_SELECTION,
-    CLEAR_LIST_SELECTION
+    CLEAR_LIST_SELECTION,
+    OPEN_ITEM_ADD_FORM,
+    OPEN_ITEM_EDIT_FORM,
+    UPDATE_LIST,
+    UPDATE_LIST_COMPLETE,
+    UPDATE_LIST_FAILED,
+    MOVE_LIST_ITEM
 } from '../actions/types';
 
 
@@ -56,8 +62,28 @@ export default function(state = initialState, action) {
                 ...state,
                 selectedComment: null
             };
+        case OPEN_ITEM_ADD_FORM:
+        case OPEN_ITEM_EDIT_FORM:
+        case UPDATE_LIST:
+        case UPDATE_LIST_COMPLETE:
+        case UPDATE_LIST_FAILED:
+            // TODO
+            return state;
+        case MOVE_LIST_ITEM:
+            return {
+                ...state,
+                items: reorder(state.items, action.payload.oldPosition, action.payload.newPosition)
+            };
 
         default:
             return state;
     }
 }
+
+function reorder(list, oldIndex, newIndex) {
+    const item = list[oldIndex];
+    const newList = list.filter((_, i) => i !== oldIndex);
+    newList.splice(newIndex, 0, item);
+    return newList;
+}
+

@@ -3,7 +3,12 @@ import { connect } from 'react-redux';
 import {
     STATUS_LOADING, STATUS_SUCCESS, STATUS_FAILED
 } from '../../constants';
-import { fetchLists, toggleListSelection, clearListSelection } from '../../redux/actions';
+import {
+    fetchLists,
+    toggleListSelection,
+    clearListSelection,
+    moveListItem
+} from '../../redux/actions';
 import { getListsState } from '../../redux/selectors';
 import Loading from '../common/loading';
 import Error from '../common/error';
@@ -17,6 +22,7 @@ class Lists extends React.Component {
         super(props);
         this.select = this.select.bind(this);
         this.clearSelection = this.clearSelection.bind(this);
+        this.moveItem = this.moveItem.bind(this);
     }
 
     componentDidMount() {
@@ -30,6 +36,10 @@ class Lists extends React.Component {
 
     fetchLists() {
         this.props.fetchLists();
+    }
+
+    moveItem(oldPosition, newPosition) {
+        this.props.moveListItem(oldPosition, newPosition);
     }
 
     save() {
@@ -70,7 +80,8 @@ class Lists extends React.Component {
                 <ListsData
                     data={this.props.items}
                     selectedComment={this.props.selectedComment}
-                    onSelect={ this.select } />
+                    onSelect={ this.select }
+                    onReorder={ this.moveItem } />
                 <ListsControls onSave={ () => this.save() } />
             </div>
         );
@@ -93,6 +104,10 @@ const mapStateToProps = state => {
 }
 
 export default connect(
-    mapStateToProps,
-    { fetchLists, toggleListSelection, clearListSelection }
+    mapStateToProps, {
+        fetchLists,
+        toggleListSelection,
+        clearListSelection,
+        moveListItem
+    }
 )(Lists);

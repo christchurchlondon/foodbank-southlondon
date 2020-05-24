@@ -1,0 +1,24 @@
+@import 'include';
+
+.lists-data {
+    .move {
+
+        color: $colour-text-secondary;
+
+        &:not(.disabled) {
+            cursor: pointer;
+        }
+
+        &.disabled {
+            color: $colour-text-disabled;
+        }
+
+        &:hover:not(.disabled) {
+            color: $colour-main;
+        }
+
+        + .move {
+            margin-left: $pad-half;
+        }
+    }
+}

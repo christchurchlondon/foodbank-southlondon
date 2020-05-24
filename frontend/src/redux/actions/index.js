@@ -14,6 +14,12 @@ import {
     LOAD_LISTS_FAILED,
     TOGGLE_LIST_SELECTION,
     CLEAR_LIST_SELECTION,
+    OPEN_ITEM_ADD_FORM,
+    OPEN_ITEM_EDIT_FORM,
+    UPDATE_LIST,
+    UPDATE_LIST_COMPLETE,
+    UPDATE_LIST_FAILED,
+    MOVE_LIST_ITEM,
     LOAD_EVENTS,
     EVENTS_LOADED,
     LOAD_EVENTS_FAILED,
@@ -152,6 +158,41 @@ export const toggleListSelection = (id, type) => ({
 
 export const clearListSelection = () => ({
     type: CLEAR_LIST_SELECTION
+})
+
+export const openItemAddForm = () => ({
+    type: OPEN_ITEM_ADD_FORM
+});
+
+export const openItemEditForm = (id, data) => ({
+    type: OPEN_ITEM_EDIT_FORM,
+    payload: {
+        id,
+        data
+    }
+});
+
+export const updateList = data => ({
+    type: UPDATE_LIST,
+    payload: {
+        data
+    }
+});
+
+export const updateListComplete = () => ({
+    type: UPDATE_LIST_COMPLETE
+});
+
+export const updateListFailed = () => ({
+    type: UPDATE_LIST_FAILED
+});
+
+export const moveListItem = (oldPosition, newPosition) => ({
+    type: MOVE_LIST_ITEM,
+    payload: {
+        oldPosition,
+        newPosition
+    }
 })
 
 // Events

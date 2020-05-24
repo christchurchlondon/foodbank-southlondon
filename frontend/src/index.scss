@@ -61,6 +61,8 @@ th {
     color: $colour-text-secondary;
 }
 
+
+// TODO remove this - all tables should be padded
 th:first-child, td:first-child, th.first, td.first {
     padding-left: 0;
 }
