@@ -13,6 +13,7 @@ import {
     confirmSubmitEvent,
     cancelSubmitEvent
 } from '../../redux/actions';
+import Paginator from '../common/paginator';
 import Loading from '../common/loading';
 import Error from '../common/error';
 import RequestsFilter from './filter';
@@ -26,11 +27,17 @@ class Requests extends React.Component {
     
     constructor(props) {
         super(props);
+        this.selectPage = this.selectPage.bind(this);
         this.fetchRequests = this.fetchRequests.bind(this);
         this.clearSelection = this.clearSelection.bind(this);
         this.submitAction = this.submitAction.bind(this);
         this.confirmEventSubmission = this.confirmEventSubmission.bind(this);
         this.cancelEventSubmission = this.cancelEventSubmission.bind(this);
+
+        this.state = {
+            // page: 1,
+            filters: {}
+        };
     }
 
     componentDidMount() {
@@ -39,8 +46,14 @@ class Requests extends React.Component {
         this.fetchEvents();
     }
 
-    fetchRequests(filters = {}) {
-        this.props.fetchRequests(filters);
+    selectPage(page) {
+        // this.setState({ page });
+        this.fetchRequests(this.filters, page);
+    }
+
+    fetchRequests(filters = {}, page = 1) {
+        this.setState({ filters });
+        this.props.fetchRequests(filters, page);
     }
 
     fetchEvents() {
@@ -109,6 +122,10 @@ class Requests extends React.Component {
                     onSelect={ id => this.selectRequest(id) }
                     onToggle={ id => this.toggleRequest(id) }
                     onToggleAll={ () => this.toggleAllRequests() } />
+                <Paginator
+                    selectedPage={this.props.page}
+                    pages={this.props.totalPages}
+                    onSelect={ this.selectPage } />
                 <RequestsActions
                     disabled={ !this.getSelectedIds().length }
                     status={ this.props.events.loadingStatus }

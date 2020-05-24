@@ -9,9 +9,10 @@
 
     .page {
         margin: 0 $pad-half / 2;
-        padding: $pad-half 0;
+        padding: $pad-half;
         display: inline-block;
         min-width: $pad-double;
+        box-sizing: border-box;
         background-color: $colour-tab;
         color: $colour-tab-text;
         text-align: center;

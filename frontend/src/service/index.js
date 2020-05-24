@@ -47,7 +47,7 @@ function formatDate(date) {
     return format(date, DATE_FORMAT_REQUEST);
 }
 
-export function getRequests(filters = {}) {
+export function getRequests(filters = {}, page = 1) {
 
     // TODO refactor dates
     let dates = [];
@@ -55,7 +55,7 @@ export function getRequests(filters = {}) {
     (filters.dates || {}).end && dates.push(formatDate(filters.dates.end));
 
     const params = {
-        page: 1,
+        page: page,
         perpage: 50,
         delivery_dates: dates.join(','),
         client_full_names: filters.name,
@@ -69,7 +69,7 @@ export function getRequests(filters = {}) {
 
             // TODO add page info to response
 
-            return response.items.map(item => ({
+            const result = response.items.map(item => ({
                 id: item.request_id,
                 fullName: item.client_full_name,
                 referenceNumber: item.reference_number,
@@ -78,6 +78,12 @@ export function getRequests(filters = {}) {
                 eventName: item.event_name,
                 postcode: item.postcode
             }));
+
+            return {
+                result,
+                page: response.page,
+                totalPages: response.total_pages
+            };
         });
 }
 
