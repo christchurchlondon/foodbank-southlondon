@@ -46,7 +46,7 @@ class Requests extends React.Component {
     }
 
     selectPage(page) {
-        this.fetchRequests(this.filters, page);
+        this.fetchRequests(this.state.filters, page);
     }
 
     fetchRequests(filters = {}, page = 1) {
