@@ -47,7 +47,16 @@ function formatDate(date) {
     return format(date, DATE_FORMAT_REQUEST);
 }
 
-export function getRequests(filters = {}) {
+function parseDate(text) {
+    return parse(text, DATE_FORMAT_REQUEST, new Date())
+}
+
+function parseTimestamp(timestamp) {
+    if (!timestamp) return null;
+    return parse(timestamp.substr(0, 19).replace('T', ' '), DATE_FORMAT_TIMESTAMP, new Date());
+}
+
+export function getRequests(filters = {}, page = 1) {
 
     // TODO refactor dates
     let dates = [];
@@ -55,7 +64,7 @@ export function getRequests(filters = {}) {
     (filters.dates || {}).end && dates.push(formatDate(filters.dates.end));
 
     const params = {
-        page: 1,
+        page: page,
         perpage: 50,
         delivery_dates: dates.join(','),
         client_full_names: filters.name,
@@ -67,17 +76,20 @@ export function getRequests(filters = {}) {
     return performFetch(url)
         .then(response => {
 
-            // TODO add page info to response
-
-            return response.items.map(item => ({
+            const result = response.items.map(item => ({
                 id: item.request_id,
                 fullName: item.client_full_name,
                 referenceNumber: item.reference_number,
-                deliveryDate: parse(item.delivery_date, DATE_FORMAT_REQUEST, new Date()),
-                eventData: item.event_data,
-                eventName: item.event_name,
+                deliveryDate: parseDate(item.delivery_date),
+                event: extractEvent(item),
                 postcode: item.postcode
             }));
+
+            return {
+                result,
+                page: response.page,
+                totalPages: response.total_pages
+            };
         });
 }
 
@@ -88,7 +100,7 @@ export function getSingleRequest(id) {
             const events = response.events.map(event => ({
                 name: event.event_name,
                 data: event.event_data,
-                timestamp: parse(event.event_timestamp.substr(0, 19).replace('T', ' '), DATE_FORMAT_TIMESTAMP, new Date())
+                timestamp: parseTimestamp(event.event_timestamp)
             }));
             return { details, events };
         });
@@ -122,7 +134,7 @@ export function getLists() {
                         familyOf5Plus: {
                             quantity: item['family_of_5+_quantity'],
                             notes: item['family_of_5+_notes']
-                        },
+                        }
                     }
                 }
             });
@@ -136,9 +148,7 @@ export function getEvents() {
             requiresConfirmation: v.confirmation_expected || v.date_expected || v.quantity_expected,
             requiresDate: v.date_expected,
             requiresQuantity: v.quantity_expected,
-
-            // TODO get this added to data
-            isDownload: v.event_name.toLowerCase().includes('print')
+            isDownload: v.returns_pdf
         })));
 }
 
@@ -191,6 +201,17 @@ function responseItemToRequest(item) {
         },
         extraInformation: item.extra_information,
         editUrl: item.edit_details_url
+    };
+}
+
+function extractEvent(item) {
+
+    const name = item.event_name;
+    const data = item.event_data;
+    const date = parseTimestamp(item.event_timestamp);
+
+    return {
+        name, data, date
     };
 }
 

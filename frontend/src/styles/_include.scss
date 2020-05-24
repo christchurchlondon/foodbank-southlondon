@@ -15,6 +15,7 @@ $colour-accent: #00adef;
 $colour-accent-bold: #2381D3;
 $colour-text: #282922;
 $colour-text-secondary: lighten($colour-text, 30); //(40,41,34,.7);
+$colour-text-disabled: lighten($colour-text, 40);
 $colour-danger: #ff5436;
 $colour-white: #fff;
 
@@ -43,3 +44,4 @@ $colour-tab-primary: $colour-main-bold;
 $colour-tab-text: $colour-main-bold;
 $colour-tab-primary-text: $colour-white;
 $colour-tab-text-hover: $colour-main;
+$colour-tab-text-disabled: $colour-text-disabled;

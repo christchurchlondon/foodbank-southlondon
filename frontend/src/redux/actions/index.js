@@ -44,26 +44,29 @@ export const setTab = tab => ({
 
 // Requests
 
-export const fetchRequests = filters => {
+export const fetchRequests = (filters, page) => {
     return dispatch => {
-        dispatch(loadRequests(filters));
-        return getRequests(filters)
-            .then(result => dispatch(requestsLoaded(result)))
+        dispatch(loadRequests(filters, page));
+        return getRequests(filters, page)
+            .then(({result, page, totalPages}) => dispatch(requestsLoaded(result, page, totalPages)))
             .catch(() => dispatch(loadRequestsFailed()));
     };
 };
 
-export const loadRequests = filters => ({
+export const loadRequests = (filters, page) => ({
     type: LOAD_REQUESTS,
     payload: {
-        filters
+        filters,
+        page
     }
 });
 
-export const requestsLoaded = requests => ({
+export const requestsLoaded = (requests, page, totalPages) => ({
     type: REQUESTS_LOADED,
     payload: {
-        requests
+        requests,
+        page,
+        totalPages
     }
 });
 

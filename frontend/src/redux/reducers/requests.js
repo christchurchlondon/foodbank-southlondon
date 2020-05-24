@@ -29,6 +29,8 @@ const initialState = {
     filter: '',
     status: STATUS_IDLE,
     items: [],
+    page: 0,
+    totalPages: 0,
     selection: {
         status: STATUS_IDLE,
         item: null
@@ -49,12 +51,15 @@ export default function(state = initialState, action) {
                 ...state,
                 filters: action.payload.filters,
                 status: STATUS_LOADING,
+                page: action.payload.page,
                 items: []
             };
         case REQUESTS_LOADED:
             return {
                 ...state,
                 status: STATUS_SUCCESS,
+                page: action.payload.page,
+                totalPages: action.payload.totalPages,
                 items: action.payload.requests
                     .map(request => ({
                         data: request,
