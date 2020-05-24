@@ -18,7 +18,6 @@ export default class RequestsList extends React.Component {
 
     extractEvent(event) {
         if (!event.name) return '';
-        console.log(event.date)
         const date = format(event.date, DATE_FORMAT_UI);
         return !!event.data
             ? `${ event.name } (${ event.data }) @ ${ date }`

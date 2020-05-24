@@ -16,6 +16,7 @@ import {
     CLEAR_LIST_SELECTION,
     OPEN_ITEM_ADD_FORM,
     OPEN_ITEM_EDIT_FORM,
+    DELETE_LIST_ITEM,
     UPDATE_LIST,
     UPDATE_LIST_COMPLETE,
     UPDATE_LIST_FAILED,
@@ -171,6 +172,15 @@ export const openItemEditForm = (id, data) => ({
         data
     }
 });
+
+export const deleteListItem = id => ({
+    type: DELETE_LIST_ITEM,
+    payload: {
+        id
+    }
+});
+
+// TODO sendListUpdate action (w/ service method)
 
 export const updateList = data => ({
     type: UPDATE_LIST,

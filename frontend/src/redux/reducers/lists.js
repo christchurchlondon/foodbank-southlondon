@@ -12,6 +12,7 @@ import {
     CLEAR_LIST_SELECTION,
     OPEN_ITEM_ADD_FORM,
     OPEN_ITEM_EDIT_FORM,
+    DELETE_LIST_ITEM,
     UPDATE_LIST,
     UPDATE_LIST_COMPLETE,
     UPDATE_LIST_FAILED,
@@ -64,11 +65,13 @@ export default function(state = initialState, action) {
             };
         case OPEN_ITEM_ADD_FORM:
         case OPEN_ITEM_EDIT_FORM:
+        case DELETE_LIST_ITEM:
         case UPDATE_LIST:
         case UPDATE_LIST_COMPLETE:
         case UPDATE_LIST_FAILED:
             // TODO
             return state;
+        // TODO dialog actions (open, confirm, close)
         case MOVE_LIST_ITEM:
             return {
                 ...state,
