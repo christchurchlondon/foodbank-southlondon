@@ -35,7 +35,6 @@ class Requests extends React.Component {
         this.cancelEventSubmission = this.cancelEventSubmission.bind(this);
 
         this.state = {
-            // page: 1,
             filters: {}
         };
     }
@@ -47,7 +46,6 @@ class Requests extends React.Component {
     }
 
     selectPage(page) {
-        // this.setState({ page });
         this.fetchRequests(this.filters, page);
     }
 
