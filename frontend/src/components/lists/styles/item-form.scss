@@ -1,0 +1,56 @@
+@import 'include';
+
+
+.item-form {
+
+    .row {
+
+        margin: $pad-half 0;
+
+        label {
+            display: inline-block;
+            min-width: 120px;
+            color: $colour-text-secondary;
+            margin-right: $pad-standard;
+            text-align: right;
+        }
+
+        input[type=text], input[type=number] {
+            box-sizing: border-box;
+            border: 1px solid $colour-border;
+            border-radius: 2px;
+            padding: $pad-half / 2;
+            font-size: 14px;
+
+            &:focus {
+                border: 1px solid $colour-border-primary;
+                outline: none;
+            }
+        }
+
+        input[type=text] {
+            width: 250px;
+
+            &.large {
+                width: 460px;
+            }
+        }
+
+        input[type=number] {
+            width: 120px;
+        }
+
+    }
+
+    .row-group {
+        border-top: 1px solid $colour-border;
+        padding: $pad-half 0 0;
+        margin: $pad-half 0;
+
+        h4 {
+            margin: 0;
+            color: $colour-text;
+        }
+    }
+
+}

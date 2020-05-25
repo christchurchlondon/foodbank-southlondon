@@ -23,6 +23,7 @@ $colour-white: #fff;
 $colour-background-primary: $colour-background;
 $colour-background-secondary: $colour-main;
 
+$colour-border: lighten($colour-text, 60);
 $colour-border-primary: $colour-accent;
 $colour-border-secondary: $colour-background;
 
