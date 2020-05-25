@@ -134,7 +134,7 @@ export const fetchLists = () => {
     return dispatch => {
         dispatch(loadLists());
         return getLists()
-            .then(result => dispatch(listsLoaded(result)))
+            .then(({ lists, notes }) => dispatch(listsLoaded(lists, notes)))
             .catch(() => dispatch(loadListsFailed()))
     };
 }
@@ -143,10 +143,11 @@ export const loadLists = () => ({
     type: LOAD_LISTS
 });
 
-export const listsLoaded = lists => ({
+export const listsLoaded = (lists, notes) => ({
     type: LISTS_LOADED,
     payload: {
-        lists
+        lists,
+        notes
     }
 });
 
@@ -205,10 +206,10 @@ export const closeSaveListDialog = () => ({
     type: CLOSE_SAVE_LIST_DIALOG
 });
 
-export const sendListUpdate = data => {
+export const sendListUpdate = (data, notes) => {
     return dispatch => {
         dispatch(updateList(data));
-        return postListUpdate(data)
+        return postListUpdate(data, notes)
             .then(() => {
                 dispatch(updateListComplete());
                 dispatch(closeSaveListDialog());

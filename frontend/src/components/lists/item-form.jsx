@@ -20,23 +20,23 @@ export default class ListItemForm extends React.Component {
             description: this.props.item.description || '',
             householdSizes: {
                 single: {
-                    quantity: sizes.single.quantity || 0,
+                    quantity: sizes.single.quantity || '',
                     notes: sizes.single.notes || ''
                 },
                 familyOf2: {
-                    quantity: sizes.familyOf2.quantity || 0,
+                    quantity: sizes.familyOf2.quantity || '',
                     notes: sizes.familyOf2.notes || ''
                 },
                 familyOf3: {
-                    quantity: sizes.familyOf3.quantity || 0,
+                    quantity: sizes.familyOf3.quantity || '',
                     notes: sizes.familyOf3.notes || ''
                 },
                 familyOf4: {
-                    quantity: sizes.familyOf4.quantity || 0,
+                    quantity: sizes.familyOf4.quantity || '',
                     notes: sizes.familyOf4.notes || ''
                 },
                 familyOf5Plus: {
-                    quantity: sizes.familyOf5Plus.quantity || 0,
+                    quantity: sizes.familyOf5Plus.quantity || '',
                     notes: sizes.familyOf5Plus.notes || ''
                 }
             }

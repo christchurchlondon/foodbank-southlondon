@@ -68,7 +68,8 @@ class Lists extends React.Component {
     }
 
     confirmSave() {
-        this.props.sendListUpdate(this.props.items);
+        // TODO handle notes properly
+        this.props.sendListUpdate(this.props.items, this.props.notes);
     }
 
     select(id, type) {

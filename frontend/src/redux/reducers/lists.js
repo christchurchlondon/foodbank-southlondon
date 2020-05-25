@@ -28,6 +28,7 @@ import {
 const initialState = {
     status: STATUS_IDLE,
     items: [],
+    notes: '',
     selectedComment: null,
     editItem: null,
     saveDialog: null
@@ -47,13 +48,15 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 status: STATUS_SUCCESS,
-                items: action.payload.lists
+                items: action.payload.lists,
+                notes: action.payload.notes
             };
         case LOAD_LISTS_FAILED:
             return {
                 ...state,
                 status: STATUS_FAILED,
-                items: []
+                items: [],
+                notes: ''
             };
         case TOGGLE_LIST_SELECTION:
             const { id, type } = state.selectedComment || { id: null, type: null };
