@@ -85,7 +85,7 @@ export default class ListsData extends React.Component {
                         <span className={ 'item-action' + (index === length - 1 ? ' disabled' : '') } onClick={ () => this.move(index, index + 1) }>
                             <FontAwesomeIcon icon="arrow-down" />
                         </span>
-                        <span className="item-action" onClick={ () => this.edit(item) }>
+                        <span className="item-action primary" onClick={ () => this.edit(item) }>
                             <FontAwesomeIcon icon="edit" />
                         </span>
                     </td>

@@ -5,7 +5,17 @@
 
         color: $colour-text-secondary;
 
-        // TODO &.primary, &.danger
+        &.primary:not(.disabled) {
+            color: $colour-accent;
+
+            &:hover {
+                color: $colour-accent-bold;
+            }
+        }
+
+        &.danger {
+            color: $colour-danger;
+        }
 
         &:not(.disabled) {
             cursor: pointer;
