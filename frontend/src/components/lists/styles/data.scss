@@ -1,9 +1,11 @@
 @import 'include';
 
 .lists-data {
-    .move {
+    .item-action {
 
         color: $colour-text-secondary;
+
+        // TODO &.primary, &.danger
 
         &:not(.disabled) {
             cursor: pointer;
@@ -17,7 +19,7 @@
             color: $colour-main;
         }
 
-        + .move {
+        + .item-action {
             margin-left: $pad-half;
         }
     }

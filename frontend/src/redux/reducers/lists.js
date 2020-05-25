@@ -76,11 +76,13 @@ export default function(state = initialState, action) {
                 }
             };
         case OPEN_ITEM_EDIT_FORM:
+            const item = state.items.find(i => i.id === action.payload.id);
+            if (!item) return state;
             return {
                 ...state,
                 editItem: {
                     id: action.payload.id,
-                    data: { ...action.payload.data }
+                    data: { ...item }
                 }
             };
         case DELETE_LIST_ITEM:

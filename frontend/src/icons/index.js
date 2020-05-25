@@ -1,6 +1,7 @@
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
+    faPlus,
     faArrowDown,
     faArrowUp,
     faComment,
@@ -16,6 +17,7 @@ import {
 
 export default function setupIcons() {
     library.add(
+        faPlus,
         faArrowDown,
         faArrowUp,
         faComment,

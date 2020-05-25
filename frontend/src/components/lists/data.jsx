@@ -8,11 +8,16 @@ export default class ListsData extends React.Component {
 
     constructor(props) {
         super(props);
+        this.edit = this.edit.bind(this);
         this.move = this.move.bind(this);
     }
 
     selectComment(id, type) {
         this.props.onSelect(id, type);
+    }
+
+    edit(item) {
+        this.props.onEdit(item.id);
     }
 
     move(pos, newPos) {
@@ -74,11 +79,14 @@ export default class ListsData extends React.Component {
                             onSelect={ this.selectComment } />
                     </td>
                     <td>
-                        <span className={ 'move' + (index === 0 ? ' disabled' : '') } onClick={ () => this.move(index, index - 1) }>
+                        <span className={ 'item-action' + (index === 0 ? ' disabled' : '') } onClick={ () => this.move(index, index - 1) }>
                             <FontAwesomeIcon icon="arrow-up" />
                         </span>
-                        <span className={ 'move' + (index === length - 1 ? ' disabled' : '') } onClick={ () => this.move(index, index + 1) }>
+                        <span className={ 'item-action' + (index === length - 1 ? ' disabled' : '') } onClick={ () => this.move(index, index + 1) }>
                             <FontAwesomeIcon icon="arrow-down" />
+                        </span>
+                        <span className="item-action" onClick={ () => this.edit(item) }>
+                            <FontAwesomeIcon icon="edit" />
                         </span>
                     </td>
                 </tr>

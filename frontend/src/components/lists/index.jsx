@@ -7,6 +7,11 @@ import {
     fetchLists,
     toggleListSelection,
     clearListSelection,
+    openItemAddForm,
+    openItemEditForm,
+    deleteListItem,
+    confirmListItemEdit,
+    cancelListItemEdit,
     moveListItem
 } from '../../redux/actions';
 import { getListsState } from '../../redux/selectors';
@@ -23,6 +28,10 @@ class Lists extends React.Component {
         super(props);
         this.select = this.select.bind(this);
         this.clearSelection = this.clearSelection.bind(this);
+        this.openAddForm = this.openAddForm.bind(this);
+        this.openEditForm = this.openEditForm.bind(this);
+        this.editItem = this.editItem.bind(this);
+        this.cancelEditItem = this.cancelEditItem.bind(this);
         this.moveItem = this.moveItem.bind(this);
     }
 
@@ -56,16 +65,24 @@ class Lists extends React.Component {
         this.props.clearListSelection();
     }
 
-    openEditForm(id) {
-        // TODO separate function for new item?
+    openAddForm() {
+        this.props.openItemAddForm();
     }
 
-    editItem(data) {
-        // TODO
+    openEditForm(id) {
+        this.props.openItemEditForm(id);
+    }
+
+    deleteItem(id) {
+        this.props.deleteListItem();
+    }
+
+    editItem(id, data) {
+        this.props.confirmListItemEdit(id, data);
     }
 
     cancelEditItem() {
-        // TODO
+        this.props.cancelListItemEdit();
     }
 
     isLoading() {
@@ -94,8 +111,11 @@ class Lists extends React.Component {
                     data={this.props.items}
                     selectedComment={this.props.selectedComment}
                     onSelect={ this.select }
+                    onEdit={ this.openEditForm }
                     onReorder={ this.moveItem } />
-                <ListsControls onSave={ () => this.save() } />
+                <ListsControls
+                    onAdd={ this.openAddForm }
+                    onSave={ this.save } />
             </div>
         );
     }
@@ -103,7 +123,8 @@ class Lists extends React.Component {
     getEditForm() {
         return this.props.editItem
             ? <ListItemForm
-                item={ this.props.editItem }
+                id={ this.props.editItem.id }
+                item={ this.props.editItem.data }
                 onEdit={ this.editItem }
                 onCancel={ this.cancelEditItem } />
             : null;
@@ -133,6 +154,11 @@ export default connect(
         fetchLists,
         toggleListSelection,
         clearListSelection,
+        openItemAddForm,
+        openItemEditForm,
+        deleteListItem,
+        confirmListItemEdit,
+        cancelListItemEdit,
         moveListItem
     }
 )(Lists);
