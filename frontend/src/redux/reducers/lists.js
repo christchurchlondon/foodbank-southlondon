@@ -68,11 +68,13 @@ export default function(state = initialState, action) {
                 selectedComment: null
             };
         case OPEN_ITEM_ADD_FORM:
+            const newId = Math.max(...state.items.map(i => i.id)) + 1;
             return {
                 ...state,
                 editItem: {
-                    id: NEW_ITEM_ID,
-                    data: createBlankItem()
+                    id: newId,
+                    data: createBlankItem(newId),
+                    new: true
                 }
             };
         case OPEN_ITEM_EDIT_FORM:
@@ -93,16 +95,17 @@ export default function(state = initialState, action) {
                 })
             };
         case CONFIRM_LIST_ITEM_EDIT:
-            const items = action.payload.id === NEW_ITEM_ID
-                ? [ ...state.items, action.payload.item ]
-                : state.items.map(item => {
+            const items = state.items.map(i => i.id).includes(action.payload.id)
+                ? state.items.map(item => {
                     return item.id === action.payload.id
                         ? action.payload.item
                         : item;
-                });
+                })
+                :[ ...state.items, action.payload.item ];
             return {
                 ...state,
-                items
+                items,
+                editItem: null
             };
         case CANCEL_LIST_ITEM_EDIT:
             return {
@@ -126,8 +129,6 @@ export default function(state = initialState, action) {
     }
 }
 
-const NEW_ITEM_ID = -1;
-
 function reorder(list, oldIndex, newIndex) {
     const item = list[oldIndex];
     const newList = list.filter((_, i) => i !== oldIndex);
@@ -135,9 +136,9 @@ function reorder(list, oldIndex, newIndex) {
     return newList;
 }
 
-function createBlankItem() {
+function createBlankItem(id) {
     return {
-        id: NEW_ITEM_ID,
+        id: id,
         description: '',
         householdSizes: {
             single: {

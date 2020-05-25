@@ -125,6 +125,7 @@ class Lists extends React.Component {
             ? <ListItemForm
                 id={ this.props.editItem.id }
                 item={ this.props.editItem.data }
+                new={ this.props.editItem.new }
                 onEdit={ this.editItem }
                 onCancel={ this.cancelEditItem } />
             : null;

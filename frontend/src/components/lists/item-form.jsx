@@ -7,9 +7,12 @@ export default class ListItemForm extends React.Component {
 
     constructor(props) {
         super(props);
+        this.keyDownHandler = this.keyDownHandler.bind(this);
         this.confirm = this.confirm.bind(this);
         this.cancel = this.cancel.bind(this);
         this.updateDescription = this.updateDescription.bind(this);
+        this.updateQuantity = this.updateQuantity.bind(this);
+        this.updateNotes = this.updateNotes.bind(this);
 
         const sizes = this.props.item.householdSizes;
 
@@ -38,10 +41,27 @@ export default class ListItemForm extends React.Component {
                 }
             }
         };
+    }
 
+    componentDidMount() {
+        document.addEventListener('keydown', this.keyDownHandler, false);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.keyDownHandler, false);
+    }
+
+    keyDownHandler(event) {
+        if (event.keyCode === 13) {
+            this.confirm();
+        }
+        if (event.keyCode === 27) {
+            this.cancel();
+        }
     }
 
     confirm() {
+        if (!this.state.description) return;
         this.props.onEdit(this.props.id, this.state);
     }
 
@@ -166,7 +186,7 @@ export default class ListItemForm extends React.Component {
 
     render() {
 
-        const title = this.props.id === -1
+        const title = this.props.new
             ? 'New List Item'
             : 'Edit List Item';
 
