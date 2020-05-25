@@ -17,7 +17,7 @@ export default function RequestEventsDetails(props) {
         : <tr><td className="empty-row" colSpan="3">No events</td></tr>;
 
     return (
-        <table className="events-details padded">
+        <table className="events-details">
             <thead>
                 <tr>
                     <th>Name</th>

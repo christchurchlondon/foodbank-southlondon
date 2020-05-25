@@ -48,7 +48,7 @@ export default class RequestsList extends React.Component {
         const allChecked = this.props.requests.every(item => item.checked);
 
         return (
-            <table className="requests-list selectable padded">
+            <table className="requests-list selectable">
                 <thead>
                     <tr>
                         <th>
