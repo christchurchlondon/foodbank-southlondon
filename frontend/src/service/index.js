@@ -170,7 +170,8 @@ export function postEvent(event, ids, data = {}) {
     }
 }
 
-export function updateList() {
+export function postListUpdate(list) {
+    const payload = listToRequestPayload(list);
     // TODO
 }
 
@@ -206,6 +207,11 @@ function responseItemToRequest(item) {
         extraInformation: item.extra_information,
         editUrl: item.edit_details_url
     };
+}
+
+function listToRequestPayload(list) {
+    // TODO
+    return list.map(item => item);
 }
 
 function extractEvent(item) {

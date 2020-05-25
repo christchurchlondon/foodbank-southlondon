@@ -39,7 +39,8 @@ import {
     getSingleRequest,
     getLists,
     getEvents,
-    postEvent
+    postEvent,
+    postListUpdate
 } from '../../service';
 
 
@@ -207,7 +208,7 @@ export const closeSaveListDialog = () => ({
 export const sendListUpdate = data => {
     return dispatch => {
         dispatch(updateList(data));
-        return updateList(data)
+        return postListUpdate(data)
             .then(() => {
                 dispatch(updateListComplete());
                 dispatch(closeSaveListDialog());
