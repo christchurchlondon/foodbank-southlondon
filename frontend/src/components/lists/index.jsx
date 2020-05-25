@@ -69,7 +69,7 @@ class Lists extends React.Component {
 
     getContents() {
         if (this.isLoading()) return <Loading />;
-        if (this.isFailed()) return <Error message={'Unable to load requests'} />;
+        if (this.isFailed()) return <Error message={'Unable to load lists'} />;
         return this.getListsContents();
     }
 

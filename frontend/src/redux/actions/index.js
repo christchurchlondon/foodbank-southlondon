@@ -130,7 +130,7 @@ export const fetchLists = () => {
         dispatch(loadLists());
         return getLists()
             .then(result => dispatch(listsLoaded(result)))
-            .catch(() => loadListsFailed())
+            .catch(() => dispatch(loadListsFailed()))
     };
 }
 
