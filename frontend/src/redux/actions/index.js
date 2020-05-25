@@ -17,6 +17,8 @@ import {
     OPEN_ITEM_ADD_FORM,
     OPEN_ITEM_EDIT_FORM,
     DELETE_LIST_ITEM,
+    CONFIRM_LIST_ITEM_EDIT,
+    CANCEL_LIST_ITEM_EDIT,
     UPDATE_LIST,
     UPDATE_LIST_COMPLETE,
     UPDATE_LIST_FAILED,
@@ -180,7 +182,25 @@ export const deleteListItem = id => ({
     }
 });
 
-// TODO sendListUpdate action (w/ service method)
+export const confirmListItemEdit = data => ({
+    type: CONFIRM_LIST_ITEM_EDIT,
+    payload: {
+        data
+    }
+});
+
+export const cancelListItemEdit = () => ({
+    type: CANCEL_LIST_ITEM_EDIT
+})
+
+export const sendListUpdate = data => {
+    return dispatch => {
+        dispatch(updateList(data));
+        return updateList(data)
+            .then(() => dispatch(updateListComplete()))
+            .catch(() => dispatch(updateListFailed()));
+    };
+}
 
 export const updateList = data => ({
     type: UPDATE_LIST,

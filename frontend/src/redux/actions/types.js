@@ -24,8 +24,10 @@ export const CLEAR_LIST_SELECTION = 'CLEAR_LIST_SELECTION';
 export const OPEN_ITEM_ADD_FORM = 'OPEN_ITEM_ADD_FORM';
 export const OPEN_ITEM_EDIT_FORM = 'OPEN_ITEM_EDIT_FORM';
 export const DELETE_LIST_ITEM = 'DELETE_LIST_ITEM';
-// TODO dialog actions (open, confirm, close)
+export const CONFIRM_LIST_ITEM_EDIT = 'CONFIRM_LIST_ITEM_EDIT';
+export const CANCEL_LIST_ITEM_EDIT = 'CANCEL_LIST_ITEM_EDIT';
 export const UPDATE_LIST = 'UPDATE_LIST';
+// TODO actions for confirm save, cancel save etc. (what about leaving the page?)
 export const UPDATE_LIST_COMPLETE = 'UPDATE_LIST_COMPLETE';
 export const UPDATE_LIST_FAILED = 'UPDATE_LIST_FAILED';
 export const MOVE_LIST_ITEM = 'MOVE_LIST_ITEM';
