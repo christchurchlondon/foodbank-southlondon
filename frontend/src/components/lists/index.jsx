@@ -32,14 +32,18 @@ class Lists extends React.Component {
         super(props);
         this.select = this.select.bind(this);
         this.clearSelection = this.clearSelection.bind(this);
+        this.updateNotes = this.updateNotes.bind(this);
         this.openAddForm = this.openAddForm.bind(this);
         this.openEditForm = this.openEditForm.bind(this);
         this.editItem = this.editItem.bind(this);
         this.cancelEditItem = this.cancelEditItem.bind(this);
         this.moveItem = this.moveItem.bind(this);
+        this.deleteItem = this.deleteItem.bind(this);
         this.openSaveDialog = this.openSaveDialog.bind(this);
         this.closeSaveDialog = this.closeSaveDialog.bind(this);
         this.confirmSave = this.confirmSave.bind(this);
+
+        this.state = { notes: this.props.value || '' };
     }
 
     componentDidMount() {
@@ -55,6 +59,10 @@ class Lists extends React.Component {
         this.props.fetchLists();
     }
 
+    updateNotes(notes) {
+        this.setState({ notes });
+    }
+
     moveItem(oldPosition, newPosition) {
         this.props.moveListItem(oldPosition, newPosition);
     }
@@ -68,8 +76,7 @@ class Lists extends React.Component {
     }
 
     confirmSave() {
-        // TODO handle notes properly
-        this.props.sendListUpdate(this.props.items, this.props.notes);
+        this.props.sendListUpdate(this.props.items, this.state.notes);
     }
 
     select(id, type) {
@@ -89,7 +96,7 @@ class Lists extends React.Component {
     }
 
     deleteItem(id) {
-        this.props.deleteListItem();
+        this.props.deleteListItem(id);
     }
 
     editItem(id, data) {
@@ -121,13 +128,14 @@ class Lists extends React.Component {
     getListsContents() {
         return (
             <div>
-                <ListsComments />
+                <ListsComments value={ this.props.notes } onChange={ this.updateNotes } />
                 <ListsData
                     data={this.props.items}
                     selectedComment={this.props.selectedComment}
                     onSelect={ this.select }
                     onEdit={ this.openEditForm }
-                    onReorder={ this.moveItem } />
+                    onReorder={ this.moveItem }
+                    onDelete={ this.deleteItem } />
                 <ListsControls
                     onAdd={ this.openAddForm }
                     onSave={ this.openSaveDialog } />

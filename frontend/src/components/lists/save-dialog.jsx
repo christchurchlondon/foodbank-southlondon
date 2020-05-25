@@ -15,7 +15,7 @@ export default function ListSaveDialog(props) {
     ];
 
     return (
-        <Popup title="Save Changes" buttons={ buttons }>
+        <Popup title="Save Changes" buttons={ buttons } onClose={ props.cancel }>
             <p>Do you want to save your changes?</p>
         </Popup>
     );

@@ -1,5 +1,19 @@
 @import 'include';
 
-.lists-comments label {
-    margin-right: $pad-standard;
+.lists-comments {
+
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+
+    label {
+        margin-right: $pad-standard;
+    }
+
+    textarea {
+        flex-grow: 1;
+        height: 60px;
+        padding: $pad-half;
+        font-size: 14px;
+    }
 }

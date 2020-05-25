@@ -10,6 +10,7 @@ export default class ListsData extends React.Component {
         super(props);
         this.edit = this.edit.bind(this);
         this.move = this.move.bind(this);
+        this.delete = this.delete.bind(this);
     }
 
     selectComment(id, type) {
@@ -23,6 +24,10 @@ export default class ListsData extends React.Component {
     move(pos, newPos) {
         if (newPos < 0 || newPos >= this.props.data.length) return;
         this.props.onReorder(pos, newPos);
+    }
+
+    delete(item) {
+        this.props.onDelete(item.id);
     }
 
     render() {
@@ -87,6 +92,9 @@ export default class ListsData extends React.Component {
                         </span>
                         <span className="item-action primary" onClick={ () => this.edit(item) }>
                             <FontAwesomeIcon icon="edit" />
+                        </span>
+                        <span className="item-action danger" onClick={ () => this.delete(item) }>
+                            <FontAwesomeIcon icon="times" />
                         </span>
                     </td>
                 </tr>
