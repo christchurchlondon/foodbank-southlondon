@@ -12,7 +12,10 @@ import {
     deleteListItem,
     confirmListItemEdit,
     cancelListItemEdit,
-    moveListItem
+    moveListItem,
+    openSaveListDialog,
+    closeSaveListDialog,
+    sendListUpdate
 } from '../../redux/actions';
 import { getListsState } from '../../redux/selectors';
 import Loading from '../common/loading';
@@ -21,6 +24,7 @@ import ListsComments from './comments';
 import ListsData from './data';
 import ListsControls from './controls';
 import ListItemForm from './item-form';
+import ListSaveDialog from './save-dialog';
 
 class Lists extends React.Component {
 
@@ -33,6 +37,9 @@ class Lists extends React.Component {
         this.editItem = this.editItem.bind(this);
         this.cancelEditItem = this.cancelEditItem.bind(this);
         this.moveItem = this.moveItem.bind(this);
+        this.openSaveDialog = this.openSaveDialog.bind(this);
+        this.closeSaveDialog = this.closeSaveDialog.bind(this);
+        this.confirmSave = this.confirmSave.bind(this);
     }
 
     componentDidMount() {
@@ -52,9 +59,16 @@ class Lists extends React.Component {
         this.props.moveListItem(oldPosition, newPosition);
     }
 
-    save() {
-        // TODO
-        console.log('Save button clicked!');
+    openSaveDialog() {
+        this.props.openSaveListDialog();
+    }
+
+    closeSaveDialog() {
+        this.props.closeSaveListDialog();
+    }
+
+    confirmSave() {
+        this.props.sendListUpdate(this.props.items);
     }
 
     select(id, type) {
@@ -115,7 +129,7 @@ class Lists extends React.Component {
                     onReorder={ this.moveItem } />
                 <ListsControls
                     onAdd={ this.openAddForm }
-                    onSave={ this.save } />
+                    onSave={ this.openSaveDialog } />
             </div>
         );
     }
@@ -131,16 +145,25 @@ class Lists extends React.Component {
             : null;
     }
 
+    getSaveDialog() {
+        return this.props.saveDialog
+            ? <ListSaveDialog status={ this.props.saveDialog.status }
+                onConfirm={ this.confirmSave }
+                onCancel={ this.closeSaveDialog } />
+            : null;
+    }
+
     render() {
 
         const contents = this.getContents();
-
         const editForm = this.getEditForm();
+        const saveDialog = this.getSaveDialog();
 
         return (
             <div className="lists-container">
                 { contents }
                 { editForm }
+                { saveDialog }
             </div>
         );
     }
@@ -160,6 +183,9 @@ export default connect(
         deleteListItem,
         confirmListItemEdit,
         cancelListItemEdit,
-        moveListItem
+        moveListItem,
+        openSaveListDialog,
+        closeSaveListDialog,
+        sendListUpdate
     }
 )(Lists);

@@ -15,6 +15,8 @@ import {
     DELETE_LIST_ITEM,
     CONFIRM_LIST_ITEM_EDIT,
     CANCEL_LIST_ITEM_EDIT,
+    OPEN_SAVE_LIST_DIALOG,
+    CLOSE_SAVE_LIST_DIALOG,
     UPDATE_LIST,
     UPDATE_LIST_COMPLETE,
     UPDATE_LIST_FAILED,
@@ -112,12 +114,41 @@ export default function(state = initialState, action) {
                 ...state,
                 editItem: null
             }
-        case UPDATE_LIST:
+        case OPEN_SAVE_LIST_DIALOG:
+            return {
+                ...state,
+                saveDialog: {
+                    status: STATUS_IDLE
+                }
+            };
+        case CLOSE_SAVE_LIST_DIALOG:
+            return {
+                ...state,
+                saveDialog: null
+            }
+        case UPDATE_LIST:return {
+                ...state,
+                saveDialog: {
+                    ...state.saveDialog,
+                    status: STATUS_LOADING
+                }
+            };
         case UPDATE_LIST_COMPLETE:
+            return {
+                ...state,
+                saveDialog: {
+                    ...state.saveDialog,
+                    status: STATUS_SUCCESS
+                }
+            };
         case UPDATE_LIST_FAILED:
-            // TODO
-            return state;
-        // TODO saveDialog actions (open, confirm, close)
+            return {
+                ...state,
+                saveDialog: {
+                    ...state.saveDialog,
+                    status: STATUS_FAILED
+                }
+            };
         case MOVE_LIST_ITEM:
             return {
                 ...state,

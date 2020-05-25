@@ -19,6 +19,8 @@ import {
     DELETE_LIST_ITEM,
     CONFIRM_LIST_ITEM_EDIT,
     CANCEL_LIST_ITEM_EDIT,
+    OPEN_SAVE_LIST_DIALOG,
+    CLOSE_SAVE_LIST_DIALOG,
     UPDATE_LIST,
     UPDATE_LIST_COMPLETE,
     UPDATE_LIST_FAILED,
@@ -192,16 +194,27 @@ export const confirmListItemEdit = (id, item) => ({
 
 export const cancelListItemEdit = () => ({
     type: CANCEL_LIST_ITEM_EDIT
-})
+});
+
+export const openSaveListDialog = () => ({
+    type: OPEN_SAVE_LIST_DIALOG
+});
+
+export const closeSaveListDialog = () => ({
+    type: CLOSE_SAVE_LIST_DIALOG
+});
 
 export const sendListUpdate = data => {
     return dispatch => {
         dispatch(updateList(data));
         return updateList(data)
-            .then(() => dispatch(updateListComplete()))
+            .then(() => {
+                dispatch(updateListComplete());
+                dispatch(closeSaveListDialog());
+            })
             .catch(() => dispatch(updateListFailed()));
     };
-}
+};
 
 export const updateList = data => ({
     type: UPDATE_LIST,
