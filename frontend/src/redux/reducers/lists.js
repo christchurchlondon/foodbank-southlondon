@@ -13,6 +13,8 @@ import {
     OPEN_ITEM_ADD_FORM,
     OPEN_ITEM_EDIT_FORM,
     DELETE_LIST_ITEM,
+    CONFIRM_LIST_ITEM_EDIT,
+    CANCEL_LIST_ITEM_EDIT,
     UPDATE_LIST,
     UPDATE_LIST_COMPLETE,
     UPDATE_LIST_FAILED,
@@ -24,7 +26,9 @@ import {
 const initialState = {
     status: STATUS_IDLE,
     items: [],
-    selectedComment: null
+    selectedComment: null,
+    editItem: null,
+    saveDialog: null
 }
 
 export default function(state = initialState, action) {
@@ -64,14 +68,51 @@ export default function(state = initialState, action) {
                 selectedComment: null
             };
         case OPEN_ITEM_ADD_FORM:
+            return {
+                ...state,
+                editItem: {
+                    id: NEW_ITEM_ID,
+                    data: createBlankItem()
+                }
+            };
         case OPEN_ITEM_EDIT_FORM:
+            return {
+                ...state,
+                editItem: {
+                    id: action.payload.id,
+                    data: { ...action.payload.data }
+                }
+            };
         case DELETE_LIST_ITEM:
+            return {
+                ...state,
+                items: state.items.filter(item => {
+                    return item.id !== action.payload.id
+                })
+            };
+        case CONFIRM_LIST_ITEM_EDIT:
+            const items = action.payload.id === NEW_ITEM_ID
+                ? [ ...state.items, action.payload.item ]
+                : state.items.map(item => {
+                    return item.id === action.payload.id
+                        ? action.payload.item
+                        : item;
+                });
+            return {
+                ...state,
+                items
+            };
+        case CANCEL_LIST_ITEM_EDIT:
+            return {
+                ...state,
+                editItem: null
+            }
         case UPDATE_LIST:
         case UPDATE_LIST_COMPLETE:
         case UPDATE_LIST_FAILED:
             // TODO
             return state;
-        // TODO dialog actions (open, confirm, close)
+        // TODO saveDialog actions (open, confirm, close)
         case MOVE_LIST_ITEM:
             return {
                 ...state,
@@ -83,6 +124,8 @@ export default function(state = initialState, action) {
     }
 }
 
+const NEW_ITEM_ID = -1;
+
 function reorder(list, oldIndex, newIndex) {
     const item = list[oldIndex];
     const newList = list.filter((_, i) => i !== oldIndex);
@@ -90,3 +133,31 @@ function reorder(list, oldIndex, newIndex) {
     return newList;
 }
 
+function createBlankItem() {
+    return {
+        id: NEW_ITEM_ID,
+        description: '',
+        householdSizes: {
+            single: {
+                quantity: '',
+                notes: ''
+            },
+            familyOf2: {
+                quantity: '',
+                notes: ''
+            },
+            familyOf3: {
+                quantity: '',
+                notes: ''
+            },
+            familyOf4: {
+                quantity: '',
+                notes: ''
+            },
+            familyOf5Plus: {
+                quantity: '',
+                notes: ''
+            }
+        }
+    }
+}

@@ -182,10 +182,11 @@ export const deleteListItem = id => ({
     }
 });
 
-export const confirmListItemEdit = data => ({
+export const confirmListItemEdit = (id, item) => ({
     type: CONFIRM_LIST_ITEM_EDIT,
     payload: {
-        data
+        id,
+        item
     }
 });
 
