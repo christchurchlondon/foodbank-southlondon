@@ -15,6 +15,7 @@ import Error from '../common/error';
 import ListsComments from './comments';
 import ListsData from './data';
 import ListsControls from './controls';
+import ListItemForm from './item-form';
 
 class Lists extends React.Component {
 
@@ -55,6 +56,18 @@ class Lists extends React.Component {
         this.props.clearListSelection();
     }
 
+    openEditForm(id) {
+        // TODO separate function for new item?
+    }
+
+    editItem(data) {
+        // TODO
+    }
+
+    cancelEditItem() {
+        // TODO
+    }
+
     isLoading() {
         return this.props.status === STATUS_LOADING;
     }
@@ -87,13 +100,25 @@ class Lists extends React.Component {
         );
     }
 
+    getEditForm() {
+        return this.props.editItem
+            ? <ListItemForm
+                item={ this.props.editItem }
+                onEdit={ this.editItem }
+                onCancel={ this.cancelEditItem } />
+            : null;
+    }
+
     render() {
 
         const contents = this.getContents();
 
+        const editForm = this.getEditForm();
+
         return (
             <div className="lists-container">
                 { contents }
+                { editForm }
             </div>
         );
     }

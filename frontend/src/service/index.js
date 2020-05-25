@@ -170,6 +170,10 @@ export function postEvent(event, ids, data = {}) {
     }
 }
 
+export function updateList() {
+    // TODO
+}
+
 function responseItemToRequest(item) {
     return {
         id: item.request_id,
