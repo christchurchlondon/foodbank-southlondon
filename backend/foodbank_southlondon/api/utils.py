@@ -53,15 +53,18 @@ def cache(name: str, spreadsheet_id: str, force_refresh: bool = False) -> pd.Dat
     return cache
 
 
-def gsheet_a1(spreadsheet_id, index) -> str:
+def gsheet_a1(spreadsheet_id: str, index: int = 0) -> str:
     sheet = _gsheet(spreadsheet_id, index)
     return sheet.acell("A1").value
 
 
-def overwrite_rows(spreadsheet_id: str, rows: List) -> None:
-    sheet = _gsheet(spreadsheet_id)
-    flask.current_app.logger.debug(f"Overwriting all rows with {len(rows)} new rows in {sheet.spreadsheet.title} ({sheet.url}) ...")
-    sheet.update(f"{sheet.title}", rows, value_input_option="USER_ENTERED")
+def overwrite_rows(spreadsheet_id: str, rows: List, index: int = 0) -> None:
+    sheet = _gsheet(spreadsheet_id, index)
+    new_row_count = len(rows)
+    flask.current_app.logger.debug(f"Overwriting all rows with {new_row_count} new rows in {sheet.spreadsheet.title} ({sheet.url}) ...")
+    existing_row_count = sheet.row_count
+    sheet.update(rows, value_input_option="USER_ENTERED")
+    sheet.delete_rows(new_row_count + 1, existing_row_count)
 
 
 def paginate(*sort_by: str, ascending: bool = True) -> Callable:

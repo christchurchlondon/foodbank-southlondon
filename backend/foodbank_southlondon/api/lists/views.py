@@ -25,7 +25,7 @@ class Lists(flask_restx.Resource):
         params = parsers.cache_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         df = cache(force_refresh=refresh_cache)
-        notes = utils.gsheet_a1(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], 1)
+        notes = utils.gsheet_a1(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], index=1)
         return {"notes": notes, "items": df.to_dict("records")}
 
     @rest.response(201, "Created")
@@ -34,7 +34,15 @@ class Lists(flask_restx.Resource):
         """Overwrite the Shopping Lists."""
         data = flask.request.json
         flask.current_app.logger.debug(f"Received request body, {data}")
-        utils.overwrite_rows(flask.current_app.config[_FBSL_LISTS_GSHEET_URI], list(data.values()))
+        lists_gsheet_uri = flask.current_app.config[_FBSL_LISTS_GSHEET_URI]
+        items = data["items"]
+        if not items:
+            rows = []
+        else:
+            rows = [list(items[0].keys())]
+            rows.extend(list(item.values()) for item in data["items"])
+        utils.overwrite_rows(lists_gsheet_uri, rows)
+        utils.overwrite_rows(lists_gsheet_uri, [[data["notes"]]], index=1)
         return ({}, 201)
 
 
