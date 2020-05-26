@@ -18,7 +18,6 @@ export default class RequestsList extends React.Component {
 
     extractEvent(event) {
         if (!event.name) return '';
-        console.log(event.date)
         const date = format(event.date, DATE_FORMAT_UI);
         return !!event.data
             ? `${ event.name } (${ event.data }) @ ${ date }`
@@ -49,7 +48,7 @@ export default class RequestsList extends React.Component {
         const allChecked = this.props.requests.every(item => item.checked);
 
         return (
-            <table className="requests-list selectable padded">
+            <table className="requests-list selectable">
                 <thead>
                     <tr>
                         <th>

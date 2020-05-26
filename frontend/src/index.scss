@@ -61,24 +61,11 @@ th {
     color: $colour-text-secondary;
 }
 
-th:first-child, td:first-child, th.first, td.first {
-    padding-left: 0;
-}
-
-th:last-child, td:last-child, th.last, td.last {
-    padding-right: 0;
-}
-
-table.padded th, table.padded td {
-    padding: $pad-half;
-}
-
 th.numerical, td.numerical {
     text-align: right;
 }
 
 tbody tr:nth-child(even) {
-    // background: rgba(138, 246, 251, 0.2);
     background: rgba(91, 159, 227, 0.2);
 }
 
@@ -88,7 +75,6 @@ table.selectable tbody tr {
 
 table.selectable tbody tr:hover {
     background: rgba(91, 159, 227, 0.4);
-    // background-color: rgba(138, 246, 251, 0.4);
 }
 
 table .empty-row {

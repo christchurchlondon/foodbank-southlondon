@@ -1,16 +1,39 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ListItemNotes from './item-notes';
+import './styles/data.scss';
 
 
 export default class ListsData extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.edit = this.edit.bind(this);
+        this.move = this.move.bind(this);
+        this.delete = this.delete.bind(this);
+    }
 
     selectComment(id, type) {
         this.props.onSelect(id, type);
     }
 
+    edit(item) {
+        this.props.onEdit(item.id);
+    }
+
+    move(pos, newPos) {
+        if (newPos < 0 || newPos >= this.props.data.length) return;
+        this.props.onReorder(pos, newPos);
+    }
+
+    delete(item) {
+        this.props.onDelete(item.id);
+    }
+
     render() {
 
         const { id, type } = this.props.selectedComment || { id: null, type: null };
+        const length = this.props.data.length;
 
         const tableRows = this.props.data.map((item, index) => {
 
@@ -60,6 +83,20 @@ export default class ListsData extends React.Component {
                             notes={item.householdSizes.familyOf5Plus.notes}
                             onSelect={ this.selectComment } />
                     </td>
+                    <td>
+                        <span className={ 'item-action' + (index === 0 ? ' disabled' : '') } onClick={ () => this.move(index, index - 1) }>
+                            <FontAwesomeIcon icon="arrow-up" />
+                        </span>
+                        <span className={ 'item-action' + (index === length - 1 ? ' disabled' : '') } onClick={ () => this.move(index, index + 1) }>
+                            <FontAwesomeIcon icon="arrow-down" />
+                        </span>
+                        <span className="item-action primary" onClick={ () => this.edit(item) }>
+                            <FontAwesomeIcon icon="edit" />
+                        </span>
+                        <span className="item-action danger" onClick={ () => this.delete(item) }>
+                            <FontAwesomeIcon icon="times" />
+                        </span>
+                    </td>
                 </tr>
             );
         })
@@ -70,6 +107,7 @@ export default class ListsData extends React.Component {
                     <tr>
                         <th rowSpan="2">Description</th>
                         <th colSpan="5" className="first">Quantities and Notes</th>
+                        <th></th>
                     </tr>
                     <tr>
                         <th>Single</th>
@@ -77,6 +115,7 @@ export default class ListsData extends React.Component {
                         <th>Family of 3</th>
                         <th>Family of 4</th>
                         <th>Family of 5+</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>

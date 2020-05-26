@@ -15,7 +15,7 @@ $colour-accent: #00adef;
 $colour-accent-bold: #2381D3;
 $colour-text: #282922;
 $colour-text-secondary: lighten($colour-text, 30); //(40,41,34,.7);
-$colour-text-disabled: lighten($colour-text, 40);
+$colour-text-disabled: lighten($colour-text, 60);
 $colour-danger: #ff5436;
 $colour-white: #fff;
 
@@ -23,6 +23,7 @@ $colour-white: #fff;
 $colour-background-primary: $colour-background;
 $colour-background-secondary: $colour-main;
 
+$colour-border: lighten($colour-text, 60);
 $colour-border-primary: $colour-accent;
 $colour-border-secondary: $colour-background;
 

@@ -14,6 +14,17 @@ import {
     LOAD_LISTS_FAILED,
     TOGGLE_LIST_SELECTION,
     CLEAR_LIST_SELECTION,
+    OPEN_ITEM_ADD_FORM,
+    OPEN_ITEM_EDIT_FORM,
+    DELETE_LIST_ITEM,
+    CONFIRM_LIST_ITEM_EDIT,
+    CANCEL_LIST_ITEM_EDIT,
+    OPEN_SAVE_LIST_DIALOG,
+    CLOSE_SAVE_LIST_DIALOG,
+    UPDATE_LIST,
+    UPDATE_LIST_COMPLETE,
+    UPDATE_LIST_FAILED,
+    MOVE_LIST_ITEM,
     LOAD_EVENTS,
     EVENTS_LOADED,
     LOAD_EVENTS_FAILED,
@@ -28,7 +39,8 @@ import {
     getSingleRequest,
     getLists,
     getEvents,
-    postEvent
+    postEvent,
+    postListUpdate
 } from '../../service';
 
 
@@ -122,8 +134,8 @@ export const fetchLists = () => {
     return dispatch => {
         dispatch(loadLists());
         return getLists()
-            .then(result => dispatch(listsLoaded(result)))
-            .catch(() => loadListsFailed())
+            .then(({ lists, notes }) => dispatch(listsLoaded(lists, notes)))
+            .catch(() => dispatch(loadListsFailed()))
     };
 }
 
@@ -131,10 +143,11 @@ export const loadLists = () => ({
     type: LOAD_LISTS
 });
 
-export const listsLoaded = lists => ({
+export const listsLoaded = (lists, notes) => ({
     type: LISTS_LOADED,
     payload: {
-        lists
+        lists,
+        notes
     }
 });
 
@@ -152,6 +165,80 @@ export const toggleListSelection = (id, type) => ({
 
 export const clearListSelection = () => ({
     type: CLEAR_LIST_SELECTION
+})
+
+export const openItemAddForm = () => ({
+    type: OPEN_ITEM_ADD_FORM
+});
+
+export const openItemEditForm = (id, data) => ({
+    type: OPEN_ITEM_EDIT_FORM,
+    payload: {
+        id,
+        data
+    }
+});
+
+export const deleteListItem = id => ({
+    type: DELETE_LIST_ITEM,
+    payload: {
+        id
+    }
+});
+
+export const confirmListItemEdit = (id, item) => ({
+    type: CONFIRM_LIST_ITEM_EDIT,
+    payload: {
+        id,
+        item
+    }
+});
+
+export const cancelListItemEdit = () => ({
+    type: CANCEL_LIST_ITEM_EDIT
+});
+
+export const openSaveListDialog = () => ({
+    type: OPEN_SAVE_LIST_DIALOG
+});
+
+export const closeSaveListDialog = () => ({
+    type: CLOSE_SAVE_LIST_DIALOG
+});
+
+export const sendListUpdate = (data, notes) => {
+    return dispatch => {
+        dispatch(updateList(data));
+        return postListUpdate(data, notes)
+            .then(() => {
+                dispatch(updateListComplete());
+                dispatch(closeSaveListDialog());
+            })
+            .catch(() => dispatch(updateListFailed()));
+    };
+};
+
+export const updateList = data => ({
+    type: UPDATE_LIST,
+    payload: {
+        data
+    }
+});
+
+export const updateListComplete = () => ({
+    type: UPDATE_LIST_COMPLETE
+});
+
+export const updateListFailed = () => ({
+    type: UPDATE_LIST_FAILED
+});
+
+export const moveListItem = (oldPosition, newPosition) => ({
+    type: MOVE_LIST_ITEM,
+    payload: {
+        oldPosition,
+        newPosition
+    }
 })
 
 // Events

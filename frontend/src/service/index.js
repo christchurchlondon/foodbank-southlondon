@@ -7,7 +7,8 @@ const endpoints = {
     GET_SINGLE_REQUEST: 'bff/details/',
     GET_LISTS: 'api/lists/',
     GET_EVENTS: 'api/events/distinct/?attribute=event_name',
-    SUBMIT_EVENT: 'bff/actions/'
+    SUBMIT_EVENT: 'bff/actions/',
+    SUBMIT_LISTS: 'api/lists/'
 };
 
 
@@ -110,7 +111,7 @@ export function getSingleRequest(id) {
 export function getLists() {
     return performFetch(endpoints.GET_LISTS)
         .then(response => {
-            return response.items.map((item, id) => {
+            const lists = response.items.map((item, id) => {
                 return {
                     id: id,    // Change?
                     description: item.item_description,
@@ -138,6 +139,8 @@ export function getLists() {
                     }
                 }
             });
+            const notes = response.notes;
+            return { lists, notes };
         });
 }
 
@@ -168,6 +171,13 @@ export function postEvent(event, ids, data = {}) {
     } else {
         return performPost(endpoints.SUBMIT_EVENT, requestBody);
     }
+}
+
+export function postListUpdate(list, notes) {
+    const items = listToRequestPayload(list);
+    const requestBody = { notes, items };
+
+    return performPost(endpoints.SUBMIT_LISTS, requestBody);
 }
 
 function responseItemToRequest(item) {
@@ -202,6 +212,25 @@ function responseItemToRequest(item) {
         extraInformation: item.extra_information,
         editUrl: item.edit_details_url
     };
+}
+
+function listToRequestPayload(list) {
+    return list.map(item => {
+        const sizes = item.householdSizes;
+        return {
+            item_description: item.description,
+            single_quantity: sizes.single.quantity,
+            single_notes: sizes.single.notes,
+            family_of_2_quantity: sizes.familyOf2.quantity,
+            family_of_2_notes: sizes.familyOf2.notes,
+            family_of_3_quantity: sizes.familyOf3.quantity,
+            family_of_3_notes: sizes.familyOf3.notes,
+            family_of_4_quantity: sizes.familyOf4.quantity,
+            family_of_4_notes: sizes.familyOf4.notes,
+            ['family_of_5+_quantity']: sizes.familyOf5Plus.quantity,
+            ['family_of_5+_notes']: sizes.familyOf5Plus.notes
+        };
+    });
 }
 
 function extractEvent(item) {

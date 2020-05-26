@@ -1,0 +1,39 @@
+@import 'include';
+
+.lists-data {
+
+    margin: 0 0 $pad-standard;
+
+    .item-action {
+
+        color: $colour-text-secondary;
+
+        &.primary:not(.disabled) {
+            color: $colour-accent;
+
+            &:hover {
+                color: $colour-accent-bold;
+            }
+        }
+
+        &.danger {
+            color: $colour-danger;
+        }
+
+        &:not(.disabled) {
+            cursor: pointer;
+        }
+
+        &.disabled {
+            color: $colour-text-disabled;
+        }
+
+        &:hover:not(.disabled) {
+            color: $colour-main;
+        }
+
+        + .item-action {
+            margin-left: $pad-half;
+        }
+    }
+}
