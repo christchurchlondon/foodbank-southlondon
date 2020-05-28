@@ -62,7 +62,7 @@ class ProductionConfig(_Config):
     GOOGLE_CLIENT_ID = "555689098172-2hmfl06vftk660n1a1cvcpu5kuh5l243.apps.googleusercontent.com"
     PREFERRED_URL_SCHEME = "https"
 
-    FBSL_BASE_DOMAIN = f"https://{_heroku_app_name}-herokuapp.com" if _heroku_app_name else f"localhost:{_port}" if _port else "localhost"
+    FBSL_BASE_DOMAIN = f"{_heroku_app_name}.herokuapp.com" if _heroku_app_name else f"localhost:{_port}" if _port else "localhost"
     FBSL_EVENTS_GSHEET_URI = "1OAluin8tOIpYUxcm18gHJSc0z1tx4EdxY9I2bdB4zj4"
     FBSL_LISTS_GSHEET_URI = "1D0TcNW7pTMGgKYDogS4YDVJqEBAavu3GfXHu_iGlSmU"
     FBSL_GSUITE_IMPERSONATE_ADDRESS = "ed@christchurchlondon.org"
