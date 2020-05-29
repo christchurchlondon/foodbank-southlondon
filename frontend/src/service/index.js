@@ -48,8 +48,8 @@ function formatDate(date) {
     return format(date, DATE_FORMAT_REQUEST);
 }
 
-function parseDate(text) {
-    return parse(text, DATE_FORMAT_REQUEST, new Date())
+function parseDate(text, format = DATE_FORMAT_REQUEST) {
+    return parse(text, format, new Date())
 }
 
 function parseTimestamp(timestamp) {
@@ -81,7 +81,7 @@ export function getRequests(filters = {}, page = 1) {
                 id: item.request_id,
                 fullName: item.client_full_name,
                 referenceNumber: item.reference_number,
-                deliveryDate: parseDate(item.delivery_date),
+                deliveryDate: parseDate(item.delivery_date, 'dd/MM/yyyy'),
                 event: extractEvent(item),
                 postcode: item.postcode
             }));
