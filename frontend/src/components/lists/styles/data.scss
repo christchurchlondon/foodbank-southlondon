@@ -4,6 +4,10 @@
 
     margin: 0 0 $pad-standard;
 
+    .action-cell {
+        text-align: right;
+    }
+
     .item-action {
 
         color: $colour-text-secondary;

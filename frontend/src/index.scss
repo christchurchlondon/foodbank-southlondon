@@ -37,6 +37,10 @@ input {
     padding: $pad-half;
 }
 
+select {
+    font-size: 1rem;
+}
+
 select:focus {
     outline: none;
 }

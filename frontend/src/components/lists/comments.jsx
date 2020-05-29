@@ -12,7 +12,7 @@ export default class ListsComments extends React.Component {
         return (
             <section className="lists-comments panel">
                 <label>Comments</label>
-                <textarea value={ this.props.value } onChange={ e => this.props.onChange(e.target.value) }></textarea>
+                <textarea defaultValue={ this.props.value } onChange={ e => this.props.onChange(e.target.value) }></textarea>
             </section>
         );
     }
