@@ -68,5 +68,5 @@ class ProductionConfig(_Config):
     FBSL_GSUITE_IMPERSONATE_ADDRESS = "ed@christchurchlondon.org"
     FBSL_GSUITE_GROUP_ADDRESS = "foodbankapp-users@christchurchlondon.org"
     FBSL_PROTECT_API = True
-    FBSL_REQUESTS_FORM_URI = "1nSPgge024rIYUBxnVx3lNhJok8DuBcg8ZlehhZDfjFc"
+    FBSL_REQUESTS_FORM_URI = "1FAIpQLSfyLJH5_Im0C_XEifpD5CUzR5zZyu_9NEXGFY364qPu5JEFrw"
     FBSL_REQUESTS_GSHEET_URI = "1TDM35lGcVPcf0HJda-V7l2QLH9R0EMHP8mbLdZcpb5k"

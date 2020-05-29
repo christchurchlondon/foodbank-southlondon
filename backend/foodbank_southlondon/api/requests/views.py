@@ -84,7 +84,7 @@ class DistinctRequestsValues(flask_restx.Resource):
 
 
 def _edit_details_url(request_id):
-    return f"https://docs.google.com/forms/d/e/{flask.current_app.config['FBSL_REQUESTS_FORM_URI']}/viewForm?edit2={request_id}"
+    return f"https://docs.google.com/forms/d/e/{flask.current_app.config['FBSL_REQUESTS_FORM_URI']}/viewform?edit2={request_id}"
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
