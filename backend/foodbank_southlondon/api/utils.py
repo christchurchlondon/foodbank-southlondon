@@ -63,9 +63,10 @@ def overwrite_rows(spreadsheet_id: str, rows: List, index: int = 0) -> None:
     new_row_count = len(rows)
     flask.current_app.logger.debug(f"Overwriting all rows with {new_row_count} new rows in {sheet.spreadsheet.title} ({sheet.url}) ...")
     existing_row_count = sheet.row_count
-    sheet.update(rows, value_input_option="USER_ENTERED")
+    if new_row_count:
+        sheet.update(rows, value_input_option="USER_ENTERED")
     if existing_row_count > new_row_count:
-        sheet.delete_rows(new_row_count + 1, existing_row_count)
+        sheet.delete_rows((new_row_count or 1) + 1, existing_row_count)
 
 
 def paginate(*sort_by: str, ascending: bool = True) -> Callable:
