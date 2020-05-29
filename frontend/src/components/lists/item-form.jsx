@@ -109,7 +109,7 @@ export default class ListItemForm extends React.Component {
                     <h4>Single</h4>
                     <div className="row">
                         <label>Quantity</label>
-                        <input type="number"
+                        <input type="text" className="small"
                             value={ this.state.householdSizes.single.quantity }
                             onChange={ e => this.updateQuantity(e, 'single') } />
                     </div>
@@ -124,7 +124,7 @@ export default class ListItemForm extends React.Component {
                     <h4>Family of 2</h4>
                     <div className="row">
                         <label>Quantity</label>
-                        <input type="number"
+                        <input type="text" className="small"
                             value={ this.state.householdSizes.familyOf2.quantity }
                             onChange={ e => this.updateQuantity(e, 'familyOf2') } />
                     </div>
@@ -139,7 +139,7 @@ export default class ListItemForm extends React.Component {
                     <h4>Family of 3</h4>
                     <div className="row">
                         <label>Quantity</label>
-                        <input type="number"
+                        <input type="text" className="small"
                             value={ this.state.householdSizes.familyOf3.quantity }
                             onChange={ e => this.updateQuantity(e, 'familyOf3') } />
                     </div>
@@ -154,7 +154,7 @@ export default class ListItemForm extends React.Component {
                     <h4>Family of 4</h4>
                     <div className="row">
                         <label>Quantity</label>
-                        <input type="number"
+                        <input type="text" className="small"
                             value={ this.state.householdSizes.familyOf4.quantity }
                             onChange={ e => this.updateQuantity(e, 'familyOf4') } />
                     </div>
@@ -169,7 +169,7 @@ export default class ListItemForm extends React.Component {
                     <h4>Family of 5+</h4>
                     <div className="row">
                         <label>Quantity</label>
-                        <input type="number"
+                        <input type="text" className="small"
                             value={ this.state.householdSizes.familyOf5Plus.quantity }
                             onChange={ e => this.updateQuantity(e, 'familyOf5Plus') } />
                     </div>

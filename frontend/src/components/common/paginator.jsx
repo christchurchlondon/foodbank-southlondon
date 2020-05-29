@@ -104,6 +104,7 @@ export default class Paginator extends React.Component {
     }
 
     render() {
+        if (!this.props.pages || this.props.pages < 0) return null;
         return (
             <div className="paginator">
                 { this.getPrevLink() }

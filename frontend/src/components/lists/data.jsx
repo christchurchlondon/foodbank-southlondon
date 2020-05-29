@@ -83,7 +83,7 @@ export default class ListsData extends React.Component {
                             notes={item.householdSizes.familyOf5Plus.notes}
                             onSelect={ this.selectComment } />
                     </td>
-                    <td>
+                    <td className="action-cell">
                         <span className={ 'item-action' + (index === 0 ? ' disabled' : '') } onClick={ () => this.move(index, index - 1) }>
                             <FontAwesomeIcon icon="arrow-up" />
                         </span>

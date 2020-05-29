@@ -31,13 +31,13 @@
         input[type=text] {
             width: 250px;
 
+            &.small {
+                width: 150px;
+            }
+
             &.large {
                 width: 460px;
             }
-        }
-
-        input[type=number] {
-            width: 120px;
         }
 
     }
