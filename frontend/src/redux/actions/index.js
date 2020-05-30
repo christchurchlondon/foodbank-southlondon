@@ -1,5 +1,4 @@
 import {
-    SET_TAB,
     LOAD_REQUESTS,
     REQUESTS_LOADED,
     LOAD_REQUESTS_FAILED,
@@ -43,15 +42,6 @@ import {
     postListUpdate
 } from '../../service';
 
-
-// Tabs
-
-export const setTab = tab => ({
-    type: SET_TAB,
-    payload: {
-        tab
-    }
-});
 
 
 // Requests
