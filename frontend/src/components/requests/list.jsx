@@ -12,6 +12,10 @@ export default class RequestsList extends React.Component {
         this.props.onToggleAll();
     }
 
+    handleCheckboxCellClick(event) {
+        event.stopPropagation();
+    }
+
     handleCheckboxClick(event) {
         event.stopPropagation();
     }
@@ -30,7 +34,7 @@ export default class RequestsList extends React.Component {
             const request = item.data;
             return (
                 <tr key={request.id} onClick={ () => this.props.onSelect(request.id) }>
-                    <td>
+                    <td className="selection-cell" onClick={ this.handleCheckboxCellClick }>
                         <input type="checkbox"
                             onChange={ () => this.toggle(request.id) }
                             onClick={ this.handleCheckboxClick }
@@ -51,7 +55,7 @@ export default class RequestsList extends React.Component {
             <table className="requests-list selectable">
                 <thead>
                     <tr>
-                        <th>
+                        <th className="selection-cell">
                             <input type="checkbox"
                                 onChange={ () => this.toggleAll() }
                                 onClick={ this.handleCheckboxClick }

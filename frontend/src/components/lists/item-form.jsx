@@ -17,6 +17,7 @@ export default class ListItemForm extends React.Component {
         const sizes = this.props.item.householdSizes;
 
         this.state = {
+            id: this.props.id,
             description: this.props.item.description || '',
             householdSizes: {
                 single: {

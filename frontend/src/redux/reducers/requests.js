@@ -32,6 +32,7 @@ const initialState = {
     page: 0,
     totalPages: 0,
     selection: {
+        id: null,
         status: STATUS_IDLE,
         item: null
     },
@@ -76,11 +77,13 @@ export default function(state = initialState, action) {
                 ...state,
                 selection: {
                     ...state.selection,
+                    id: action.payload.id,
                     status: STATUS_LOADING,
                     item: null
                 }
             };
         case REQUEST_SELECTION_LOADED:
+            if (action.payload.id !== state.selection.id) return state;
             return {
                 ...state,
                 selection: {
@@ -103,7 +106,9 @@ export default function(state = initialState, action) {
                 ...state,
                 selection: {
                     ...state.selection,
-                    status: STATUS_IDLE
+                    id: null,
+                    status: STATUS_IDLE,
+                    item: null
                 }
             };
         case TOGGLE_REQUEST:

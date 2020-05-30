@@ -1,8 +1,4 @@
 
-// Main
-export const SET_TAB = 'SET_TAB';
-
-
 // Requests
 export const LOAD_REQUESTS = 'LOAD_REQUESTS';
 export const REQUESTS_LOADED = 'REQUESTS_LOADED';

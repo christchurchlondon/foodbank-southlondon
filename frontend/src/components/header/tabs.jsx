@@ -1,35 +1,22 @@
 import React from 'react';
-import { TAB_REQUESTS, TAB_LISTS } from '../../constants';
 import Tab from './tab';
 
 const tabDefinitions = [
-    { id: TAB_REQUESTS, label: 'Clients' },
-    { id: TAB_LISTS, label: 'Lists' }
+    { path: '/clients', label: 'Clients' },
+    { path: '/lists', label: 'Lists' }
 ];
 
-export default class Tabs extends React.Component {
+export default function Tabs() {
 
-    handleTabClick(tab) {
-        this.props.onSelect(tab);
-    }
+    const tabs = tabDefinitions.map(({ path, label }, index) => {
+        return (
+            <Tab
+                key={index}
+                name={label}
+                path={path}
+            />
+        );
+    })
 
-    isSelectedTab(tab) {
-        return this.props.selected === tab;
-    }
-
-    render() {
-
-        const tabs = tabDefinitions.map(({id, label}, index) => {
-            return (
-                <Tab
-                    key={index}
-                    name={label}
-                    isSelected={this.isSelectedTab(id)}
-                    onClick={ () => this.handleTabClick(id) }
-                />
-            );
-        })
-
-        return <div className="tabs">{ tabs }</div>;
-    }
+    return <div className="tabs">{ tabs }</div>;
 }

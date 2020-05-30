@@ -1,5 +1,4 @@
 import {
-    SET_TAB,
     LOAD_REQUESTS,
     REQUESTS_LOADED,
     LOAD_REQUESTS_FAILED,
@@ -44,15 +43,6 @@ import {
 } from '../../service';
 
 
-// Tabs
-
-export const setTab = tab => ({
-    type: SET_TAB,
-    payload: {
-        tab
-    }
-});
-
 
 // Requests
 
@@ -90,7 +80,7 @@ export const fetchSingleRequest = id => {
     return dispatch => {
         dispatch(selectRequest(id));
         return getSingleRequest(id)
-            .then(result => dispatch(requestSelectionLoaded(result)))
+            .then(result => dispatch(requestSelectionLoaded(id, result)))
             .catch(() => selectRequestFailed());
     };
 };
@@ -102,9 +92,10 @@ export const selectRequest = id => ({
     }
 });
 
-export const requestSelectionLoaded = request => ({
+export const requestSelectionLoaded = (id, request) => ({
     type: REQUEST_SELECTION_LOADED,
     payload: {
+        id,
         request
     }
 });
