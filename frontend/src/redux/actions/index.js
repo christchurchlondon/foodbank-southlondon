@@ -80,7 +80,7 @@ export const fetchSingleRequest = id => {
     return dispatch => {
         dispatch(selectRequest(id));
         return getSingleRequest(id)
-            .then(result => dispatch(requestSelectionLoaded(result)))
+            .then(result => dispatch(requestSelectionLoaded(id, result)))
             .catch(() => selectRequestFailed());
     };
 };
@@ -92,9 +92,10 @@ export const selectRequest = id => ({
     }
 });
 
-export const requestSelectionLoaded = request => ({
+export const requestSelectionLoaded = (id, request) => ({
     type: REQUEST_SELECTION_LOADED,
     payload: {
+        id,
         request
     }
 });
