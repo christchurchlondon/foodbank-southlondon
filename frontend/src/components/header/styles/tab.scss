@@ -3,27 +3,35 @@
 .tab {
     display: inline-block;
     margin-right: $pad-half / 2;
-    padding: $pad-standard $pad-standard .8rem;
     background-color: $colour-tab;
     color: $colour-tab-text;
     cursor: pointer;
     border-top-right-radius: $pad-half / 2;
     border-top-left-radius: $pad-half / 2;
-}
 
-.tab:hover {
-    color: $colour-tab-text-hover;
-}
+    &:hover {
+        color: $colour-tab-text-hover;
+    }
 
-.tab.selected {
-    background-color: $colour-tab-primary;
-    color: $colour-tab-primary-text;
-}
+    &.selected {
+        background-color: $colour-tab-primary;
+        color: $colour-tab-primary-text;
+    }
 
-.tab.selected:hover {
-    color: $colour-tab-text-hover;
-}
+    &.selected:hover {
+        color: $colour-tab-text-hover;
+    }
 
-.tab.selected:hover {
-    color: $colour-white;
+    &.selected:hover {
+        color: $colour-white;
+    }
+
+    a {
+        display: inline-block;
+        padding: $pad-standard $pad-standard .8rem;
+        border-top-right-radius: $pad-half / 2;
+        border-top-left-radius: $pad-half / 2;
+        color: inherit;
+        background-color: inherit;
+    }
 }
