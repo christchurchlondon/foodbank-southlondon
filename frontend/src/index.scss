@@ -1,4 +1,6 @@
 @import 'include';
+@import 'fontawesome/fontawesome.scss';
+@import 'fontawesome/regular.scss';
 
 body {
     margin: 0;
@@ -35,6 +37,30 @@ a:hover {
 input {
     border: none;
     padding: $pad-half;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+input[type=checkbox] {
+    margin: 0;
+    padding: 0;
+    font-size: 1.5rem;
+    color: $colour-text;
+    appearance: none;
+    cursor: pointer;
+
+    @extend %fa-icon;
+    @extend .far;
+
+    &:before {
+        content: fa-content($fa-var-square);
+    }
+
+    &:checked:before {
+        content: fa-content($fa-var-check-square);
+    }
 }
 
 select {
@@ -79,6 +105,10 @@ table.selectable tbody tr {
 
 table.selectable tbody tr:hover {
     background: rgba(91, 159, 227, 0.4);
+}
+
+table .selection-cell {
+    vertical-align: middle;
 }
 
 table .empty-row {
