@@ -26,6 +26,7 @@ export default class RequestsEventDialog extends React.Component {
     }
 
     componentDidMount() {
+        if (!this.props.details) return;
         document.addEventListener('keydown', this.keyDownHandler, false);
     }
 
@@ -88,7 +89,7 @@ export default class RequestsEventDialog extends React.Component {
             return (
                 <div className="field-row">
                     <label>Quantity</label>
-                    <input type="number" onChange={ this.updateQuantity } />
+                    <input type="text" onChange={ this.updateQuantity } />
                 </div>
             );
         }

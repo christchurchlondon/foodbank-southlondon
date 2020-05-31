@@ -20,8 +20,12 @@
             }
         }
 
-        &.danger {
-            color: $colour-danger;
+        &.danger:not(.disabled) {
+            color: $colour-button-bg-danger;
+
+            &:hover {
+                color: $colour-button-bg-danger-hover;
+            }
         }
 
         &:not(.disabled) {
@@ -33,7 +37,7 @@
         }
 
         &:hover:not(.disabled) {
-            color: $colour-main;
+            color: $colour-text;
         }
 
         + .item-action {

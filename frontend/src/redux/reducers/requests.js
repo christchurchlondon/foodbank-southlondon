@@ -26,7 +26,7 @@ import {
 
 
 const initialState = {
-    filter: '',
+    filters: {},
     status: STATUS_IDLE,
     items: [],
     page: 0,

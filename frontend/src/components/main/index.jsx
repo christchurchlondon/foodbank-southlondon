@@ -1,4 +1,5 @@
 import React from 'react';
+import { createBrowserHistory } from 'history';
 import {
     BrowserRouter as Router,
     Redirect,
@@ -12,6 +13,11 @@ import './styles/index.scss';
 
 
 export default function Main() {
+
+    const history = createBrowserHistory();
+    history.push('/temp');
+    history.goBack();
+
     return (
         <Router>
             <main className="main">

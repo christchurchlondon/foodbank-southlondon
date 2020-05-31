@@ -114,7 +114,9 @@ class Requests extends React.Component {
     getRequestsContents() {
         return (
             <div>
-                <RequestsFilter onSubmit={ v => this.fetchRequests(v) } value={this.props.filter} />
+                <RequestsFilter
+                    onSubmit={ v => this.fetchRequests(v) }
+                    value={ this.props.filters } />
                 <RequestsList
                     requests={ this.props.items }
                     onSelect={ id => this.selectRequest(id) }
