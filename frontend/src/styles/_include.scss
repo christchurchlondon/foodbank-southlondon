@@ -14,7 +14,7 @@ $colour-background: #f2f3eb;
 $colour-accent: #00adef;
 $colour-accent-bold: #2381D3;
 $colour-text: #282922;
-$colour-text-secondary: lighten($colour-text, 30); //(40,41,34,.7);
+$colour-text-secondary: lighten($colour-text, 30);
 $colour-text-disabled: lighten($colour-text, 60);
 $colour-danger: #ff5436;
 $colour-white: #fff;
@@ -31,6 +31,8 @@ $colour-button-bg: $colour-main;
 $colour-button-bg-primary: $colour-main-bold;
 $colour-button-bg-secondary: $colour-background;
 $colour-button-bg-disabled: darken($colour-background, 50);
+$colour-button-bg-danger: $colour-danger;
+$colour-button-bg-danger-hover: darken($colour-danger, 10);
 
 $colour-button-text: $colour-white;
 $colour-button-text-primary: $colour-white;
