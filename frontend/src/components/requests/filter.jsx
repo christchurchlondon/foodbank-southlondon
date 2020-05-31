@@ -58,13 +58,16 @@ export default class RequestsFilter extends React.Component {
                 <label className="and">and</label>
                 <FilterField label="Name"
                     value={ this.state.name }
-                    onChange={ this.onNameChange } />
+                    onChange={ this.onNameChange }
+                    onEnter={ this.submit } />
                 <FilterField label="Ref #"
                     value={ this.state.referenceNumber }
-                    onChange={ this.onReferenceNumberChange } />
+                    onChange={ this.onReferenceNumberChange }
+                    onEnter={ this.submit } />
                 <FilterField label="Postcode"
                     value={ this.state.postcode }
-                    onChange={ this.onPostcodeChange } />
+                    onChange={ this.onPostcodeChange }
+                    onEnter={ this.submit } />
                 <button onClick={ () => this.submit() }>Go</button>
             </div>
         );
