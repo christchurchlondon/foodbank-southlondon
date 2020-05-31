@@ -15,12 +15,10 @@ export default class RequestsFilter extends React.Component {
         this.submit = this.submit.bind(this);
 
         this.state = {
-            dates: {
-                start: null, end: null     // TODO
-            },
-            name: props.name || '',
-            referenceNumber: props.referenceNumber || '',
-            postcode: props.postcode || ''
+            dates: props.value.dates || {},
+            name: props.value.name || '',
+            referenceNumber: props.value.referenceNumber || '',
+            postcode: props.value.postcode || ''
         };
     }
 
@@ -52,8 +50,11 @@ export default class RequestsFilter extends React.Component {
     render() {
         return (
             <div className="requests-filter panel">
-                <label>Filters:</label>
-                <DateRangePicker onChange={ this.onDatePickerChange } />
+                <label>Dates:</label>
+                <DateRangePicker
+                    onChange={ this.onDatePickerChange }
+                    start={ this.state.dates.start }
+                    end={ this.state.dates.end } />
                 <label className="and">and</label>
                 <FilterField label="Name"
                     value={ this.state.name }

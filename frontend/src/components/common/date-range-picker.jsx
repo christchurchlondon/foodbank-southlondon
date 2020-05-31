@@ -7,17 +7,14 @@ import './styles/date-range-picker.scss';
 
 export default class DateRangePicker extends React.Component {
 
-    // TODO take start date and date range in props
-    
     constructor(props) {
         super(props);
         this.setStartDate = this.setStartDate.bind(this);
         this.setEndDate = this.setEndDate.bind(this);
         this.onChange = this.onChange.bind(this);
         this.state = {
-            test: 'value 1',
-            startDate: null,
-            endDate: null
+            startDate: this.props.start,
+            endDate: this.props.end
         };
     }
 
