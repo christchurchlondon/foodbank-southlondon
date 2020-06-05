@@ -15,7 +15,7 @@ class _ReverseProxied(object):
         return self.app(environ, start_response)
 
 
-app = flask.Flask(__name__, static_folder="../../frontend/build", template_folder="templates")
+app = flask.Flask(__name__, static_folder="../../frontend/build", static_url_path="/", template_folder="templates")
 app.wsgi_app = _ReverseProxied(app.wsgi_app)  # type:ignore
 
 oauth = flask_client.OAuth()
