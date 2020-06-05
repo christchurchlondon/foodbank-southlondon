@@ -14,7 +14,7 @@ _PREFERRED_URL_SCHEME = "PREFERRED_URL_SCHEME"
 
 
 @app.route("/")
-def catch_all(path) -> Union[flask.Response, werkzeug.Response]:
+def catch_all() -> Union[flask.Response, werkzeug.Response]:
     if flask.session.get(flask.current_app.config[_FBSL_USER_SESSION_VAR]):
         return app.send_static_file("index.html")
     return flask.redirect("/login")

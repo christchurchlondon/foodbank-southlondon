@@ -96,7 +96,7 @@
             </tr>
             {% for item in list["items"] %}
                 {% set quantity = item['quantity'] %}
-                {% if quantity != "0" %}
+                {% if quantity and quantity != "0" %}
             <tr class="compact">
                 <td>{{ item['item_description'] }}</td>
                 <td>{{ quantity }}</td>
