@@ -31,7 +31,7 @@ lint: ## run flake8 and mypy
 
 .PHONY: run
 run: install ## run the flask locally using the builtin flask webserver [DEV]
-	export FLASK_APP=foodbank_southlondon.launch:main FLASK_ENV=production && \
+	export FLASK_APP=foodbank_southlondon.launch:main FLASK_ENV=development && \
 	. $(_VENV_ACTIVATE) && \
 	flask run --eager-loading
 
