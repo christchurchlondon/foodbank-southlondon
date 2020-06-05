@@ -31,9 +31,9 @@ lint: ## run flake8 and mypy
 
 .PHONY: run
 run: install ## run the flask locally using the builtin flask webserver [DEV]
-	export FLASK_APP=foodbank_southlondon.launch:main FLASK_ENV=development && \
+	export FLASK_APP=foodbank_southlondon.launch:main FLASK_ENV=development PORT=5000 && \
 	. $(_VENV_ACTIVATE) && \
-	flask run --eager-loading
+	flask run --eager-loading --port=$$PORT
 
 .PHONY: venv
 venv: $(_VENV_ACTIVATE) ## create a virtual env if it doesn't exist
