@@ -35,7 +35,8 @@ class Requests(flask_restx.Resource):
             df = df.loc[df["Delivery Date"].isin(delivery_dates)]
         name_attribute = "Client Full Name"
         if client_full_names or postcodes or reference_numbers:
-            df = df.loc[df[name_attribute].isin(client_full_names) | df["Postcode"].isin(postcodes) | df["Reference Number"].isin(reference_numbers)]
+            df = df.loc[df[name_attribute].isin(client_full_names) | df["Postcode"].str.startswith(tuple(postcodes)) |
+                        df["Reference Number"].isin(reference_numbers)]
         if last_request_only:
             df = df.assign(rank=df.groupby([name_attribute]).cumcount(ascending=False) + 1).query("rank == 1").drop("rank", axis=1)
         df = df.assign(edit_details_url=df["request_id"].map(_edit_details_url))
