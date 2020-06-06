@@ -11,3 +11,19 @@ export function today() {
     date.setMilliseconds(0);
     return date;
 }
+
+export function formatAddress(address) {
+    return [
+        address.line1,
+        address.line2,
+        address.town,
+        address.county,
+        address.postcode
+    ]
+        .filter(line => !!line)
+        .join(', ');
+}
+
+export function formatHousehold(household) {
+    return `${household.total} occupants (${household.adults} adults, ${household.children} children)`;
+}
