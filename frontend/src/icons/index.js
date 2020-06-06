@@ -4,11 +4,12 @@ import {
     faPlus,
     faArrowDown,
     faArrowUp,
+    faChevronLeft,
+    faChevronRight,
     faComment,
     faEdit,
     faExclamationCircle,
-    faChevronLeft,
-    faChevronRight,
+    faSignOutAlt,
     faSpinner,
     faTimes
 } from '@fortawesome/free-solid-svg-icons'
@@ -20,11 +21,12 @@ export default function setupIcons() {
         faPlus,
         faArrowDown,
         faArrowUp,
+        faChevronLeft,
+        faChevronRight,
         faComment,
         faEdit,
         faExclamationCircle,
-        faChevronLeft,
-        faChevronRight,
+        faSignOutAlt,
         faSpinner,
         faTimes
     );
