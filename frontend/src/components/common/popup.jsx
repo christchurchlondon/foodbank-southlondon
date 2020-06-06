@@ -48,6 +48,14 @@ export default class Popup extends React.Component {
             });
     }
 
+    getHeader() {
+        const icon = this.props.icon ? <FontAwesomeIcon icon={ this.props.icon } className="popup-header-icon" /> : null;
+        return <header className="popup-header">
+            <h3>{ icon }{ this.props.title }</h3>
+            { this.getCloseButton() }
+        </header>;
+    }
+
     getFooter() {
         const buttons = this.getButtons();
         return buttons.length > 0
@@ -69,10 +77,7 @@ export default class Popup extends React.Component {
         return (
             <div className="popup-wrapper" onClick={ this.close }>
                 <div className="popup-box" onClick={ this.boxClickHandler }>
-                    <header className="popup-header">
-                        <h3>{ this.props.title }</h3>
-                        { this.getCloseButton() }
-                    </header>
+                    { this.getHeader() }
                     <main>
                         { this.props.children }
                     </main>

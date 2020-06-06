@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { STATUS_LOADING, STATUS_FAILED, STATUS_SUCCESS } from '../../constants';
+import { STATUS_IDLE, STATUS_LOADING, STATUS_FAILED, STATUS_SUCCESS } from '../../constants';
 import { getRequestsState } from '../../redux/selectors';
 import {
     fetchRequests,
@@ -30,7 +30,7 @@ class Requests extends React.Component {
         this.selectPage = this.selectPage.bind(this);
         this.fetchRequests = this.fetchRequests.bind(this);
         this.clearSelection = this.clearSelection.bind(this);
-        this.submitAction = this.submitAction.bind(this);
+        this.triggerSubmit = this.triggerSubmit.bind(this);
         this.confirmEventSubmission = this.confirmEventSubmission.bind(this);
         this.cancelEventSubmission = this.cancelEventSubmission.bind(this);
 
@@ -40,8 +40,9 @@ class Requests extends React.Component {
     }
 
     componentDidMount() {
-        // TODO only run if props.items is empty?
-        this.fetchRequests();
+        if (this.props.status === STATUS_IDLE) {
+            this.fetchRequests(this.props.filters);
+        }
         this.fetchEvents();
     }
 
@@ -74,8 +75,7 @@ class Requests extends React.Component {
         this.props.clearRequestSelection();
     }
 
-    // Rename?
-    submitAction(event) {
+    triggerSubmit(event) {
         this.props.triggerSubmitEvent(event, this.getSelectedIds());
     }
 
@@ -105,6 +105,12 @@ class Requests extends React.Component {
         return this.props.status === STATUS_SUCCESS;
     }
 
+    getFilter() {
+        return <RequestsFilter
+            onSubmit={ v => this.fetchRequests(v) }
+            value={ this.props.filters } />;
+    }
+
     getContents() {
         if (this.isLoading()) return <Loading />;
         if (this.isFailed()) return <Error message={'Unable to load requests'} />;
@@ -114,9 +120,6 @@ class Requests extends React.Component {
     getRequestsContents() {
         return (
             <div>
-                <RequestsFilter
-                    onSubmit={ v => this.fetchRequests(v) }
-                    value={ this.props.filters } />
                 <RequestsList
                     requests={ this.props.items }
                     onSelect={ id => this.selectRequest(id) }
@@ -130,7 +133,7 @@ class Requests extends React.Component {
                     disabled={ !this.getSelectedIds().length }
                     status={ this.props.events.loadingStatus }
                     events={ this.props.events.items }
-                    onAction={ action => this.submitAction(action) } />
+                    onAction={ action => this.triggerSubmit(action) } />
             </div>
         );
     }
@@ -152,7 +155,7 @@ class Requests extends React.Component {
 
     render() {
 
-        // TODO refresh button?
+        const filter = this.getFilter();
 
         const contents = this.getContents();
 
@@ -162,6 +165,7 @@ class Requests extends React.Component {
 
         return (
             <div className="requests-container">
+                { filter }
                 { contents }
                 { selection }
                 { eventDialog }

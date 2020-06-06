@@ -3,13 +3,16 @@
 
 .date-range-picker {
     display: inline-flex;
-}
+    align-items: baseline;
 
-.date-range-picker label {
-    margin-right: $pad-half;
-}
+    label {
+        display: inline-block;
+        margin: 0 $pad-half;
+    }
 
-.date-range-picker input[type=text] {
-    margin-right: $pad-half;
-    width: 75px;
+    input[type=text] {
+        // margin-right: $pad-half;
+        width: 75px;
+    }
+
 }

@@ -30,7 +30,9 @@ export default class RequestsList extends React.Component {
 
     render() {
 
-        const tableRows = this.props.requests.map(item => {
+        const data = this.props.requests;
+
+        const tableRows = data.map(item => {
             const request = item.data;
             return (
                 <tr key={request.id} onClick={ () => this.props.onSelect(request.id) }>
@@ -49,7 +51,8 @@ export default class RequestsList extends React.Component {
             );
         });
 
-        const allChecked = this.props.requests.every(item => item.checked);
+        const hasData = data.length > 0;
+        const allChecked = data.every(item => item.checked);
 
         return (
             <table className="requests-list selectable">
@@ -59,7 +62,8 @@ export default class RequestsList extends React.Component {
                             <input type="checkbox"
                                 onChange={ () => this.toggleAll() }
                                 onClick={ this.handleCheckboxClick }
-                                checked={ allChecked }/>
+                                disabled={ !hasData }
+                                checked={ hasData && allChecked } />
                         </th>
                         <th>Name</th>
                         <th>Postcode</th>
