@@ -4,6 +4,7 @@ import {
     STATUS_SUCCESS,
     STATUS_FAILED
 } from '../../constants';
+import { today } from '../../helpers';
 import {
     LOAD_REQUESTS,
     REQUESTS_LOADED,
@@ -26,7 +27,12 @@ import {
 
 
 const initialState = {
-    filters: {},
+    filters: {
+        dates: {
+            start: today(),
+            end: today()
+        }
+    },
     status: STATUS_IDLE,
     items: [],
     page: 0,

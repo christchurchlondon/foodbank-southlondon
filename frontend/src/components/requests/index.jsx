@@ -41,7 +41,7 @@ class Requests extends React.Component {
 
     componentDidMount() {
         // TODO only run if props.items is empty?
-        this.fetchRequests();
+        this.fetchRequests(this.props.filters);
         this.fetchEvents();
     }
 
