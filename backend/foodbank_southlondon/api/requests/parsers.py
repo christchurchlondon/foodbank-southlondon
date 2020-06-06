@@ -5,7 +5,7 @@ from foodbank_southlondon.api.parsers import cache_params, pagination_params  # 
 
 requests_params = pagination_params.copy()
 requests_params.add_argument("delivery_dates", type=str, required=False, action="split", help="A comma separated list of Delivery Dates to filter "
-                             "on- if provided, this filter applies first")
+                             "on - if provided, this filter applies first")
 requests_params.add_argument("client_full_names", type=str, required=False, action="split", help="A comma separated list of Client Full Names to "
                              "filter on - if provided alongside postcodes and/or reference_numbers, the result will be based on an OR filter")
 requests_params.add_argument("postcodes", type=str, required=False, action="split", help="A comma separated list of Postcodes to filter on - if "
