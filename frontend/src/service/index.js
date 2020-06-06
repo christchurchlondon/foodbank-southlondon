@@ -13,12 +13,13 @@ const endpoints = {
 
 
 function performFetch(url) {
-    return fetch(url)
+    return fetch(url, { cache: 'no-cache' })
         .then(response => response.json());
 }
 
 function performPost(url, data = {}) {
     return fetch(url, {
+        cache: 'no-cache',
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         method: 'POST',
         body: JSON.stringify(data)

@@ -6,8 +6,10 @@
 }
 
 .request-details .row label {
+    font-size: $font-size-small;
     color: $colour-text-secondary;
     margin: 0 0 $pad-half;
+    text-transform: uppercase;
 }
 
 .event-wrap {

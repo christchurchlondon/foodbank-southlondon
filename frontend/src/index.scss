@@ -64,7 +64,7 @@ input[type=checkbox] {
 }
 
 select {
-    font-size: 1rem;
+    font-size: $font-size-standard;
 }
 
 select:focus {
@@ -123,7 +123,7 @@ button {
     color: $colour-button-text;
     border: none;
     border-radius: 0;
-    font-size: 1rem;
+    font-size: $font-size-standard;
     line-height: 1;
     cursor: pointer;
 }
