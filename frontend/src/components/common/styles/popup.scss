@@ -22,16 +22,22 @@
     display: flex;
     align-items: center;
     margin: 0 0 $pad-standard;
-}
+    color: $colour-text;
 
-.popup-header h3 {
-    font-size: 1.2rem;
-    font-weight: 500;
-    margin: 0;
-}
+    .popup-header-icon {
+        margin-right: $pad-half;
+        color: $colour-text-secondary;
+    }
 
-.popup-header .close {
-    margin: 0 0 0 auto;
+    h3 {
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .close {
+        margin: 0 0 0 auto;
+    }
 }
 
 .popup-footer {

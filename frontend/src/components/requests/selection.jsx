@@ -138,7 +138,7 @@ export default class RequestSelection extends React.Component {
         const events = this.getEventsDetails();
 
         return (
-            <Popup title='Request Details' onClose={ this.close }>
+            <Popup title="Client Details" icon="user" onClose={ this.close }>
                 { contents }
                 { events }
             </Popup>

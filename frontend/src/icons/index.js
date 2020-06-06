@@ -11,7 +11,8 @@ import {
     faExclamationCircle,
     faSignOutAlt,
     faSpinner,
-    faTimes
+    faTimes,
+    faUser
 } from '@fortawesome/free-solid-svg-icons'
 
 // Add more icons here when required
@@ -28,6 +29,7 @@ export default function setupIcons() {
         faExclamationCircle,
         faSignOutAlt,
         faSpinner,
-        faTimes
+        faTimes,
+        faUser
     );
 }
