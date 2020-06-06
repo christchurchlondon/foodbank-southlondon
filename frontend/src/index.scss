@@ -34,12 +34,21 @@ a:hover {
     color: $colour-anchor-hover;
 }
 
-input {
-    border: none;
+input, textarea {
     padding: $pad-half;
 
     &:focus {
         outline: none;
+    }
+}
+
+input[type=text], textarea {
+
+    border: 1px solid $colour-border;
+    border-radius: 2px;
+
+    &:focus {
+        border: 1px solid $colour-accent;
     }
 }
 
