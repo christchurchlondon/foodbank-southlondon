@@ -1,6 +1,7 @@
 import React from 'react';
 import DatePicker from 'react-datepicker';
 import { DATE_FORMAT_UI } from '../../constants';
+import { today } from '../../helpers';
 import 'react-datepicker/dist/react-datepicker.css';
 import './styles/date-range-picker.scss';
 
@@ -40,19 +41,23 @@ export default class DateRangePicker extends React.Component {
 
         const startDate = this.state.startDate;
         const endDate = this.state.endDate;
+        const highlight = [ today() ];
 
         return (
             <div className="date-range-picker">
                 <DatePicker
+                    todayButton="Today"
                     dateFormat={ DATE_FORMAT_UI }
                     selected={ startDate }
                     onChange={ date => this.setStartDate(date) }
                     selectsStart
                     startDate={ startDate }
                     endDate={ endDate }
+                    highlightDates={ highlight }
                 />
                 <label>to</label>
                 <DatePicker
+                    todayButton="Today"
                     dateFormat={ DATE_FORMAT_UI }
                     selected={ endDate }
                     onChange={ date => this.setEndDate(date) }
@@ -60,6 +65,7 @@ export default class DateRangePicker extends React.Component {
                     startDate={ startDate }
                     endDate={ endDate }
                     minDate={ startDate }
+                    highlightDates={ highlight }
                 />
             </div>
         );
