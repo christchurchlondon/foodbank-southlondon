@@ -31,8 +31,9 @@ const initialState = {
     notes: '',
     selectedComment: null,
     editItem: null,
-    saveDialog: null
-}
+    saveDialog: null,
+    unsaved: false
+};
 
 export default function(state = initialState, action) {
     switch (action.type) {
@@ -42,7 +43,8 @@ export default function(state = initialState, action) {
                 ...state,
                 status: STATUS_LOADING,
                 items: [],
-                selectedComment: null
+                selectedComment: null,
+                unsaved: false
             };
         case LISTS_LOADED:
             return {
@@ -97,7 +99,8 @@ export default function(state = initialState, action) {
                 ...state,
                 items: state.items.filter(item => {
                     return item.id !== action.payload.id
-                })
+                }),
+                unsaved: true
             };
         case CONFIRM_LIST_ITEM_EDIT:
             const items = state.items.map(i => i.id).includes(action.payload.id)
@@ -110,7 +113,8 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 items,
-                editItem: null
+                editItem: null,
+                unsaved: true
             };
         case CANCEL_LIST_ITEM_EDIT:
             return {
@@ -142,7 +146,8 @@ export default function(state = initialState, action) {
                 saveDialog: {
                     ...state.saveDialog,
                     status: STATUS_SUCCESS
-                }
+                },
+                unsaved: false
             };
         case UPDATE_LIST_FAILED:
             return {
@@ -155,7 +160,8 @@ export default function(state = initialState, action) {
         case MOVE_LIST_ITEM:
             return {
                 ...state,
-                items: reorder(state.items, action.payload.oldPosition, action.payload.newPosition)
+                items: reorder(state.items, action.payload.oldPosition, action.payload.newPosition),
+                unsaved: true
             };
 
         default:
