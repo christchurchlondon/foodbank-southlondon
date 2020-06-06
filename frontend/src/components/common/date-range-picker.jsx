@@ -13,6 +13,7 @@ export default class DateRangePicker extends React.Component {
         this.setStartDate = this.setStartDate.bind(this);
         this.setEndDate = this.setEndDate.bind(this);
         this.onChange = this.onChange.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
         this.state = {
             startDate: this.props.start,
             endDate: this.props.end
@@ -37,19 +38,27 @@ export default class DateRangePicker extends React.Component {
         });
     }
 
+    handleKeyDown(event) {
+        console.log('keypress')
+        if (event.keyCode === 13) {
+            this.props.onEnter();
+        }
+    }
+
     render() {
 
         const startDate = this.state.startDate;
         const endDate = this.state.endDate;
         const highlight = [ today() ];
-
+        
         return (
-            <div className="date-range-picker">
+            <div className="date-range-picker" onKeyPress={ this.handleKeyPress }>
                 <DatePicker
                     todayButton="Today"
                     dateFormat={ DATE_FORMAT_UI }
                     selected={ startDate }
                     onChange={ date => this.setStartDate(date) }
+                    onKeyDown={ this.handleKeyDown }
                     selectsStart
                     startDate={ startDate }
                     endDate={ endDate }
@@ -61,6 +70,7 @@ export default class DateRangePicker extends React.Component {
                     dateFormat={ DATE_FORMAT_UI }
                     selected={ endDate }
                     onChange={ date => this.setEndDate(date) }
+                    onKeyDown={ this.handleKeyDown }
                     selectsEnd
                     startDate={ startDate }
                     endDate={ endDate }

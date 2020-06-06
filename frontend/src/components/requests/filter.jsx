@@ -54,6 +54,7 @@ export default class RequestsFilter extends React.Component {
                     <label className="date-field-label">Dates:</label>
                     <DateRangePicker
                         onChange={ this.onDatePickerChange }
+                        onEnter={ this.submit }
                         start={ this.state.dates.start }
                         end={ this.state.dates.end } />
                 </div>
