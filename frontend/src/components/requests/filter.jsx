@@ -50,11 +50,13 @@ export default class RequestsFilter extends React.Component {
     render() {
         return (
             <div className="requests-filter panel">
-                <label>Dates:</label>
-                <DateRangePicker
-                    onChange={ this.onDatePickerChange }
-                    start={ this.state.dates.start }
-                    end={ this.state.dates.end } />
+                <div className="date-field">
+                    <label className="date-field-label">Dates:</label>
+                    <DateRangePicker
+                        onChange={ this.onDatePickerChange }
+                        start={ this.state.dates.start }
+                        end={ this.state.dates.end } />
+                </div>
                 <label className="and">and</label>
                 <FilterField label="Name"
                     value={ this.state.name }

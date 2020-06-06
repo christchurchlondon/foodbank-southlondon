@@ -51,6 +51,7 @@ export default class DateRangePicker extends React.Component {
                     startDate={ startDate }
                     endDate={ endDate }
                 />
+                <label>to</label>
                 <DatePicker
                     dateFormat={ DATE_FORMAT_UI }
                     selected={ endDate }

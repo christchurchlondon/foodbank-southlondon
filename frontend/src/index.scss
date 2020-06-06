@@ -54,6 +54,11 @@ input[type=checkbox] {
     @extend %fa-icon;
     @extend .far;
 
+    &:disabled {
+        color: $colour-text-disabled;
+        cursor: default;
+    }
+
     &:before {
         content: fa-content($fa-var-square);
     }

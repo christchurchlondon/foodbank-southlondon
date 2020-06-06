@@ -60,7 +60,7 @@ function parseTimestamp(timestamp) {
 
 export function getRequests(filters = {}, page = 1) {
 
-    // TODO refactor dates
+    // TODO refactor following back end change
     let dates = [];
     (filters.dates || {}).start && dates.push(formatDate(filters.dates.start));
     (filters.dates || {}).end && dates.push(formatDate(filters.dates.end));
@@ -68,7 +68,7 @@ export function getRequests(filters = {}, page = 1) {
     const params = {
         page: page,
         perpage: 50,
-        delivery_dates: dates.join(','),
+        // delivery_dates: dates.join(','),
         client_full_names: filters.name,
         reference_numbers: filters.referenceNumber,
         postcodes: filters.postcode
