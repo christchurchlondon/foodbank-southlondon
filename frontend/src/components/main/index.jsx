@@ -1,5 +1,4 @@
 import React from 'react';
-import { createBrowserHistory } from 'history';
 import {
     HashRouter as Router,
     Redirect,
@@ -13,11 +12,6 @@ import './styles/index.scss';
 
 
 export default function Main() {
-
-    const history = createBrowserHistory();
-    history.push('/temp');
-    history.goBack();
-
     return (
         <Router>
             <main className="main">
@@ -29,7 +23,7 @@ export default function Main() {
                     </Switch>
                 </div>
             </main>
-            <Redirect from="/" to="/clients" />
+            <Redirect from="/#" to="/clients" />
         </Router>
     );
 }

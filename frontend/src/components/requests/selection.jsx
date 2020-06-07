@@ -5,7 +5,7 @@ import {
     STATUS_LOADING,
     STATUS_FAILED
 } from '../../constants';
-import { capitalise } from '../../helpers';
+import { capitalise, formatAddress, formatHousehold } from '../../helpers';
 import Error from '../common/error';
 import Loading from '../common/loading';
 import Popup from '../common/popup';
@@ -51,7 +51,7 @@ export default class RequestSelection extends React.Component {
                 </div>
                 <div className="row">
                     <label>ID</label>
-                    <p>{ item.request_id }</p>
+                    <p>{ item.id }</p>
                 </div>
                 <div className="row">
                     <label>Ref #</label>
@@ -75,11 +75,11 @@ export default class RequestSelection extends React.Component {
                 </div>
                 <div className="row">
                     <label>Address</label>
-                    <p>{ this.getAddressString(item) }</p>
+                    <p>{ formatAddress(item.address) }</p>
                 </div>
                 <div className="row">
                     <label>Household</label>
-                    <p>{ this.getHouseholdString(item) }</p>
+                    <p>{ formatHousehold(item.household) }</p>
                 </div>
                 <div className="row">
                     <label>Age of children</label>
@@ -87,7 +87,7 @@ export default class RequestSelection extends React.Component {
                 </div>
                 <div className="row">
                     <label>Dietary Requirements</label>
-                    <p>{ item.requirements.dietary }</p>
+                    <p>{ item.requirements.dietary || 'None' }</p>
                 </div>
                 <div className="row">
                     <label>Other requirements</label>
@@ -95,24 +95,10 @@ export default class RequestSelection extends React.Component {
                 </div>
                 <div className="row">
                     <label>Extra Information</label>
-                    <p>{ item.extraInformation }</p>
+                    <p>{ item.extraInformation || 'None' }</p>
                 </div>
             </div>
         );
-    }
-
-    getAddressString(item) {
-        // TODO formatter function
-        const address = item.address;
-        return [
-            address.line1, address.line2, address.town, address.county, address.postcode
-        ].join(', ');
-    }
-
-    getHouseholdString(item) {
-        // TODO formatter function
-        const house = item.household;
-        return `${house.total} occupants (${house.adults} adults, ${house.children} children)`
     }
 
     getOtherRequirementsText(item) {
@@ -152,7 +138,7 @@ export default class RequestSelection extends React.Component {
         const events = this.getEventsDetails();
 
         return (
-            <Popup title='Request Details' onClose={ this.close }>
+            <Popup title="Client Details" icon="user" onClose={ this.close }>
                 { contents }
                 { events }
             </Popup>

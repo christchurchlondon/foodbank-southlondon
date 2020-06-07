@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Prompt } from 'react-router-dom';
 import {
     STATUS_LOADING, STATUS_SUCCESS, STATUS_FAILED
 } from '../../constants';
@@ -173,6 +174,7 @@ class Lists extends React.Component {
                 { contents }
                 { editForm }
                 { saveDialog }
+                <Prompt when={this.props.unsaved} message="You have unsaved data on this page. Continue?" />
             </div>
         );
     }

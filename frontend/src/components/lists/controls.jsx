@@ -9,7 +9,9 @@ export default function ListsControls(props) {
             <button className="add" onClick={ props.onAdd }>
                 <FontAwesomeIcon icon="plus" />Add
             </button>
-            <button className="primary save" onClick={ props.onSave }>Save</button>
+            <button className="primary save" onClick={ props.onSave }>
+                <FontAwesomeIcon icon={['far', 'save']} />Save
+            </button>
         </section>
     );
 }

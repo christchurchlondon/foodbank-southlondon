@@ -13,12 +13,13 @@ const endpoints = {
 
 
 function performFetch(url) {
-    return fetch(url)
+    return fetch(url, { cache: 'no-cache' })
         .then(response => response.json());
 }
 
 function performPost(url, data = {}) {
     return fetch(url, {
+        cache: 'no-cache',
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         method: 'POST',
         body: JSON.stringify(data)
@@ -59,7 +60,7 @@ function parseTimestamp(timestamp) {
 
 export function getRequests(filters = {}, page = 1) {
 
-    // TODO refactor dates
+    // TODO refactor following back end change
     let dates = [];
     (filters.dates || {}).start && dates.push(formatDate(filters.dates.start));
     (filters.dates || {}).end && dates.push(formatDate(filters.dates.end));
@@ -67,7 +68,7 @@ export function getRequests(filters = {}, page = 1) {
     const params = {
         page: page,
         perpage: 50,
-        delivery_dates: dates.join(','),
+        // delivery_dates: dates.join(','),
         client_full_names: filters.name,
         reference_numbers: filters.referenceNumber,
         postcodes: filters.postcode
@@ -206,8 +207,8 @@ function responseItemToRequest(item) {
         requirements: {
             dietary: item.dietary_requirements,
             feminineProducts: item.feminine_products_required.toLowerCase() === 'true',
-            babyProducts: item.dietary_requirements.toLowerCase() === 'true',
-            petFood: item.dietary_requirements.toLowerCase() === 'true'
+            babyProducts: item.baby_products_required.toLowerCase() === 'true',
+            petFood: item.pet_food_required.toLowerCase() === 'true'
         },
         extraInformation: item.extra_information,
         editUrl: item.edit_details_url
