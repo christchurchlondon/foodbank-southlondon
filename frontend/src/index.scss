@@ -48,7 +48,7 @@ input[type=text], textarea {
     border-radius: 2px;
 
     &:focus {
-        border: 1px solid $colour-accent;
+        border-color: $colour-accent;
     }
 }
 
@@ -78,11 +78,13 @@ input[type=checkbox] {
 }
 
 select {
+    border: 1px solid $colour-border;
     font-size: $font-size-standard;
-}
 
-select:focus {
-    outline: none;
+    &:focus {
+        outline: none;
+        border-color: $colour-accent;
+    }
 }
 
 table {
