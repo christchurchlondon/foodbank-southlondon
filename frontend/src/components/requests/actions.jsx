@@ -1,4 +1,5 @@
 import React from 'react';
+import Select from 'react-select';
 import './styles/actions.scss';
 
 export default class RequestsActions extends React.Component {
@@ -10,8 +11,8 @@ export default class RequestsActions extends React.Component {
         this.state = { value: null };
     }
 
-    handleChange(event) {
-        const value = this.props.events.find(e => e.name === event.target.value);
+    handleChange(option) {
+        const value = this.props.events.find(e => e.name === option.value);
         this.setState({ value });
     }
 
@@ -23,19 +24,23 @@ export default class RequestsActions extends React.Component {
 
     render() {
 
-        const options = this.props.events.map((event, index) => {
-            return <option key={index} value={event.name}>{ event.name }</option>;
-        });
+        const options = this.props.events
+            .map(event => event.name)
+            .map(name => ({
+                value: name,
+                label: name
+            }));
 
         const disableButton = this.props.disabled || !this.state.value;
 
         return (
             <div className="requests-actions panel">
                 <label>Select action</label>
-                <select onChange={ this.handleChange }>
-                    <option> - Select - </option>
-                    { options }
-                </select>
+                <Select
+                    value={ this.state.value }
+                    options={ options }
+                    className="requests-select"
+                    onChange={ this.handleChange } />
                 <button disabled={ disableButton } onClick={ this.doAction }>Submit</button>
             </div>
         );

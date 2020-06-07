@@ -5,13 +5,17 @@
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
-}
 
-.requests-actions label {
-    display: inline-block;
-    margin-right: $pad-standard;
-}
+    .requests-select {
+        width: 200px;
+    }
 
-.requests-actions button {
-    margin-left: $pad-standard;
+    label {
+        display: inline-block;
+        margin-right: $pad-standard;
+    }
+
+    button {
+        margin-left: $pad-standard;
+    }
 }
