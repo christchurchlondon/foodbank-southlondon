@@ -39,7 +39,6 @@ export default class DateRangePicker extends React.Component {
     }
 
     handleKeyDown(event) {
-        console.log('keypress')
         if (event.keyCode === 13) {
             this.props.onEnter();
         }
