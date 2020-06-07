@@ -46,6 +46,7 @@ function encodeParams(params) {
 }
 
 function formatDate(date) {
+    if (!date) return '';
     return format(date, DATE_FORMAT_REQUEST);
 }
 
@@ -60,15 +61,12 @@ function parseTimestamp(timestamp) {
 
 export function getRequests(filters = {}, page = 1) {
 
-    // TODO refactor following back end change
-    let dates = [];
-    (filters.dates || {}).start && dates.push(formatDate(filters.dates.start));
-    (filters.dates || {}).end && dates.push(formatDate(filters.dates.end));
-
+    const dates = filters.dates || {};
     const params = {
         page: page,
         perpage: 50,
-        // delivery_dates: dates.join(','),
+        start_date: formatDate(dates.start),
+        end_date: formatDate(dates.end),
         client_full_names: filters.name,
         reference_numbers: filters.referenceNumber,
         postcodes: filters.postcode
@@ -114,7 +112,7 @@ export function getLists() {
         .then(response => {
             const lists = response.items.map((item, id) => {
                 return {
-                    id: id,    // Change?
+                    id: id,
                     description: item.item_description,
                     householdSizes: {
                         single: {
