@@ -183,7 +183,16 @@ class Status(flask_restx.Resource):
         """List Client Request summary and status information."""
         params = parsers.status_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
-        delivery_dates = ",".join(params["delivery_dates"] or ()) or None
+        start_date = params["start_date"]
+        end_date = params["end_date"]
+        delivery_dates = None
+        if start_date or end_date:
+            today = datetime.date.today()
+            start_date = start_date or today.replace(day=1)
+            end_date = end_date or today
+            if end_date < start_date:
+                rest.abort(400, f"end_date {end_date} was before start_date, {start_date}.")
+            delivery_dates = ",".join((start_date + datetime.timedelta(days=i)).strftime("%d/%m/%Y") for i in range((end_date - start_date).days + 1))
         client_full_names = ",".join(params["client_full_names"] or ()) or None
         postcodes = ",".join(params["postcodes"] or ()) or None
         reference_numbers = ",".join(params["reference_numbers"] or ()) or None
