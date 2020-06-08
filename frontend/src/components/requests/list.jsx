@@ -28,6 +28,14 @@ export default class RequestsList extends React.Component {
             : `${ event.name } @ ${ date }`;
     }
 
+    getEmptyRow() {
+        return (
+            <tr className="empty-row">
+                <td colSpan="6">No results</td>
+            </tr>
+        );
+    }
+
     render() {
 
         const data = this.props.requests;
@@ -74,6 +82,7 @@ export default class RequestsList extends React.Component {
                 </thead>
                 <tbody>
                     { tableRows }
+                    { !hasData && this.getEmptyRow() }
                 </tbody>
             </table>
         )

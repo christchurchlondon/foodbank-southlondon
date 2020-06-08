@@ -1,0 +1,39 @@
+@import 'include';
+
+.menu {
+
+    position: relative;
+
+    .toggle {
+        cursor: pointer;
+    }
+
+    .toggle-icon {
+        margin-left: $pad-half;
+    }
+
+    .menu-list {
+        position: absolute;
+        top: 40px;
+        left: 0;
+        background: $colour-white;
+        border: 1px solid $colour-border;
+        // TODO shadow
+
+        &.right {
+            left: initial;
+            right: 0;
+        }
+
+        li {
+            padding: $pad-half;
+            cursor: pointer;
+            white-space: nowrap;
+
+            &:hover {
+                background-color: lighten($colour-accent, 50);
+            }
+        }
+    }
+
+}

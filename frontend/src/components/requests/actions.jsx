@@ -1,5 +1,5 @@
 import React from 'react';
-import Select from 'react-select';
+import Menu from '../common/menu';
 import './styles/actions.scss';
 
 export default class RequestsActions extends React.Component {
@@ -25,23 +25,20 @@ export default class RequestsActions extends React.Component {
     render() {
 
         const options = this.props.events
-            .map(event => event.name)
-            .map(name => ({
-                value: name,
-                label: name
+            .map(event => ({
+                label: event.name,
+                action: () => this.props.onAction(event)
             }));
 
-        const disableButton = this.props.disabled || !this.state.value;
+        const label = this.props.recordCount
+            ? `${this.props.recordCount} clients selected`
+            : 'No clients selected';
 
         return (
             <div className="requests-actions panel">
-                <label>Select action</label>
-                <Select
-                    value={ this.state.value }
-                    options={ options }
-                    className="requests-select"
-                    onChange={ this.handleChange } />
-                <button disabled={ disableButton } onClick={ this.doAction }>Submit</button>
+                <Menu options={options}
+                    label={label}
+                    disabled={ !this.props.recordCount } />
             </div>
         );
     }

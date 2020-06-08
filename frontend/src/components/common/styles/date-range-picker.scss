@@ -7,11 +7,17 @@
 
     label {
         display: inline-block;
-        margin: 0 $pad-half;
+
+        &.from {
+            margin: 0 $pad-half 0 0;
+        }
+
+        &.to {
+            margin: 0 $pad-half;
+        }
     }
 
     input[type=text] {
-        // margin-right: $pad-half;
         width: 75px;
     }
 
