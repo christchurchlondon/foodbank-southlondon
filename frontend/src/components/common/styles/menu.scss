@@ -18,7 +18,8 @@
         left: 0;
         background: $colour-white;
         border: 1px solid $colour-border;
-        // TODO shadow
+        
+        @include shadow;
 
         &.right {
             left: initial;

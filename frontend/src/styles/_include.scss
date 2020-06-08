@@ -57,3 +57,10 @@ $colour-tab-text: $colour-main-bold;
 $colour-tab-primary-text: $colour-white;
 $colour-tab-text-hover: $colour-main;
 $colour-tab-text-disabled: $colour-text-disabled;
+
+
+// Mixins
+
+@mixin shadow {
+    box-shadow: .1rem .1rem .5rem .1rem rgba(0, 0, 0, 0.1);
+}
