@@ -9,6 +9,7 @@ from foodbank_southlondon.api.requests import models, namespace, parsers
 
 
 # CONFIG VARIABLES
+_FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_URI = "FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_URI"
 _FBSL_REQUESTS_GSHEET_URI = "FBSL_REQUESTS_GSHEET_URI"
 
 # INTERNALS
@@ -39,7 +40,8 @@ class Requests(flask_restx.Resource):
                         df["Voucher Number"].isin(voucher_numbers)]
         if last_request_only:
             df = df.assign(rank=df.groupby([name_attribute]).cumcount(ascending=False) + 1).query("rank == 1").drop("rank", axis=1)
-        df = df.assign(edit_details_url=df["request_id"].map(_edit_details_url))
+        congestion_zone_postcodes = _congestion_zone_postcodes()["Postcode"].values
+        df = df.assign(edit_details_url=df["request_id"].map(_edit_details_url), congestion_zone=df["Postcode"] in congestion_zone_postcodes)
         return (df, params["page"], params["per_page"])
 
 
@@ -62,7 +64,8 @@ class RequestsByID(flask_restx.Resource):
         missing_request_ids = request_id_values.difference(df[request_id_attribute].unique())
         if missing_request_ids:
             rest.abort(404, f"the following request_id values {missing_request_ids} were not found.")
-        df = df.assign(edit_details_url=df[request_id_attribute].map(_edit_details_url))
+            congestion_zone_postcodes = _congestion_zone_postcodes()["Postcode"].values
+        df = df.assign(edit_details_url=df[request_id_attribute].map(_edit_details_url), congestion_zone=df["Postcode"] in congestion_zone_postcodes)
         return (df, params["page"], params["per_page"])
 
 
@@ -84,7 +87,11 @@ class DistinctRequestsValues(flask_restx.Resource):
         return {"values": sorted(distinct_values)}
 
 
-def _edit_details_url(request_id):
+def _congestion_zone_postcodes() -> pd.DataFrame:
+    return utils.cache("congestion_zone_postcodes", flask.current_app.config[_FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_URI])
+
+
+def _edit_details_url(request_id: str):
     return f"https://docs.google.com/forms/d/e/{flask.current_app.config['FBSL_REQUESTS_FORM_URI']}/viewform?edit2={request_id}"
 
 
