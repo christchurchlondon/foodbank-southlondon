@@ -5,11 +5,13 @@
     position: relative;
 
     .toggle {
+        display: flex;
+        min-width: 195px;
         cursor: pointer;
     }
 
     .toggle-icon {
-        margin-left: $pad-half;
+        margin-left: auto;
     }
 
     .menu-list {
