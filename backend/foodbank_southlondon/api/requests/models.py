@@ -12,8 +12,10 @@ request = rest.model("ClientRequest", {
                                       "(consistent across requests)", example="H-00001-00001"),
     "client_full_name": fields.String(attribute="Client Full Name", required=True, description="The full name of the Client", example="John Smith"),
     "phone_number": fields.String(attribute="Phone Number", required=False, description="The Client's contact phone number", example="07123 456 789"),
-    "delivery_date": fields.String(attribute="Delivery Date", required=True, description="The date that the food parcel should be delivered in the "
+    "packing_date": fields.String(attribute="Packing Date", required=True, description="The date that the food parcel should be delivered in the "
                                    "format of DD/MM/YYYY", example="23/04/2020"),
+    "time_of_day": fields.String(attribute="Time of Day", required=True, description="The time of day that the food parcel should be packed.",
+                                 example="AM", enum=["AM", "PM"]),
     "address_line_1": fields.String(attribute="Address Line 1", required=True, description="The first line of the address",
                                     example="8 Terrace Mews"),
     "address_line_2": fields.String(attribute="Address Line 2", required=False, description="The second line of the address", example="Portswood"),

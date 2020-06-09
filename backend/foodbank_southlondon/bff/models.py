@@ -40,7 +40,8 @@ _status = rest.inherit("Status", _event, {
     "client_full_name": _clone_field_without_attribute(requests_models.request["client_full_name"]),
     "voucher_number": _clone_field_without_attribute(requests_models.request["voucher_number"]),
     "postcode": _clone_field_without_attribute(requests_models.request["postcode"]),
-    "delivery_date": _clone_field_without_attribute(requests_models.request["delivery_date"])
+    "packing_date": _clone_field_without_attribute(requests_models.request["packing_date"]),
+    "time_of_day": _clone_field_without_attribute(requests_models.request["time_of_day"])
 })
 
 page_of_status = rest.inherit("StatusPage", _pagination, {

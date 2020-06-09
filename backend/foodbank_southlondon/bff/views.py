@@ -185,14 +185,14 @@ class Status(flask_restx.Resource):
         refresh_cache = params["refresh_cache"]
         start_date = params["start_date"]
         end_date = params["end_date"]
-        delivery_dates = None
+        packing_dates = None
         if start_date or end_date:
             today = datetime.date.today()
             start_date = start_date or today.replace(day=1)
             end_date = end_date or today
             if end_date < start_date:
                 rest.abort(400, f"end_date {end_date} was before start_date, {start_date}.")
-            delivery_dates = ",".join((start_date + datetime.timedelta(days=i)).strftime("%d/%m/%Y") for i in range((end_date - start_date).days + 1))
+            packing_dates = ",".join((start_date + datetime.timedelta(days=i)).strftime("%d/%m/%Y") for i in range((end_date - start_date).days + 1))
         client_full_names = ",".join(params["client_full_names"] or ()) or None
         postcodes = ",".join(params["postcodes"] or ()) or None
         voucher_numbers = ",".join(params["voucher_numbers"] or ()) or None
@@ -200,9 +200,9 @@ class Status(flask_restx.Resource):
         api_base_url = _api_base_url()
         items = []
         requests_data = _get(f"{api_base_url}requests/", cookies=flask.request.cookies,
-                             headers={"X-Fields": "items{request_id, client_full_name, voucher_number, postcode, delivery_date}, "
+                             headers={"X-Fields": "items{request_id, client_full_name, voucher_number, postcode, packing_date, time_of_day}, "
                                       "page, per_page, total_items, total_pages"},
-                             params={"client_full_names": client_full_names, "delivery_dates": delivery_dates, "page": params["page"],
+                             params={"client_full_names": client_full_names, "packing_dates": packing_dates, "page": params["page"],
                                      "per_page": per_page, "postcodes": postcodes, "voucher_numbers": voucher_numbers,
                                      "refresh_cache": refresh_cache})
         requests_df = pd.DataFrame(requests_data["items"])

@@ -26,14 +26,14 @@ class Requests(flask_restx.Resource):
         """List all Client Requests."""
         params = parsers.requests_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
-        delivery_dates = set(delivery_date.strip() for delivery_date in (params["delivery_dates"] or ()))
+        packing_dates = set(packing_date.strip() for packing_date in (params["packing_dates"] or ()))
         client_full_names = set(client_full_name.strip() for client_full_name in (params["client_full_names"] or ()))
         postcodes = set(postcode.strip() for postcode in (params["postcodes"] or ()))
         voucher_numbers = set(voucher_number.strip() for voucher_number in (params["voucher_numbers"] or ()))
         last_request_only = params["last_request_only"]
         df = cache(force_refresh=refresh_cache)
-        if delivery_dates:
-            df = df.loc[df["Delivery Date"].isin(delivery_dates)]
+        if packing_dates:
+            df = df.loc[df["Packing Date"].isin(packing_dates)]
         name_attribute = "Client Full Name"
         if client_full_names or postcodes or voucher_numbers:
             df = df.loc[df[name_attribute].isin(client_full_names) | df["Postcode"].str.startswith(tuple(postcodes)) |
@@ -41,7 +41,7 @@ class Requests(flask_restx.Resource):
         if last_request_only:
             df = df.assign(rank=df.groupby([name_attribute]).cumcount(ascending=False) + 1).query("rank == 1").drop("rank", axis=1)
         congestion_zone_postcodes = _congestion_zone_postcodes()["Postcode"].values
-        df = df.assign(edit_details_url=df["request_id"].map(_edit_details_url), congestion_zone=df["Postcode"] in congestion_zone_postcodes)
+        df = df.assign(edit_details_url=df["request_id"].map(_edit_details_url), congestion_zone=False)#df["Postcode"] in congestion_zone_postcodes)
         return (df, params["page"], params["per_page"])
 
 
@@ -65,7 +65,7 @@ class RequestsByID(flask_restx.Resource):
         if missing_request_ids:
             rest.abort(404, f"the following request_id values {missing_request_ids} were not found.")
             congestion_zone_postcodes = _congestion_zone_postcodes()["Postcode"].values
-        df = df.assign(edit_details_url=df[request_id_attribute].map(_edit_details_url), congestion_zone=df["Postcode"] in congestion_zone_postcodes)
+        df = df.assign(edit_details_url=df[request_id_attribute].map(_edit_details_url), congestion_zone=False)#df["Postcode"] in congestion_zone_postcodes)
         return (df, params["page"], params["per_page"])
 
 
@@ -77,12 +77,12 @@ class DistinctRequestsValues(flask_restx.Resource):
     def get(self) -> Dict[str, List]:
         """Get the distinct values of a Requests attribute."""
         params = parsers.distinct_requests_params.parse_args(flask.request)
-        delivery_dates = set(delivery_date.strip() for delivery_date in (params["delivery_dates"] or ()))
+        packing_dates = set(packing_date.strip() for packing_date in (params["packing_dates"] or ()))
         attribute = params["attribute"]
         refresh_cache = params["refresh_cache"]
         df = cache(force_refresh=refresh_cache)
-        if delivery_dates:
-            df = df.loc[df["Delivery Date"].isin(delivery_dates)]
+        if packing_dates:
+            df = df.loc[df["Packing Date"].isin(packing_dates)]
         distinct_values = df[attribute].unique()
         return {"values": sorted(distinct_values)}
 
