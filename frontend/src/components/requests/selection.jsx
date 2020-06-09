@@ -50,10 +50,6 @@ export default class RequestSelection extends React.Component {
                     { this.getEditLink(item) }
                 </div>
                 <div className="row">
-                    <label>ID</label>
-                    <p>{ item.id }</p>
-                </div>
-                <div className="row">
                     <label>Ref #</label>
                     <p>{ item.referenceNumber }</p>
                 </div>

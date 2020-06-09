@@ -30,8 +30,10 @@ export default class RequestsActions extends React.Component {
                 action: () => this.props.onAction(event)
             }));
 
+        const clients = this.props.recordCount === 1 ? 'client' : 'clients';
+
         const label = this.props.recordCount
-            ? `${this.props.recordCount} clients selected`
+            ? `${this.props.recordCount} ${clients} selected`
             : 'No clients selected';
 
         return (
