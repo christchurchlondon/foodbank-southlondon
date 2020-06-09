@@ -79,8 +79,8 @@ export function getRequests(filters = {}, page = 1) {
             const result = response.items.map(item => ({
                 id: item.request_id,
                 fullName: item.client_full_name,
-                referenceNumber: item.reference_number,
-                deliveryDate: parseDate(item.delivery_date, 'dd/MM/yyyy'),
+                voucherNumber: item.voucher_number,
+                packingDate: parseDate(item.packing_date, 'dd/MM/yyyy'),
                 event: extractEvent(item),
                 postcode: item.postcode
             }));
