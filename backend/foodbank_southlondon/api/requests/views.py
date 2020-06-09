@@ -28,7 +28,7 @@ class Requests(flask_restx.Resource):
         refresh_cache = params["refresh_cache"]
         packing_dates = set(packing_date.strip() for packing_date in (params["packing_dates"] or ()))
         client_full_names = set(client_full_name.strip() for client_full_name in (params["client_full_names"] or ()))
-        postcodes = set(postcode.strip() for postcode in (params["postcodes"] or ()))
+        postcodes = set(postcode.upper().strip() for postcode in (params["postcodes"] or ()))
         voucher_numbers = set(voucher_number.strip() for voucher_number in (params["voucher_numbers"] or ()))
         last_request_only = params["last_request_only"]
         df = cache(force_refresh=refresh_cache)
@@ -36,7 +36,7 @@ class Requests(flask_restx.Resource):
             df = df.loc[df["Packing Date"].isin(packing_dates)]
         name_attribute = "Client Full Name"
         if client_full_names or postcodes or voucher_numbers:
-            df = df.loc[df[name_attribute].isin(client_full_names) | df["Postcode"].str.startswith(tuple(postcodes)) |
+            df = df.loc[df[name_attribute].isin(client_full_names) | df["Postcode"].str.upper().str.startswith(tuple(postcodes)) |
                         df["Voucher Number"].isin(voucher_numbers)]
         if last_request_only:
             df = df.assign(rank=df.groupby([name_attribute]).cumcount(ascending=False) + 1).query("rank == 1").drop("rank", axis=1)
