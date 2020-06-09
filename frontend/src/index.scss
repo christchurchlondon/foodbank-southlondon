@@ -25,13 +25,14 @@ p {
     margin: 0 0 $pad-half;
 }
 
-a {
+a, .anchor {
     text-decoration: none;
     color: $colour-anchor;
-}
+    cursor: pointer;
 
-a:hover {
-    color: $colour-anchor-hover;
+    &:hover {
+        color: $colour-anchor-hover;
+    }
 }
 
 input, textarea {
@@ -48,7 +49,7 @@ input[type=text], textarea {
     border-radius: 2px;
 
     &:focus {
-        border: 1px solid $colour-accent;
+        border-color: $colour-accent;
     }
 }
 
@@ -78,11 +79,13 @@ input[type=checkbox] {
 }
 
 select {
+    border: 1px solid $colour-border;
     font-size: $font-size-standard;
-}
 
-select:focus {
-    outline: none;
+    &:focus {
+        outline: none;
+        border-color: $colour-accent;
+    }
 }
 
 table {
@@ -114,12 +117,12 @@ tbody tr:nth-child(even) {
     background: rgba(91, 159, 227, 0.2);
 }
 
-table.selectable tbody tr {
+table.selectable tbody tr:not(.empty-row) {
     cursor: pointer;
-}
 
-table.selectable tbody tr:hover {
-    background: rgba(91, 159, 227, 0.4);
+    &:hover {
+        background: rgba(91, 159, 227, 0.4);
+    }
 }
 
 table .selection-cell {
@@ -140,30 +143,38 @@ button {
     font-size: $font-size-standard;
     line-height: 1;
     cursor: pointer;
-}
 
-button.primary:not(:disabled) {
-    background-color: $colour-button-bg-primary;
-    color: $colour-button-text-primary;
-}
+    &.primary {
+        background-color: $colour-button-bg-primary;
+        color: $colour-button-text-primary;
+    }
 
-button.secondary:not(:disabled) {
-    background-color: $colour-button-bg-secondary;
-    color: $colour-button-text-secondary;
-}
+    &.secondary {
+        background-color: $colour-button-bg-secondary;
+        color: $colour-button-text-secondary;
+    }
 
-button.btn-small {
-    padding: $pad-half / 2 $pad-half;
-}
+    &.btn-small {
+        padding: $pad-half / 2 $pad-half;
+    }
 
-button:disabled {
-    cursor: default;
-    background-color: $colour-button-bg-disabled;
-    color: $colour-button-text-disabled;
-}
+    &:disabled {
+        cursor: default;
+        background-color: $colour-button-bg-disabled;
+        color: $colour-button-text-disabled;
 
-button:focus {
-    outline: none;
+        &.primary {
+            background-color: $colour-button-bg-primary-disabled;
+        }
+
+        &.secondary {
+            background-color: $colour-button-bg-secondary-disabled;
+        }
+    }
+
+    &:focus {
+        outline: none;
+    }
 }
 
 .panel {

@@ -1,11 +1,19 @@
 @import 'include';
 
 .filter-field {
-    margin: 0 $pad-half;
     display: inline-flex;
-    flex-direction: column;
-}
+    align-items: center;
+    padding: 0 $pad-standard 0 0;
 
-.filter-field label {
-    margin-bottom: $pad-half;
+    label {
+        margin-bottom: $pad-half;
+    }
+
+    input[type=text] {
+        width: 180px;
+    }
+
+    .search-icon {
+        margin-right: $pad-standard - .2rem;
+    }
 }

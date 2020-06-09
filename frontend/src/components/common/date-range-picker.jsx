@@ -39,7 +39,6 @@ export default class DateRangePicker extends React.Component {
     }
 
     handleKeyDown(event) {
-        console.log('keypress')
         if (event.keyCode === 13) {
             this.props.onEnter();
         }
@@ -53,6 +52,7 @@ export default class DateRangePicker extends React.Component {
         
         return (
             <div className="date-range-picker" onKeyPress={ this.handleKeyPress }>
+                <label className="from">From</label>
                 <DatePicker
                     todayButton="Today"
                     dateFormat={ DATE_FORMAT_UI }
@@ -64,7 +64,7 @@ export default class DateRangePicker extends React.Component {
                     endDate={ endDate }
                     highlightDates={ highlight }
                 />
-                <label>to</label>
+                <label className="to">to</label>
                 <DatePicker
                     todayButton="Today"
                     dateFormat={ DATE_FORMAT_UI }

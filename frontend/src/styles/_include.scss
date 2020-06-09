@@ -36,14 +36,16 @@ $colour-border-secondary: $colour-background;
 
 $colour-button-bg: $colour-main;
 $colour-button-bg-primary: $colour-main-bold;
-$colour-button-bg-secondary: $colour-background;
-$colour-button-bg-disabled: darken($colour-background, 50);
+$colour-button-bg-secondary: $colour-accent-bold;
+$colour-button-bg-disabled: darken($colour-background, 30);
+$colour-button-bg-primary-disabled: lighten($colour-main-bold, 20);
+$colour-button-bg-secondary-disabled: lighten($colour-accent-bold, 20);
 $colour-button-bg-danger: $colour-danger;
 $colour-button-bg-danger-hover: darken($colour-danger, 10);
 
 $colour-button-text: $colour-white;
 $colour-button-text-primary: $colour-white;
-$colour-button-text-secondary: $colour-accent-bold;
+$colour-button-text-secondary: $colour-background;
 $colour-button-text-disabled: lighten($colour-button-text, 50);
 
 $colour-anchor: $colour-accent;
@@ -55,3 +57,10 @@ $colour-tab-text: $colour-main-bold;
 $colour-tab-primary-text: $colour-white;
 $colour-tab-text-hover: $colour-main;
 $colour-tab-text-disabled: $colour-text-disabled;
+
+
+// Mixins
+
+@mixin shadow {
+    box-shadow: .1rem .1rem .5rem .1rem rgba(0, 0, 0, 0.1);
+}

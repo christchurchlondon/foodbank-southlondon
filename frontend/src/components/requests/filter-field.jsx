@@ -1,4 +1,5 @@
 import React from 'react';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import './styles/filter-field.scss';
 
 
@@ -27,8 +28,9 @@ export default class FilterField extends React.Component {
     render() {
         return (
             <div className="filter-field">
-                <label>{ this.props.label }</label>
+                <Icon icon="search" className="search-icon" />
                 <input type="text"
+                    placeholder={ this.props.label }
                     value={ this.state.value }
                     onChange={ this.handleChange }
                     onKeyDown={ this.handleKeyDown } />

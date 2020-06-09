@@ -1,17 +1,5 @@
 @import 'include';
 
 .requests-actions {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
-}
-
-.requests-actions label {
-    display: inline-block;
-    margin-right: $pad-standard;
-}
-
-.requests-actions button {
     margin-left: $pad-standard;
 }

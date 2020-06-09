@@ -21,6 +21,7 @@ import RequestsList from './list';
 import RequestsActions from './actions';
 import RequestSelection from './selection';
 import RequestsEventDialog from './event-dialog';
+import './styles/index.scss';
 
 
 class Requests extends React.Component {
@@ -111,6 +112,14 @@ class Requests extends React.Component {
             value={ this.props.filters } />;
     }
 
+    getActions() {
+        return <RequestsActions
+            recordCount={ this.getSelectedIds().length }
+            status={ this.props.events.loadingStatus }
+            events={ this.props.events.items }
+            onAction={ action => this.triggerSubmit(action) } />;
+    }
+
     getContents() {
         if (this.isLoading()) return <Loading />;
         if (this.isFailed()) return <Error message={'Unable to load requests'} />;
@@ -129,11 +138,6 @@ class Requests extends React.Component {
                     selectedPage={this.props.page}
                     pages={this.props.totalPages}
                     onSelect={ this.selectPage } />
-                <RequestsActions
-                    disabled={ !this.getSelectedIds().length }
-                    status={ this.props.events.loadingStatus }
-                    events={ this.props.events.items }
-                    onAction={ action => this.triggerSubmit(action) } />
             </div>
         );
     }
@@ -156,6 +160,7 @@ class Requests extends React.Component {
     render() {
 
         const filter = this.getFilter();
+        const actions = this.getActions();
 
         const contents = this.getContents();
 
@@ -165,7 +170,10 @@ class Requests extends React.Component {
 
         return (
             <div className="requests-container">
-                { filter }
+                <div className="requests-header">
+                    { filter }
+                    { actions }
+                </div>
                 { contents }
                 { selection }
                 { eventDialog }

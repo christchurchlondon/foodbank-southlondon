@@ -89,7 +89,7 @@ export default class RequestsEventDialog extends React.Component {
             return (
                 <div className="field-row">
                     <label>Quantity</label>
-                    <input type="text" onChange={ this.updateQuantity } />
+                    <input type="number" onChange={ this.updateQuantity } />
                 </div>
             );
         }

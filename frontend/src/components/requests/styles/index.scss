@@ -1,0 +1,12 @@
+@import 'include';
+
+.requests-container {
+
+    .requests-header {
+        position: sticky;
+        top: -1px;
+        display: flex;
+        align-items: flex-start;
+        background-color: $colour-white;
+    }
+}
