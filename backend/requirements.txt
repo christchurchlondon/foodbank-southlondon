@@ -1,6 +1,7 @@
 authlib
 flask
 flask-restx
+fuzzywuzzy[speedup]
 google-api-python-client
 google-auth
 gspread
