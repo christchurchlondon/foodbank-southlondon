@@ -28,15 +28,15 @@ class Requests(flask_restx.Resource):
         delivery_dates = set(delivery_date.strip() for delivery_date in (params["delivery_dates"] or ()))
         client_full_names = set(client_full_name.strip() for client_full_name in (params["client_full_names"] or ()))
         postcodes = set(postcode.strip() for postcode in (params["postcodes"] or ()))
-        reference_numbers = set(reference_number.strip() for reference_number in (params["reference_numbers"] or ()))
+        voucher_numbers = set(voucher_number.strip() for voucher_number in (params["voucher_numbers"] or ()))
         last_request_only = params["last_request_only"]
         df = cache(force_refresh=refresh_cache)
         if delivery_dates:
             df = df.loc[df["Delivery Date"].isin(delivery_dates)]
         name_attribute = "Client Full Name"
-        if client_full_names or postcodes or reference_numbers:
+        if client_full_names or postcodes or voucher_numbers:
             df = df.loc[df[name_attribute].isin(client_full_names) | df["Postcode"].str.startswith(tuple(postcodes)) |
-                        df["Reference Number"].isin(reference_numbers)]
+                        df["Voucher Number"].isin(voucher_numbers)]
         if last_request_only:
             df = df.assign(rank=df.groupby([name_attribute]).cumcount(ascending=False) + 1).query("rank == 1").drop("rank", axis=1)
         df = df.assign(edit_details_url=df["request_id"].map(_edit_details_url))

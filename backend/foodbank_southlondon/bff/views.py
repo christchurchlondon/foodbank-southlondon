@@ -159,7 +159,7 @@ class Details(flask_restx.Resource):
             if value:
                 params[f"{attribute}s"] = value
         similar_request_data = _get(f"{api_base_url}requests/", cookies=flask.request.cookies,
-                                    headers={"X-Fields": "items{request_id, timestamp, client_full_name, postcode, reference_number}, total_pages"},
+                                    headers={"X-Fields": "items{request_id, timestamp, client_full_name, postcode, voucher_number}, total_pages"},
                                     params=params)
         assert (events_data["total_pages"] <= 1 and similar_request_data["total_pages"] <= 1)
         similar_request_items = similar_request_data["items"]
@@ -195,15 +195,15 @@ class Status(flask_restx.Resource):
             delivery_dates = ",".join((start_date + datetime.timedelta(days=i)).strftime("%d/%m/%Y") for i in range((end_date - start_date).days + 1))
         client_full_names = ",".join(params["client_full_names"] or ()) or None
         postcodes = ",".join(params["postcodes"] or ()) or None
-        reference_numbers = ",".join(params["reference_numbers"] or ()) or None
+        voucher_numbers = ",".join(params["voucher_numbers"] or ()) or None
         per_page = params["per_page"]
         api_base_url = _api_base_url()
         items = []
         requests_data = _get(f"{api_base_url}requests/", cookies=flask.request.cookies,
-                             headers={"X-Fields": "items{request_id, client_full_name, reference_number, postcode, delivery_date}, "
+                             headers={"X-Fields": "items{request_id, client_full_name, voucher_number, postcode, delivery_date}, "
                                       "page, per_page, total_items, total_pages"},
                              params={"client_full_names": client_full_names, "delivery_dates": delivery_dates, "page": params["page"],
-                                     "per_page": per_page, "postcodes": postcodes, "reference_numbers": reference_numbers,
+                                     "per_page": per_page, "postcodes": postcodes, "voucher_numbers": voucher_numbers,
                                      "refresh_cache": refresh_cache})
         requests_df = pd.DataFrame(requests_data["items"])
         if not requests_df.empty:

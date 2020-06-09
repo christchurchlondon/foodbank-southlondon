@@ -8,7 +8,7 @@ request = rest.model("ClientRequest", {
                                 example="ACYDBNgidDBRKTk_WpZiWnVOKVzOzbPPXzO3NxqUlTK9cNXuEfpOLTRRT5YV2dnscmWOucg"),
     "timestamp": fields.String(attribute="Timestamp", required=True, description="The timestamp of the form submission in the format of "
                                "DD/MM/YYYY HH:MM:SS", example="30/04/2020 18:27:57"),
-    "reference_number": fields.String(attribute="Reference Number", required=True, description="The unique FoodBank Reference Number of the Client "
+    "voucher_number": fields.String(attribute="Voucher Number", required=True, description="The unique FoodBank Voucher Number of the Client "
                                       "(consistent across requests)", example="H-00001-00001"),
     "client_full_name": fields.String(attribute="Client Full Name", required=True, description="The full name of the Client", example="John Smith"),
     "phone_number": fields.String(attribute="Phone Number", required=False, description="The Client's contact phone number", example="07123 456 789"),

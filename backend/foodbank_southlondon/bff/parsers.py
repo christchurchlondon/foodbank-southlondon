@@ -17,4 +17,4 @@ status_params.add_argument("end_date", type=lambda x: datetime.date.fromisoforma
                            "provided, the end_date defaults to today.")
 status_params.add_argument(_requests_params_args["client_full_names"])
 status_params.add_argument(_requests_params_args["postcodes"])
-status_params.add_argument(_requests_params_args["reference_numbers"])
+status_params.add_argument(_requests_params_args["voucher_numbers"])

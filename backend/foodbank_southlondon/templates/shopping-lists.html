@@ -24,7 +24,6 @@
             table {
                 border-collapse: collapse;
                 break-before: avoid-page;
-                break-inside: avoid-page;
                 table-layout: fixed;
                 width: 100%
             }
@@ -58,7 +57,7 @@
         <h1>CLIENT SHOPPING LIST</h1>
         {% set postcode = request['postcode'] %}
         <h2>POSTCODE: {{ postcode }}</h2>
-        <b>REFERENCE #:</b> {{ request['reference_number'] }}
+        <b>VOUCHER #:</b> {{ request['voucher_number'] }}
         <table>
             <tr>
                 <td colspan="2"><b>NAME:</b> {{ request['client_full_name'] }}</td>
