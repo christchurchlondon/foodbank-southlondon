@@ -9,8 +9,11 @@ EVENT_NAMES = (
     "Print Shopping List",
     "Print Shipping Label",
     "Print Driver Overview",
+    "Mark as Called and Confirmed",
+    "Mark as Called and No Response",
     "Mark as Out for Delivery",
     "Mark as Delivered",
+    "Mark as Delivery Cancelled",
     "Mark as Fullfilled with Trussell Trust"
 )
 
