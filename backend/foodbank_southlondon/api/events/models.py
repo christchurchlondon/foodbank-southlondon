@@ -14,7 +14,8 @@ EVENT_NAMES = (
     "Mark as Out for Delivery",
     "Mark as Delivered",
     "Mark as Delivery Cancelled",
-    "Mark as Fullfilled with Trussell Trust"
+    "Mark as Fullfilled with Trussell Trust",
+    "Permanently Delete Request"
 )
 
 

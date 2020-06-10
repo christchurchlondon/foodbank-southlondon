@@ -8,6 +8,7 @@ import pandas as pd  # type:ignore
 import requests
 import weasyprint  # type:ignore
 
+from foodbank_southlondon.api import utils
 from foodbank_southlondon.api.lists import models as lists_models
 from foodbank_southlondon.bff import models, parsers, rest
 
@@ -20,6 +21,7 @@ _FBSL_BASE_DOMAIN = "FBSL_BASE_DOMAIN"
 _FBSL_CATCH_ALL_LIST = "FBSL_CATCH_ALL_LIST"
 _FBSL_MAX_ACTION_REQUEST_IDS = "FBSL_MAX_ACTION_REQUEST_IDS"
 _FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
+_FBSL_REQUESTS_GSHEET_URI = "FBSL_REQUESTS_GSHEET_URI"
 _PREFERRED_URL_SCHEME = "PREFERRED_URL_SCHEME"
 
 
@@ -99,6 +101,7 @@ class Actions(flask_restx.Resource):
     def post(self) -> Union[flask.Response, Tuple[Dict, int]]:
         """Process an action."""
         data = flask.request.json
+        flask.current_app.logger.debug(f"Received request body, {data}")
         request_ids = data["request_ids"]
         total_request_ids = len(request_ids)
         max_action_request_ids = flask.current_app.config[_FBSL_MAX_ACTION_REQUEST_IDS]
@@ -122,6 +125,10 @@ class Actions(flask_restx.Resource):
             return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
         elif event_name == "Print Driver Overview":
             return_value = self._generate_driver_overview_pdf(requests_items)
+        elif event_name == "Permanently Delete Request":
+            for request_id in request_ids:
+                utils.delete_row(flask.current_app.config[_FBSL_REQUESTS_GSHEET_URI], request_id)
+            return_value = ({}, 201)
         else:
             return_value = ({}, 201)
         now = f"{datetime.datetime.utcnow().isoformat()}Z"

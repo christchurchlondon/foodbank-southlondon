@@ -15,6 +15,14 @@ _FBSL_SA_KEY = "FBSL_SA_KEY"
 _FBSL_USER_SESSION_VAR = "FBSL_USER_SESSION_VAR"
 
 
+def apps_script_resource() -> discovery.Resource:
+    apps_script_resource = flask.g.get("apps_script_resource")
+    if apps_script_resource is None:
+        creds = credentials("https://www.googleapis.com/auth/drive.metadata.readonly")
+        apps_script_resource = flask.g.apps_script_resource = discovery.build("script", "v1", credentials=creds).files()
+    return apps_script_resource
+
+
 def credentials(*scopes: str) -> Credentials:
     return Credentials.from_service_account_info(json.loads(flask.current_app.config[_FBSL_SA_KEY]), scopes=list(scopes))
 

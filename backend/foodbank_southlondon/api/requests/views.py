@@ -44,8 +44,8 @@ class Requests(flask_restx.Resource):
                         df["Voucher Number"].isin(voucher_numbers)]
         if last_request_only:
             df = df.assign(rank=df.groupby([name_attribute]).cumcount(ascending=False) + 1).query("rank == 1").drop("rank", axis=1)
-        congestion_zone_postcodes = _congestion_zone_postcodes()["Postcode"].values
-        df = df.assign(edit_details_url=df["request_id"].map(_edit_details_url), congestion_zone=df["Postcode"].isin(congestion_zone_postcodes))
+        df = df.assign(edit_details_url=df["request_id"].map(_edit_details_url),
+                       congestion_zone=df["Postcode"].isin(_congestion_zone_postcodes()["Postcode"].values))
         return (df, params["page"], params["per_page"])
 
 
@@ -68,9 +68,8 @@ class RequestsByID(flask_restx.Resource):
         missing_request_ids = request_id_values.difference(df[request_id_attribute].unique())
         if missing_request_ids:
             rest.abort(404, f"the following request_id values {missing_request_ids} were not found.")
-            congestion_zone_postcodes = _congestion_zone_postcodes()["Postcode"].values
         df = df.assign(edit_details_url=df[request_id_attribute].map(_edit_details_url),
-                       congestion_zone=df["Postcode"].isin(congestion_zone_postcodes))
+                       congestion_zone=df["Postcode"].isin(_congestion_zone_postcodes()["Postcode"].values))
         return (df, params["page"], params["per_page"])
 
 
