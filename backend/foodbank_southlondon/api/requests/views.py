@@ -1,5 +1,7 @@
-from typing import Dict, List, Tuple
+from typing import Dict, Iterable, List, Tuple
+import functools
 
+from fuzzywuzzy import fuzz, process # type:ignore
 import flask
 import flask_restx  # type:ignore
 import pandas as pd  # type:ignore
@@ -10,6 +12,7 @@ from foodbank_southlondon.api.requests import models, namespace, parsers
 
 # CONFIG VARIABLES
 _FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_URI = "FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_URI"
+_FBSL_FUZZY_SEARCH_THRESHOLD = "FBSL_FUZZY_SEARCH_THRESHOLD"
 _FBSL_REQUESTS_GSHEET_URI = "FBSL_REQUESTS_GSHEET_URI"
 
 # INTERNALS
@@ -36,7 +39,8 @@ class Requests(flask_restx.Resource):
             df = df.loc[df["Packing Date"].isin(packing_dates)]
         name_attribute = "Client Full Name"
         if client_full_names or postcodes or voucher_numbers:
-            df = df.loc[df[name_attribute].isin(client_full_names) | df["Postcode"].str.upper().str.startswith(tuple(postcodes)) |
+            df = df.loc[df[name_attribute].map(functools.partial(fuzzy_match, choices=client_full_names)) |
+                        df["Postcode"].str.upper().str.startswith(tuple(postcodes)) |
                         df["Voucher Number"].isin(voucher_numbers)]
         if last_request_only:
             df = df.assign(rank=df.groupby([name_attribute]).cumcount(ascending=False) + 1).query("rank == 1").drop("rank", axis=1)
@@ -92,9 +96,15 @@ def _congestion_zone_postcodes() -> pd.DataFrame:
     return utils.cache("congestion_zone_postcodes", flask.current_app.config[_FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_URI])
 
 
-def _edit_details_url(request_id: str):
+def _edit_details_url(request_id: str) -> str:
     return f"https://docs.google.com/forms/d/e/{flask.current_app.config['FBSL_REQUESTS_FORM_URI']}/viewform?edit2={request_id}"
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
     return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_URI], force_refresh=force_refresh)
+
+
+def fuzzy_match(text: str, choices: Iterable) -> bool:
+    search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
+    possibilities = process.extract(text, choices, scorer=fuzz.partial_ratio)
+    return any(p[1] >= search_threshold for p in possibilities)
