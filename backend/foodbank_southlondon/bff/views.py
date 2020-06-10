@@ -8,6 +8,7 @@ import pandas as pd  # type:ignore
 import requests
 import weasyprint  # type:ignore
 
+from foodbank_southlondon.api import utils
 from foodbank_southlondon.api.lists import models as lists_models
 from foodbank_southlondon.bff import models, parsers, rest
 
@@ -20,6 +21,7 @@ _FBSL_BASE_DOMAIN = "FBSL_BASE_DOMAIN"
 _FBSL_CATCH_ALL_LIST = "FBSL_CATCH_ALL_LIST"
 _FBSL_MAX_ACTION_REQUEST_IDS = "FBSL_MAX_ACTION_REQUEST_IDS"
 _FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
+_FBSL_REQUESTS_GSHEET_URI = "FBSL_REQUESTS_GSHEET_URI"
 _PREFERRED_URL_SCHEME = "PREFERRED_URL_SCHEME"
 
 
@@ -99,6 +101,7 @@ class Actions(flask_restx.Resource):
     def post(self) -> Union[flask.Response, Tuple[Dict, int]]:
         """Process an action."""
         data = flask.request.json
+        flask.current_app.logger.debug(f"Received request body, {data}")
         request_ids = data["request_ids"]
         total_request_ids = len(request_ids)
         max_action_request_ids = flask.current_app.config[_FBSL_MAX_ACTION_REQUEST_IDS]
@@ -107,22 +110,26 @@ class Actions(flask_restx.Resource):
         event_name = data["event_name"]
         event_data = data["event_data"]
         api_base_url = _api_base_url()
-        try:
-            requests_items = _get(f"{api_base_url}requests/{','.join(request_ids)}", cookies=flask.request.cookies,
-                                  params={"per_page": total_request_ids})["items"]
-        except requests.exceptions.HTTPError as error:
-            if error.response.status_code == 404:
-                rest.abort(404, error.response.json()["message"])
-            raise
-        if event_name == "Print Shopping List":
-            return_value = self._generate_shopping_list_pdf(requests_items, api_base_url, flask.request.cookies)
-        elif event_name == "Print Shipping Label":
-            if not event_data.isdigit():
-                rest.abort(400, "When event_name is \"Print Shipping Label\", event_data is expected to be an integer quantity of pages to print.")
-            return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
-        elif event_name == "Print Driver Overview":
-            return_value = self._generate_driver_overview_pdf(requests_items)
+        if event_name.startswith("Print"):
+            try:
+                requests_items = _get(f"{api_base_url}requests/{','.join(request_ids)}", cookies=flask.request.cookies,
+                                    params={"per_page": total_request_ids})["items"]
+            except requests.exceptions.HTTPError as error:
+                if error.response.status_code == 404:
+                    rest.abort(404, error.response.json()["message"])
+                raise
+            if event_name == "Print Shopping List":
+                return_value = self._generate_shopping_list_pdf(requests_items, api_base_url, flask.request.cookies)
+            elif event_name == "Print Shipping Label":
+                if not event_data.isdigit():
+                    rest.abort(400, "When event_name is \"Print Shipping Label\", event_data is expected to be an integer quantity of pages to print.")
+                return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
+            elif event_name == "Print Driver Overview":
+                return_value = self._generate_driver_overview_pdf(requests_items)
         else:
+            if event_name == "Permanently Delete Request":
+                for request_id in request_ids:
+                    utils.delete_row(flask.current_app.config[_FBSL_REQUESTS_GSHEET_URI], request_id)
             return_value = ({}, 201)
         now = f"{datetime.datetime.utcnow().isoformat()}Z"
         _post(f"{api_base_url}events/", cookies=flask.request.cookies,
@@ -159,7 +166,7 @@ class Details(flask_restx.Resource):
             if value:
                 params[f"{attribute}s"] = value
         similar_request_data = _get(f"{api_base_url}requests/", cookies=flask.request.cookies,
-                                    headers={"X-Fields": "items{request_id, timestamp, client_full_name, postcode, reference_number}, total_pages"},
+                                    headers={"X-Fields": "items{request_id, timestamp, client_full_name, postcode, voucher_number}, total_pages"},
                                     params=params)
         assert (events_data["total_pages"] <= 1 and similar_request_data["total_pages"] <= 1)
         similar_request_items = similar_request_data["items"]
@@ -185,25 +192,25 @@ class Status(flask_restx.Resource):
         refresh_cache = params["refresh_cache"]
         start_date = params["start_date"]
         end_date = params["end_date"]
-        delivery_dates = None
+        packing_dates = None
         if start_date or end_date:
             today = datetime.date.today()
             start_date = start_date or today.replace(day=1)
             end_date = end_date or today
             if end_date < start_date:
                 rest.abort(400, f"end_date {end_date} was before start_date, {start_date}.")
-            delivery_dates = ",".join((start_date + datetime.timedelta(days=i)).strftime("%d/%m/%Y") for i in range((end_date - start_date).days + 1))
+            packing_dates = ",".join((start_date + datetime.timedelta(days=i)).strftime("%d/%m/%Y") for i in range((end_date - start_date).days + 1))
         client_full_names = ",".join(params["client_full_names"] or ()) or None
         postcodes = ",".join(params["postcodes"] or ()) or None
-        reference_numbers = ",".join(params["reference_numbers"] or ()) or None
+        voucher_numbers = ",".join(params["voucher_numbers"] or ()) or None
         per_page = params["per_page"]
         api_base_url = _api_base_url()
         items = []
         requests_data = _get(f"{api_base_url}requests/", cookies=flask.request.cookies,
-                             headers={"X-Fields": "items{request_id, client_full_name, reference_number, postcode, delivery_date}, "
+                             headers={"X-Fields": "items{request_id, client_full_name, voucher_number, postcode, packing_date, time_of_day}, "
                                       "page, per_page, total_items, total_pages"},
-                             params={"client_full_names": client_full_names, "delivery_dates": delivery_dates, "page": params["page"],
-                                     "per_page": per_page, "postcodes": postcodes, "reference_numbers": reference_numbers,
+                             params={"client_full_names": client_full_names, "packing_dates": packing_dates, "page": params["page"],
+                                     "per_page": per_page, "postcodes": postcodes, "voucher_numbers": voucher_numbers,
                                      "refresh_cache": refresh_cache})
         requests_df = pd.DataFrame(requests_data["items"])
         if not requests_df.empty:

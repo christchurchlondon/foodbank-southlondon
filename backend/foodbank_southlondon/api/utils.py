@@ -27,7 +27,7 @@ def _gsheet(spreadsheet_id: str, index: int = 0) -> gspread.Worksheet:
 
 def _gsheet_to_df(spreadsheet_id: str) -> pd.DataFrame:
     sheet = _gsheet(spreadsheet_id)
-    flask.current_app.logger.debug(f"Download gSheet, {sheet.spreadsheet.title} ({sheet.url}) ...")
+    flask.current_app.logger.info(f"Download gSheet, {sheet.spreadsheet.title} ({sheet.url}) ...")
     data = sheet.get_all_values()
     headers = data.pop(0)
     return pd.DataFrame(data, columns=headers)
@@ -35,7 +35,7 @@ def _gsheet_to_df(spreadsheet_id: str) -> pd.DataFrame:
 
 def append_rows(spreadsheet_id: str, rows: List) -> None:
     sheet = _gsheet(spreadsheet_id)
-    flask.current_app.logger.debug(f"Writing {len(rows)} rows, in {sheet.spreadsheet.title} ({sheet.url}) ...")
+    flask.current_app.logger.info(f"Writing {len(rows)} rows, in {sheet.spreadsheet.title} ({sheet.url}) ...")
     sheet.append_rows(rows, value_input_option="USER_ENTERED")
 
 
@@ -47,21 +47,27 @@ def cache(name: str, spreadsheet_id: str, force_refresh: bool = False) -> pd.Dat
         file_modified_time = datetime.datetime.fromisoformat(file_metadata["modifiedTime"].replace("Z", "+00:00"))
         if _caches_updated[name] >= file_modified_time:
             return cache
-    flask.current_app.logger.debug(f"Refreshing cache, {name} ...")
+    flask.current_app.logger.info(f"Refreshing cache, {name} ...")
     _caches_updated[name] = now
     cache = _caches[name] = _gsheet_to_df(spreadsheet_id)
     return cache
 
 
+def delete_row(spreadsheet_id: str, find_value: str) -> None:
+    sheet = _gsheet(spreadsheet_id)
+    flask.current_app.logger.info(f"Deleting the row with {find_value} in the last column...")
+    sheet.delete_row(sheet.find(find_value, in_column=sheet.col_count).row)
+
+
 def gsheet_a1(spreadsheet_id: str, index: int = 0) -> str:
     sheet = _gsheet(spreadsheet_id, index)
-    return sheet.acell("A1").value
+    return sheet.cell(1, 1).value
 
 
 def overwrite_rows(spreadsheet_id: str, rows: List, index: int = 0) -> None:
     sheet = _gsheet(spreadsheet_id, index)
     new_row_count = len(rows)
-    flask.current_app.logger.debug(f"Overwriting all rows with {new_row_count} new rows in {sheet.spreadsheet.title} ({sheet.url}) ...")
+    flask.current_app.logger.info(f"Overwriting all rows with {new_row_count} new rows in {sheet.spreadsheet.title} ({sheet.url}) ...")
     existing_row_count = sheet.row_count
     if rows:
         sheet.update(rows, value_input_option="USER_ENTERED")

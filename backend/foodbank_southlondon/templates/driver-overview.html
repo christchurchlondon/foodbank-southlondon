@@ -59,7 +59,7 @@
                 <th>Name</th>
                 <th>Address</th>
                 <th>Contact</th>
-                <th>Delivery Date</th>
+                <th>Packing Date</th>
                 <th>Instructions</th>
                 <th>Delivered?</th>
             </tr>
@@ -68,7 +68,7 @@
                 <td>{{ request['client_full_name'] }}</td>
                 <td>{{ request['address_line_1'] }}, {{ request['postcode'] }}</td>
                 <td>{{ request['phone_number'] or '' }}</td>
-                <td>{{ request['delivery_date'] }}</td>
+                <td>{{ request['packing_date'] }}</td>
                 <td>{{ request['delivery_instructions'] or '' }}</td>
                 <td></td>
             </tr>

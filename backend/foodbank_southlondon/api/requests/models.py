@@ -8,12 +8,14 @@ request = rest.model("ClientRequest", {
                                 example="ACYDBNgidDBRKTk_WpZiWnVOKVzOzbPPXzO3NxqUlTK9cNXuEfpOLTRRT5YV2dnscmWOucg"),
     "timestamp": fields.String(attribute="Timestamp", required=True, description="The timestamp of the form submission in the format of "
                                "DD/MM/YYYY HH:MM:SS", example="30/04/2020 18:27:57"),
-    "reference_number": fields.String(attribute="Reference Number", required=True, description="The unique FoodBank Reference Number of the Client "
+    "voucher_number": fields.String(attribute="Voucher Number", required=True, description="The unique FoodBank Voucher Number of the Client "
                                       "(consistent across requests)", example="H-00001-00001"),
     "client_full_name": fields.String(attribute="Client Full Name", required=True, description="The full name of the Client", example="John Smith"),
     "phone_number": fields.String(attribute="Phone Number", required=False, description="The Client's contact phone number", example="07123 456 789"),
-    "delivery_date": fields.String(attribute="Delivery Date", required=True, description="The date that the food parcel should be delivered in the "
+    "packing_date": fields.String(attribute="Packing Date", required=True, description="The date that the food parcel should be delivered in the "
                                    "format of DD/MM/YYYY", example="23/04/2020"),
+    "time_of_day": fields.String(attribute="Time of Day", required=True, description="The time of day that the food parcel should be packed.",
+                                 example="AM", enum=["AM", "PM"]),
     "address_line_1": fields.String(attribute="Address Line 1", required=True, description="The first line of the address",
                                     example="8 Terrace Mews"),
     "address_line_2": fields.String(attribute="Address Line 2", required=False, description="The second line of the address", example="Portswood"),
@@ -44,7 +46,8 @@ request = rest.model("ClientRequest", {
                                        example="No dairy"),
     "edit_details_url": fields.String(required=True, description="The Google Forms edit response URL that can be used to update details of the Client"
                                       "Request", example="https://docs.google.com/forms/d/e/1FAIpQLSfb94-4k-Pkf3ccBqd2WR-yzMBdmqdehYBbnN1HLrmE9caneA/"
-                                      "viewform?edit2=2_ABaOnueK_9ztK8RlxxBe6Jf0wvs9rAwoi30EwATe24VtNeMhgazghzzd4pgibH-HHn_RDZQ")
+                                      "viewform?edit2=2_ABaOnueK_9ztK8RlxxBe6Jf0wvs9rAwoi30EwATe24VtNeMhgazghzzd4pgibH-HHn_RDZQ"),
+    "congestion_zone": fields.Boolean(required=True, description="Whether or not the postcode is in the congestion zone.", example=True)
 })
 
 page_of_requests = rest.inherit("ClientRequestsPage", models.pagination, {

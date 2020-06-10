@@ -38,9 +38,10 @@ _event = rest.model("EventSummary", {
 _status = rest.inherit("Status", _event, {
     "request_id": requests_models.request["request_id"],
     "client_full_name": _clone_field_without_attribute(requests_models.request["client_full_name"]),
-    "reference_number": _clone_field_without_attribute(requests_models.request["reference_number"]),
+    "voucher_number": _clone_field_without_attribute(requests_models.request["voucher_number"]),
     "postcode": _clone_field_without_attribute(requests_models.request["postcode"]),
-    "delivery_date": _clone_field_without_attribute(requests_models.request["delivery_date"])
+    "packing_date": _clone_field_without_attribute(requests_models.request["packing_date"]),
+    "time_of_day": _clone_field_without_attribute(requests_models.request["time_of_day"])
 })
 
 page_of_status = rest.inherit("StatusPage", _pagination, {
@@ -54,7 +55,7 @@ _similar_request_summary = rest.model("SimilarClientRequestSummary", {
     "timestamp": _clone_field_without_attribute(requests_models.request["timestamp"]),
     "client_full_name": _clone_field_without_attribute(requests_models.request["client_full_name"]),
     "postcode": _clone_field_without_attribute(requests_models.request["postcode"]),
-    "reference_number": _clone_field_without_attribute(requests_models.request["reference_number"])
+    "voucher_number": _clone_field_without_attribute(requests_models.request["voucher_number"])
 })
 
 details = rest.model("ClientRequestDetails", {

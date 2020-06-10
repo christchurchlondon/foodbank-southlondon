@@ -17,11 +17,13 @@ class _Config(object):
 
     FBSL_BASE_DOMAIN = ""
     FBSL_CATCH_ALL_LIST = "family_of_5+"
+    FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_URI = ""
     FBSL_EVENTS_GSHEET_URI = ""
+    FBSL_FUZZY_SEARCH_THRESHOLD = 80
     FBSL_GSUITE_IMPERSONATE_ADDRESS = ""
     FBSL_GSUITE_GROUP_ADDRESS = ""
     FBSL_LISTS_GSHEET_URI = ""
-    FBSL_MAX_ACTION_REQUEST_IDS = 20
+    FBSL_MAX_ACTION_REQUEST_IDS = 50
     FBSL_MAX_PAGE_SIZE = 500
     assert FBSL_MAX_ACTION_REQUEST_IDS < FBSL_MAX_PAGE_SIZE
     FBSL_PROTECT_API: Optional[bool] = None
@@ -48,6 +50,7 @@ class DevelopmentConfig(_Config):
     PREFERRED_URL_SCHEME = "http"
 
     FBSL_BASE_DOMAIN = f"localhost:{_port}"
+    FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_URI = "12DJtBIalZ5yHUK9-vm5Fq1U9tJuksHFAnSbd3SwBKok"
     FBSL_EVENTS_GSHEET_URI = "1GfD-YA_9eMSMqu9eTZlCEC0wvsV6c0CRlMLRPOvWM48"
     FBSL_LISTS_GSHEET_URI = "1Hor0i7K_W99LFXw-Grpf1mIY2MjDUNGnfV2ByNGf1gQ"
     FBSL_GSUITE_IMPERSONATE_ADDRESS = "ac@adamcunnington.info"
@@ -63,6 +66,7 @@ class ProductionConfig(_Config):
     PREFERRED_URL_SCHEME = "https"
 
     FBSL_BASE_DOMAIN = f"{_heroku_app_name}.herokuapp.com" if _heroku_app_name else f"localhost:{_port}"
+    FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_URI = "1sPFqWRX2cyW1zIBvqYBOg_y46DN7doh3v-2ZusraJ70"
     FBSL_EVENTS_GSHEET_URI = "1OAluin8tOIpYUxcm18gHJSc0z1tx4EdxY9I2bdB4zj4"
     FBSL_LISTS_GSHEET_URI = "1D0TcNW7pTMGgKYDogS4YDVJqEBAavu3GfXHu_iGlSmU"
     FBSL_GSUITE_IMPERSONATE_ADDRESS = "ed@christchurchlondon.org"
