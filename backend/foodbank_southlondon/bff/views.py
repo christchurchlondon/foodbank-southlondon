@@ -110,26 +110,26 @@ class Actions(flask_restx.Resource):
         event_name = data["event_name"]
         event_data = data["event_data"]
         api_base_url = _api_base_url()
-        try:
-            requests_items = _get(f"{api_base_url}requests/{','.join(request_ids)}", cookies=flask.request.cookies,
-                                  params={"per_page": total_request_ids})["items"]
-        except requests.exceptions.HTTPError as error:
-            if error.response.status_code == 404:
-                rest.abort(404, error.response.json()["message"])
-            raise
-        if event_name == "Print Shopping List":
-            return_value = self._generate_shopping_list_pdf(requests_items, api_base_url, flask.request.cookies)
-        elif event_name == "Print Shipping Label":
-            if not event_data.isdigit():
-                rest.abort(400, "When event_name is \"Print Shipping Label\", event_data is expected to be an integer quantity of pages to print.")
-            return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
-        elif event_name == "Print Driver Overview":
-            return_value = self._generate_driver_overview_pdf(requests_items)
-        elif event_name == "Permanently Delete Request":
-            for request_id in request_ids:
-                utils.delete_row(flask.current_app.config[_FBSL_REQUESTS_GSHEET_URI], request_id)
-            return_value = ({}, 201)
+        if event_name.startswith("Print"):
+            try:
+                requests_items = _get(f"{api_base_url}requests/{','.join(request_ids)}", cookies=flask.request.cookies,
+                                    params={"per_page": total_request_ids})["items"]
+            except requests.exceptions.HTTPError as error:
+                if error.response.status_code == 404:
+                    rest.abort(404, error.response.json()["message"])
+                raise
+            if event_name == "Print Shopping List":
+                return_value = self._generate_shopping_list_pdf(requests_items, api_base_url, flask.request.cookies)
+            elif event_name == "Print Shipping Label":
+                if not event_data.isdigit():
+                    rest.abort(400, "When event_name is \"Print Shipping Label\", event_data is expected to be an integer quantity of pages to print.")
+                return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
+            elif event_name == "Print Driver Overview":
+                return_value = self._generate_driver_overview_pdf(requests_items)
         else:
+            if event_name == "Permanently Delete Request":
+                for request_id in request_ids:
+                    utils.delete_row(flask.current_app.config[_FBSL_REQUESTS_GSHEET_URI], request_id)
             return_value = ({}, 201)
         now = f"{datetime.datetime.utcnow().isoformat()}Z"
         _post(f"{api_base_url}events/", cookies=flask.request.cookies,
