@@ -1,7 +1,7 @@
 @import 'include';
 
 .tab {
-    display: inline-block;
+    display: flex;
     margin-right: $pad-half / 2;
     background-color: $colour-tab;
     color: $colour-tab-text;

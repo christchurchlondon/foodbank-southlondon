@@ -59,6 +59,13 @@ $colour-tab-text-hover: $colour-main;
 $colour-tab-text-disabled: $colour-text-disabled;
 
 
+// Breakpoints
+
+$breakpoint-medium: 960px;
+$breakpoint-large: 1200px;
+$breakpoint-x-large: 1200px;
+
+
 // Mixins
 
 @mixin shadow {
