@@ -115,11 +115,10 @@ export default class RequestsEventDialog extends React.Component {
     }
 
     getStatusDialogContents() {
-        const contents = this.props.status === STATUS_LOADING
-            ? <Loading />
-            : <Error />;
+        const isLoading = this.props.status === STATUS_LOADING;
+        const contents = isLoading ? <Loading /> : <Error />;
         return (
-            <Popup title="Event Submission" canClose={ false }>
+            <Popup title="Event Submission" canClose={ !isLoading }>
                 { contents }
             </Popup>
         );
