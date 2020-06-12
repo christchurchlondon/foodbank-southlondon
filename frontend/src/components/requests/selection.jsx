@@ -86,8 +86,16 @@ export default class RequestSelection extends React.Component {
                     <p>{ item.requirements.dietary || 'None' }</p>
                 </div>
                 <div className="row">
-                    <label>Other requirements</label>
-                    <p>{ this.getOtherRequirementsText(item) }</p>
+                    <label>Feminine Products</label>
+                    <p>{ item.requirements.feminineProducts }</p>
+                </div>
+                <div className="row">
+                    <label>Baby Products</label>
+                    <p>{ item.requirements.babyProducts }</p>
+                </div>
+                <div className="row">
+                    <label>Pet Food</label>
+                    <p>{ item.requirements.petFood }</p>
                 </div>
                 <div className="row">
                     <label>Extra Information</label>
@@ -95,16 +103,6 @@ export default class RequestSelection extends React.Component {
                 </div>
             </div>
         );
-    }
-
-    getOtherRequirementsText(item) {
-        const reqs = item.requirements;
-        const list = [];
-        reqs.feminineProducts && list.push('feminine products');
-        reqs.babyProducts && list.push('baby products');
-        reqs.petFood && list.push('pet food');
-
-        return capitalise(list.length ? list.join(', ') : 'none');
     }
 
     getEditLink(item) {

@@ -207,9 +207,9 @@ function responseItemToRequest(item) {
         },
         requirements: {
             dietary: item.dietary_requirements,
-            feminineProducts: item.feminine_products_required.toLowerCase() === 'true',
-            babyProducts: item.baby_products_required.toLowerCase() === 'true',
-            petFood: item.pet_food_required.toLowerCase() === 'true'
+            feminineProducts: item.feminine_products_required,
+            babyProducts: item.baby_products_required,
+            petFood: item.pet_food_required
         },
         extraInformation: item.extra_information,
         editUrl: item.edit_details_url
