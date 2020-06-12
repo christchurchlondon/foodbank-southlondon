@@ -19,8 +19,9 @@
     }
 
     .logout {
-        margin: $pad-half $pad-standard 0 auto;
-        align-self: baseline;
+        position: absolute;
+        top: $pad-half;
+        right: $pad-standard;
         font-size: .8rem;
     }
 
