@@ -53,6 +53,7 @@ export default class RequestsList extends React.Component {
                     <td>{ request.fullName }</td>
                     <td>{ request.postcode }</td>
                     <td>{ format(request.packingDate, DATE_FORMAT_UI) }</td>
+                    <td>{ request.timeOfDay }</td>
                     <td>{ this.extractEvent(request.event) }</td>
                 </tr>
             );
@@ -75,6 +76,7 @@ export default class RequestsList extends React.Component {
                         <th>Name</th>
                         <th>Postcode</th>
                         <th>Packing Date</th>
+                        <th>Time</th>
                         <th>Last Status</th>
                     </tr>
                 </thead>

@@ -81,6 +81,7 @@ export function getRequests(filters = {}, page = 1) {
                 fullName: item.client_full_name,
                 voucherNumber: item.voucher_number,
                 packingDate: parseDate(item.packing_date, 'dd/MM/yyyy'),
+                timeOfDay: item.time_of_day,
                 event: extractEvent(item),
                 postcode: item.postcode
             }));
