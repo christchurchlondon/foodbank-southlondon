@@ -81,7 +81,7 @@ export const fetchSingleRequest = id => {
         dispatch(selectRequest(id));
         return getSingleRequest(id)
             .then(result => dispatch(requestSelectionLoaded(id, result)))
-            .catch(() => selectRequestFailed());
+            .catch(() => dispatch(selectRequestFailed()));
     };
 };
 
