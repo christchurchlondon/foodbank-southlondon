@@ -135,8 +135,10 @@ class Requests extends React.Component {
                     onToggle={ id => this.toggleRequest(id) }
                     onToggleAll={ () => this.toggleAllRequests() } />
                 <Paginator
-                    selectedPage={this.props.page}
-                    pages={this.props.totalPages}
+                    selectedPage={ this.props.paging.page }
+                    pages={ this.props.paging.totalPages }
+                    pageSize={ this.props.paging.pageSize }
+                    totalRecords={ this.props.paging.totalItems }
                     onSelect={ this.selectPage } />
             </div>
         );

@@ -35,8 +35,12 @@ const initialState = {
     },
     status: STATUS_IDLE,
     items: [],
-    page: 0,
-    totalPages: 0,
+    paging: {
+        page: 0,
+        totalPages: 0,
+        totalItems: 0,
+        pageSize: 0
+    },
     selection: {
         id: null,
         status: STATUS_IDLE,
@@ -58,15 +62,26 @@ export default function(state = initialState, action) {
                 ...state,
                 filters: action.payload.filters,
                 status: STATUS_LOADING,
-                page: action.payload.page,
+                paging: {
+                    ...state.paging,
+                    page: action.payload.page,
+                    totalPages: 0,
+                    totalItems: 0,
+                    pageSize: 0
+                },
                 items: []
             };
         case REQUESTS_LOADED:
             return {
                 ...state,
                 status: STATUS_SUCCESS,
-                page: action.payload.page,
-                totalPages: action.payload.totalPages,
+                paging: {
+                    ...state.paging,
+                    page: action.payload.paging.page,
+                    totalPages: action.payload.paging.totalPages,
+                    totalItems: action.payload.paging.totalItems,
+                    pageSize: action.payload.paging.pageSize
+                },
                 items: action.payload.requests
                     .map(request => ({
                         data: request,

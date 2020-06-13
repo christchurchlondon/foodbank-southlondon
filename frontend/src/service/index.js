@@ -99,11 +99,14 @@ export function getRequests(filters = {}, page = 1) {
                 isInCongestionZone: isInCongestionZone(item.postcode)
             }));
 
-            return {
-                result,
+            const paging = {
                 page: response.page,
-                totalPages: response.total_pages
-            };
+                totalPages: response.total_pages,
+                totalItems: response.total_items,
+                pageSize: response.per_page
+            }
+
+            return { result, paging };
         });
 }
 
