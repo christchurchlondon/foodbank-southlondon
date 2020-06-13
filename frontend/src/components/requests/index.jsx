@@ -81,7 +81,7 @@ class Requests extends React.Component {
     }
 
     confirmEventSubmission(event, data) {
-        this.props.confirmSubmitEvent(event, this.getSelectedIds(), data);
+        this.props.confirmSubmitEvent(event, this.getSelectedIds(), data, this.state.filters);
     }
 
     cancelEventSubmission() {

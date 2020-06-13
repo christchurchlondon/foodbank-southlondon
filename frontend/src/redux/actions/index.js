@@ -278,9 +278,9 @@ export const openSubmitDialog = event => ({
     }
 });
 
-export const confirmSubmitEvent = (event, ids, data) => {
+export const confirmSubmitEvent = (event, ids, data, filters = {}) => {
     return dispatch => {
-        dispatch(sendEvent(event, ids, data));
+        dispatch(sendEvent(event, ids, data, filters));
         dispatch(closeSubmitDialog());
     };
 };
@@ -295,11 +295,14 @@ export const closeSubmitDialog = () => ({
     type: CLOSE_SUBMIT_DIALOG
 });
 
-export const sendEvent = (event, ids, data) => {
+export const sendEvent = (event, ids, data, filters) => {
     return dispatch => {
         dispatch(submitEvent(event));
         return postEvent(event, ids, data)
-            .then(() => dispatch(eventSubmitComplete()))
+            .then(() => {
+                dispatch(eventSubmitComplete());
+                dispatch(fetchRequests(filters));
+            })
             .catch(() => dispatch(eventSubmitFailed()));
     };
 };
