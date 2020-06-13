@@ -15,7 +15,8 @@ const endpoints = {
 
 function performFetch(url) {
     return fetch(url, { cache: 'no-cache' })
-        .then(response => response.json());
+        .then(handleErrors)
+        .then(response => response.json())
 }
 
 function performPost(url, data = {}) {
@@ -24,7 +25,9 @@ function performPost(url, data = {}) {
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         method: 'POST',
         body: JSON.stringify(data)
-    }).then(response => response.json())
+    })
+        .then(handleErrors)
+        .then(response => response.json())
 }
 
 function performDownload(url, data = {}) {
@@ -33,11 +36,19 @@ function performDownload(url, data = {}) {
         method: 'POST',
         body: JSON.stringify(data)
     })
+        .then(handleErrors)
         .then(response => response.blob())
         .then(blob => {
             var url = window.URL.createObjectURL(blob);
             window.open(url);
         });
+}
+
+function handleErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
 }
 
 function encodeParams(params) {
