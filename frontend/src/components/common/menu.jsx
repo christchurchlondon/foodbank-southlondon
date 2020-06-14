@@ -17,6 +17,10 @@ export default class Menu extends React.Component {
         document.addEventListener('click', this.close, false);
     }
 
+    componentWillUnmount() {
+        document.removeEventListener('click', this.close, false);
+    }
+
     toggle() {
         this.setState({ show: !this.state.show });
     }

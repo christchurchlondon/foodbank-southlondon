@@ -1,6 +1,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { DATE_FORMAT_UI } from '../../constants';
+import CongestionCharge from '../common/congestion-charge';
 
 export default class RequestsList extends React.Component {
 
@@ -51,9 +52,12 @@ export default class RequestsList extends React.Component {
                             checked={ item.checked } />
                     </td>
                     <td>{ request.fullName }</td>
-                    <td>{ request.postcode }</td>
+                    <td>
+                        { request.postcode }
+                        { request.isInCongestionZone && <CongestionCharge /> }
+                    </td>
                     <td>{ format(request.packingDate, DATE_FORMAT_UI) }</td>
-                    <td>{ request.voucherNumber }</td>
+                    <td>{ request.timeOfDay }</td>
                     <td>{ this.extractEvent(request.event) }</td>
                 </tr>
             );
@@ -76,7 +80,7 @@ export default class RequestsList extends React.Component {
                         <th>Name</th>
                         <th>Postcode</th>
                         <th>Packing Date</th>
-                        <th>Voucher #</th>
+                        <th>Time</th>
                         <th>Last Status</th>
                     </tr>
                 </thead>

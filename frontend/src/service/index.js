@@ -1,5 +1,6 @@
 import fetch from 'cross-fetch';
 import { format, parse } from 'date-fns';
+import { isInCongestionZone } from '../helpers';
 import { DATE_FORMAT_REQUEST, DATE_FORMAT_TIMESTAMP } from '../constants';
 
 const endpoints = {
@@ -14,7 +15,8 @@ const endpoints = {
 
 function performFetch(url) {
     return fetch(url, { cache: 'no-cache' })
-        .then(response => response.json());
+        .then(handleErrors)
+        .then(response => response.json())
 }
 
 function performPost(url, data = {}) {
@@ -23,7 +25,9 @@ function performPost(url, data = {}) {
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         method: 'POST',
         body: JSON.stringify(data)
-    }).then(response => response.json())
+    })
+        .then(handleErrors)
+        .then(response => response.json())
 }
 
 function performDownload(url, data = {}) {
@@ -32,11 +36,19 @@ function performDownload(url, data = {}) {
         method: 'POST',
         body: JSON.stringify(data)
     })
+        .then(handleErrors)
         .then(response => response.blob())
         .then(blob => {
             var url = window.URL.createObjectURL(blob);
             window.open(url);
         });
+}
+
+function handleErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
 }
 
 function encodeParams(params) {
@@ -81,15 +93,20 @@ export function getRequests(filters = {}, page = 1) {
                 fullName: item.client_full_name,
                 voucherNumber: item.voucher_number,
                 packingDate: parseDate(item.packing_date, 'dd/MM/yyyy'),
+                timeOfDay: item.time_of_day,
                 event: extractEvent(item),
-                postcode: item.postcode
+                postcode: item.postcode,
+                isInCongestionZone: isInCongestionZone(item.postcode)
             }));
 
-            return {
-                result,
+            const paging = {
                 page: response.page,
-                totalPages: response.total_pages
-            };
+                totalPages: response.total_pages,
+                totalItems: response.total_items,
+                pageSize: response.per_page
+            }
+
+            return { result, paging };
         });
 }
 
@@ -204,9 +221,9 @@ function responseItemToRequest(item) {
         },
         requirements: {
             dietary: item.dietary_requirements,
-            feminineProducts: item.feminine_products_required.toLowerCase() === 'true',
-            babyProducts: item.baby_products_required.toLowerCase() === 'true',
-            petFood: item.pet_food_required.toLowerCase() === 'true'
+            feminineProducts: item.feminine_products_required,
+            babyProducts: item.baby_products_required,
+            petFood: item.pet_food_required
         },
         extraInformation: item.extra_information,
         editUrl: item.edit_details_url

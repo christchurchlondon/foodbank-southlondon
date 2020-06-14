@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './styles/paginator.scss';
 
@@ -88,36 +89,62 @@ export default class Paginator extends React.Component {
         );
     }
 
+    getDescription() {
+        if (!this.props.pageSize || !this.props.totalRecords) {
+            return null;
+        }
+        const start = this.props.pageSize * (this.props.selectedPage - 1) + 1;
+        const end = Math.min(this.props.pageSize * this.props.selectedPage, this.props.totalRecords);
+        return <p className="pagination-description">Showing {start} - {end} of { this.props.totalRecords }</p>
+    }
+
+    select(page) {
+        if (this.props.onSelect) {
+            this.props.onSelect(page);
+        }
+    }
+
     selectPrev() {
         if (this.isFirstPage()) return;
-        this.props.onSelect(this.props.selectedPage - 1);
+        this.select(this.props.selectedPage - 1);
     }
 
     selectNext() {
         if (this.isLastPage()) return;
-        this.props.onSelect(this.props.selectedPage + 1);
+        this.select(this.props.selectedPage + 1);
     }
 
     selectPage(page) {
         if (page === this.props.selectedPage) return;
-        this.props.onSelect(page);
+        this.select(page);
     }
 
     render() {
         if (!this.props.pages || this.props.pages < 0) return null;
         return (
             <div className="paginator">
-                { this.getPrevLink() }
-                { this.getStartPages() }
-                { this.getStartSpacer() }
-                { this.getMidPages() }
-                { this.getEndSpacer() }
-                { this.getEndPages() }
-                { this.getNextLink() }
+                <div className="pages">
+                    { this.getPrevLink() }
+                    { this.getStartPages() }
+                    { this.getStartSpacer() }
+                    { this.getMidPages() }
+                    { this.getEndSpacer() }
+                    { this.getEndPages() }
+                    { this.getNextLink() }
+                </div>
+                { this.getDescription() }
             </div>
         );
 
     }
+}
+
+Paginator.propTypes = {
+    pages: PropTypes.number,
+    selectedPage: PropTypes.number,
+    pageSize: PropTypes.number,
+    totalRecords: PropTypes.number,
+    onSelect: PropTypes.func
 }
 
 function Page(props) {
@@ -128,3 +155,8 @@ function Page(props) {
         </span>
     );
 }
+
+Page.propTypes = {
+    page: PropTypes.number.isRequired,
+    selected: PropTypes.bool
+};

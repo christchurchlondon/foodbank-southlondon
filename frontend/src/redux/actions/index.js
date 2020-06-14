@@ -50,7 +50,7 @@ export const fetchRequests = (filters, page) => {
     return dispatch => {
         dispatch(loadRequests(filters, page));
         return getRequests(filters, page)
-            .then(({result, page, totalPages}) => dispatch(requestsLoaded(result, page, totalPages)))
+            .then(({result, paging}) => dispatch(requestsLoaded(result, paging)))
             .catch(() => dispatch(loadRequestsFailed()));
     };
 };
@@ -63,12 +63,11 @@ export const loadRequests = (filters, page) => ({
     }
 });
 
-export const requestsLoaded = (requests, page, totalPages) => ({
+export const requestsLoaded = (requests, paging) => ({
     type: REQUESTS_LOADED,
     payload: {
         requests,
-        page,
-        totalPages
+        paging
     }
 });
 
@@ -81,7 +80,7 @@ export const fetchSingleRequest = id => {
         dispatch(selectRequest(id));
         return getSingleRequest(id)
             .then(result => dispatch(requestSelectionLoaded(id, result)))
-            .catch(() => selectRequestFailed());
+            .catch(() => dispatch(selectRequestFailed()));
     };
 };
 
@@ -278,9 +277,9 @@ export const openSubmitDialog = event => ({
     }
 });
 
-export const confirmSubmitEvent = (event, ids, data) => {
+export const confirmSubmitEvent = (event, ids, data, filters = {}) => {
     return dispatch => {
-        dispatch(sendEvent(event, ids, data));
+        dispatch(sendEvent(event, ids, data, filters));
         dispatch(closeSubmitDialog());
     };
 };
@@ -295,11 +294,14 @@ export const closeSubmitDialog = () => ({
     type: CLOSE_SUBMIT_DIALOG
 });
 
-export const sendEvent = (event, ids, data) => {
+export const sendEvent = (event, ids, data, filters) => {
     return dispatch => {
         dispatch(submitEvent(event));
         return postEvent(event, ids, data)
-            .then(() => dispatch(eventSubmitComplete()))
+            .then(() => {
+                dispatch(eventSubmitComplete());
+                dispatch(fetchRequests(filters));
+            })
             .catch(() => dispatch(eventSubmitFailed()));
     };
 };

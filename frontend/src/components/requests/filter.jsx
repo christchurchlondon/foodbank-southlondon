@@ -88,7 +88,7 @@ export default class RequestsFilter extends React.Component {
                         onChange={ this.onPostcodeChange }
                         onEnter={ this.submit } />
                     <span className="anchor toggle" onClick={ this.toggleAdditional }>
-                        More
+                        <span className="toggle-label">More</span>
                         <Icon icon={ this.state.showAdditional ? 'chevron-up' : 'chevron-down' }
                             className="toggle-icon" />
                     </span>

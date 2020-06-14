@@ -44,3 +44,13 @@
         margin-left: auto;
     }
 }
+
+@media (max-width: $breakpoint-medium) {
+    .toggle-label {
+        display: none;
+    }
+
+    .toggle-icon {
+        margin: 0 $pad-standard 0 0;
+    }
+}

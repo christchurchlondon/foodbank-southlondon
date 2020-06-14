@@ -52,4 +52,9 @@
     .page-spacer:before {
         content: '...';
     }
+
+    .pagination-description {
+        margin-left: $pad-standard;
+        color: $colour-text-secondary;
+    }
 }
