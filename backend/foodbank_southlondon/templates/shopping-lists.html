@@ -53,14 +53,16 @@
     </head>
     <title>Shopping Lists</title>
     <body>
+        <!-- UNCOMMENT ONCE PDF PAGE BREAK ISSUE FIXED
         <img src="{{ url_for('static', filename='logo.png', _external=True)}}">
         <h1>CLIENT SHOPPING LIST</h1>
         {% set postcode = request['postcode'] %}
         <h2>POSTCODE: {{ postcode }}</h2>
         <b>VOUCHER #:</b> {{ request['voucher_number'] }}
+        -->
         <table>
             <tr>
-                <td colspan="2"><b>NAME:</b> {{ request['client_full_name'] }}</td>
+                <td colspan="2"><b>NAME:</b> {{ request['client_full_name'] }} ({{ request['voucher_number'] }})</td>
                 <td colspan="2"><b>CONTACT:</b> {{ request['phone_number'] or '' }}</td>
             </tr>
             <tr>
