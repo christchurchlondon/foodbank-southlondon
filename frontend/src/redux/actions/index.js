@@ -260,12 +260,12 @@ export const loadEventsFailed = message => ({
     }
 });
 
-export const triggerSubmitEvent = (event, ids) => {
+export const triggerSubmitEvent = (event, ids, filters) => {
     return dispatch => {
         if (event.requiresConfirmation) {
             dispatch(openSubmitDialog(event, ids));
         } else {
-            dispatch(sendEvent(event, ids));
+            dispatch(sendEvent(event, ids, {}, filters));
         }
     };
 };
