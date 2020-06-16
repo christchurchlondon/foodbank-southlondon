@@ -50,8 +50,8 @@ export default class RequestSelection extends React.Component {
                     { this.getEditLink(item) }
                 </div>
                 <div className="row">
-                    <label>Ref #</label>
-                    <p>{ item.referenceNumber }</p>
+                    <label>Voucher #</label>
+                    <p>{ item.voucherNumber }</p>
                 </div>
                 <div className="row">
                     <label>Full Name</label>
@@ -62,7 +62,7 @@ export default class RequestSelection extends React.Component {
                     <p>{ item.phoneNumber }</p>
                 </div>
                 <div className="row">
-                    <label>Delivery Date</label>
+                    <label>Packing Date</label>
                     <p>{ item.delivery.date }</p>
                 </div>
                 <div className="row">
