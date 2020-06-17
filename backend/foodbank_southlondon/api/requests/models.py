@@ -9,11 +9,11 @@ request = rest.model("ClientRequest", {
     "timestamp": fields.String(attribute="Timestamp", required=True, description="The timestamp of the form submission in the format of "
                                "DD/MM/YYYY HH:MM:SS", example="30/04/2020 18:27:57"),
     "voucher_number": fields.String(attribute="Voucher Number", required=True, description="The unique FoodBank Voucher Number of the Client "
-                                      "(consistent across requests)", example="H-00001-00001"),
+                                    "(consistent across requests)", example="H-00001-00001"),
     "client_full_name": fields.String(attribute="Client Full Name", required=True, description="The full name of the Client", example="John Smith"),
     "phone_number": fields.String(attribute="Phone Number", required=False, description="The Client's contact phone number", example="07123 456 789"),
     "packing_date": fields.String(attribute="Packing Date", required=True, description="The date that the food parcel should be delivered in the "
-                                   "format of DD/MM/YYYY", example="23/04/2020"),
+                                  "format of DD/MM/YYYY", example="23/04/2020"),
     "time_of_day": fields.String(attribute="Time of Day", required=True, description="The time of day that the food parcel should be packed.",
                                  example="AM", enum=["AM", "PM"]),
     "address_line_1": fields.String(attribute="Address Line 1", required=True, description="The first line of the address",

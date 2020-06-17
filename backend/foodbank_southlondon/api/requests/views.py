@@ -1,7 +1,7 @@
 from typing import Dict, Iterable, List, Tuple
 import functools
 
-from fuzzywuzzy import fuzz, process # type:ignore
+from fuzzywuzzy import fuzz, process  # type:ignore
 import flask
 import flask_restx  # type:ignore
 import pandas as pd  # type:ignore
@@ -11,9 +11,11 @@ from foodbank_southlondon.api.requests import models, namespace, parsers
 
 
 # CONFIG VARIABLES
-_FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_URI = "FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_URI"
+_FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_ID = "FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_ID"
+_FBSL_FORM_EDIT_URL_TEMPLATE = "FBSL_FORM_EDIT_URL_TEMPLATE"
 _FBSL_FUZZY_SEARCH_THRESHOLD = "FBSL_FUZZY_SEARCH_THRESHOLD"
-_FBSL_REQUESTS_GSHEET_URI = "FBSL_REQUESTS_GSHEET_URI"
+_FBSL_FORM_ID = "FBSL_FORM_ID"
+_FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
 
 # INTERNALS
 _CACHE_NAME = "requests"
@@ -24,7 +26,7 @@ class Requests(flask_restx.Resource):
 
     @rest.expect(parsers.requests_params)
     @rest.marshal_with(models.page_of_requests)
-    @utils.paginate("Postcode", "request_id")
+    @utils.paginate("Time of Day", "Postcode", "request_id")
     def get(self) -> Tuple[Dict, int, int]:
         """List all Client Requests."""
         params = parsers.requests_params.parse_args(flask.request)
@@ -92,15 +94,15 @@ class DistinctRequestsValues(flask_restx.Resource):
 
 
 def _congestion_zone_postcodes() -> pd.DataFrame:
-    return utils.cache("congestion_zone_postcodes", flask.current_app.config[_FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_URI])
+    return utils.cache("congestion_zone_postcodes", flask.current_app.config[_FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_ID])
 
 
 def _edit_details_url(request_id: str) -> str:
-    return f"https://docs.google.com/forms/d/e/{flask.current_app.config['FBSL_REQUESTS_FORM_URI']}/viewform?edit2={request_id}"
+    return flask.current_app.config[_FBSL_FORM_EDIT_URL_TEMPLATE].format(form_id=flask.current_app.config[_FBSL_FORM_ID], request_id=request_id)
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
-    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_URI], force_refresh=force_refresh)
+    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], force_refresh=force_refresh)
 
 
 def fuzzy_match(text: str, choices: Iterable) -> bool:

@@ -1,6 +1,7 @@
 default: help
 
 # PARAMETERS
+ENV ?= development
 PYTHON3 ?= python3.8
 VENV_NAME ?= .venv
 
@@ -30,8 +31,8 @@ lint: ## run flake8 and mypy
 	mypy -p foodbank_southlondon
 
 .PHONY: run
-run: install ## run the flask locally using the builtin flask webserver [DEV]
-	export FLASK_APP=foodbank_southlondon.launch:main FLASK_ENV=development PORT=5000 && \
+run: install ## ENV= (run the flask locally using the builtin flask webserver; ENV defaults to development)
+	export FLASK_APP=foodbank_southlondon.launch:main FLASK_ENV=$(ENV) PORT=5000 && \
 	. $(_VENV_ACTIVATE) && \
 	flask run --eager-loading --port=$$PORT
 

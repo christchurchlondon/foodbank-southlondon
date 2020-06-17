@@ -63,8 +63,8 @@
                 <td class="right"><b>DELIVER:</b> {{ request['packing_date'] }}</td>
             </tr>
             <tr class="middle">
-                <td>
-                    <b>{{ request['address_line_1'] }}</b><br>
+                <td style="font-size: 1.25em; line-height: 1.25em;">
+                    {{ request['address_line_1'] }}<br>
                     {{ request['address_line_2'] or '' }}<br>
                     {{ request['town'] or '' }}<br>
                     {{ request['county'] or '' }}
