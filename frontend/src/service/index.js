@@ -1,6 +1,5 @@
 import fetch from 'cross-fetch';
 import { format, parse } from 'date-fns';
-import { isInCongestionZone } from '../helpers';
 import { DATE_FORMAT_REQUEST, DATE_FORMAT_TIMESTAMP } from '../constants';
 
 const endpoints = {
@@ -37,10 +36,33 @@ function performDownload(url, data = {}) {
         body: JSON.stringify(data)
     })
         .then(handleErrors)
-        .then(response => response.blob())
-        .then(blob => {
-            var url = window.URL.createObjectURL(blob);
-            window.open(url);
+        .then(async response => ({
+            name: extractFileNameFromResponse(response),
+            blob: await response.blob()
+        }))
+        .then(({ name, blob }) => {
+
+            // It is necessary to create a new blob object with mime-type explicitly set for all browsers except Chrome, but it works for Chrome too.
+            const newBlob = new Blob([blob], { type: 'application/pdf' });
+
+            // MS Edge and IE don't allow using a blob object directly as link href, instead it is necessary to use msSaveOrOpenBlob
+            if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+                window.navigator.msSaveOrOpenBlob(newBlob);
+            } else {
+                // For other browsers: create a link pointing to the ObjectURL containing the blob.
+                const objUrl = window.URL.createObjectURL(newBlob);
+
+                let link = document.createElement('a');
+                link.href = objUrl;
+                link.download = name;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+
+                // For Firefox it is necessary to delay revoking the ObjectURL.
+                setTimeout(() => { window.URL.revokeObjectURL(objUrl); }, 250);
+            }
+
         });
 }
 
@@ -49,6 +71,20 @@ function handleErrors(response) {
         throw Error(response.statusText);
     }
     return response;
+}
+
+function extractFileNameFromResponse(response) {
+    const dispositions = response.headers.get('content-disposition').split(';');
+    const token = 'filename=';
+    return dispositions.reduce((name, disposition) => {
+        if (disposition.indexOf(token) > -1) {
+            return disposition
+                .replace(token, '')
+                .replace(/"/g, '')
+                .trim();
+        }
+        return name;
+    }, 'download.pdf');
 }
 
 function encodeParams(params) {
@@ -91,12 +127,13 @@ export function getRequests(filters = {}, page = 1) {
             const result = response.items.map(item => ({
                 id: item.request_id,
                 fullName: item.client_full_name,
+                householdSize: item.household_size,
                 voucherNumber: item.voucher_number,
                 packingDate: parseDate(item.packing_date, 'dd/MM/yyyy'),
                 timeOfDay: item.time_of_day,
                 event: extractEvent(item),
                 postcode: item.postcode,
-                isInCongestionZone: isInCongestionZone(item.postcode)
+                isInCongestionZone: item.congestion_zone
             }));
 
             const paging = {
@@ -106,7 +143,9 @@ export function getRequests(filters = {}, page = 1) {
                 pageSize: response.per_page
             }
 
-            return { result, paging };
+            const editUrl = response.form_submit_url;
+
+            return { result, paging, editUrl };
         });
 }
 

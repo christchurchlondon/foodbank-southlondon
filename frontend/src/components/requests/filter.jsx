@@ -63,7 +63,7 @@ export default class RequestsFilter extends React.Component {
                         value={ this.state.name }
                         onChange={ this.onNameChange }
                         onEnter={ this.submit } />
-                    <FilterField label="Search ref number..."
+                    <FilterField label="Search vouchers..."
                         value={ this.state.referenceNumber }
                         onChange={ this.onReferenceNumberChange }
                         onEnter={ this.submit } />

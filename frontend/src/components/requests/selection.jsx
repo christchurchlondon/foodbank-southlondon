@@ -116,7 +116,6 @@ export default class RequestSelection extends React.Component {
     getEventsDetails() {
         if (!this.props.item) return null;
 
-        // TODO max height container for events
         return (
             <div className="event-wrap">
                 <EventsDetails events={ this.props.item.events } />

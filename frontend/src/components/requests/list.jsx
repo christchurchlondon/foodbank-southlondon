@@ -52,6 +52,7 @@ export default class RequestsList extends React.Component {
                             checked={ item.checked } />
                     </td>
                     <td>{ request.fullName }</td>
+                    <td>{ request.householdSize }</td>
                     <td>
                         { request.postcode }
                         { request.isInCongestionZone && <CongestionCharge /> }
@@ -78,6 +79,7 @@ export default class RequestsList extends React.Component {
                                 checked={ hasData && allChecked } />
                         </th>
                         <th>Name</th>
+                        <th>Family Size</th>
                         <th>Postcode</th>
                         <th>Packing Date</th>
                         <th>Time</th>

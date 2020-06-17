@@ -135,6 +135,7 @@ export default class RequestsEventDialog extends React.Component {
         const buttons = [
             {
                 label: 'Confirm',
+                className: 'primary',
                 disabled: !this.canSubmit(),
                 onClick: () => { this.confirm(); }
             },
