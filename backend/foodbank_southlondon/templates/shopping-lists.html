@@ -68,7 +68,10 @@
             <tr>
                 <td colspan="2">
                     <b>ADDRESS</b><br>
-                    {{ request['address_line_1'] }}, {{ postcode }}
+                    {% set address_line_2 = request['address_line_2'] %}
+                    {% set town = request['town'] %}
+                    {% set county = request['county'] %}
+                    {{ request['address_line_1'] }}{% if address_line_2 %}, {{ address_line_2 }}{% endif %}{% if town %}, {{ town }}{% endif %}{% if county %}, {{ county }}{% endif %}, {{ request['postcode'] }}
                 </td>
                 <td colspan="2">
                     <b>EXTRA INFORMATION</b><br>

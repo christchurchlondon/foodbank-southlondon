@@ -19,9 +19,11 @@ logging.getLogger("weasyprint").addHandler(logging.StreamHandler())
 # CONFIG VARIABLES
 _FBSL_BASE_DOMAIN = "FBSL_BASE_DOMAIN"
 _FBSL_CATCH_ALL_LIST = "FBSL_CATCH_ALL_LIST"
+_FBSL_FORM_ID = "FBSL_FORM_ID"
+_FBSL_FORM_SUBMIT_URL_TEMPLATE = "FBSL_FORM_SUBMIT_URL_TEMPLATE"
 _FBSL_MAX_ACTION_REQUEST_IDS = "FBSL_MAX_ACTION_REQUEST_IDS"
 _FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
-_FBSL_REQUESTS_GSHEET_URI = "FBSL_REQUESTS_GSHEET_URI"
+_FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
 _PREFERRED_URL_SCHEME = "PREFERRED_URL_SCHEME"
 
 
@@ -113,23 +115,25 @@ class Actions(flask_restx.Resource):
         if event_name.startswith("Print"):
             try:
                 requests_items = _get(f"{api_base_url}requests/{','.join(request_ids)}", cookies=flask.request.cookies,
-                                    params={"per_page": total_request_ids})["items"]
+                                      params={"per_page": total_request_ids})["items"]
             except requests.exceptions.HTTPError as error:
                 if error.response.status_code == 404:
                     rest.abort(404, error.response.json()["message"])
                 raise
+            print_shipping_label = "Print Shipping Label"
             if event_name == "Print Shopping List":
                 return_value = self._generate_shopping_list_pdf(requests_items, api_base_url, flask.request.cookies)
-            elif event_name == "Print Shipping Label":
+            elif event_name == print_shipping_label:
                 if not event_data.isdigit():
-                    rest.abort(400, "When event_name is \"Print Shipping Label\", event_data is expected to be an integer quantity of pages to print.")
+                    rest.abort(400, f"When event_name is \"{print_shipping_label}\", event_data is expected to be an integer quantity of pages to "
+                               "print.")
                 return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
             elif event_name == "Print Driver Overview":
                 return_value = self._generate_driver_overview_pdf(requests_items)
         else:
             if event_name == "Permanently Delete Request":
                 for request_id in request_ids:
-                    utils.delete_row(flask.current_app.config[_FBSL_REQUESTS_GSHEET_URI], request_id)
+                    utils.delete_row(flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], request_id)
             return_value = ({}, 201)
         now = f"{datetime.datetime.utcnow().isoformat()}Z"
         _post(f"{api_base_url}events/", cookies=flask.request.cookies,
@@ -228,5 +232,6 @@ class Status(flask_restx.Resource):
             "per_page": requests_data["per_page"],
             "total_pages": requests_data["total_pages"],
             "total_items": requests_data["total_items"],
+            "form_submit_url": flask.current_app.config[_FBSL_FORM_SUBMIT_URL_TEMPLATE].format(form_id=flask.current_app.config[_FBSL_FORM_ID]),
             "items": items
         }

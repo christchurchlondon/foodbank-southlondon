@@ -10,7 +10,7 @@ from foodbank_southlondon.api.requests import views as requests_views
 
 
 # CONFIG VARIABLES
-_FBSL_EVENTS_GSHEET_URI = "FBSL_EVENTS_GSHEET_URI"
+_FBSL_EVENTS_GSHEET_ID = "FBSL_EVENTS_GSHEET_ID"
 
 # INTERNALS
 _CACHE_NAME = "events"
@@ -57,7 +57,7 @@ class Events(flask_restx.Resource):
         missing_request_ids = set(items_df["request_id"].unique()).difference(requests_df["request_id"].unique())
         if missing_request_ids:
             rest.abort(400, f"the following request_id values {missing_request_ids} were not found.")
-        utils.append_rows(flask.current_app.config[_FBSL_EVENTS_GSHEET_URI], [list(item.values()) for item in items])
+        utils.append_rows(flask.current_app.config[_FBSL_EVENTS_GSHEET_ID], [list(item.values()) for item in items])
         return ({}, 201)
 
 
@@ -80,4 +80,4 @@ class DistinctEventNameValues(flask_restx.Resource):
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
-    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_EVENTS_GSHEET_URI], force_refresh=force_refresh)
+    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_EVENTS_GSHEET_ID], force_refresh=force_refresh)
