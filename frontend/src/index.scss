@@ -161,6 +161,15 @@ button, .button {
             color: $colour-button-text-secondary;
         }
     }
+    
+    &.danger {
+        background-color: $colour-button-bg-danger;
+        color: $colour-button-text-danger;
+
+        &:hover {
+            color: $colour-button-text-danger;
+        }
+    }
 
     &.btn-small {
         padding: $pad-half / 2 $pad-half;
