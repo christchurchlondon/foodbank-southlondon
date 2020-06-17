@@ -207,8 +207,8 @@ class Status(flask_restx.Resource):
         api_base_url = _api_base_url()
         items = []
         requests_data = _get(f"{api_base_url}requests/", cookies=flask.request.cookies,
-                             headers={"X-Fields": "items{request_id, client_full_name, voucher_number, postcode, packing_date, time_of_day}, "
-                                      "page, per_page, total_items, total_pages"},
+                             headers={"X-Fields": "items{request_id, client_full_name, voucher_number, postcode, packing_date, time_of_day, "
+                                      "household_size}, page, per_page, total_items, total_pages"},
                              params={"client_full_names": client_full_names, "packing_dates": packing_dates, "page": params["page"],
                                      "per_page": per_page, "postcodes": postcodes, "voucher_numbers": voucher_numbers,
                                      "refresh_cache": refresh_cache})
