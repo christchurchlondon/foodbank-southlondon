@@ -80,7 +80,7 @@ export function getRequests(filters = {}, page = 1) {
         start_date: formatDate(dates.start),
         end_date: formatDate(dates.end),
         client_full_names: filters.name,
-        reference_numbers: filters.referenceNumber,
+        voucher_numbers: filters.referenceNumber,
         postcodes: filters.postcode
     };
 
@@ -203,7 +203,7 @@ function responseItemToRequest(item) {
         fullName: item.client_full_name,
         phoneNumber: item.phone_number,
         delivery: {
-            date: item.delivery_date,
+            date: item.packing_date,
             instructions: item.delivery_instructions
         },
         address: {
