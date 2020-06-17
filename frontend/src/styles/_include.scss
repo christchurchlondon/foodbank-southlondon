@@ -18,6 +18,8 @@ $font-size-large: 1.2rem;
 $colour-main: #5bac26;
 $colour-main-bold: #008751;
 $colour-background: #f2f3eb;
+$colour-background-semibold: #c5c6b9;
+$colour-background-bold: #a5a69a;
 $colour-accent: #00adef;
 $colour-accent-bold: #2381D3;
 $colour-text: #282922;
@@ -35,18 +37,19 @@ $colour-border-primary: $colour-accent;
 $colour-border-secondary: $colour-background;
 
 $colour-button-bg: $colour-main;
-$colour-button-bg-primary: $colour-main-bold;
-$colour-button-bg-secondary: $colour-accent-bold;
-$colour-button-bg-disabled: darken($colour-background, 30);
-$colour-button-bg-primary-disabled: lighten($colour-main-bold, 20);
-$colour-button-bg-secondary-disabled: lighten($colour-accent-bold, 20);
+$colour-button-bg-primary: $colour-accent-bold;
+$colour-button-bg-secondary: $colour-background-bold;
+$colour-button-bg-disabled: $colour-background;
+$colour-button-bg-primary-disabled: $colour-background-semibold;
+$colour-button-bg-secondary-disabled: $colour-background;
 $colour-button-bg-danger: $colour-danger;
 $colour-button-bg-danger-hover: darken($colour-danger, 10);
 
 $colour-button-text: $colour-white;
 $colour-button-text-primary: $colour-white;
-$colour-button-text-secondary: $colour-background;
-$colour-button-text-disabled: lighten($colour-button-text, 50);
+$colour-button-text-secondary: $colour-white;
+$colour-button-text-disabled: $colour-white;
+$colour-button-text-danger: $colour-white;
 
 $colour-anchor: $colour-accent;
 $colour-anchor-hover: $colour-accent-bold;

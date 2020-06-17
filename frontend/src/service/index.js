@@ -1,6 +1,5 @@
 import fetch from 'cross-fetch';
 import { format, parse } from 'date-fns';
-import { isInCongestionZone } from '../helpers';
 import { DATE_FORMAT_REQUEST, DATE_FORMAT_TIMESTAMP } from '../constants';
 
 const endpoints = {
@@ -128,12 +127,13 @@ export function getRequests(filters = {}, page = 1) {
             const result = response.items.map(item => ({
                 id: item.request_id,
                 fullName: item.client_full_name,
+                householdSize: item.household_size,
                 voucherNumber: item.voucher_number,
                 packingDate: parseDate(item.packing_date, 'dd/MM/yyyy'),
                 timeOfDay: item.time_of_day,
                 event: extractEvent(item),
                 postcode: item.postcode,
-                isInCongestionZone: isInCongestionZone(item.postcode)
+                isInCongestionZone: item.congestion_zone
             }));
 
             const paging = {
@@ -143,7 +143,9 @@ export function getRequests(filters = {}, page = 1) {
                 pageSize: response.per_page
             }
 
-            return { result, paging };
+            const editUrl = response.form_submit_url;
+
+            return { result, paging, editUrl };
         });
 }
 

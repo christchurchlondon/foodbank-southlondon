@@ -7,7 +7,10 @@
     .toggle {
         display: flex;
         min-width: 195px;
-        cursor: pointer;
+
+        &:not(:disabled) {
+            cursor: pointer;
+        }
     }
 
     .toggle-icon {

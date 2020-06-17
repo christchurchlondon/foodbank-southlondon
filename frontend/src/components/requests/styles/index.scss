@@ -9,4 +9,17 @@
         align-items: flex-start;
         background-color: $colour-white;
     }
+
+    .requests-controls {
+        display: flex;
+        align-items: center;
+
+        .add-button {
+            margin-left: auto;
+
+            svg {
+                margin-right: $pad-half;
+            }
+        }
+    }
 }

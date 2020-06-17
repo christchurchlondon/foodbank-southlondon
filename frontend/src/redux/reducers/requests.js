@@ -51,7 +51,8 @@ const initialState = {
         items: [],
         dialog: null,
         updateStatus: STATUS_IDLE
-    }
+    },
+    editUrl: ''
 };
 
 export default function(state = initialState, action) {
@@ -86,7 +87,8 @@ export default function(state = initialState, action) {
                     .map(request => ({
                         data: request,
                         checked: false
-                    }))
+                    })),
+                editUrl: action.payload.editUrl
             };
         case LOAD_REQUESTS_FAILED:
             return {

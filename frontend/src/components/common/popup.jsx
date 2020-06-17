@@ -67,7 +67,7 @@ export default class Popup extends React.Component {
         return this.props.canClose === false
             ? null
             : (
-                <button className="close btn-small" onClick={ this.close }>
+                <button className="close danger btn-small" onClick={ this.close }>
                     <FontAwesomeIcon icon="times" />
                 </button>
             );

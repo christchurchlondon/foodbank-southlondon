@@ -2,7 +2,5 @@
 
 .congestion-charge {
     height: 14px;
-    position: relative;
-    top: 1px;
-    margin-left: $pad-half;
+    margin: 0 0 -1px $pad-half;
 }

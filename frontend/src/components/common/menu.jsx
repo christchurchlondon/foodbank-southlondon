@@ -53,7 +53,7 @@ export default class Menu extends React.Component {
     render() {
         return (
             <div className="menu">
-                <button className="secondary toggle" disabled={ this.props.disabled } onClick={ this.handleToggleClick }>
+                <button className="primary toggle" disabled={ this.props.disabled } onClick={ this.handleToggleClick }>
                     { this.props.label }
                     <FontAwesomeIcon icon="chevron-down" className="toggle-icon" />
                 </button>
