@@ -134,7 +134,7 @@ table .empty-row {
     color: $colour-text-secondary;
 }
 
-button {
+button, .button {
     padding: $pad-half $pad-standard;
     background-color: $colour-button-bg;
     color: $colour-button-text;
@@ -147,11 +147,19 @@ button {
     &.primary {
         background-color: $colour-button-bg-primary;
         color: $colour-button-text-primary;
+
+        &:hover {
+            color: $colour-button-text-primary;
+        }
     }
 
     &.secondary {
         background-color: $colour-button-bg-secondary;
         color: $colour-button-text-secondary;
+
+        &:hover {
+            color: $colour-button-text-secondary;
+        }
     }
 
     &.btn-small {
@@ -170,6 +178,10 @@ button {
         &.secondary {
             background-color: $colour-button-bg-secondary-disabled;
         }
+    }
+
+    &:hover {
+        color: $colour-button-text;
     }
 
     &:focus {

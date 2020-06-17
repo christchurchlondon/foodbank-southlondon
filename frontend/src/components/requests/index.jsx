@@ -1,6 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { STATUS_IDLE, STATUS_LOADING, STATUS_FAILED, STATUS_SUCCESS } from '../../constants';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import {
+    EDIT_URL,
+    STATUS_FAILED,
+    STATUS_IDLE,
+    STATUS_LOADING,
+    STATUS_SUCCESS
+} from '../../constants';
 import { getRequestsState } from '../../redux/selectors';
 import {
     fetchRequests,
@@ -134,12 +141,17 @@ class Requests extends React.Component {
                     onSelect={ id => this.selectRequest(id) }
                     onToggle={ id => this.toggleRequest(id) }
                     onToggleAll={ () => this.toggleAllRequests() } />
-                <Paginator
-                    selectedPage={ this.props.paging.page }
-                    pages={ this.props.paging.totalPages }
-                    pageSize={ this.props.paging.pageSize }
-                    totalRecords={ this.props.paging.totalItems }
-                    onSelect={ this.selectPage } />
+                <div className="requests-controls">
+                    <Paginator
+                        selectedPage={ this.props.paging.page }
+                        pages={ this.props.paging.totalPages }
+                        pageSize={ this.props.paging.pageSize }
+                        totalRecords={ this.props.paging.totalItems }
+                        onSelect={ this.selectPage } />
+                    <a className="button add-button" href={ EDIT_URL } target="_blank" title="Open Google sheet to edit">
+                        <Icon icon="plus" />Add a new entry
+                    </a>
+                </div>
             </div>
         );
     }
