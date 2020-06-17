@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import {
-    EDIT_URL,
     STATUS_FAILED,
     STATUS_IDLE,
     STATUS_LOADING,
@@ -148,13 +147,19 @@ class Requests extends React.Component {
                         pageSize={ this.props.paging.pageSize }
                         totalRecords={ this.props.paging.totalItems }
                         onSelect={ this.selectPage } />
-                    <a className="button add-button" href={ EDIT_URL } title="Open Google sheet to edit"
-                        target="_blank" rel="noopener noreferrer">
-                        <Icon icon="plus" />Add a new entry
-                    </a>
+                    { this.getEditLink() }
                 </div>
             </div>
         );
+    }
+
+    getEditLink() {
+        return this.props.editUrl
+            ? <a className="button add-button" href={ this.props.editUrl } title="Open Google sheet to edit"
+                target="_blank" rel="noopener noreferrer">
+                <Icon icon="plus" />Add a new entry
+            </a>
+            : null;
     }
 
     getRequestSelection() {

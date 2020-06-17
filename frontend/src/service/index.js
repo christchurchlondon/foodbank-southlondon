@@ -107,7 +107,9 @@ export function getRequests(filters = {}, page = 1) {
                 pageSize: response.per_page
             }
 
-            return { result, paging };
+            const editUrl = response.form_submit_url;
+
+            return { result, paging, editUrl };
         });
 }
 

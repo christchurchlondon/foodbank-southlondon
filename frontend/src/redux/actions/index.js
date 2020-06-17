@@ -50,7 +50,7 @@ export const fetchRequests = (filters, page) => {
     return dispatch => {
         dispatch(loadRequests(filters, page));
         return getRequests(filters, page)
-            .then(({result, paging}) => dispatch(requestsLoaded(result, paging)))
+            .then(({ result, paging, editUrl }) => dispatch(requestsLoaded(result, paging, editUrl)))
             .catch(() => dispatch(loadRequestsFailed()));
     };
 };
@@ -63,11 +63,11 @@ export const loadRequests = (filters, page) => ({
     }
 });
 
-export const requestsLoaded = (requests, paging) => ({
+export const requestsLoaded = (requests, paging, editUrl) => ({
     type: REQUESTS_LOADED,
     payload: {
         requests,
-        paging
+        paging, editUrl
     }
 });
 
