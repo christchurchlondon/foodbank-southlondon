@@ -46,6 +46,8 @@ _status = rest.inherit("Status", _event, {
 })
 
 page_of_status = rest.inherit("StatusPage", _pagination, {
+    "form_submit_url": fields.String(required=True, description="The URL that users can use to submit entries in the form.",
+                                     example="https://docs.google.com/forms/d/e/asdasdasd989123123lkf_skdjfasd/viewform"),
     "items": fields.List(fields.Nested(_status))
 })
 
