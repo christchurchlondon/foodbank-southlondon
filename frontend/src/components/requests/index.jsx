@@ -157,7 +157,7 @@ class Requests extends React.Component {
         return this.props.editUrl
             ? <a className="button add-button" href={ this.props.editUrl } title="Open Google sheet to edit"
                 target="_blank" rel="noopener noreferrer">
-                <Icon icon="plus" />Add a new entry
+                <Icon icon="plus" />New request
             </a>
             : null;
     }
