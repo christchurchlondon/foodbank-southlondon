@@ -1,6 +1,5 @@
 import fetch from 'cross-fetch';
 import { format, parse } from 'date-fns';
-import { isInCongestionZone } from '../helpers';
 import { DATE_FORMAT_REQUEST, DATE_FORMAT_TIMESTAMP } from '../constants';
 
 const endpoints = {
@@ -97,7 +96,7 @@ export function getRequests(filters = {}, page = 1) {
                 timeOfDay: item.time_of_day,
                 event: extractEvent(item),
                 postcode: item.postcode,
-                isInCongestionZone: isInCongestionZone(item.postcode)
+                isInCongestionZone: item.congestion_zone
             }));
 
             const paging = {
