@@ -148,7 +148,8 @@ class Requests extends React.Component {
                         pageSize={ this.props.paging.pageSize }
                         totalRecords={ this.props.paging.totalItems }
                         onSelect={ this.selectPage } />
-                    <a className="button add-button" href={ EDIT_URL } target="_blank" title="Open Google sheet to edit">
+                    <a className="button add-button" href={ EDIT_URL } title="Open Google sheet to edit"
+                        target="_blank" rel="noopener noreferrer">
                         <Icon icon="plus" />Add a new entry
                     </a>
                 </div>
