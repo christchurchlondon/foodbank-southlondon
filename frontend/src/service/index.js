@@ -37,10 +37,33 @@ function performDownload(url, data = {}) {
         body: JSON.stringify(data)
     })
         .then(handleErrors)
-        .then(response => response.blob())
-        .then(blob => {
-            var url = window.URL.createObjectURL(blob);
-            window.open(url);
+        .then(async response => ({
+            name: extractFileNameFromResponse(response),
+            blob: await response.blob()
+        }))
+        .then(({ name, blob }) => {
+
+            // It is necessary to create a new blob object with mime-type explicitly set for all browsers except Chrome, but it works for Chrome too.
+            const newBlob = new Blob([blob], { type: 'application/pdf' });
+
+            // MS Edge and IE don't allow using a blob object directly as link href, instead it is necessary to use msSaveOrOpenBlob
+            if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+                window.navigator.msSaveOrOpenBlob(newBlob);
+            } else {
+                // For other browsers: create a link pointing to the ObjectURL containing the blob.
+                const objUrl = window.URL.createObjectURL(newBlob);
+
+                let link = document.createElement('a');
+                link.href = objUrl;
+                link.download = name;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+
+                // For Firefox it is necessary to delay revoking the ObjectURL.
+                setTimeout(() => { window.URL.revokeObjectURL(objUrl); }, 250);
+            }
+
         });
 }
 
@@ -49,6 +72,20 @@ function handleErrors(response) {
         throw Error(response.statusText);
     }
     return response;
+}
+
+function extractFileNameFromResponse(response) {
+    const dispositions = response.headers.get('content-disposition').split(';');
+    const token = 'filename=';
+    return dispositions.reduce((name, disposition) => {
+        if (disposition.indexOf(token) > -1) {
+            return disposition
+                .replace(token, '')
+                .replace(/"/g, '')
+                .trim();
+        }
+        return name;
+    }, 'download.pdf');
 }
 
 function encodeParams(params) {
