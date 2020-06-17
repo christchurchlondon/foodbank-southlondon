@@ -16,12 +16,12 @@ export default function Main() {
         <Router>
             <main className="main">
                 <Header />
-                <div className="contents">
+                <section className="contents">
                     <Switch>
                         <Route path="/clients" component={ Requests } />
                         <Route path="/lists" component={ Lists } />
                     </Switch>
-                </div>
+                </section>
             </main>
             <Redirect from="/#" to="/clients" />
         </Router>
