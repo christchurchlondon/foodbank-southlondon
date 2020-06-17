@@ -42,7 +42,8 @@ _status = rest.inherit("Status", _event, {
     "postcode": _clone_field_without_attribute(requests_models.request["postcode"]),
     "packing_date": _clone_field_without_attribute(requests_models.request["packing_date"]),
     "time_of_day": _clone_field_without_attribute(requests_models.request["time_of_day"]),
-    "household_size": _clone_field_without_attribute(requests_models.request["household_size"])
+    "household_size": _clone_field_without_attribute(requests_models.request["household_size"]),
+    "congestion_zone": _clone_field_without_attribute(requests_models.request["congestion_zone"])
 })
 
 page_of_status = rest.inherit("StatusPage", _pagination, {
