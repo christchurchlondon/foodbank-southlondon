@@ -24,6 +24,7 @@ When running locally, you have two options:
 * Install **NodeJS & npmjs** - [Mac](https://nodejs.org/en/download/) | [Ubuntu](https://github.com/nodesource/distributions)
 * Install **Python 3.8** - [Mac](https://www.python.org/downloads/mac-osx/) | [Ubuntu](https://launchpad.net/~deadsnakes/+archive/ubuntu/ppa) (*python3.8 python3.8-dev python3.8-venv*)
 * Install **Git** - Mac (builtin in *[Xcode](https://developer.apple.com/xcode/)*) | Ubuntu (builtin)
+* Install **WeasyPrint's Dependencies** - [All Platforms](https://weasyprint.readthedocs.io/en/stable/install.html#)
 * Clone this repository
 
 #### Installation
@@ -48,7 +49,6 @@ To install the application in a production environment, you need a different set
 #### Prerequisites
 * Install **Make** - Mac (builtin in *[Xcode](https://developer.apple.com/xcode/)*) | Ubuntu (builtin)
 * Install **Docker** [Mac] (https://docs.docker.com/docker-for-mac/install/ | ) [Ubuntu] (https://docs.docker.com/engine/install/ubuntu/)
-* Install **WeasyPrint's Dependencies** - [All Platforms](https://weasyprint.readthedocs.io/en/stable/install.html#)
 * Clone this repository
 
 #### Run Locally
