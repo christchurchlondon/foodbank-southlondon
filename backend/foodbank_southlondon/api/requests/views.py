@@ -26,7 +26,7 @@ class Requests(flask_restx.Resource):
 
     @rest.expect(parsers.requests_params)
     @rest.marshal_with(models.page_of_requests)
-    @utils.paginate("Time of Day", "Postcode", "request_id")
+    @utils.paginate("Packing Date", "Time of Day", "Postcode", "request_id")
     def get(self) -> Tuple[Dict, int, int]:
         """List all Client Requests."""
         params = parsers.requests_params.parse_args(flask.request)
