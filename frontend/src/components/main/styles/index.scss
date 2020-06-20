@@ -3,8 +3,23 @@
 
 /* Layout / Main styles */
 
+html, body, #root {
+    height: 100%;
+}
+
 .contents {
     margin: 0 auto;
     padding: 1rem;
+    width: 100%;
     max-width: 1200px;
+}
+
+main {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+footer {
+    margin-top: auto;
 }

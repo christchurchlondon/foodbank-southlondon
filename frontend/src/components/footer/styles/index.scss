@@ -1,0 +1,20 @@
+@import 'include';
+
+
+footer {
+    background-color: $colour-background;
+    padding: $pad-standard;
+    
+    p {
+        margin: 0;
+        font-size: $font-size-small;
+        text-align: center;
+        color: $colour-text-secondary;
+    }
+
+    a {
+        margin-left: $pad-standard;
+        border-left: 1px solid $colour-text-secondary;
+        padding-left: $pad-standard;
+    }
+}
