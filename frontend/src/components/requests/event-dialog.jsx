@@ -154,7 +154,7 @@ export default class RequestsEventDialog extends React.Component {
                 onClose={ this.close }
             >
                 <div className="event-dialog-contents">
-                    <p>Are you sure you want to submit this action?</p>
+                    <p>{ this.props.details.event.confirmationLabel || 'Are you sure you want to submit this action?' }</p>
                     { inputFields }
                 </div>
             </Popup>

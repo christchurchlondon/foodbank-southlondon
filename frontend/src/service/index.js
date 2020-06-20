@@ -203,7 +203,8 @@ export function getEvents() {
     return performFetch(endpoints.GET_EVENTS)
         .then(response => response.values.map(v => ({
             name: v.event_name,
-            requiresConfirmation: v.confirmation_expected || v.date_expected || v.quantity_expected,
+            requiresConfirmation: v.confirmation_expected,
+            confirmationLabel: v.confirmation_label,
             requiresDate: v.date_expected,
             requiresQuantity: v.quantity_expected,
             isDownload: v.returns_pdf
