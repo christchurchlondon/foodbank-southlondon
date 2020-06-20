@@ -6,6 +6,7 @@ import {
     Switch
 } from 'react-router-dom';
 import Header from '../header';
+import Footer from '../footer';
 import Requests from '../requests';
 import Lists from '../lists';
 import './styles/index.scss';
@@ -22,6 +23,7 @@ export default function Main() {
                         <Route path="/lists" component={ Lists } />
                     </Switch>
                 </section>
+                <Footer />
             </main>
             <Redirect from="/#" to="/clients" />
         </Router>
