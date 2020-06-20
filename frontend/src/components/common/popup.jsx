@@ -21,7 +21,9 @@ export default class Popup extends React.Component {
     }
 
     close() {
-        this.props.onClose();
+        if (this.props.onClose) {
+            this.props.onClose();
+        }
     }
 
     boxClickHandler(event) {
