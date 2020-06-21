@@ -239,7 +239,7 @@ export function postListUpdate(list, notes) {
 function responseItemToRequest(item) {
     return {
         id: item.request_id,
-        referenceNumber: item.reference_number,
+        voucherNumber: item.voucher_number,
         fullName: item.client_full_name,
         phoneNumber: item.phone_number,
         delivery: {
