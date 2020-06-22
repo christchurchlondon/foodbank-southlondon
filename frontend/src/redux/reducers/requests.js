@@ -195,6 +195,7 @@ export default function(state = initialState, action) {
                 ...state,
                 events: {
                     ...state.events,
+                    updateStatus: STATUS_IDLE,
                     dialog: null
                 }
             };
