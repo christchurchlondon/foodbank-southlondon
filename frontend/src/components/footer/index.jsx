@@ -34,7 +34,7 @@ export default class Footer extends React.Component {
 
     render() {
         return (
-            <footer>
+            <footer className="footer">
                 <p>
                     Application by A, D & <span onClick={ this.click.bind(this) }>D</span>
                     <a href="https://vauxhall.foodbank.org.uk/" rel="noopener noreferrer" target="_blank">Vauxhall Foodbank</a>
