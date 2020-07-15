@@ -58,7 +58,7 @@ class RequestsByID(flask_restx.Resource):
     @rest.response(404, "Not Found")
     @rest.expect(parsers.pagination_params)
     @rest.marshal_with(models.page_of_requests)
-    @utils.paginate("Client Full Name", "request_id")
+    @utils.paginate("Postcode")
     def get(self, request_ids: str) -> Tuple[Dict, int, int]:
         """Get all Client Requests by provided request_id values."""
         request_id_values = set(request_id.strip() for request_id in request_ids.split(","))
