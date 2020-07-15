@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union
 import datetime
 
 import flask
@@ -7,6 +7,7 @@ import numpy as np  # type:ignore
 import pandas as pd  # type:ignore
 import requests
 import weasyprint  # type:ignore
+import werkzeug
 
 from foodbank_southlondon.api import utils
 from foodbank_southlondon.api.lists import models as lists_models
@@ -50,7 +51,7 @@ def _post(url: str, **kwargs: Any) -> Dict:
 class Actions(flask_restx.Resource):
 
     @staticmethod
-    def _generate_driver_overview_pdf(requests_items, driver_name):
+    def _generate_driver_overview_pdf(requests_items: List, driver_name: str) -> flask.Response:
         template_name = "driver-overview"
         today = datetime.datetime.now().strftime("%Y-%m-%d")
         html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", requests_items=requests_items, date=today,
@@ -59,7 +60,7 @@ class Actions(flask_restx.Resource):
         return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, template_name)
 
     @staticmethod
-    def _generate_shopping_list_pdf(requests_items, api_base_url, cookies):
+    def _generate_shopping_list_pdf(requests_items: List, api_base_url: str, cookies: werkzeug.ImmutableTypeConversionDict) -> flask.Response:
         lists: Dict[str, Dict[str, Any]] = {}
         catch_all_list_name = flask.current_app.config[_FBSL_CATCH_ALL_LIST]
         template_name = "shopping-lists"
@@ -78,7 +79,7 @@ class Actions(flask_restx.Resource):
         return Actions._make_pdf_response(pages, document.metadata, document.url_fetcher, document._font_config, template_name)
 
     @staticmethod
-    def _generate_shipping_label_pdf(request_items, quantity):
+    def _generate_shipping_label_pdf(request_items: List, quantity: int) -> flask.Response:
         template_name = "shipping-labels"
         pages = []
         document = None
@@ -91,7 +92,7 @@ class Actions(flask_restx.Resource):
         return Actions._make_pdf_response(pages, document.metadata, document.url_fetcher, document._font_config, template_name)
 
     @staticmethod
-    def _make_pdf_response(pages, metadata, url_fetcher, font_config, template_name):
+    def _make_pdf_response(pages: List, metadata: Any, url_fetcher: Any, font_config: Any, template_name: str) -> flask.Response:
         pdf = weasyprint.Document(pages, metadata, url_fetcher, font_config).write_pdf()
         response = flask.make_response((pdf, 201))
         response.headers["Content-Type"] = "application/pdf"
@@ -102,7 +103,7 @@ class Actions(flask_restx.Resource):
     @rest.response(400, "Bad Request")
     @rest.response(404, "Not Found")
     @rest.expect(models.action)
-    def post(self) -> Union[flask.Response, Tuple[Dict, int]]:
+    def post(self) -> Union[Tuple[Dict, int], flask.Response]:
         """Process an action."""
         data = flask.request.json
         flask.current_app.logger.debug(f"Received request body, {data}")
