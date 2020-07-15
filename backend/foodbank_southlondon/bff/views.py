@@ -50,10 +50,11 @@ def _post(url: str, **kwargs: Any) -> Dict:
 class Actions(flask_restx.Resource):
 
     @staticmethod
-    def _generate_driver_overview_pdf(requests_items):
+    def _generate_driver_overview_pdf(requests_items, driver_name):
         template_name = "driver-overview"
         today = datetime.datetime.now().strftime("%Y-%m-%d")
-        html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", requests_items=requests_items, date=today), encoding="utf8")
+        html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", requests_items=requests_items, date=today,
+                                                            driver_name=driver_name), encoding="utf8")
         document = html.render()
         return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, template_name)
 
@@ -71,7 +72,7 @@ class Actions(flask_restx.Resource):
                 list_name = household_size.lower().replace(" ", "_")
                 list_name = list_name if list_name in lists_models.LIST_NAMES else catch_all_list_name
                 list = lists[household_size] = _get(f"{api_base_url}lists/{list_name}", cookies=cookies)
-            html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", request=request, list=list))
+            html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", request=request, list=list), encoding="utf8")
             document = html.render()
             pages.extend(document.pages)
         return Actions._make_pdf_response(pages, document.metadata, document.url_fetcher, document._font_config, template_name)
@@ -83,7 +84,8 @@ class Actions(flask_restx.Resource):
         document = None
         for request in request_items:
             for index in range(quantity):
-                html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", request=request, page=index + 1, total_pages=quantity))
+                html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", request=request, page=index + 1, total_pages=quantity),
+                                       encoding="utf8")
                 document = html.render()
                 pages.extend(document.pages)
         return Actions._make_pdf_response(pages, document.metadata, document.url_fetcher, document._font_config, template_name)
@@ -128,7 +130,7 @@ class Actions(flask_restx.Resource):
                     rest.abort(400, f"The quantity must be a whole number.")
                 return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
             elif event_name == "Print Driver Overview":
-                return_value = self._generate_driver_overview_pdf(requests_items)
+                return_value = self._generate_driver_overview_pdf(requests_items, event_data)
         else:
             if event_name == "Permanently Delete Request":
                 for request_id in request_ids:

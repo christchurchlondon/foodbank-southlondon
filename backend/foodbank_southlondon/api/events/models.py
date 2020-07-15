@@ -44,6 +44,7 @@ _distinct_event_name_value = rest.model("DistinctEventNameValue", {
     "confirmation_expected": fields.Boolean(required=True, description="Whether this event_name expects special confirmation.", example=False),
     "date_expected": fields.Boolean(required=True, description="Whether this event_name expects a date to be captured.", example=True),
     "quantity_expected": fields.Boolean(required=True, description="Whether this event_name expects a quantity to be captured.", example=True),
+    "name_expected": fields.Boolean(required=True, description="Whether this event_name expects a driver name to be captured.", example=False),
     "returns_pdf": fields.Boolean(required=True, description="Whether a POST of this event_name would return a PDF or not.", example=False),
     "confirmation_label": fields.String(required=True, description="The label to show when requesting confirmation.", example=_example_label)
 })
