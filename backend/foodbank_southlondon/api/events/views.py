@@ -56,7 +56,7 @@ class Events(flask_restx.Resource):
         requests_df = requests_views.cache(force_refresh=True)
         missing_request_ids = set(items_df["request_id"].unique()).difference(requests_df["request_id"].unique())
         if missing_request_ids:
-            rest.abort(400, f"the following request_id values {missing_request_ids} were not found.")
+            rest.abort(400, f"the following Request ID values {missing_request_ids} were not found.")
         utils.append_rows(flask.current_app.config[_FBSL_EVENTS_GSHEET_ID], [list(item.values()) for item in items])
         return ({}, 201)
 

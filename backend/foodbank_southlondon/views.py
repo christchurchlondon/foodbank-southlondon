@@ -42,4 +42,4 @@ def login() -> werkzeug.Response:
 @app.route("/logout")
 def logout() -> werkzeug.Response:
     flask.session.pop(flask.current_app.config[_FBSL_USER_SESSION_VAR], None)
-    return flask.redirect("https://christchurchlondon.org")
+    return flask.redirect("https://accounts.google.com/Logout")

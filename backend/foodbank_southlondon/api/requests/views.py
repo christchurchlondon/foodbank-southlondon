@@ -69,7 +69,7 @@ class RequestsByID(flask_restx.Resource):
         df = df.loc[df[request_id_attribute].isin(request_id_values)]
         missing_request_ids = request_id_values.difference(df[request_id_attribute].unique())
         if missing_request_ids:
-            rest.abort(404, f"the following request_id values {missing_request_ids} were not found.")
+            rest.abort(404, f"the following Request ID values {missing_request_ids} were not found.")
         df = df.assign(edit_details_url=df[request_id_attribute].map(_edit_details_url),
                        congestion_zone=df["Postcode"].isin(_congestion_zone_postcodes()["Postcode"].values))
         return (df, params["page"], params["per_page"])

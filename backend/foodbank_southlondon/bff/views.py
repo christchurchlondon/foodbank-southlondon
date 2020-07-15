@@ -108,7 +108,7 @@ class Actions(flask_restx.Resource):
         total_request_ids = len(request_ids)
         max_action_request_ids = flask.current_app.config[_FBSL_MAX_ACTION_REQUEST_IDS]
         if total_request_ids > max_action_request_ids:
-            rest.abort(400, f"The maximum number of request_id values that can be passed in a single action request is {max_action_request_ids}.")
+            rest.abort(400, f"The maximum number of clients that can be selected at one time is {max_action_request_ids}.")
         event_name = data["event_name"]
         event_data = data["event_data"]
         api_base_url = _api_base_url()
@@ -125,8 +125,7 @@ class Actions(flask_restx.Resource):
                 return_value = self._generate_shopping_list_pdf(requests_items, api_base_url, flask.request.cookies)
             elif event_name == print_shipping_label:
                 if not event_data.isdigit():
-                    rest.abort(400, f"When event_name is \"{print_shipping_label}\", event_data is expected to be an integer quantity of pages to "
-                               "print.")
+                    rest.abort(400, f"The quantity must be a whole number.")
                 return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
             elif event_name == "Print Driver Overview":
                 return_value = self._generate_driver_overview_pdf(requests_items)
@@ -158,7 +157,7 @@ class Details(flask_restx.Resource):
                                   params={"refresh_cache": refresh_cache})["items"]
         except requests.exceptions.HTTPError as error:
             if error.response.status_code == 404:
-                rest.abort(404, f"request_id, {request_id} does not match any existing request.")
+                rest.abort(404, f"Request ID, {request_id} does not match any existing request. Contact webmaster.")
             raise
         request_data = requests_items[0]
         max_per_page = flask.current_app.config[_FBSL_MAX_PAGE_SIZE]
