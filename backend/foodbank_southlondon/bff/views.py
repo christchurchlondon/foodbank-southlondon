@@ -60,7 +60,8 @@ class Actions(flask_restx.Resource):
         return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, template_name)
 
     @staticmethod
-    def _generate_shopping_list_pdf(requests_items: List, api_base_url: str, cookies: werkzeug.ImmutableTypeConversionDict) -> flask.Response:
+    def _generate_shopping_list_pdf(requests_items: List, api_base_url: str,
+                                    cookies: werkzeug.datastructures.ImmutableTypeConversionDict) -> flask.Response:
         lists: Dict[str, Dict[str, Any]] = {}
         catch_all_list_name = flask.current_app.config[_FBSL_CATCH_ALL_LIST]
         template_name = "shopping-lists"
