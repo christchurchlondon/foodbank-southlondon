@@ -280,7 +280,6 @@ export const openSubmitDialog = event => ({
 export const confirmSubmitEvent = (event, ids, data, filters = {}) => {
     return dispatch => {
         dispatch(sendEvent(event, ids, data, filters));
-        dispatch(closeSubmitDialog());
     };
 };
 
@@ -300,6 +299,7 @@ export const sendEvent = (event, ids, data, filters) => {
         return postEvent(event, ids, data)
             .then(() => {
                 dispatch(eventSubmitComplete());
+                dispatch(closeSubmitDialog())
                 dispatch(fetchRequests(filters));
             })
             .catch(() => dispatch(eventSubmitFailed()));
