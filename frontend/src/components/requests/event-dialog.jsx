@@ -19,7 +19,7 @@ export default class RequestsEventDialog extends React.Component {
         this.updateQuantity = this.updateQuantity.bind(this);
 
         this.state = {
-            date: null,
+            date: new Date(),
             quantity: null
         };
     }
