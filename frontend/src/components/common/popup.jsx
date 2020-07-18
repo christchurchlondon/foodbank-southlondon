@@ -7,6 +7,7 @@ export default class Popup extends React.Component {
 
     constructor(props) {
         super(props);
+        this.confirm = this.confirm.bind(this);
         this.close = this.close.bind(this);
         this.boxClickHandler = this.boxClickHandler.bind(this);
         this.keyDownHandler = this.keyDownHandler.bind(this);
@@ -20,6 +21,12 @@ export default class Popup extends React.Component {
         document.removeEventListener('keydown', this.keyDownHandler, false);
     }
 
+    confirm() {
+        if (this.props.onConfirm) {
+            this.props.onConfirm();
+        }
+    }
+
     close() {
         if (this.props.onClose) {
             this.props.onClose();
@@ -31,8 +38,13 @@ export default class Popup extends React.Component {
     }
 
     keyDownHandler(event) {
-        if (event.keyCode === 27) {
-            this.close();
+        switch (event.keyCode) {
+            case 13:
+                this.confirm();
+                break;
+            case 27:
+                this.close();
+                break;
         }
     }
 

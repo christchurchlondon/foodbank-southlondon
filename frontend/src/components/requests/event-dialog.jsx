@@ -17,27 +17,11 @@ export default class RequestsEventDialog extends React.Component {
         this.close = this.close.bind(this);
         this.updateDate = this.updateDate.bind(this);
         this.updateQuantity = this.updateQuantity.bind(this);
-        this.keyDownHandler = this.keyDownHandler.bind(this);
 
         this.state = {
             date: null,
             quantity: null
         };
-    }
-
-    componentDidMount() {
-        if (!this.props.details) return;
-        document.addEventListener('keydown', this.keyDownHandler, false);
-    }
-
-    componentWillUnmount() {
-        document.removeEventListener('keydown', this.keyDownHandler, false);
-    }
-
-    keyDownHandler(event) {
-        if (event.keyCode === 13) {
-            this.confirm();
-        }
     }
 
     confirm() {
@@ -64,13 +48,11 @@ export default class RequestsEventDialog extends React.Component {
     }
 
     updateQuantity(event) {
-        // TODO check that this is a number?
         const quantity = event.target.value;
         this.setState({ quantity });
     }
 
     getInputFields() {
-        // Is it one or the other?
         if (this.props.details.event.requiresDate) {
             const maxDate = new Date();
             return (
@@ -151,6 +133,7 @@ export default class RequestsEventDialog extends React.Component {
         return (
             <Popup title="Confirm submission"
                 buttons={ buttons }
+                onConfirm={ this.confirm }
                 onClose={ this.close }
             >
                 <div className="event-dialog-contents">
