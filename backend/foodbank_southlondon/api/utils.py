@@ -59,6 +59,12 @@ def delete_row(spreadsheet_id: str, find_value: str) -> None:
     sheet.delete_row(sheet.find(find_value, in_column=sheet.col_count).row)
 
 
+def expire_cache(name: str) -> None:
+    if name in _caches:
+        del _caches[name]
+        del _caches_updated[name]
+
+
 def gsheet_a1(spreadsheet_id: str, index: int = 0) -> str:
     sheet = _gsheet(spreadsheet_id, index)
     return sheet.cell(1, 1).value

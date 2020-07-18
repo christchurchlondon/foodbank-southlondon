@@ -139,7 +139,7 @@ class Actions(flask_restx.Resource):
                 for request_id in request_ids:
                     utils.delete_row(flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], request_id)
             return_value = ({}, 201)
-        now = f"{datetime.datetime.now(tz=pytz.timezone('Europe/London')).isoformat()}Z"
+        now = datetime.datetime.now(tz=pytz.timezone('Europe/London')).isoformat()
         _post(f"{api_base_url}events/", cookies=flask.request.cookies,
               json={"items": [{"request_id": request_id, "event_timestamp": now, "event_name": event_name, "event_data": event_data}
                               for request_id in request_ids]})

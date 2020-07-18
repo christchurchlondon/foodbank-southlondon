@@ -43,6 +43,7 @@ class Lists(flask_restx.Resource):
             rows.extend(list(item.values()) for item in data["items"])
         utils.overwrite_rows(lists_gsheet_id, rows)
         utils.overwrite_rows(lists_gsheet_id, [[data["notes"]]], index=1)
+        utils.expire_cache(_CACHE_NAME)
         return ({}, 201)
 
 
