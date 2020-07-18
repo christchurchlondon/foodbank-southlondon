@@ -16,28 +16,14 @@ export default class RequestsEventDialog extends React.Component {
         this.cancel = this.cancel.bind(this);
         this.close = this.close.bind(this);
         this.updateDate = this.updateDate.bind(this);
+        this.updateName = this.updateName.bind(this);
         this.updateQuantity = this.updateQuantity.bind(this);
-        this.keyDownHandler = this.keyDownHandler.bind(this);
 
         this.state = {
-            date: null,
+            date: new Date(),
+            name: null,
             quantity: null
         };
-    }
-
-    componentDidMount() {
-        if (!this.props.details) return;
-        document.addEventListener('keydown', this.keyDownHandler, false);
-    }
-
-    componentWillUnmount() {
-        document.removeEventListener('keydown', this.keyDownHandler, false);
-    }
-
-    keyDownHandler(event) {
-        if (event.keyCode === 13) {
-            this.confirm();
-        }
     }
 
     confirm() {
@@ -45,6 +31,7 @@ export default class RequestsEventDialog extends React.Component {
 
         const params = {
             date: this.state.date,
+            name: this.state.name,
             quantity: this.state.quantity
         };
 
@@ -63,15 +50,18 @@ export default class RequestsEventDialog extends React.Component {
         this.setState({ date });
     }
 
+    updateName(event) {
+        const name = event.target.value;
+        this.setState({ name });
+    }
+
     updateQuantity(event) {
-        // TODO check that this is a number?
         const quantity = event.target.value;
         this.setState({ quantity });
     }
 
     getInputFields() {
-        // Is it one or the other?
-        if (this.props.details.event.requiresDate) {
+        if (this.requiresDate()) {
             const maxDate = new Date();
             return (
                 <div className="field-row">
@@ -85,7 +75,15 @@ export default class RequestsEventDialog extends React.Component {
                 </div>
             );
         }
-        if (this.props.details.event.requiresQuantity) {
+        if (this.requiresName()) {
+            return (
+                <div className="field-row">
+                    <label>Name</label>
+                    <input type="text" onChange={ this.updateName } />
+                </div>
+            );
+        }
+        if (this.requiresQuantity()) {
             return (
                 <div className="field-row">
                     <label>Quantity</label>
@@ -98,6 +96,10 @@ export default class RequestsEventDialog extends React.Component {
 
     requiresDate() {
         return this.props.details.event.requiresDate;
+    }
+
+    requiresName() {
+        return this.props.details.event.requiresName;
     }
 
     requiresQuantity() {
@@ -151,6 +153,7 @@ export default class RequestsEventDialog extends React.Component {
         return (
             <Popup title="Confirm submission"
                 buttons={ buttons }
+                onConfirm={ this.confirm }
                 onClose={ this.close }
             >
                 <div className="event-dialog-contents">

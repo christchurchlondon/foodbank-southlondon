@@ -206,6 +206,7 @@ export function getEvents() {
             requiresConfirmation: v.confirmation_expected,
             confirmationLabel: v.confirmation_label,
             requiresDate: v.date_expected,
+            requiresName: v.name_expected,
             requiresQuantity: v.quantity_expected,
             isDownload: v.returns_pdf
         })));
@@ -213,8 +214,8 @@ export function getEvents() {
 
 export function postEvent(event, ids, data = {}) {
 
-    const date = (data && data.date) ? formatDate(data.date) : null;
-    const eventData = date || data.quantity;
+    const date = (data && data.date && event.requiresDate) ? formatDate(data.date) : null;
+    const eventData = date || data.name || data.quantity;
 
     const requestBody = {
         event_name: event.name,

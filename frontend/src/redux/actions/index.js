@@ -260,12 +260,12 @@ export const loadEventsFailed = message => ({
     }
 });
 
-export const triggerSubmitEvent = (event, ids, filters) => {
+export const triggerSubmitEvent = (event, ids, filters,page) => {
     return dispatch => {
         if (event.requiresConfirmation) {
             dispatch(openSubmitDialog(event, ids));
         } else {
-            dispatch(sendEvent(event, ids, {}, filters));
+            dispatch(sendEvent(event, ids, {}, filters, page));
         }
     };
 };
@@ -277,10 +277,9 @@ export const openSubmitDialog = event => ({
     }
 });
 
-export const confirmSubmitEvent = (event, ids, data, filters = {}) => {
+export const confirmSubmitEvent = (event, ids, data, filters = {}, page = 1) => {
     return dispatch => {
-        dispatch(sendEvent(event, ids, data, filters));
-        dispatch(closeSubmitDialog());
+        dispatch(sendEvent(event, ids, data, filters, page));
     };
 };
 
@@ -294,13 +293,14 @@ export const closeSubmitDialog = () => ({
     type: CLOSE_SUBMIT_DIALOG
 });
 
-export const sendEvent = (event, ids, data, filters) => {
+export const sendEvent = (event, ids, data, filters, page) => {
     return dispatch => {
         dispatch(submitEvent(event));
         return postEvent(event, ids, data)
             .then(() => {
                 dispatch(eventSubmitComplete());
-                dispatch(fetchRequests(filters));
+                dispatch(closeSubmitDialog())
+                dispatch(fetchRequests(filters, page));
             })
             .catch(() => dispatch(eventSubmitFailed()));
     };
