@@ -71,7 +71,7 @@ class DistinctEventNameValues(flask_restx.Resource):
         params = parsers.distinct_events_params.parse_args(flask.request)  # noqa: F841 - here as reminder; currently we only support 1 value
         values = [{
             "event_name": event_name,
-            "confirmation_expected": not event_name.startswith("Print") or event_name == "Print Shipping Label" or event_name == "Print Driver Overview",
+            "confirmation_expected": event_name != "Print Shopping List",
             "date_expected": event_name.startswith("Mark"),
             "quantity_expected": event_name == "Print Shipping Label",
             "name_expected": event_name == "Print Driver Overview",
