@@ -2,6 +2,7 @@ import React from 'react';
 import { format } from 'date-fns';
 import { DATE_FORMAT_UI } from '../../constants';
 import CongestionCharge from '../common/congestion-charge';
+import './styles/list.scss';
 
 export default class RequestsList extends React.Component {
 
