@@ -8,6 +8,7 @@ gspread
 numpy
 pandas
 python-dotenv
+pytz
 requests
 weasyprint
 werkzeug
