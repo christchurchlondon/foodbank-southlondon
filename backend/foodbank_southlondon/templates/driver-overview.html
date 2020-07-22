@@ -7,6 +7,11 @@
                 margin: 0.5cm;
                 size: landscape;
             }
+            .clearfix:after {
+                display: block;
+                content: "";
+                clear: both;
+            }
             body {
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 font-size: 12px;
@@ -51,10 +56,12 @@
         </style>
     </head>
     <body>
-        <img src="{{ url_for('static', filename='logo.png', _external=True)}}">
-        <h1>DRIVER OVERVIEW</h1>
-        <h2>Driver Name: {{ driver_name }}</h2>
-        <b>Date:</b> {{ date }}
+        <div class="clearfix">
+            <img src="{{ url_for('static', filename='logo.png', _external=True)}}">
+            <h1>DRIVER OVERVIEW</h1>
+            <h2>Driver Name: {{ driver_name }}</h2>
+            <b>Date:</b> {{ date }}
+        </div>
         <table>
             <tr>
                 <th>Name</th>

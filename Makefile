@@ -11,7 +11,7 @@ clean: ## clean up temp & local build files (FRONTEND make clean + BACKEND make 
 	make -C backend clean
 
 .PHONY: dist
-dist: ## build a docker image, push to Heroku Container Registry and release to the site
+dist: ## push the latest foodbank-southlondon docker image to Heroku Container Registry and release to the site
 	heroku login
 	heroku container:login
 	heroku container:push -a foodbank-southlondon web
