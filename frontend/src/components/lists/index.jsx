@@ -69,11 +69,18 @@ class Lists extends React.Component {
     }
 
     openSaveDialog() {
-        this.props.openSaveListDialog();
+        if (!this.props.saveDialog) {
+            this.props.openSaveListDialog();
+        }
     }
 
     closeSaveDialog() {
-        this.props.closeSaveListDialog();
+        if (
+            this.props.saveDialog
+            && this.props.saveDialog.status !== STATUS_LOADING
+        ) {
+            this.props.closeSaveListDialog();
+        }
     }
 
     confirmSave() {

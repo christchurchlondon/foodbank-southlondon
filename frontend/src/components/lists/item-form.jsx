@@ -195,11 +195,11 @@ export default class ListItemForm extends React.Component {
             {
                 label: 'Ok',
                 className: 'primary',
-                onClick: () => { this.confirm(); }
+                onClick: () => this.confirm()
             }, {
                 label: 'Cancel',
                 className: 'secondary',
-                onClick: () => { this.cancel(); }
+                onClick: () => this.cancel()
             }
         ];
 

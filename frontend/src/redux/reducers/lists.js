@@ -133,7 +133,8 @@ export default function(state = initialState, action) {
                 ...state,
                 saveDialog: null
             }
-        case UPDATE_LIST:return {
+        case UPDATE_LIST:
+            return {
                 ...state,
                 saveDialog: {
                     ...state.saveDialog,
