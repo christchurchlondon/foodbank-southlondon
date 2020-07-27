@@ -6,12 +6,26 @@ import { STATUS_LOADING, STATUS_FAILED } from '../../constants';
 
 export default class ListSaveDialog extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.confirm = this.confirm.bind(this);
+        this.cancel = this.cancel.bind(this);
+    }
+
     isLoading() {
         return this.props.status === STATUS_LOADING
     }
 
     isFailed() {
         return this.props.status === STATUS_FAILED;
+    }
+
+    confirm() {
+        this.props.onConfirm();
+    }
+
+    cancel() {
+        this.props.onCancel();
     }
 
     getContents() {
@@ -26,16 +40,20 @@ export default class ListSaveDialog extends React.Component {
             {
                 label: 'Ok',
                 disabled: this.isLoading() || this.isFailed(),
-                onClick: () => this.props.onConfirm()
+                onClick: () => this.confirm()
             }, {
                 label: 'Cancel',
                 className: 'secondary',
-                onClick: () => this.props.onCancel()
+                onClick: () => this.cancel()
             }
         ];
 
         return (
-            <Popup title="Save Changes" buttons={ buttons } onClose={ this.props.onCancel }>
+            <Popup
+                title="Save Changes"
+                buttons={ buttons }
+                onConfirm={ this.confirm }
+                onClose={ this.cancel }>
                 { this.getContents() }
             </Popup>
         );
