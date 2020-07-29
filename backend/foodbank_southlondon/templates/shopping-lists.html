@@ -29,6 +29,7 @@
             table {
                 border-collapse: collapse;
                 break-before: avoid;
+                page-break-after: always;
                 table-layout: fixed;
                 width: 100%
             }
@@ -57,89 +58,93 @@
     </head>
     <title>Shopping Lists</title>
     <body>
-        <div class="clearfix">
-            <!-- <img src="{{ url_for('static', filename='logo.png', _external=True)}}"> TOO MANY BYTES BRO -->
-            <h1>CLIENT SHOPPING LIST</h1>
-            {% set postcode = request['postcode'] %}
-            <h2>POSTCODE: {{ postcode }}</h2>
-            <b>VOUCHER #:</b> {{ request['voucher_number'] }}
-        </div>
-        <table>
-            <tr>
-                <td colspan="3"><b>NAME:</b> {{ request['client_full_name'] }}</td>
-                <td colspan="3"><b>CONTACT:</b> {{ request['phone_number'] or '' }}</td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <b>ADDRESS</b><br>
-                    {% set address_line_2 = request['address_line_2'] %}
-                    {% set town = request['town'] %}
-                    {% set county = request['county'] %}
-                    {{ request['address_line_1'] }}{% if address_line_2 %}, {{ address_line_2 }}{% endif %}{% if town %}, {{ town }}{% endif %}{% if county %}, {{ county }}{% endif %}, {{ request['postcode'] }}
-                </td>
-                <td colspan="3">
-                    <b>EXTRA INFORMATION</b><br>
-                    {{ request['extra_information'] or '' }}
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <b>HOUSEHOLD SIZE:</b> {{ request['household_size'] }}<br>
-                    <b>GENDER:</b> {{ request['gender'] }}<br>
-                    <b>NUMBER OF ADULTS:</b> {{ request['number_of_adults'] }}<br>
-                    <b>NUMBER OF CHILDREN:</b> {{ request['number_of_children'] }}<br>
-                    <b>AGE OF CHILDREN:</b> {{ request['age_of_children'] }}
-                </td>
-                <td colspan="3">
-                    <b>FEMININE PRODUCTS REQUIRED:</b> {{ request['feminine_products_required'] }}<br>
-                    <b>BABY PRODUCTS REQUIRED:</b> {{ request['baby_products_required'] }}<br>
-                    <b>PET FOOD REQUIRED:</b> {{ request['pet_food_required'] }}<br>
-                    <b>DIETARY REQUIREMENTS:</b> {{ request['dietary_requirements'] }}
-                </td>
-            </tr>
-            <tr class="spacer"><td colspan="6"></td></tr>
-            <tr>
-                <th colspan="2">Item Description</th>
-                <th>Quantity</th>
-                <th colspan="2">Notes</th>
-                <th>Completed?</th>
-            </tr>
-            {% for item in list["items"] %}
-                {% set quantity = item['quantity'] %}
-                {% if quantity and quantity != "0" %}
-            <tr class="compact">
-                <td colspan="2">{{ item['item_description'] }}</td>
-                <td>{{ quantity }}</td>
-                <td colspan="2">{{ item['notes'] or '' }}</td>
-                <td></td>
-            </tr>
-                {% endif %}
-            {% endfor %}
-            <tr class="spacer"><td colspan="6"></td></tr>
-            <tr>
-                <td colspan="6">
-                    <b>Warehouse Manager Notes</b><br>
-                    {{ list['notes'] }}
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <b>Date Packed</b><br>
-                </td>
-                <td colspan="4"></td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <b>Packer Name</b><br>
-                </td>
-                <td colspan="4"></td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <b>Packer Signature</b>
-                </td>
-                <td colspan="4"></td>
-            </tr>
-        </table>
+        {% for item in data %}
+            {% set request = item["request"] %}
+            {% set list = item["list"] %}
+            <div class="clearfix">
+                <!-- <img src="{{ url_for('static', filename='logo.png', _external=True)}}"> TOO MANY BYTES BRO -->
+                <h1>CLIENT SHOPPING LIST</h1>
+                {% set postcode = request['postcode'] %}
+                <h2>POSTCODE: {{ postcode }}</h2>
+                <b>VOUCHER #:</b> {{ request['voucher_number'] }}
+            </div>
+            <table>
+                <tr>
+                    <td colspan="3"><b>NAME:</b> {{ request['client_full_name'] }}</td>
+                    <td colspan="3"><b>CONTACT:</b> {{ request['phone_number'] or '' }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <b>ADDRESS</b><br>
+                        {% set address_line_2 = request['address_line_2'] %}
+                        {% set town = request['town'] %}
+                        {% set county = request['county'] %}
+                        {{ request['address_line_1'] }}{% if address_line_2 %}, {{ address_line_2 }}{% endif %}{% if town %}, {{ town }}{% endif %}{% if county %}, {{ county }}{% endif %}, {{ request['postcode'] }}
+                    </td>
+                    <td colspan="3">
+                        <b>EXTRA INFORMATION</b><br>
+                        {{ request['extra_information'] or '' }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <b>HOUSEHOLD SIZE:</b> {{ request['household_size'] }}<br>
+                        <b>GENDER:</b> {{ request['gender'] }}<br>
+                        <b>NUMBER OF ADULTS:</b> {{ request['number_of_adults'] }}<br>
+                        <b>NUMBER OF CHILDREN:</b> {{ request['number_of_children'] }}<br>
+                        <b>AGE OF CHILDREN:</b> {{ request['age_of_children'] }}
+                    </td>
+                    <td colspan="3">
+                        <b>FEMININE PRODUCTS REQUIRED:</b> {{ request['feminine_products_required'] }}<br>
+                        <b>BABY PRODUCTS REQUIRED:</b> {{ request['baby_products_required'] }}<br>
+                        <b>PET FOOD REQUIRED:</b> {{ request['pet_food_required'] }}<br>
+                        <b>DIETARY REQUIREMENTS:</b> {{ request['dietary_requirements'] }}
+                    </td>
+                </tr>
+                <tr class="spacer"><td colspan="6"></td></tr>
+                <tr>
+                    <th colspan="2">Item Description</th>
+                    <th>Quantity</th>
+                    <th colspan="2">Notes</th>
+                    <th>Completed?</th>
+                </tr>
+                {% for item in list["items"] %}
+                    {% set quantity = item['quantity'] %}
+                    {% if quantity and quantity != "0" %}
+                <tr class="compact">
+                    <td colspan="2">{{ item['item_description'] }}</td>
+                    <td>{{ quantity }}</td>
+                    <td colspan="2">{{ item['notes'] or '' }}</td>
+                    <td></td>
+                </tr>
+                    {% endif %}
+                {% endfor %}
+                <tr class="spacer"><td colspan="6"></td></tr>
+                <tr>
+                    <td colspan="6">
+                        <b>Warehouse Manager Notes</b><br>
+                        {{ list['notes'] }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <b>Date Packed</b><br>
+                    </td>
+                    <td colspan="4"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <b>Packer Name</b><br>
+                    </td>
+                    <td colspan="4"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <b>Packer Signature</b>
+                    </td>
+                    <td colspan="4"></td>
+                </tr>
+            </table>
+        {% endfor %}
     </body>
 </html>

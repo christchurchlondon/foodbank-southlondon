@@ -66,8 +66,7 @@ class Actions(flask_restx.Resource):
         lists: Dict[str, Dict[str, Any]] = {}
         catch_all_list_name = flask.current_app.config[_FBSL_CATCH_ALL_LIST]
         template_name = "shopping-lists"
-        pages = []
-        document = None
+        data = []
         for request in requests_items:
             household_size = request["household_size"]
             list = lists.get(household_size)
@@ -75,10 +74,10 @@ class Actions(flask_restx.Resource):
                 list_name = household_size.lower().replace(" ", "_")
                 list_name = list_name if list_name in lists_models.LIST_NAMES else catch_all_list_name
                 list = lists[household_size] = _get(f"{api_base_url}lists/{list_name}", cookies=cookies)
-            html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", request=request, list=list), encoding="utf8")
-            document = html.render()
-            pages.extend(document.pages)
-        return Actions._make_pdf_response(pages, document.metadata, document.url_fetcher, document._font_config, template_name)
+            data.append({"request": request, "list": list})
+        html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", data=data), encoding="utf8")
+        document = html.render()
+        return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, template_name)
 
     @staticmethod
     def _generate_shipping_label_pdf(request_items: List, quantity: int) -> flask.Response:
