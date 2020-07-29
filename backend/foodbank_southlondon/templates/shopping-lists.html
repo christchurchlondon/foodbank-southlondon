@@ -58,7 +58,7 @@
     <title>Shopping Lists</title>
     <body>
         <div class="clearfix">
-            <img src="{{ url_for('static', filename='logo.png', _external=True)}}">
+            <!-- <img src="{{ url_for('static', filename='logo.png', _external=True)}}"> TOO MANY BYTES BRO -->
             <h1>CLIENT SHOPPING LIST</h1>
             {% set postcode = request['postcode'] %}
             <h2>POSTCODE: {{ postcode }}</h2>
