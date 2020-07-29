@@ -122,7 +122,9 @@
                 <tr>
                     <td colspan="6">
                         <b>Warehouse Manager Notes</b><br>
-                        {{ list['notes'] }}
+                        {% autoescape false %}
+                            {{ list['notes'].replace('\n', '<br>') }}
+                        {% endautoescape %}
                     </td>
                 </tr>
                 <tr>
