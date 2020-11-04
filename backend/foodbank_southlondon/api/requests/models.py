@@ -35,7 +35,7 @@ request = rest.model("ClientRequest", {
     "age_of_children": fields.String(attribute="Age of Children", required=True, description="The age range of the children living at the household",
                                      example="3-6"),
     "dietary_requirements": fields.String(attribute="Dietary Requirements", required=True, description="Whether the Client has any dietary "
-                                          "requirements", example="No", enum=["Yes", "No", "Don't Know"]),
+                                          "requirements", example="Meat / Fish"),
     "feminine_products_required": fields.String(attribute="Feminine Products Required?", required=True, description="Whether the Client requires "
                                                 "feminine products", example="No", enum=["Yes", "No", "Don't Know"]),
     "baby_products_required": fields.String(attribute="Baby Products Required?", required=True, description="Whether the Client requires baby "
