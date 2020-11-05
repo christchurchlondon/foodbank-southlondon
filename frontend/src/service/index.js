@@ -264,7 +264,8 @@ function responseItemToRequest(item) {
             dietary: item.dietary_requirements,
             feminineProducts: item.feminine_products_required,
             babyProducts: item.baby_products_required,
-            petFood: item.pet_food_required
+            petFood: item.pet_food_required,
+            otherRequirements: item.other_requirements
         },
         extraInformation: item.extra_information,
         editUrl: item.edit_details_url
