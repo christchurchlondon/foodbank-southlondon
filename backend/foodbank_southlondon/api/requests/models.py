@@ -44,7 +44,7 @@ request = rest.model("ClientRequest", {
                                        example="Yes", enum=["Yes", "No", "Don't Know"]),
     "other_requirements": fields.String(attribute="Other Requirements", required=True,
                                         description="Additional, non-dietary requirements or season-specific asks", example="Christmas Presents"),
-    "flag_for_action": fields.Boolean(attribute="Flag for Action", required=True,
+    "flag_for_action": fields.Boolean(attribute="Flag for Action", required=True, default=False,
                                       description="Whether or not this request should be flagged for action", example=True),
     "extra_information": fields.String(attribute="Extra Information", required=False, description="Any extra information to be noted",
                                        example="No dairy"),
