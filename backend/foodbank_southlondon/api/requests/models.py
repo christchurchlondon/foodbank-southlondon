@@ -3,6 +3,11 @@ from flask_restx import fields  # type:ignore
 from foodbank_southlondon.api import models, rest
 
 
+class StrBoolean(fields.Raw):
+    def format(self, value: str) -> bool:
+        return True if value.upper() == "YES" else False
+
+
 request = rest.model("ClientRequest", {
     "request_id": fields.String(required=True, description="The unique ID of the Client Request",
                                 example="ACYDBNgidDBRKTk_WpZiWnVOKVzOzbPPXzO3NxqUlTK9cNXuEfpOLTRRT5YV2dnscmWOucg"),
@@ -44,8 +49,8 @@ request = rest.model("ClientRequest", {
                                        example="Yes", enum=["Yes", "No", "Don't Know"]),
     "other_requirements": fields.String(attribute="Other Requirements", required=True,
                                         description="Additional, non-dietary requirements or season-specific asks", example="Christmas Presents"),
-    "flag_for_action": fields.Boolean(attribute="Flag for Action", required=True, default=False,
-                                      description="Whether or not this request should be flagged for action", example=True),
+    "flag_for_action": StrBoolean(attribute="Flag for Action", required=True, default="",
+                                  description="Whether or not this request should be flagged for action", example=True),
     "extra_information": fields.String(attribute="Extra Information", required=False, description="Any extra information to be noted",
                                        example="No dairy"),
     "edit_details_url": fields.String(required=True, description="The Google Forms edit response URL that can be used to update details of the Client"
