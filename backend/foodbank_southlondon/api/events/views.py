@@ -71,7 +71,7 @@ class DistinctEventNameValues(flask_restx.Resource):
     def get(self, type: str) -> Dict[str, List]:
         """Get the distinct Event options for a given type."""
         events = models.STATUSES if type == _STATUSES else models.ACTIONS
-        values = [{
+        items = [{
             "event_name": event.name,
             "confirmation_expected": event.confirmation_expected,
             "date_expected": event.date_expected,
@@ -80,7 +80,7 @@ class DistinctEventNameValues(flask_restx.Resource):
             "returns_pdf": event.returns_pdf,
             "confirmation_label": event.confirmation_label
         } for event in events]
-        return {"items": values}
+        return {"items": items}
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
