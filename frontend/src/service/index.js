@@ -258,7 +258,7 @@ function responseItemToRequest(item) {
             adults: item.number_of_adults,
             children: item.number_of_children,
             total: item.household_size,
-            ageOfChildren: item.age_of_children
+            ageAndGenderOfChildren: item.age_and_gender_of_children
         },
         requirements: {
             dietary: item.dietary_requirements,

@@ -78,8 +78,8 @@ export default class RequestSelection extends React.Component {
                     <p>{ formatHousehold(item.household) }</p>
                 </div>
                 <div className="row">
-                    <label>Age of children</label>
-                    <p>{ item.household.ageOfChildren }</p>
+                    <label>Age and Gender of children</label>
+                    <p>{ item.household.ageAndGenderOfChildren }</p>
                 </div>
                 <div className="row">
                     <label>Dietary Requirements</label>
