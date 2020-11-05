@@ -15,12 +15,11 @@ class Event:
     name_expected: bool
     returns_pdf: bool
     confirmation_label: str = None
-    value_override: str = None
 
 
 STATUSES = (
     Event("Request Denied", True, False, False, False, False, "This action marks the request as denied but does not delete the request."),
-    Event("No Status", True, False, False, False, False, "This action clears the current status.", ""),
+    Event("", True, False, False, False, False, "This action clears the current status."),
     Event("Pending More Info", True, False, False, False, False),
     Event("Called & Confirmed", True, True, False, False, False, "What date did you call the client?"),
     Event("Called & No Response", True, True, False, False, False, "What date did you attempt to call the client?"),
