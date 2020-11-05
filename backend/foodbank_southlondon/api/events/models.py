@@ -32,7 +32,7 @@ STATUSES = (
 )
 
 ACTIONS = (
-    Event("Print Shopping List", False, False, False, False, True),
+    Event("Print Shopping List", True, False, False, False, True),
     Event("Print Shipping Label", True, False, True, False, True, "How many boxes have been made for this client?"),
     Event("Print Driver Overview", True, False, False, True, True),
     Event("Permanently Delete Request", True, False, False, False, False, "This action permanently deletes the request. This action cannot be "
