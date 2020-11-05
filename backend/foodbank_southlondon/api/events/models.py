@@ -27,6 +27,7 @@ class Action(enum.Enum):
 
 
 ACTIONS = [action.value for action in Action]
+ACTION_NAMES = [action.event_name for action in ACTIONS]
 
 
 class Status(enum.Enum):
@@ -46,6 +47,7 @@ class Status(enum.Enum):
 
 
 STATUSES = [status.value for status in Status]
+STATUS_NAMES = [status.event_name for status in STATUSES]
 
 
 class ActionStatus(enum.Enum):
@@ -60,17 +62,15 @@ ACTION_STATUSES = [action_status.value for action_status in ActionStatus]
 EVENTS = STATUSES + ACTION_STATUSES
 EVENT_NAMES = [event.event_name for event in EVENTS]
 
-_example_event = EVENTS[0]
-
 _distinct_event_type = rest.model("DistinctEventType", {
-    "event_name": fields.String(required=True, description="A valid event_name value", example=_example_event.event_name),
+    "event_name": fields.String(required=True, description="A valid event_name value", example=Status.REQUEST_DENIED.value.event_name),
     "confirmation_expected": fields.Boolean(required=True, description="Whether this event_name expects special confirmation.", example=False),
     "date_expected": fields.Boolean(required=True, description="Whether this event_name expects a date to be captured.", example=True),
     "quantity_expected": fields.Boolean(required=True, description="Whether this event_name expects a quantity to be captured.", example=True),
     "name_expected": fields.Boolean(required=True, description="Whether this event_name expects a driver name to be captured.", example=False),
     "returns_pdf": fields.Boolean(required=True, description="Whether a POST of this event_name would return a PDF or not.", example=False),
     "confirmation_label": fields.String(required=True, description="The label to show when requesting confirmation.",
-                                        example=_example_event.confirmation_label)
+                                        example=Status.REQUEST_DENIED.value.confirmation_label)
 })
 
 distinct_event_types = rest.model("DistinctEventTypes", {
@@ -81,7 +81,8 @@ event = rest.model("Event", {
     "request_id": requests_models.request["request_id"],
     "event_timestamp": fields.DateTime(required=True, description="The timestamp when the event was recorded, in ISO 8601 format",
                                        example="2020-04-26T13:31:42Z"),
-    "event_name": fields.String(required=True, description="The name of the event that occured", example=_example_event.event_name, enum=EVENT_NAMES),
+    "event_name": fields.String(required=True, description="The name of the event that occured", example=Status.REQUEST_DENIED.value.event_name,
+                                enum=EVENT_NAMES),
     "event_data": fields.String(required=True, description="Data that accompanied the event submission such as a date or name", example="2020-04-01")
 })
 

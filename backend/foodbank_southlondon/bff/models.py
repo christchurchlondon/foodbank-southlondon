@@ -25,7 +25,15 @@ def _clone_fields_without_attribute(model: flask_restx.Model) -> Dict:
 
 action = rest.model("Action", {
     "request_ids": fields.List(events_models.event["request_id"]),
-    "event_name": events_models.event["event_name"],
+    "event_name": fields.String(required=True, description="The name of the action event",
+                                example=events_models.Action.DELETE_REQUEST.value.event_name, enum=events_models.ACTION_NAMES),
+    "event_data": events_models.event["event_data"]
+})
+
+action = rest.model("Status", {
+    "request_ids": fields.List(events_models.event["request_id"]),
+    "event_name": fields.String(required=True, description="The name of the status event",
+                                example=events_models.Action.DELETE_REQUEST.value.event_name, enum=events_models.STATUS_NAMES),
     "event_data": events_models.event["event_data"]
 })
 
