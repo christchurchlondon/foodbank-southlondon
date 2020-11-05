@@ -30,7 +30,7 @@ action = rest.model("Action", {
     "event_data": events_models.event["event_data"]
 })
 
-action = rest.model("Status", {
+status = rest.model("Status", {
     "request_ids": fields.List(events_models.event["request_id"]),
     "event_name": fields.String(required=True, description="The name of the status event",
                                 example=events_models.Action.DELETE_REQUEST.value.event_name, enum=events_models.STATUS_NAMES),
