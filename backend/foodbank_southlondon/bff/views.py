@@ -142,7 +142,7 @@ class Actions(flask_restx.Resource):
                     rest.abort(400, f"The quantity must be a whole number.")
                 return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
             elif event_name == events_models.Action.PRINT_DRIVER_OVERVIEW.value.event_name:
-                action_status_name = events_models.ActionStatus.DRIVER_OVERVIEW_PRINTED.value.event_name
+                action_status_name = events_models.ActionStatus.OUT_FOR_DELIVERY.value.event_name
                 return_value = self._generate_driver_overview_pdf(requests_items, event_data)
             elif event_name == events_models.Action.PRINT_DAY_OVERVIEW.value.event_name:
                 return_value = self._generate_driver_overview_pdf(requests_items, event_data)

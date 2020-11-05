@@ -55,7 +55,7 @@ STATUS_NAMES = [status.event_name for status in STATUSES]
 class ActionStatus(enum.Enum):
     SHOPPING_LIST_PRINTED = Event("Shopping List Printed", False, False, False, False, False)
     SHIPPING_LABEL_PRINTED = Event("Shipping Label Printed", False, False, False, False, False)
-    DRIVER_OVERVIEW_PRINTED = Event("Driver Overview Printed", False, False, False, False, False)
+    OUT_FOR_DELIVERY = Event("Out for Delivery", False, False, False, False, False)
     REQUEST_DELETED = Event("Request Deleted", False, False, False, False, False)
 
 
