@@ -99,7 +99,7 @@ export default class RequestSelection extends React.Component {
                 </div>
                 <div className="row">
                     <label>Other Requirements</label>
-                    <p>{ item.requirements.otherRequirements }</p>
+                    <p>{ item.requirements.other }</p>
                 </div>
                 <div className="row">
                     <label>Extra Information</label>
