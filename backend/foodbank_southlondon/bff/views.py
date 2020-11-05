@@ -153,7 +153,7 @@ class Details(flask_restx.Resource):
     @rest.marshal_with(models.details)
     def get(self, request_id: str) -> Dict[str, Any]:
         """Get detailed information for a single Client Request."""
-        params = parsers.status_params.parse_args(flask.request)
+        params = parsers.summary_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         api_base_url = _api_base_url()
         try:
@@ -188,14 +188,14 @@ class Details(flask_restx.Resource):
         }
 
 
-@rest.route("/status")
-class Status(flask_restx.Resource):
+@rest.route("/summary")
+class Summary(flask_restx.Resource):
 
-    @rest.expect(parsers.status_params)
-    @rest.marshal_with(models.page_of_status)
+    @rest.expect(parsers.summary_params)
+    @rest.marshal_with(models.page_of_summary)
     def get(self) -> Dict[str, Any]:
-        """List Client Request summary and status information."""
-        params = parsers.status_params.parse_args(flask.request)
+        """List Client Request summary."""
+        params = parsers.summary_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         start_date = params["start_date"]
         end_date = params["end_date"]
