@@ -13,7 +13,9 @@ from foodbank_southlondon.api.requests import views as requests_views
 _FBSL_EVENTS_GSHEET_ID = "FBSL_EVENTS_GSHEET_ID"
 
 # INTERNALS
+_ACTIONS = "actions"
 _CACHE_NAME = "events"
+_STATUSES = "statuses"
 
 
 @namespace.route("/")
@@ -62,24 +64,23 @@ class Events(flask_restx.Resource):
         return ({}, 201)
 
 
-@namespace.route("/distinct/")
+@namespace.route(f"/distinct/<any({_STATUSES},{_ACTIONS}):type>")
 class DistinctEventNameValues(flask_restx.Resource):
 
-    @rest.expect(parsers.distinct_events_params)
-    @rest.marshal_with(models.distinct_event_name_values)
-    def get(self) -> Dict[str, List]:
-        """Get the distinct options for an Events attribute."""
-        params = parsers.distinct_events_params.parse_args(flask.request)  # noqa: F841 - here as reminder; currently we only support 1 value
+    @rest.marshal_with(models.distinct_event_types)
+    def get(self, type: str) -> Dict[str, List]:
+        """Get the distinct Event options for a given type."""
+        events = models.STATUSES if type == _STATUSES else models.ACTIONS
         values = [{
-            "event_name": event_name,
-            "confirmation_expected": event_name != "Print Shopping List",
-            "date_expected": event_name.startswith("Mark"),
-            "quantity_expected": event_name == "Print Shipping Label",
-            "name_expected": event_name == "Print Driver Overview",
-            "returns_pdf": event_name.startswith("Print"),
-            "confirmation_label": event_label
-        } for event_name, event_label in models.EVENTS.items()]
-        return {"values": values}
+            "event_name": event.name,
+            "confirmation_expected": event.confirmation_expected,
+            "date_expected": event.date_expected,
+            "quantity_expected": event.quantity_expected,
+            "name_expected": event.name_expected,
+            "returns_pdf": event.returns_pdf,
+            "confirmation_label": event.confirmation_label
+        } for event in events]
+        return {"items": values}
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
