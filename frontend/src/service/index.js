@@ -3,7 +3,7 @@ import { format, parse } from 'date-fns';
 import { DATE_FORMAT_REQUEST, DATE_FORMAT_TIMESTAMP } from '../constants';
 
 const endpoints = {
-    GET_REQUESTS: 'bff/status',
+    GET_REQUESTS: 'bff/summary',
     GET_SINGLE_REQUEST: 'bff/details/',
     GET_LISTS: 'api/lists/',
     GET_EVENTS: 'api/events/distinct/?attribute=event_name',
