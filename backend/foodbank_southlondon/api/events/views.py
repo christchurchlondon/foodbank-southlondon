@@ -1,4 +1,5 @@
 from typing import Dict, List, Tuple
+import dataclasses
 
 import flask
 import flask_restx  # type:ignore
@@ -70,17 +71,8 @@ class DistinctEventNameValues(flask_restx.Resource):
     @rest.marshal_with(models.distinct_event_types)
     def get(self, type: str) -> Dict[str, List]:
         """Get the distinct Event options for a given type."""
-        events = models.STATUSES if type == _STATUSES else models.ACTIONS
-        items = [{
-            "event_name": event.name,
-            "confirmation_expected": event.confirmation_expected,
-            "date_expected": event.date_expected,
-            "quantity_expected": event.quantity_expected,
-            "name_expected": event.name_expected,
-            "returns_pdf": event.returns_pdf,
-            "confirmation_label": event.confirmation_label
-        } for event in events]
-        return {"items": items}
+        events = {_STATUSES: models.STATUSES, _ACTIONS: models.ACTIONS}
+        return {"items": [dataclasses.asdict(event) for event in events[type]]}
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
