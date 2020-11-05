@@ -16,6 +16,7 @@ class _Config(object):
     RESTX_VALIDATE = True
 
     FBSL_BASE_DOMAIN = ""
+    FBSL_CACHE_TTL_SECONDS = 120
     FBSL_CATCH_ALL_LIST = "family_of_5+"
     FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_ID = ""
     FBSL_EVENTS_GSHEET_ID = ""
