@@ -153,7 +153,7 @@ class Actions(flask_restx.Resource):
                 action_status_name = events_models.ActionStatus.OUT_FOR_DELIVERY.value.event_name
                 return_value = self._generate_driver_overview_pdf(requests_items, event_data)
             elif event_name == events_models.Action.PRINT_DAY_OVERVIEW.value.event_name:
-                return_value = self._generate_day_overview_pdf(requests_items)
+                return self._generate_day_overview_pdf(requests_items)
             _post_event(api_base_url, request_ids, action_status_name, event_data)
         return return_value
 
