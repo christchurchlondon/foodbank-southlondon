@@ -19,6 +19,8 @@ class Event:
 
 
 class Action(enum.Enum):
+    PRINT_DAY_OVERVIEW = Event("Print Day Overview", True, False, False, False, True, "This action generates a driver-overview like PDF without "
+                               "logging a status.")
     PRINT_SHOPPING_LIST = Event("Print Shopping List", True, False, False, False, True)
     PRINT_SHIPPING_LABEL = Event("Print Shipping Label", True, False, True, False, True, "How many boxes have been made for this client?")
     PRINT_DRIVER_OVERVIEW = Event("Print Driver Overview", True, False, False, True, True)
