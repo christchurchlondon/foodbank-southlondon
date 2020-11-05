@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <title>Driver Overview</title>
+    <head>
+        <style>
+            @page {
+                margin: 0.5cm;
+            }
+            .clearfix:after {
+                display: block;
+                content: "";
+                clear: both;
+            }
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 12px;
+                line-height: 1.5rem;
+            }
+            h1 {
+                line-height: 3rem;
+            }
+            img {
+                display: block;
+                float: right;
+                margin-bottom: 1rem;
+                object-fit: cover;
+                width: 192px;
+            }
+            table {
+                border-collapse: collapse;
+                table-layout: fixed;
+                width: 100%
+            }
+            table, td, th {
+                border: 0.1rem solid black;
+            }
+            td, th {
+                overflow: hidden;
+                overflow-wrap: break-word;
+                padding: 0.5rem;
+                vertical-align: top;
+            }
+            th {
+                text-decoration: underline;
+                font-size: 1rem;
+            }
+            td.centre {
+                text-align: center;
+            }
+            tr.spacer td {
+                background-color: lightgrey;
+                height: 0.5rem;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="clearfix">
+            <img src="{{ url_for('static', filename='logo.png', _external=True)}}">
+            <h1>DAY OVERVIEW</h1>
+            <b>Date:</b> {{ date }}
+        </div>
+        <table>
+            <tr>
+                <th>Ready for Dispatch?</th>
+                <th>Out for Delivery?</th>
+                <th>Name</th>
+                <th>Postcode</th>
+                <th>Packing Date</th>
+                <th>Time</th>
+                <th>Instructions</th>
+            </tr>
+            {% for request in requests_items %}
+            <tr>
+                <td></td>
+                <td></td>
+                <td>{{ request['client_full_name'] }}</td>
+                <td>{{ request['postcode'] }}</td>
+                <td>{{ request['packing_date'] }}</td>
+                <td>{{ request['time_of_day'] }}</td>
+                <td>{{ request['delivery_instructions'] or '' }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

@@ -56,6 +56,14 @@ def _post_event(api_base_url: str, request_ids: List, event_name: str, event_dat
 class Actions(flask_restx.Resource):
 
     @staticmethod
+    def _generate_day_overview_pdf(requests_items: List) -> flask.Response:
+        template_name = "day-overview"
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
+        html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", requests_items=requests_items, date=today), encoding="utf8")
+        document = html.render()
+        return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, template_name)
+
+    @staticmethod
     def _generate_driver_overview_pdf(requests_items: List, driver_name: str) -> flask.Response:
         template_name = "driver-overview"
         today = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -145,7 +153,7 @@ class Actions(flask_restx.Resource):
                 action_status_name = events_models.ActionStatus.OUT_FOR_DELIVERY.value.event_name
                 return_value = self._generate_driver_overview_pdf(requests_items, event_data)
             elif event_name == events_models.Action.PRINT_DAY_OVERVIEW.value.event_name:
-                return_value = self._generate_driver_overview_pdf(requests_items, event_data)
+                return_value = self._generate_day_overview_pdf(requests_items)
             _post_event(api_base_url, request_ids, action_status_name, event_data)
         return return_value
 
