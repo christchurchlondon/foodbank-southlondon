@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple
 import datetime
 
 import flask
@@ -11,6 +11,7 @@ import weasyprint  # type:ignore
 import werkzeug
 
 from foodbank_southlondon.api import utils
+from foodbank_southlondon.api.events import models as events_models
 from foodbank_southlondon.api.lists import models as lists_models
 from foodbank_southlondon.bff import models, parsers, rest
 
@@ -41,8 +42,11 @@ def _get(url: str, **kwargs: Any) -> Dict[str, Any]:
     return r.json()
 
 
-def _post(url: str, **kwargs: Any) -> Dict:
-    r = requests.post(url, **kwargs)
+def _post_event(api_base_url: str, request_ids: List, event_name: str, event_data: str) -> Dict:
+    now = datetime.datetime.now(tz=pytz.timezone("Europe/London")).isoformat()
+    r = requests.post(f"{api_base_url}events/", cookies=flask.request.cookies,
+                      json={"items": [{"request_id": request_id, "event_timestamp": now, "event_name": event_name, "event_data": event_data}
+                                      for request_id in request_ids]})
     if not r.ok:
         r.raise_for_status()
     return r.json()
@@ -104,7 +108,7 @@ class Actions(flask_restx.Resource):
     @rest.response(400, "Bad Request")
     @rest.response(404, "Not Found")
     @rest.expect(models.action)
-    def post(self) -> Union[Tuple[Dict, int], flask.Response]:
+    def post(self) -> flask.Response:
         """Process an action."""
         data = flask.request.json
         flask.current_app.logger.debug(f"Received request body, {data}")
@@ -116,32 +120,31 @@ class Actions(flask_restx.Resource):
         event_name = data["event_name"]
         event_data = data["event_data"]
         api_base_url = _api_base_url()
-        if event_name.startswith("Print"):
+        if event_name == events_models.Action.DELETE_REQUEST.value.event_name:
+            for request_id in request_ids:
+                utils.delete_row(flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], request_id)
+                _post_event(api_base_url, [request_id], events_models.ActionStatus.REQUEST_DELETED.value.event_name, event_data)
+            return_value = flask.make_response({}, 201)
+        else:
+            action_status_name = None
             try:
                 requests_items = _get(f"{api_base_url}requests/{','.join(request_ids)}", cookies=flask.request.cookies,
                                       params={"per_page": total_request_ids})["items"]
             except requests.exceptions.HTTPError as error:
                 if error.response.status_code == 404:
                     rest.abort(404, error.response.json()["message"])
-                raise
-            print_shipping_label = "Print Shipping Label"
-            if event_name == "Print Shopping List":
+            if event_name == events_models.Action.PRINT_SHOPPING_LIST.value.event_name:
+                action_status_name = events_models.ActionStatus.SHOPPING_LIST_PRINTED.value.event_name
                 return_value = self._generate_shopping_list_pdf(requests_items, api_base_url, flask.request.cookies)
-            elif event_name == print_shipping_label:
+            elif event_name == events_models.Action.PRINT_SHIPPING_LABEL.value.event_name:
+                action_status_name = events_models.ActionStatus.SHIPPING_LABEL_PRINTED.value.event_name
                 if not event_data.isdigit():
                     rest.abort(400, f"The quantity must be a whole number.")
                 return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
-            elif event_name == "Print Driver Overview":
+            elif event_name == events_models.Action.PRINT_DRIVER_OVERVIEW.value.event_name:
+                action_status_name = events_models.ActionStatus.DRIVER_OVERVIEW_PRINTED.value.event_name
                 return_value = self._generate_driver_overview_pdf(requests_items, event_data)
-        else:
-            if event_name == "Permanently Delete Request":
-                for request_id in request_ids:
-                    utils.delete_row(flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], request_id)
-            return_value = ({}, 201)
-        now = datetime.datetime.now(tz=pytz.timezone('Europe/London')).isoformat()
-        _post(f"{api_base_url}events/", cookies=flask.request.cookies,
-              json={"items": [{"request_id": request_id, "event_timestamp": now, "event_name": event_name, "event_data": event_data}
-                              for request_id in request_ids]})
+            _post_event(api_base_url, request_ids, action_status_name, event_data)
         return return_value
 
 
@@ -186,6 +189,21 @@ class Details(flask_restx.Resource):
             "events": events_data["items"],
             "similar_request_ids": similar_request_items
         }
+
+
+@rest.route("/statuses/")
+class Statuses(flask_restx.Resource):
+
+    @rest.response(201, "Created")
+    @rest.response(400, "Bad Request")
+    @rest.response(404, "Not Found")
+    @rest.expect(models.status)
+    def post(self) -> Tuple[Dict, int]:
+        """Process a status."""
+        data = flask.request.json
+        flask.current_app.logger.debug(f"Received request body, {data}")
+        _post_event(_api_base_url(), data["request_ids"], data["event_name"], data["event_data"])
+        return ({}, 201)
 
 
 @rest.route("/summary")
