@@ -117,7 +117,7 @@ tbody tr:nth-child(even) {
     background: rgba(91, 159, 227, 0.2);
 }
 
-table.selectable tbody tr:not(.empty-row) {
+table.selectable tbody tr:not(.empty-row):not(.disabled) {
     cursor: pointer;
 
     &:hover {

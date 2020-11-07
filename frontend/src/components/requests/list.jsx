@@ -44,10 +44,13 @@ export default class RequestsList extends React.Component {
 
         const tableRows = data.map(item => {
             const request = item.data;
+            const disabled = !request.id.length;
+            const onClick = disabled ? undefined : () => this.props.onSelect(request.id);
             return (
-                <tr key={request.id} onClick={ () => this.props.onSelect(request.id) }>
+                <tr key={request.id} onClick={ onClick } className={ disabled ? 'disabled' : '' }>
                     <td className="selection-cell" onClick={ this.handleCheckboxCellClick }>
                         <input type="checkbox"
+                            disabled={disabled}
                             onChange={ () => this.toggle(request.id) }
                             onClick={ this.handleCheckboxClick }
                             checked={ item.checked } />
