@@ -15,9 +15,22 @@ import {
     SELECT_REQUEST_FAILED,
     TOGGLE_REQUEST,
     TOGGLE_ALL_REQUESTS,
-    LOAD_EVENTS,
-    EVENTS_LOADED,
-    LOAD_EVENTS_FAILED,
+    LOAD_STATUSES,
+    STATUSES_LOADED,
+    LOAD_STATUSES_FAILED,
+    OPEN_SUBMIT_STATUS_DIALOG,
+    CLOSE_SUBMIT_STATUS_DIALOG,
+    SUBMIT_STATUS,
+    STATUS_SUBMIT_COMPLETE,
+    STATUS_SUBMIT_FAILED,
+    LOAD_ACTIONS,
+    ACTIONS_LOADED,
+    LOAD_ACTIONS_FAILED,
+    OPEN_SUBMIT_ACTION_DIALOG,
+    CLOSE_SUBMIT_ACTION_DIALOG,
+    SUBMIT_ACTION,
+    ACTION_SUBMIT_COMPLETE,
+    ACTION_SUBMIT_FAILED,
     OPEN_SUBMIT_DIALOG,
     CLOSE_SUBMIT_DIALOG,
     SUBMIT_EVENT,
@@ -46,9 +59,15 @@ const initialState = {
         status: STATUS_IDLE,
         item: null
     },
-    events: {
+    statuses: {
         loadingStatus: STATUS_IDLE,
-        items: [],
+        items: []
+    },
+    actions: {
+        loadingStatus: STATUS_IDLE,
+        items: []
+    },
+    events: {
         dialog: null,
         updateStatus: STATUS_IDLE
     },
@@ -153,29 +172,59 @@ export default function(state = initialState, action) {
                     checked
                 }))
             };
-        case LOAD_EVENTS:
+
+
+        case LOAD_STATUSES:
             return {
                 ...state,
-                events: {
-                    ...state.events,
+                statuses: {
+                    ...state.statuses,
                     loadingStatus: STATUS_LOADING,
                     items: []
                 }
             };
-        case EVENTS_LOADED:
+        case STATUSES_LOADED:
             return {
                 ...state,
-                events: {
-                    ...state.events,
+                statuses: {
+                    ...state.statuses,
                     loadingStatus: STATUS_SUCCESS,
-                    items: action.payload.events
+                    items: action.payload.statuses
                 }
             };
-        case LOAD_EVENTS_FAILED:
+        case LOAD_STATUSES_FAILED:
             return {
                 ...state,
-                events: {
-                    ...state.events,
+                statuses: {
+                    ...state.statuses,
+                    loadingStatus: STATUS_FAILED,
+                    items: []
+                }
+            };
+
+        case LOAD_ACTIONS:
+            return {
+                ...state,
+                actions: {
+                    ...state.actions,
+                    loadingStatus: STATUS_LOADING,
+                    items: []
+                }
+            };
+        case ACTIONS_LOADED:
+            return {
+                ...state,
+                actions: {
+                    ...state.statuses,
+                    loadingStatus: STATUS_SUCCESS,
+                    items: action.payload.actions
+                }
+            };
+        case LOAD_ACTIONS_FAILED:
+            return {
+                ...state,
+                actions: {
+                    ...state.actions,
                     loadingStatus: STATUS_FAILED,
                     items: []
                 }
@@ -186,7 +235,8 @@ export default function(state = initialState, action) {
                 events: {
                     ...state.events,
                     dialog: {
-                        event: action.payload.event
+                        event: action.payload.event,
+                        type: action.payload.type
                     }
                 }
             };

@@ -14,7 +14,12 @@ import {
     toggleAllRequests,
     fetchSingleRequest,
     clearRequestSelection,
-    fetchEvents,
+    fetchStatuses,
+    fetchActions,
+    // TODO more actions?
+
+
+    // TODO remove
     triggerSubmitEvent,
     confirmSubmitEvent,
     cancelSubmitEvent
@@ -63,8 +68,10 @@ class Requests extends React.Component {
     }
 
     fetchEvents() {
-        this.props.fetchEvents();
+        this.props.fetchStatuses();
+        this.props.fetchActions();
     }
+
 
     toggleRequest(id) {
         this.props.toggleRequest(id);
@@ -82,12 +89,12 @@ class Requests extends React.Component {
         this.props.clearRequestSelection();
     }
 
-    triggerSubmit(event) {
-        this.props.triggerSubmitEvent(event, this.getSelectedIds(), this.state.filters, this.props.paging.page);
+    triggerSubmit(event, type) {
+        this.props.triggerSubmitEvent(event, type, this.getSelectedIds(), this.state.filters, this.props.paging.page);
     }
 
-    confirmEventSubmission(event, data) {
-        this.props.confirmSubmitEvent(event, this.getSelectedIds(), data, this.state.filters, this.props.paging.page);
+    confirmEventSubmission(event, type, data) {
+        this.props.confirmSubmitEvent(event, type, this.getSelectedIds(), data, this.state.filters, this.props.paging.page);
     }
 
     cancelEventSubmission() {
@@ -121,9 +128,9 @@ class Requests extends React.Component {
     getActions() {
         return <RequestsActions
             recordCount={ this.getSelectedIds().length }
-            status={ this.props.events.loadingStatus }
-            events={ this.props.events.items }
-            onAction={ action => this.triggerSubmit(action) } />;
+            statuses={ this.props.statuses }
+            actions={ this.props.actions }
+            onAction={ (action, type) => this.triggerSubmit(action, type) } />;
     }
 
     getContents() {
@@ -213,7 +220,14 @@ export default connect(
         toggleAllRequests,
         fetchSingleRequest,
         clearRequestSelection,
-        fetchEvents,
+        
+        fetchStatuses,
+        fetchActions,
+
+        // TODO more of these?
+
+
+        // TODO remove
         triggerSubmitEvent,
         confirmSubmitEvent,
         cancelSubmitEvent

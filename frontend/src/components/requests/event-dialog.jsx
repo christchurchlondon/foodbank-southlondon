@@ -35,7 +35,11 @@ export default class RequestsEventDialog extends React.Component {
             quantity: this.state.quantity
         };
 
-        this.props.onConfirm(this.props.details.event, params);
+        this.props.onConfirm(
+            this.props.details.event,
+            this.props.details.type,
+            params
+        );
     }
 
     cancel() {
