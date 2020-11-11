@@ -47,7 +47,7 @@ def cache(name: str, spreadsheet_id: str, force_refresh: bool = False) -> pd.Dat
         file_metadata = helpers.drive_files_resource().get(fileId=spreadsheet_id, supportsAllDrives=True, fields="modifiedTime").execute()
         file_modified_time = datetime.datetime.fromisoformat(file_metadata["modifiedTime"].replace("Z", "+00:00"))
         cache_max_age_time = now - datetime.timedelta(seconds=flask.current_app.config[_FBSL_CACHE_TTL_SECONDS])
-        if _caches_updated[name] >= max(file_modified_time, cache_max_age_time):
+        if not force_refresh and _caches_updated[name] >= max(file_modified_time, cache_max_age_time):
             return cache
     flask.current_app.logger.info(f"Refreshing cache, {name} ...")
     _caches_updated[name] = now
