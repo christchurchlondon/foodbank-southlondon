@@ -64,10 +64,10 @@ class Actions(flask_restx.Resource):
         return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, template_name)
 
     @staticmethod
-    def _generate_driver_overview_pdf(requests_items: List, driver_name: str) -> flask.Response:
+    def _generate_driver_overview_pdf(items: List, driver_name: str) -> flask.Response:
         template_name = "driver-overview"
         today = datetime.datetime.now().strftime("%Y-%m-%d")
-        html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", requests_items=requests_items, date=today,
+        html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", items=items, date=today,
                                                             driver_name=driver_name), encoding="utf8")
         document = html.render()
         return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, template_name)
@@ -154,8 +154,18 @@ class Actions(flask_restx.Resource):
                     rest.abort(400, f"The quantity must be a whole number.")
                 return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
             elif event_name == events_models.Action.PRINT_DRIVER_OVERVIEW.value.event_name:
+                requests_df = pd.DataFrame(requests_items)
+                request_ids = requests_df["request_id"].unique()
+                event_attributes = ("request_id", "event_data")
+                events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
+                                headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
+                                params={"event_name": events_models.ActionStatus.SHIPPING_LABEL_PRINTED.value.event_name, "latest_event_only": True,
+                                        "per_page": len(request_ids), "request_ids": ",".join(request_ids)})
+                events_df = pd.DataFrame(events_data["items"], columns=event_attributes)
+                df = pd.merge(requests_df, events_df, on="request_id", how="left").replace({np.nan: None})
+                items = df.to_dict("records")
                 action_status_name = events_models.ActionStatus.OUT_FOR_DELIVERY.value.event_name
-                return_value = self._generate_driver_overview_pdf(requests_items, event_data)
+                return_value = self._generate_driver_overview_pdf(items, event_data)
             elif event_name == events_models.Action.PRINT_DAY_OVERVIEW.value.event_name:
                 return self._generate_day_overview_pdf(requests_items)
             _post_event(api_base_url, request_ids, action_status_name, event_data)
