@@ -16,10 +16,6 @@ import {
     clearRequestSelection,
     fetchStatuses,
     fetchActions,
-    // TODO more actions?
-
-
-    // TODO remove
     triggerSubmitEvent,
     confirmSubmitEvent,
     cancelSubmitEvent
@@ -177,11 +173,12 @@ class Requests extends React.Component {
     }
 
     getEventDialog() {
-        return <RequestsEventDialog
-            details={ this.props.events.dialog }
-            status={ this.props.events.updateStatus }
-            onConfirm={ this.confirmEventSubmission }
-            onCancel={ this.cancelEventSubmission } />;
+        return this.props.events.dialog
+            && <RequestsEventDialog
+                details={ this.props.events.dialog }
+                status={ this.props.events.updateStatus }
+                onConfirm={ this.confirmEventSubmission }
+                onCancel={ this.cancelEventSubmission } />;
     }
 
     render() {
@@ -220,14 +217,8 @@ export default connect(
         toggleAllRequests,
         fetchSingleRequest,
         clearRequestSelection,
-        
         fetchStatuses,
         fetchActions,
-
-        // TODO more of these?
-
-
-        // TODO remove
         triggerSubmitEvent,
         confirmSubmitEvent,
         cancelSubmitEvent

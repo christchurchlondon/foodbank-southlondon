@@ -305,7 +305,7 @@ export const loadActionsFailed = message => ({
 export const triggerSubmitEvent = (event, type, ids, filters, page) => {
     return dispatch => {
         if (event.requiresConfirmation) {
-            dispatch(openSubmitDialog(event, type, ids));
+            dispatch(openSubmitDialog(event, type));
         } else {
             dispatch(sendEvent(event, type, ids, {}, filters, page));
         }
