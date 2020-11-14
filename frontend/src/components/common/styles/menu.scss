@@ -6,7 +6,6 @@
 
     .toggle {
         display: flex;
-        min-width: 195px;
 
         &:not(:disabled) {
             cursor: pointer;
@@ -14,7 +13,7 @@
     }
 
     .toggle-icon {
-        margin-left: auto;
+        margin-left: $pad-half;
     }
 
     .menu-list {

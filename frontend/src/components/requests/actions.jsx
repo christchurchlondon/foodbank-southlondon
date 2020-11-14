@@ -25,17 +25,14 @@ export default class RequestsActions extends React.Component {
             : 'No clients selected';
 
         return (
-            <div className="requests-actions">
-                <div className="panel">
-                    <Menu options={statusOptions}
-                        label={label}
-                        disabled={ !this.props.recordCount } />
-                </div>
-                <div className="panel">
-                    <Menu options={actionOptions}
-                        label={label}
-                        disabled={ !this.props.recordCount } />
-                </div>
+            <div className="requests-actions panel">
+                <label>{ label }</label>
+                <Menu options={statusOptions}
+                    label="Statuses"
+                    disabled={ !this.props.recordCount } />
+                <Menu options={actionOptions}
+                    label="Actions"
+                    disabled={ !this.props.recordCount } />
             </div>
         );
     }
