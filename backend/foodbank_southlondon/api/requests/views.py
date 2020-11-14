@@ -43,6 +43,7 @@ class Requests(flask_restx.Resource):
         if client_full_names or postcodes or voucher_numbers:
             df = df.loc[df[name_attribute].map(functools.partial(fuzzy_match, choices=client_full_names)) |
                         df["Postcode"].str.upper().str.startswith(tuple(postcodes)) |
+                        df["Postcode"].str.upper().str.endswith(tuple(postcodes)) |
                         df["Voucher Number"].isin(voucher_numbers)]
         if last_request_only:
             df = df.assign(rank=df.groupby([name_attribute]).cumcount(ascending=False) + 1).query("rank == 1").drop("rank", axis=1)
