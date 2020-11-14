@@ -4,30 +4,18 @@ import './styles/actions.scss';
 
 export default class RequestsActions extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.handleChange = this.handleChange.bind(this);
-        this.doAction = this.doAction.bind(this);
-        this.state = { value: null };
-    }
-
-    handleChange(option) {
-        const value = this.props.events.find(e => e.name === option.value);
-        this.setState({ value });
-    }
-
-    doAction() {
-        if (!!this.state.value) {
-            this.props.onAction(this.state.value);
-        }
-    }
-
     render() {
 
-        const options = this.props.events
-            .map(event => ({
-                label: event.name,
-                action: () => this.props.onAction(event)
+        const statusOptions = this.props.statuses.items
+            .map(status => ({
+                label: status.name || 'No status',
+                action: () => this.props.onAction(status, 'status')
+            }));
+
+        const actionOptions = this.props.actions.items
+            .map(action => ({
+                label: action.name,
+                action: () => this.props.onAction(action, 'action')
             }));
 
         const clients = this.props.recordCount === 1 ? 'client' : 'clients';
@@ -37,10 +25,17 @@ export default class RequestsActions extends React.Component {
             : 'No clients selected';
 
         return (
-            <div className="requests-actions panel">
-                <Menu options={options}
-                    label={label}
-                    disabled={ !this.props.recordCount } />
+            <div className="requests-actions">
+                <div className="panel">
+                    <Menu options={statusOptions}
+                        label={label}
+                        disabled={ !this.props.recordCount } />
+                </div>
+                <div className="panel">
+                    <Menu options={actionOptions}
+                        label={label}
+                        disabled={ !this.props.recordCount } />
+                </div>
             </div>
         );
     }

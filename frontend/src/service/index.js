@@ -3,11 +3,13 @@ import { format, parse } from 'date-fns';
 import { DATE_FORMAT_REQUEST, DATE_FORMAT_TIMESTAMP } from '../constants';
 
 const endpoints = {
-    GET_REQUESTS: 'bff/status',
+    GET_REQUESTS: 'bff/summary',
     GET_SINGLE_REQUEST: 'bff/details/',
     GET_LISTS: 'api/lists/',
-    GET_EVENTS: 'api/events/distinct/?attribute=event_name',
-    SUBMIT_EVENT: 'bff/actions/',
+    GET_ACTIONS: 'api/events/distinct/actions',
+    GET_STATUSES: 'api/events/distinct/statuses',
+    SUBMIT_ACTION: 'bff/actions/',
+    SUBMIT_STATUS: 'bff/statuses/',
     SUBMIT_LISTS: 'api/lists/'
 };
 
@@ -199,9 +201,9 @@ export function getLists() {
         });
 }
 
-export function getEvents() {
-    return performFetch(endpoints.GET_EVENTS)
-        .then(response => response.values.map(v => ({
+export function getStatuses() {
+    return performFetch(endpoints.GET_STATUSES)
+        .then(response => response.items.map(v => ({
             name: v.event_name,
             requiresConfirmation: v.confirmation_expected,
             confirmationLabel: v.confirmation_label,
@@ -212,7 +214,24 @@ export function getEvents() {
         })));
 }
 
-export function postEvent(event, ids, data = {}) {
+export function getActions() {
+    return performFetch(endpoints.GET_ACTIONS)
+        .then(response => response.items.map(v => ({
+            name: v.event_name,
+            requiresConfirmation: v.confirmation_expected,
+            confirmationLabel: v.confirmation_label,
+            requiresDate: v.date_expected,
+            requiresName: v.name_expected,
+            requiresQuantity: v.quantity_expected,
+            isDownload: v.returns_pdf
+        })));
+}
+
+export function postEvent(event, ids, type, data = {}) {
+
+    const url = (type === 'status')
+        ? endpoints.SUBMIT_STATUS
+        : endpoints.SUBMIT_ACTION;
 
     const date = (data && data.date && event.requiresDate) ? formatDate(data.date) : null;
     const eventData = date || data.name || data.quantity;
@@ -224,11 +243,13 @@ export function postEvent(event, ids, data = {}) {
     };
 
     if (event.isDownload) {
-        return performDownload(endpoints.SUBMIT_EVENT, requestBody);
+        return performDownload(url, requestBody);
     } else {
-        return performPost(endpoints.SUBMIT_EVENT, requestBody);
+        return performPost(url, requestBody);
     }
 }
+
+
 
 export function postListUpdate(list, notes) {
     const items = listToRequestPayload(list);
@@ -258,13 +279,14 @@ function responseItemToRequest(item) {
             adults: item.number_of_adults,
             children: item.number_of_children,
             total: item.household_size,
-            ageOfChildren: item.age_of_children
+            ageAndGenderOfChildren: item.age_and_gender_of_children
         },
         requirements: {
             dietary: item.dietary_requirements,
             feminineProducts: item.feminine_products_required,
             babyProducts: item.baby_products_required,
-            petFood: item.pet_food_required
+            petFood: item.pet_food_required,
+            other: item.other_requirements
         },
         extraInformation: item.extra_information,
         editUrl: item.edit_details_url
