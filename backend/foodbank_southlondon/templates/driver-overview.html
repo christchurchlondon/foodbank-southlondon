@@ -64,29 +64,29 @@
         <table>
             <tr>
                 <th>Name</th>
-                <th>Address</th>
+                <th colspan="2">Address</th>
                 <th>Contact</th>
                 <th>Packing Date</th>
-                <th>Instructions</th>
-                <th>Delivered?</th>
+                <th>Parcels</th>
+                <th colspan="3">Instructions</th>
             </tr>
-            {% for request in requests_items %}
+            {% for item in items %}
             <tr>
-                <td>{{ request['client_full_name'] }}</td>
-                {% set address_line_2 = request['address_line_2'] %}
-                {% set town = request['town'] %}
-                {% set county = request['county'] %}
-                <td>{{ request['address_line_1'] }}{% if address_line_2 %}, {{ address_line_2 }}{% endif %}{% if town %}, {{ town }}{% endif %}{% if county %}, {{ county }}{% endif %}, {{ request['postcode'] }}</td>
-                <td>{{ request['phone_number'] or '' }}</td>
-                <td>{{ request['packing_date'] }}</td>
-                <td>{{ request['delivery_instructions'] or '' }}</td>
-                <td></td>
+                <td>{{ item['client_full_name'] }}</td>
+                {% set address_line_2 = item['address_line_2'] %}
+                {% set town = item['town'] %}
+                {% set county = item['county'] %}
+                <td colspan="2">{{ item['address_line_1'] }}{% if address_line_2 %}, {{ address_line_2 }}{% endif %}{% if town %}, {{ town }}{% endif %}{% if county %}, {{ county }}{% endif %}, {{ item['postcode'] }}</td>
+                <td>{{ item['phone_number'] or '' }}</td>
+                <td>{{ item['packing_date'] }}</td>
+                <td>{{ item['event_data'] }}</td>
+                <td colspan="3">{{ item['delivery_instructions'] or '' }}</td>
             </tr>
             {% endfor %}
             <br>
-            <tr class="spacer"><td colspan="6"></td></tr>
+            <tr class="spacer"><td colspan="9"></td></tr>
             <tr>
-                <td class="centre" colspan="6">
+                <td class="centre" colspan="9">
                     ⚠️ At the end of your shift, please call/text your shift manager to let them know that all deliveries have been completed or to report any issues. ⚠️<br>
                     Elizabeth - 07722 121 108 | Rebekah - 07366 574 794 | Reg - 07762 016 677<br>
                     ⚠️ THIS SHEET MUST BE DESTORYED OR RETURNED TO THE WAREHOUSE IMMEDIATELY ON COMPLETION OF DELIVERIES ⚠️
