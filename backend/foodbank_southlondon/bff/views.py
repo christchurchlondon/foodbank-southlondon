@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple
 import datetime
 
 import flask
@@ -11,6 +11,7 @@ import weasyprint  # type:ignore
 import werkzeug
 
 from foodbank_southlondon.api import utils
+from foodbank_southlondon.api.events import models as events_models
 from foodbank_southlondon.api.lists import models as lists_models
 from foodbank_southlondon.bff import models, parsers, rest
 
@@ -41,8 +42,11 @@ def _get(url: str, **kwargs: Any) -> Dict[str, Any]:
     return r.json()
 
 
-def _post(url: str, **kwargs: Any) -> Dict:
-    r = requests.post(url, **kwargs)
+def _post_event(api_base_url: str, request_ids: List, event_name: str, event_data: str) -> Dict:
+    now = datetime.datetime.now(tz=pytz.timezone("Europe/London")).isoformat()
+    r = requests.post(f"{api_base_url}events/", cookies=flask.request.cookies,
+                      json={"items": [{"request_id": request_id, "event_timestamp": now, "event_name": event_name, "event_data": event_data}
+                                      for request_id in request_ids]})
     if not r.ok:
         r.raise_for_status()
     return r.json()
@@ -50,6 +54,14 @@ def _post(url: str, **kwargs: Any) -> Dict:
 
 @rest.route("/actions/")
 class Actions(flask_restx.Resource):
+
+    @staticmethod
+    def _generate_day_overview_pdf(requests_items: List) -> flask.Response:
+        template_name = "day-overview"
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
+        html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", requests_items=requests_items, date=today), encoding="utf8")
+        document = html.render()
+        return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, template_name)
 
     @staticmethod
     def _generate_driver_overview_pdf(requests_items: List, driver_name: str) -> flask.Response:
@@ -104,7 +116,7 @@ class Actions(flask_restx.Resource):
     @rest.response(400, "Bad Request")
     @rest.response(404, "Not Found")
     @rest.expect(models.action)
-    def post(self) -> Union[Tuple[Dict, int], flask.Response]:
+    def post(self) -> flask.Response:
         """Process an action."""
         data = flask.request.json
         flask.current_app.logger.debug(f"Received request body, {data}")
@@ -116,32 +128,37 @@ class Actions(flask_restx.Resource):
         event_name = data["event_name"]
         event_data = data["event_data"]
         api_base_url = _api_base_url()
-        if event_name.startswith("Print"):
+        if event_name == events_models.Action.DELETE_REQUEST.value.event_name:
+            for request_id in request_ids:
+                # We want to delete before logging the event but the event log validates the request id is not missing which it will be if the
+                # delete happens first. We could add some flag into the event log post request to supress the check but this feels hacky. For now,
+                # leaving the operations in the wrong order - very small chance edge case that the deletion will fail but still be marked as deleted
+                # - user can just delete again.
+                _post_event(api_base_url, [request_id], events_models.ActionStatus.REQUEST_DELETED.value.event_name, event_data)
+                utils.delete_row(flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], request_id)
+            return_value = flask.make_response({}, 201)
+        else:
+            action_status_name = None
             try:
                 requests_items = _get(f"{api_base_url}requests/{','.join(request_ids)}", cookies=flask.request.cookies,
                                       params={"per_page": total_request_ids})["items"]
             except requests.exceptions.HTTPError as error:
                 if error.response.status_code == 404:
                     rest.abort(404, error.response.json()["message"])
-                raise
-            print_shipping_label = "Print Shipping Label"
-            if event_name == "Print Shopping List":
+            if event_name == events_models.Action.PRINT_SHOPPING_LIST.value.event_name:
+                action_status_name = events_models.ActionStatus.SHOPPING_LIST_PRINTED.value.event_name
                 return_value = self._generate_shopping_list_pdf(requests_items, api_base_url, flask.request.cookies)
-            elif event_name == print_shipping_label:
+            elif event_name == events_models.Action.PRINT_SHIPPING_LABEL.value.event_name:
+                action_status_name = events_models.ActionStatus.SHIPPING_LABEL_PRINTED.value.event_name
                 if not event_data.isdigit():
                     rest.abort(400, f"The quantity must be a whole number.")
                 return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
-            elif event_name == "Print Driver Overview":
+            elif event_name == events_models.Action.PRINT_DRIVER_OVERVIEW.value.event_name:
+                action_status_name = events_models.ActionStatus.OUT_FOR_DELIVERY.value.event_name
                 return_value = self._generate_driver_overview_pdf(requests_items, event_data)
-        else:
-            if event_name == "Permanently Delete Request":
-                for request_id in request_ids:
-                    utils.delete_row(flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], request_id)
-            return_value = ({}, 201)
-        now = datetime.datetime.now(tz=pytz.timezone('Europe/London')).isoformat()
-        _post(f"{api_base_url}events/", cookies=flask.request.cookies,
-              json={"items": [{"request_id": request_id, "event_timestamp": now, "event_name": event_name, "event_data": event_data}
-                              for request_id in request_ids]})
+            elif event_name == events_models.Action.PRINT_DAY_OVERVIEW.value.event_name:
+                return self._generate_day_overview_pdf(requests_items)
+            _post_event(api_base_url, request_ids, action_status_name, event_data)
         return return_value
 
 
@@ -153,7 +170,7 @@ class Details(flask_restx.Resource):
     @rest.marshal_with(models.details)
     def get(self, request_id: str) -> Dict[str, Any]:
         """Get detailed information for a single Client Request."""
-        params = parsers.status_params.parse_args(flask.request)
+        params = parsers.summary_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         api_base_url = _api_base_url()
         try:
@@ -188,14 +205,29 @@ class Details(flask_restx.Resource):
         }
 
 
-@rest.route("/status")
-class Status(flask_restx.Resource):
+@rest.route("/statuses/")
+class Statuses(flask_restx.Resource):
 
-    @rest.expect(parsers.status_params)
-    @rest.marshal_with(models.page_of_status)
+    @rest.response(201, "Created")
+    @rest.response(400, "Bad Request")
+    @rest.response(404, "Not Found")
+    @rest.expect(models.status)
+    def post(self) -> Tuple[Dict, int]:
+        """Process a status."""
+        data = flask.request.json
+        flask.current_app.logger.debug(f"Received request body, {data}")
+        _post_event(_api_base_url(), data["request_ids"], data["event_name"], data["event_data"])
+        return ({}, 201)
+
+
+@rest.route("/summary")
+class Summary(flask_restx.Resource):
+
+    @rest.expect(parsers.summary_params)
+    @rest.marshal_with(models.page_of_summary)
     def get(self) -> Dict[str, Any]:
-        """List Client Request summary and status information."""
-        params = parsers.status_params.parse_args(flask.request)
+        """List Client Request summary."""
+        params = parsers.summary_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         start_date = params["start_date"]
         end_date = params["end_date"]
@@ -215,7 +247,7 @@ class Status(flask_restx.Resource):
         items = []
         requests_data = _get(f"{api_base_url}requests/", cookies=flask.request.cookies,
                              headers={"X-Fields": "items{request_id, client_full_name, voucher_number, postcode, packing_date, time_of_day, "
-                                      "household_size, congestion_zone}, page, per_page, total_items, total_pages"},
+                                      "household_size, congestion_zone, flag_for_action}, page, per_page, total_items, total_pages"},
                              params={"client_full_names": client_full_names, "packing_dates": packing_dates, "page": params["page"],
                                      "per_page": per_page, "postcodes": postcodes, "voucher_numbers": voucher_numbers,
                                      "refresh_cache": refresh_cache})

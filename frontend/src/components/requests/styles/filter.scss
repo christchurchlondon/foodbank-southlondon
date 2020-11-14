@@ -16,10 +16,10 @@
         padding-right: $pad-standard;
     }
 
-    .toggle {
+    .toggle-more {
         font-size: $font-size-small;
 
-        .toggle-icon {
+        .toggle-icon-more {
             margin-left: $pad-half;
         }
     }
@@ -45,12 +45,12 @@
     }
 }
 
-@media (max-width: $breakpoint-medium) {
-    .toggle-label {
+@media (max-width: $breakpoint-large) {
+    .toggle-more-label {
         display: none;
     }
 
-    .toggle-icon {
+    .toggle-more-icon {
         margin: 0 $pad-standard 0 0;
     }
 }

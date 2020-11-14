@@ -3,6 +3,11 @@ from flask_restx import fields  # type:ignore
 from foodbank_southlondon.api import models, rest
 
 
+class StrBoolean(fields.Raw):
+    def format(self, value: str) -> bool:
+        return True if value.upper() == "YES" else False
+
+
 request = rest.model("ClientRequest", {
     "request_id": fields.String(required=True, description="The unique ID of the Client Request",
                                 example="ACYDBNgidDBRKTk_WpZiWnVOKVzOzbPPXzO3NxqUlTK9cNXuEfpOLTRRT5YV2dnscmWOucg"),
@@ -28,20 +33,24 @@ request = rest.model("ClientRequest", {
     "household_size": fields.String(attribute="Household Size", required=True, description="The type of request", example="Single",
                                     enum=["Single", "Family of 2", "Family of 3", "Family of 4", "Family of 5", "Family of 6", "Family of 7",
                                           "Family of 8", "Family of 9+"]),
-    "number_of_adults": fields.String(attribute="Number of Adults", required=True, description="The number of individuals living at the household "
-                                      "that are aged 16 or over", example="2"),
+    "number_of_adults": fields.String(attribute="Number of Adults", required=True,
+                                      description="The number of individuals living at the household that are aged 16 or over", example="2"),
     "number_of_children": fields.String(attribute="Number of Children", required=False, description="The number of children living at the household",
                                         example="1"),
-    "age_of_children": fields.String(attribute="Age of Children", required=True, description="The age range of the children living at the household",
-                                     example="3-6"),
-    "dietary_requirements": fields.String(attribute="Dietary Requirements", required=True, description="Whether the Client has any dietary "
-                                          "requirements", example="Meat / Fish"),
+    "age_and_gender_of_children": fields.String(attribute="Age and Gender of Children", required=True, description="The age range and gender of the "
+                                                "children living at the household", example="Girl - 3, Boy - 6"),
+    "dietary_requirements": fields.String(attribute="Dietary Requirements", required=True,
+                                          description="Whether the Client has any dietary requirements", example="Meat, No Dairy"),
     "feminine_products_required": fields.String(attribute="Feminine Products Required?", required=True, description="Whether the Client requires "
                                                 "feminine products", example="No", enum=["Yes", "No", "Don't Know"]),
     "baby_products_required": fields.String(attribute="Baby Products Required?", required=True, description="Whether the Client requires baby "
                                             "products", example="Don't Know", enum=["Yes", "No", "Don't Know"]),
     "pet_food_required": fields.String(attribute="Pet Food Required?", required=True, description="Whether the Client requires pet food",
                                        example="Yes", enum=["Yes", "No", "Don't Know"]),
+    "other_requirements": fields.String(attribute="Other Requirements", required=True,
+                                        description="Additional, non-dietary requirements or season-specific asks", example="Christmas Presents"),
+    "flag_for_action": StrBoolean(attribute="Flag for Action", required=True, default="",
+                                  description="Whether or not this request should be flagged for action", example=True),
     "extra_information": fields.String(attribute="Extra Information", required=False, description="Any extra information to be noted",
                                        example="No dairy"),
     "edit_details_url": fields.String(required=True, description="The Google Forms edit response URL that can be used to update details of the Client"

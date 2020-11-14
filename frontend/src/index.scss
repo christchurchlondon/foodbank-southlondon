@@ -117,21 +117,28 @@ tbody tr:nth-child(even) {
     background: rgba(91, 159, 227, 0.2);
 }
 
-table.selectable tbody tr:not(.empty-row) {
-    cursor: pointer;
+table {
 
-    &:hover {
-        background: rgba(91, 159, 227, 0.4);
+    &.selectable tbody tr:not(.empty-row):not(.disabled) {
+        cursor: pointer;
+
+        &:hover {
+            background: rgba(91, 159, 227, 0.4);
+        }
     }
-}
 
-table .selection-cell {
-    vertical-align: middle;
-}
+    .selection-cell {
+        vertical-align: middle;
+    }
 
-table .empty-row {
-    text-align: center;
-    color: $colour-text-secondary;
+    .disabled {
+        color: $colour-text-secondary;
+    }
+
+    .empty-row {
+        text-align: center;
+        color: $colour-text-secondary;
+    }
 }
 
 button, .button {

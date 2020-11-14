@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <title>Driver Overview</title>
+    <head>
+        <style>
+            @page {
+                margin: 0.5cm;
+            }
+            .clearfix:after {
+                display: block;
+                content: "";
+                clear: both;
+            }
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 10px;
+                line-height: 1.25rem;
+            }
+            h1 {
+                line-height: 2rem;
+            }
+            img {
+                display: block;
+                float: right;
+                margin-bottom: 1rem;
+                object-fit: cover;
+                width: 192px;
+            }
+            table {
+                border-collapse: collapse;
+                table-layout: fixed;
+                width: 100%
+            }
+            table, td, th {
+                border: 0.1rem solid black;
+            }
+            td, th {
+                overflow: hidden;
+                overflow-wrap: break-word;
+                padding: 0.2rem;
+                vertical-align: top;
+            }
+            th {
+                padding: 0.1rem 0.2rem;
+                font-size: 0.5rem;
+                text-decoration: underline;
+            }
+            tr.compact td {
+                padding: 0.05rem 0.2rem;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="clearfix">
+            <h1>DAY OVERVIEW</h1>
+            <b>Date:</b> {{ date }}
+        </div>
+        <table>
+            <tr>
+                <th>Packed?</th>
+                <th>Sent?</th>
+                <th colspan="2">Name</th>
+                <th>Post Code</th>
+                <th colspan="2">Packing Date</th>
+                <th>Time</th>
+                <th colspan="8">Instructions</th>
+            </tr>
+            {% for request in requests_items %}
+            <tr class="compact">
+                <td></td>
+                <td></td>
+                <td colspan="2">{{ request['client_full_name'] }}</td>
+                <td>{{ request['postcode'] }}</td>
+                <td colspan="2">{{ request['packing_date'] }}</td>
+                <td>{{ request['time_of_day'] }}</td>
+                <td colspan="8">{{ request['delivery_instructions'] or '' }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

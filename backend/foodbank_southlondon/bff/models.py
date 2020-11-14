@@ -24,8 +24,16 @@ def _clone_fields_without_attribute(model: flask_restx.Model) -> Dict:
 
 
 action = rest.model("Action", {
-    "request_ids": fields.List(requests_models.request["request_id"]),
-    "event_name": events_models.event["event_name"],
+    "request_ids": fields.List(events_models.event["request_id"]),
+    "event_name": fields.String(required=True, description="The name of the action event",
+                                example=events_models.Action.DELETE_REQUEST.value.event_name, enum=events_models.ACTION_NAMES),
+    "event_data": events_models.event["event_data"]
+})
+
+status = rest.model("Status", {
+    "request_ids": fields.List(events_models.event["request_id"]),
+    "event_name": fields.String(required=True, description="The name of the status event",
+                                example=events_models.Action.DELETE_REQUEST.value.event_name, enum=events_models.STATUS_NAMES),
     "event_data": events_models.event["event_data"]
 })
 
@@ -35,7 +43,7 @@ _event = rest.model("EventSummary", {
     "event_data": events_models.event["event_data"]
 })
 
-_status = rest.inherit("Status", _event, {
+_summary = rest.inherit("Summary", _event, {
     "request_id": requests_models.request["request_id"],
     "client_full_name": _clone_field_without_attribute(requests_models.request["client_full_name"]),
     "voucher_number": _clone_field_without_attribute(requests_models.request["voucher_number"]),
@@ -43,13 +51,14 @@ _status = rest.inherit("Status", _event, {
     "packing_date": _clone_field_without_attribute(requests_models.request["packing_date"]),
     "time_of_day": _clone_field_without_attribute(requests_models.request["time_of_day"]),
     "household_size": _clone_field_without_attribute(requests_models.request["household_size"]),
-    "congestion_zone": _clone_field_without_attribute(requests_models.request["congestion_zone"])
+    "congestion_zone": _clone_field_without_attribute(requests_models.request["congestion_zone"]),
+    "flag_for_action": _clone_field_without_attribute(requests_models.request["flag_for_action"])
 })
 
-page_of_status = rest.inherit("StatusPage", _pagination, {
+page_of_summary = rest.inherit("SummaryPage", _pagination, {
     "form_submit_url": fields.String(required=True, description="The URL that users can use to submit entries in the form.",
                                      example="https://docs.google.com/forms/d/e/asdasdasd989123123lkf_skdjfasd/viewform"),
-    "items": fields.List(fields.Nested(_status))
+    "items": fields.List(fields.Nested(_summary))
 })
 
 _request = rest.model("ClientRequest", _clone_fields_without_attribute(requests_models.request))

@@ -24,9 +24,12 @@ import {
     UPDATE_LIST_COMPLETE,
     UPDATE_LIST_FAILED,
     MOVE_LIST_ITEM,
-    LOAD_EVENTS,
-    EVENTS_LOADED,
-    LOAD_EVENTS_FAILED,
+    LOAD_STATUSES,
+    STATUSES_LOADED,
+    LOAD_STATUSES_FAILED,
+    LOAD_ACTIONS,
+    ACTIONS_LOADED,
+    LOAD_ACTIONS_FAILED,
     OPEN_SUBMIT_DIALOG,
     CLOSE_SUBMIT_DIALOG,
     SUBMIT_EVENT,
@@ -37,7 +40,8 @@ import {
     getRequests,
     getSingleRequest,
     getLists,
-    getEvents,
+    getStatuses,
+    getActions,
     postEvent,
     postListUpdate
 } from '../../service';
@@ -231,55 +235,94 @@ export const moveListItem = (oldPosition, newPosition) => ({
     }
 })
 
-// Events
 
-export const fetchEvents = () => {
+// Statuses
+
+export const fetchStatuses = () => {
     return dispatch => {
-        dispatch(loadEvents())
-        return getEvents()
-            .then(result => dispatch(eventsLoaded(result)))
-            .catch(() => loadEventsFailed());
+        dispatch(loadStatuses())
+        return getStatuses()
+            .then(result => dispatch(statusesLoaded(result)))
+            .catch(loadStatusesFailed);
     };
 };
 
-export const loadEvents = () => ({
-    type: LOAD_EVENTS
+export const loadStatuses = () => ({
+    type: LOAD_STATUSES
 });
 
-export const eventsLoaded = events => ({
-    type: EVENTS_LOADED,
+export const statusesLoaded = statuses => ({
+    type: STATUSES_LOADED,
     payload: {
-        events
+        statuses
     }
 });
 
-export const loadEventsFailed = message => ({
-    type: LOAD_EVENTS_FAILED,
+export const loadStatusesFailed = message => ({
+    type: LOAD_STATUSES_FAILED,
     payload: {
         message
     }
 });
 
-export const triggerSubmitEvent = (event, ids, filters,page) => {
+// TODO more actions
+
+
+// Actions
+
+export const fetchActions = () => {
+    return dispatch => {
+        dispatch(loadActions())
+        return getActions()
+            .then(result => dispatch(actionsLoaded(result)))
+            .catch(loadActionsFailed);
+    };
+};
+
+export const loadActions = () => ({
+    type: LOAD_ACTIONS
+});
+
+export const actionsLoaded = actions => ({
+    type: ACTIONS_LOADED,
+    payload: {
+        actions
+    }
+});
+
+export const loadActionsFailed = message => ({
+    type: LOAD_ACTIONS_FAILED,
+    payload: {
+        message
+    }
+});
+
+// TODO more?
+
+
+// Events
+
+export const triggerSubmitEvent = (event, type, ids, filters, page) => {
     return dispatch => {
         if (event.requiresConfirmation) {
-            dispatch(openSubmitDialog(event, ids));
+            dispatch(openSubmitDialog(event, type));
         } else {
-            dispatch(sendEvent(event, ids, {}, filters, page));
+            dispatch(sendEvent(event, type, ids, {}, filters, page));
         }
     };
 };
 
-export const openSubmitDialog = event => ({
+export const openSubmitDialog = (event, type) => ({
     type: OPEN_SUBMIT_DIALOG,
     payload: {
-        event
+        event,
+        type
     }
 });
 
-export const confirmSubmitEvent = (event, ids, data, filters = {}, page = 1) => {
+export const confirmSubmitEvent = (event, type, ids, data, filters = {}, page = 1) => {
     return dispatch => {
-        dispatch(sendEvent(event, ids, data, filters, page));
+        dispatch(sendEvent(event, type, ids, data, filters, page));
     };
 };
 
@@ -293,10 +336,10 @@ export const closeSubmitDialog = () => ({
     type: CLOSE_SUBMIT_DIALOG
 });
 
-export const sendEvent = (event, ids, data, filters, page) => {
+export const sendEvent = (event, type, ids, data, filters, page) => {
     return dispatch => {
         dispatch(submitEvent(event));
-        return postEvent(event, ids, data)
+        return postEvent(event, ids, type, data)
             .then(() => {
                 dispatch(eventSubmitComplete());
                 dispatch(closeSubmitDialog())
