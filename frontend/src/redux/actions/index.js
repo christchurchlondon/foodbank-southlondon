@@ -27,19 +27,9 @@ import {
     LOAD_STATUSES,
     STATUSES_LOADED,
     LOAD_STATUSES_FAILED,
-    OPEN_SUBMIT_STATUS_DIALOG,
-    CLOSE_SUBMIT_STATUS_DIALOG,
-    SUBMIT_STATUS,
-    STATUS_SUBMIT_COMPLETE,
-    STATUS_SUBMIT_FAILED,
     LOAD_ACTIONS,
     ACTIONS_LOADED,
     LOAD_ACTIONS_FAILED,
-    OPEN_SUBMIT_ACTION_DIALOG,
-    CLOSE_SUBMIT_ACTION_DIALOG,
-    SUBMIT_ACTION,
-    ACTION_SUBMIT_COMPLETE,
-    ACTION_SUBMIT_FAILED,
     OPEN_SUBMIT_DIALOG,
     CLOSE_SUBMIT_DIALOG,
     SUBMIT_EVENT,
@@ -315,7 +305,7 @@ export const loadActionsFailed = message => ({
 export const triggerSubmitEvent = (event, type, ids, filters, page) => {
     return dispatch => {
         if (event.requiresConfirmation) {
-            dispatch(openSubmitDialog(event, type, ids));
+            dispatch(openSubmitDialog(event, type));
         } else {
             dispatch(sendEvent(event, type, ids, {}, filters, page));
         }

@@ -11,10 +11,18 @@ export default class Popup extends React.Component {
         this.close = this.close.bind(this);
         this.boxClickHandler = this.boxClickHandler.bind(this);
         this.keyDownHandler = this.keyDownHandler.bind(this);
+
+        this.state = {
+            height: 0
+        };
+
+        this.headerRef = React.createRef();
+        this.footerRef = React.createRef();
     }
 
     componentDidMount() {
         document.addEventListener('keydown', this.keyDownHandler, false);
+        this.setContentsMaxHeight();
     }
 
     componentWillUnmount() {
@@ -48,6 +56,16 @@ export default class Popup extends React.Component {
         }
     }
 
+    setContentsMaxHeight() {
+        const header = this.headerRef.current || { clientHeight: 0 };
+        const footer = this.footerRef.current || { clientHeight: 0 };
+        const height = window.innerHeight
+            - header.clientHeight
+            - footer.clientHeight
+            - 80;
+        this.setState({ height })
+    }
+
     getButtons() {
         return (this.props.buttons || [])
             .map((button, index) => {
@@ -64,7 +82,7 @@ export default class Popup extends React.Component {
 
     getHeader() {
         const icon = this.props.icon ? <FontAwesomeIcon icon={ this.props.icon } className="popup-header-icon" /> : null;
-        return <header className="popup-header">
+        return <header className="popup-header" ref={ this.headerRef }>
             <h3>{ icon }{ this.props.title }</h3>
             { this.getCloseButton() }
         </header>;
@@ -73,7 +91,7 @@ export default class Popup extends React.Component {
     getFooter() {
         const buttons = this.getButtons();
         return buttons.length > 0
-            ? <footer className="popup-footer">{ buttons }</footer>
+            ? <footer className="popup-footer" ref={ this.footerRef }>{ buttons }</footer>
             : null;
     }
 
@@ -92,7 +110,7 @@ export default class Popup extends React.Component {
             <div className="popup-wrapper" onClick={ this.close }>
                 <div className="popup-box" onClick={ this.boxClickHandler }>
                     { this.getHeader() }
-                    <main>
+                    <main className="popup-main" style={ { maxHeight: this.state.height } }>
                         { this.props.children }
                     </main>
                     { this.getFooter() }
