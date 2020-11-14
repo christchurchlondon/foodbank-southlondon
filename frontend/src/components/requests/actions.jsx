@@ -8,7 +8,7 @@ export default class RequestsActions extends React.Component {
 
         const statusOptions = this.props.statuses.items
             .map(status => ({
-                label: status.name || 'No status',
+                label: status.name || 'No Status',
                 action: () => this.props.onAction(status, 'status')
             }));
 
