@@ -130,8 +130,12 @@ class Actions(flask_restx.Resource):
         api_base_url = _api_base_url()
         if event_name == events_models.Action.DELETE_REQUEST.value.event_name:
             for request_id in request_ids:
-                utils.delete_row(flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], request_id)
+                # We want to delete before logging the event but the event log validates the request id is not missing which it will be if the
+                # delete happens first. We could add some flag into the event log post request to supress the check but this feels hacky. For now,
+                # leaving the operations in the wrong order - very small chance edge case that the deletion will fail but still be marked as deleted
+                # - user can just delete again.
                 _post_event(api_base_url, [request_id], events_models.ActionStatus.REQUEST_DELETED.value.event_name, event_data)
+                utils.delete_row(flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], request_id)
             return_value = flask.make_response({}, 201)
         else:
             action_status_name = None
