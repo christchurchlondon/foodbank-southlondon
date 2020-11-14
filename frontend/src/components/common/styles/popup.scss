@@ -11,7 +11,8 @@
 }
 
 .popup-box {
-    width: 600px;
+    width: 700px;
+    box-sizing: border-box;
     max-height: calc(100% - #{$pad-double});
     margin: $pad-standard auto;
     padding: $pad-standard;
@@ -38,6 +39,10 @@
     .close {
         margin: 0 0 0 auto;
     }
+}
+
+.popup-main {
+    overflow: scroll;
 }
 
 .popup-footer {

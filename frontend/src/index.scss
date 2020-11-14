@@ -119,7 +119,7 @@ tbody tr:nth-child(even) {
 
 table {
 
-    .selectable tbody tr:not(.empty-row):not(.disabled) {
+    &.selectable tbody tr:not(.empty-row):not(.disabled) {
         cursor: pointer;
 
         &:hover {
