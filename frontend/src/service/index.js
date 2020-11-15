@@ -135,7 +135,8 @@ export function getRequests(filters = {}, page = 1) {
                 timeOfDay: item.time_of_day,
                 event: extractEvent(item),
                 postcode: item.postcode,
-                isInCongestionZone: item.congestion_zone
+                isInCongestionZone: item.congestion_zone,
+                flagForAction: item.flag_for_action
             }));
 
             const paging = {

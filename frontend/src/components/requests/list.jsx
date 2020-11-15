@@ -1,6 +1,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { DATE_FORMAT_UI } from '../../constants';
+import Flag from './flag';
 import CongestionCharge from '../common/congestion-charge';
 import './styles/list.scss';
 
@@ -55,7 +56,12 @@ export default class RequestsList extends React.Component {
                             onClick={ this.handleCheckboxClick }
                             checked={ item.checked } />
                     </td>
-                    <td>{ request.fullName }</td>
+                    <td className="cell-trim">
+                        { request.flagForAction && <Flag /> }
+                    </td>
+                    <td>
+                        { request.fullName }
+                    </td>
                     <td>{ request.householdSize }</td>
                     <td>
                         { request.postcode }
@@ -82,6 +88,7 @@ export default class RequestsList extends React.Component {
                                 disabled={ !hasData }
                                 checked={ hasData && allChecked } />
                         </th>
+                        <th className="cell-trim"></th>
                         <th>Name</th>
                         <th>Family Size</th>
                         <th>Postcode</th>
