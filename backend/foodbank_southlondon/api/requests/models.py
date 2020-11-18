@@ -5,7 +5,8 @@ from foodbank_southlondon.api import models, rest
 
 class StrBoolean(fields.Raw):
     def format(self, value: str) -> bool:
-        print(f"value: {value}")
+        if isinstance(value, bool):
+            return value
         return True if value.upper() == "YES" else False
 
 
@@ -49,7 +50,7 @@ request = rest.model("ClientRequest", {
     "other_requirements": fields.String(attribute="Other Requirements", required=True,
                                         description="Additional, non-dietary requirements or season-specific asks", example="Christmas Presents"),
     "flag_for_attention": StrBoolean(attribute="Flag for Attention", required=True, default="",
-                                  description="Whether or not this request should be flagged for attention", example=True),
+                                     description="Whether or not this request should be flagged for attention", example=True),
     "extra_information": fields.String(attribute="Extra Information", required=False, description="Any extra information to be noted",
                                        example="No dairy"),
     "edit_details_url": fields.String(required=True, description="The Google Forms edit response URL that can be used to update details of the Client"
