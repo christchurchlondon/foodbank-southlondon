@@ -57,7 +57,7 @@ export default class RequestsList extends React.Component {
                             checked={ item.checked } />
                     </td>
                     <td className="cell-trim">
-                        { request.flagForAction && <Flag /> }
+                        { request.flagForAttention && <Flag /> }
                     </td>
                     <td>
                         { request.fullName }

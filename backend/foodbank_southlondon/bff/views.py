@@ -257,7 +257,7 @@ class Summary(flask_restx.Resource):
         items = []
         requests_data = _get(f"{api_base_url}requests/", cookies=flask.request.cookies,
                              headers={"X-Fields": "items{request_id, client_full_name, voucher_number, postcode, packing_date, time_of_day, "
-                                      "household_size, congestion_zone, flag_for_action}, page, per_page, total_items, total_pages"},
+                                      "household_size, congestion_zone, flag_for_attention}, page, per_page, total_items, total_pages"},
                              params={"client_full_names": client_full_names, "packing_dates": packing_dates, "page": params["page"],
                                      "per_page": per_page, "postcodes": postcodes, "voucher_numbers": voucher_numbers,
                                      "refresh_cache": refresh_cache})

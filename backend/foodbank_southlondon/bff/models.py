@@ -52,7 +52,7 @@ _summary = rest.inherit("Summary", _event, {
     "time_of_day": _clone_field_without_attribute(requests_models.request["time_of_day"]),
     "household_size": _clone_field_without_attribute(requests_models.request["household_size"]),
     "congestion_zone": _clone_field_without_attribute(requests_models.request["congestion_zone"]),
-    "flag_for_action": _clone_field_without_attribute(requests_models.request["flag_for_action"])
+    "flag_for_attention": _clone_field_without_attribute(requests_models.request["flag_for_attention"])
 })
 
 page_of_summary = rest.inherit("SummaryPage", _pagination, {
