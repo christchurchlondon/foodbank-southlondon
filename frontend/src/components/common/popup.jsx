@@ -11,6 +11,7 @@ export default class Popup extends React.Component {
         this.close = this.close.bind(this);
         this.boxClickHandler = this.boxClickHandler.bind(this);
         this.keyDownHandler = this.keyDownHandler.bind(this);
+        this.setContentsMaxHeight = this.setContentsMaxHeight.bind(this);
 
         this.state = {
             height: 0
@@ -18,6 +19,8 @@ export default class Popup extends React.Component {
 
         this.headerRef = React.createRef();
         this.footerRef = React.createRef();
+
+        window.addEventListener('resize', this.setContentsMaxHeight);
     }
 
     componentDidMount() {

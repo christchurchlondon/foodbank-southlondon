@@ -103,6 +103,10 @@ th, td {
     padding: $pad-half;
     text-align: left;
     vertical-align: middle;
+
+    &.cell-trim {
+        padding: $pad-half 0;
+    }
 }
 
 th {
