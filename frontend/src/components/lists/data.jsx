@@ -27,7 +27,10 @@ export default class ListsData extends React.Component {
         this.props.onEdit(item.id);
     }
 
-    onDragStart(item) {        
+    onDragStart(e, item) {
+        // Hide default thumbnail
+        e.dataTransfer.setDragImage(new Image(), 0, 0);
+
         this.setState({
             draggingItem: item,
             draggingData: this.props.data
@@ -37,7 +40,7 @@ export default class ListsData extends React.Component {
     onDragEnter(e, draggedOverId) {
         // Required so that onDrop fires (https://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html)
         e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
+        e.dataTransfer.dropEffect = 'copyMove';
 
         const { draggingItem } = this.state;
 
@@ -54,7 +57,7 @@ export default class ListsData extends React.Component {
     onDragOver(e) {
         // Required so that onDrop fires (https://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html)
         e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
+        e.dataTransfer.dropEffect = 'copyMove';
     }
 
     onDrop() {
@@ -81,7 +84,6 @@ export default class ListsData extends React.Component {
         const { id, type } = this.props.selectedComment || { id: null, type: null };
 
         const data = this.state.draggingData || this.props.data;
-        const length = data.length;
 
         const tableRows = data.map((item, index) => {
 
@@ -91,13 +93,18 @@ export default class ListsData extends React.Component {
             return (
                 <tr
                     key={index}
-                    draggable
-                    onDragStart={() => this.onDragStart(item)}
                     // preventDefault calls required to get onDrop to fire
                     onDragEnter={(e) => this.onDragEnter(e, item.id)}
                     onDragOver={this.onDragOver}
                     onDrop={this.onDrop}
                 >
+                    <td
+                        className="action-cell action-cell-draggable"
+                        draggable
+                        onDragStart={(e) => this.onDragStart(e, item)}
+                    >
+                        <FontAwesomeIcon icon="bars" />
+                    </td>
                     <td>{item.description}</td>
                     <td>
                         { item.householdSizes.single.quantity }
@@ -140,12 +147,6 @@ export default class ListsData extends React.Component {
                             onSelect={ this.selectComment } />
                     </td>
                     <td className="action-cell">
-                        <span className={ 'item-action' + (index === 0 ? ' disabled' : '') } onClick={ () => this.move(index, index - 1) }>
-                            <FontAwesomeIcon icon="arrow-up" />
-                        </span>
-                        <span className={ 'item-action' + (index === length - 1 ? ' disabled' : '') } onClick={ () => this.move(index, index + 1) }>
-                            <FontAwesomeIcon icon="arrow-down" />
-                        </span>
                         <span className="item-action primary" onClick={ () => this.edit(item) }>
                             <FontAwesomeIcon icon="edit" />
                         </span>
@@ -161,11 +162,13 @@ export default class ListsData extends React.Component {
             <table className="lists-data">
                 <thead>
                     <tr>
+                        <th></th>
                         <th rowSpan="2">Description</th>
                         <th colSpan="5" className="first">Quantities and Notes</th>
                         <th></th>
                     </tr>
                     <tr>
+                        <th></th>
                         <th>Single</th>
                         <th>Family of 2</th>
                         <th>Family of 3</th>

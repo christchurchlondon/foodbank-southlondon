@@ -8,6 +8,10 @@
         text-align: right;
     }
 
+    .action-cell-draggable {
+        cursor: move;
+    }
+
     .item-action {
 
         color: $colour-text-secondary;
