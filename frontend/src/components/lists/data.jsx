@@ -11,7 +11,8 @@ export default class ListsData extends React.Component {
         this.edit = this.edit.bind(this);
         this.onDragStart = this.onDragStart.bind(this);
         this.onDragEnter = this.onDragEnter.bind(this);
-        this.onDragEnd = this.onDragEnd.bind(this);
+        this.onDragOver = this.onDragOver.bind(this);
+        this.onDrop = this.onDrop.bind(this);
         this.move = this.move.bind(this);
         this.delete = this.delete.bind(this);
 
@@ -33,7 +34,11 @@ export default class ListsData extends React.Component {
         });
     }
 
-    onDragEnter(draggedOverId) {
+    onDragEnter(e, draggedOverId) {
+        // Required so that onDrop fires (https://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html)
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+
         const { draggingItem } = this.state;
 
         if(draggingItem.id !== draggedOverId) {
@@ -46,7 +51,13 @@ export default class ListsData extends React.Component {
         }
     }
 
-    onDragEnd() {
+    onDragOver(e) {
+        // Required so that onDrop fires (https://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html)
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    }
+
+    onDrop() {
         const { draggingItem } = this.state;
 
         const pos = this.props.data.findIndex(item => item.id === draggingItem.id);
@@ -82,8 +93,10 @@ export default class ListsData extends React.Component {
                     key={index}
                     draggable
                     onDragStart={() => this.onDragStart(item)}
-                    onDragEnter={() => this.onDragEnter(item.id)}
-                    onDragEnd={() => this.onDragEnd()}
+                    // preventDefault calls required to get onDrop to fire
+                    onDragEnter={(e) => this.onDragEnter(e, item.id)}
+                    onDragOver={this.onDragOver}
+                    onDrop={this.onDrop}
                 >
                     <td>{item.description}</td>
                     <td>
