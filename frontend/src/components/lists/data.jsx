@@ -83,6 +83,7 @@ export default class ListsData extends React.Component {
 
         const { id, type } = this.props.selectedComment || { id: null, type: null };
 
+        const draggingId = this.state.draggingItem ? this.state.draggingItem.id : undefined; 
         const data = this.state.draggingData || this.props.data;
 
         const tableRows = data.map((item, index) => {
@@ -93,6 +94,7 @@ export default class ListsData extends React.Component {
             return (
                 <tr
                     key={index}
+                    className={item.id === draggingId ? 'dragging-item' : ''}
                     // preventDefault calls required to get onDrop to fire
                     onDragEnter={(e) => this.onDragEnter(e, item.id)}
                     onDragOver={this.onDragOver}
