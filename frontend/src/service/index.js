@@ -211,8 +211,8 @@ export function getLists() {
                             notes: item.family_of_9_notes
                         },
                         familyOf10Plus: {
-                            quantity: item['family_of_10+_quantity'],
-                            notes: item['family_of_10+_notes']
+                            quantity: item.family_of_10plus_quantity,
+                            notes: item.family_of_10plus_notes
                         }
                     }
                 }
@@ -337,8 +337,8 @@ function listToRequestPayload(list) {
             family_of_8_notes: sizes.familyOf8.notes,
             family_of_9_quantity: sizes.familyOf9.quantity,
             family_of_9_notes: sizes.familyOf9.notes,
-            ['family_of_10+_quantity']: sizes.familyOf10Plus.quantity,
-            ['family_of_10+_notes']: sizes.familyOf10Plus.notes
+            family_of_10plus_quantity: sizes.familyOf10Plus.quantity,
+            family_of_10plus_notes: sizes.familyOf10Plus.notes
         };
     });
 }
