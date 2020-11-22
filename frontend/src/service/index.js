@@ -174,7 +174,7 @@ export function getLists() {
                     id: id,
                     description: item.item_description,
                     householdSizes: {
-                        single: {
+                        familyOf1: {
                             quantity: item.single_quantity,
                             notes: item.single_notes
                         },
@@ -190,9 +190,29 @@ export function getLists() {
                             quantity: item.family_of_4_quantity,
                             notes: item.family_of_4_notes
                         },
-                        familyOf5Plus: {
-                            quantity: item['family_of_5+_quantity'],
-                            notes: item['family_of_5+_notes']
+                        familyOf5: {
+                            quantity: item.family_of_5_quantity,
+                            notes: item.family_of_5_notes
+                        },
+                        familyOf6: {
+                            quantity: item.family_of_6_quantity,
+                            notes: item.family_of_6_notes
+                        },
+                        familyOf7: {
+                            quantity: item.family_of_7_quantity,
+                            notes: item.family_of_7_notes
+                        },
+                        familyOf8: {
+                            quantity: item.family_of_8_quantity,
+                            notes: item.family_of_8_notes
+                        },
+                        familyOf9: {
+                            quantity: item.family_of_9_quantity,
+                            notes: item.family_of_9_notes
+                        },
+                        familyOf10Plus: {
+                            quantity: item['family_of_10+_quantity'],
+                            notes: item['family_of_10+_notes']
                         }
                     }
                 }
