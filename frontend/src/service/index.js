@@ -319,16 +319,26 @@ function listToRequestPayload(list) {
         const sizes = item.householdSizes;
         return {
             item_description: item.description,
-            single_quantity: sizes.single.quantity,
-            single_notes: sizes.single.notes,
+            single_quantity: sizes.familyOf1.quantity,
+            single_notes: sizes.familyOf1.notes,
             family_of_2_quantity: sizes.familyOf2.quantity,
             family_of_2_notes: sizes.familyOf2.notes,
             family_of_3_quantity: sizes.familyOf3.quantity,
             family_of_3_notes: sizes.familyOf3.notes,
             family_of_4_quantity: sizes.familyOf4.quantity,
             family_of_4_notes: sizes.familyOf4.notes,
-            ['family_of_5+_quantity']: sizes.familyOf5Plus.quantity,
-            ['family_of_5+_notes']: sizes.familyOf5Plus.notes
+            family_of_5_quantity: sizes.familyOf5.quantity,
+            family_of_5_notes: sizes.familyOf5.notes,
+            family_of_6_quantity: sizes.familyOf6.quantity,
+            family_of_6_notes: sizes.familyOf6.notes,
+            family_of_7_quantity: sizes.familyOf7.quantity,
+            family_of_7_notes: sizes.familyOf7.notes,
+            family_of_8_quantity: sizes.familyOf8.quantity,
+            family_of_8_notes: sizes.familyOf8.notes,
+            family_of_9_quantity: sizes.familyOf9.quantity,
+            family_of_9_notes: sizes.familyOf9.notes,
+            ['family_of_10+_quantity']: sizes.familyOf10Plus.quantity,
+            ['family_of_10+_notes']: sizes.familyOf10Plus.notes
         };
     });
 }

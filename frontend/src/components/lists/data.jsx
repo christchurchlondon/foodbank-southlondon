@@ -3,8 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ListItemNotes from './item-notes';
 import './styles/data.scss';
 
-
-const selections = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+'];
 const columns = [
     'familyOf1',
     'familyOf2',
