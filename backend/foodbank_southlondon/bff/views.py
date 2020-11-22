@@ -83,7 +83,7 @@ class Actions(flask_restx.Resource):
             household_size = request["household_size"]
             list = lists.get(household_size)
             if list is None:
-                list_name = household_size.lower().replace(" ", "_")
+                list_name = household_size.lower().replace(" ", "_").replace("+", "plus")
                 list_name = list_name if list_name in lists_models.LIST_NAMES else catch_all_list_name
                 list = lists[household_size] = _get(f"{api_base_url}lists/{list_name}", cookies=cookies)
             data.append({"request": request, "list": list})

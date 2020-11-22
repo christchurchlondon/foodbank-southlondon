@@ -17,7 +17,7 @@ class _Config(object):
 
     FBSL_BASE_DOMAIN = ""
     FBSL_CACHE_TTL_SECONDS = 120
-    FBSL_CATCH_ALL_LIST = "family_of_10+"
+    FBSL_CATCH_ALL_LIST = "family_of_10plus"
     FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_ID = ""
     FBSL_EVENTS_GSHEET_ID = ""
     FBSL_FORM_EDIT_URL_TEMPLATE = "https://docs.google.com/forms/d/e/{form_id}/viewform?edit2={request_id}"
