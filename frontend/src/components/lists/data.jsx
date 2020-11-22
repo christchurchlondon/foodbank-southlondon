@@ -63,8 +63,8 @@ export default class ListsData extends React.Component {
     onDrop() {
         const { draggingItem } = this.state;
 
-        const pos = this.props.data.findIndex(item => item.id === draggingItem.id);
-        const newPos = this.state.draggingData.findIndex(item => item.id === draggingItem.id);
+        const pos = this.props.data.indexOf(draggingItem);
+        const newPos = this.state.draggingData.indexOf(draggingItem);
 
         this.move(pos, newPos);
         this.setState({ draggingData: undefined, draggingItem: undefined });
