@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router';
 import {
     HashRouter as Router,
     Redirect,
@@ -17,15 +18,24 @@ export default function Main() {
         <Router>
             <main className="main">
                 <Header />
-                <section className="contents">
-                    <Switch>
-                        <Route path="/clients" component={ Requests } />
-                        <Route path="/lists" component={ Lists } />
-                    </Switch>
-                </section>
+                <ContentsWithRouter />
                 <Footer />
             </main>
             <Redirect from="/#" to="/clients" />
         </Router>
     );
 }
+
+function Contents(props) {
+    const wide = props.location.pathname.toLowerCase() === '/lists';
+    return (
+        <section className={'contents' + (wide ? ' large' : '')}>
+            <Switch>
+                <Route path="/clients" component={ Requests } />
+                <Route path="/lists" component={ Lists } />
+            </Switch>
+        </section>
+    );
+}
+
+const ContentsWithRouter = withRouter(Contents);
