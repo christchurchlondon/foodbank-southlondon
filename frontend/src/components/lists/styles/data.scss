@@ -8,10 +8,6 @@
         text-align: right;
     }
 
-    .action-cell-draggable {
-        cursor: move;
-    }
-
     .item-action {
 
         color: $colour-text-secondary;
@@ -48,8 +44,4 @@
             margin-left: $pad-half;
         }
     }
-}
-
-.dragging-item {
-    @include shadow
 }

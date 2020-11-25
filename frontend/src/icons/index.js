@@ -16,8 +16,7 @@ import {
     faSignOutAlt,
     faSpinner,
     faTimes,
-    faUser,
-    faBars
+    faUser
 } from '@fortawesome/free-solid-svg-icons'
 import {
     faSave
@@ -44,8 +43,7 @@ export default function setupIcons() {
         faSignOutAlt,
         faSpinner,
         faTimes,
-        faUser,
-        faBars
+        faUser
     );
 
     // Regular icons
