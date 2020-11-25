@@ -98,7 +98,7 @@ export default class ListsData extends React.Component {
         const draggingId = this.state.draggingItem ? this.state.draggingItem.id : undefined; 
         const data = this.state.draggingData || this.props.data;
 
-        const tableRows = this.props.data.map((item, rowIndex) => {
+        const tableRows = data.map((item, rowIndex) => {
             const isSelected = t => id === rowIndex && t === type;
             const cells = columns.map((col, colIndex) => {
                 return (
