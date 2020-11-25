@@ -29,6 +29,12 @@ export default class ListsData extends React.Component {
         this.delete = this.delete.bind(this);
 
         this.state = {};
+
+        // Drag and drop won't work in Safari if we try to construct the image inline
+        // and empty. The workaround is to use an empty GIF as the source for the image
+        // and build it before the drag operations are started
+        this.transparentDragImage = new Image();
+        this.transparentDragImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
     }
 
     selectComment(id, type) {
@@ -41,7 +47,7 @@ export default class ListsData extends React.Component {
 
     onDragStart(e, item) {
         // Hide default thumbnail
-        e.dataTransfer.setDragImage(new Image(), 0, 0);
+        e.dataTransfer.setDragImage(this.transparentDragImage, 0, 0);
 
         this.setState({
             draggingItem: item,
