@@ -5,7 +5,7 @@ import {
     STATUS_LOADING,
     STATUS_FAILED
 } from '../../constants';
-import { capitalise, formatAddress, formatHousehold } from '../../helpers';
+import { formatAddress, formatHousehold } from '../../helpers';
 import Error from '../common/error';
 import Loading from '../common/loading';
 import Popup from '../common/popup';

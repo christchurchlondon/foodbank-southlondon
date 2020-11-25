@@ -12,6 +12,10 @@ html, body, #root {
     padding: 1rem;
     width: 100%;
     max-width: 1200px;
+
+    &.large {
+        max-width: 1420px;
+    }
 }
 
 .main {

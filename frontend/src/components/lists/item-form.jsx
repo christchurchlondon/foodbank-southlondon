@@ -3,6 +3,19 @@ import Popup from '../common/popup';
 import './styles/item-form.scss';
 
 
+const columns = [
+    { id: 'familyOf1', label: 'Single' },
+    { id: 'familyOf2', label: 'Family of 2' },
+    { id: 'familyOf3', label: 'Family of 3' },
+    { id: 'familyOf4', label: 'Family of 4' },
+    { id: 'familyOf5', label: 'Family of 5' },
+    { id: 'familyOf6', label: 'Family of 6' },
+    { id: 'familyOf7', label: 'Family of 7' },
+    { id: 'familyOf8', label: 'Family of 8' },
+    { id: 'familyOf9', label: 'Family of 9' },
+    { id: 'familyOf10Plus', label: 'Family of 10 Plus' },
+];
+
 export default class ListItemForm extends React.Component {
 
     constructor(props) {
@@ -20,9 +33,9 @@ export default class ListItemForm extends React.Component {
             id: this.props.id,
             description: this.props.item.description || '',
             householdSizes: {
-                single: {
-                    quantity: sizes.single.quantity || '',
-                    notes: sizes.single.notes || ''
+                familyOf1: {
+                    quantity: sizes.familyOf1.quantity || '',
+                    notes: sizes.familyOf1.notes || ''
                 },
                 familyOf2: {
                     quantity: sizes.familyOf2.quantity || '',
@@ -36,9 +49,29 @@ export default class ListItemForm extends React.Component {
                     quantity: sizes.familyOf4.quantity || '',
                     notes: sizes.familyOf4.notes || ''
                 },
-                familyOf5Plus: {
-                    quantity: sizes.familyOf5Plus.quantity || '',
-                    notes: sizes.familyOf5Plus.notes || ''
+                familyOf5: {
+                    quantity: sizes.familyOf5.quantity || '',
+                    notes: sizes.familyOf5.notes || ''
+                },
+                familyOf6: {
+                    quantity: sizes.familyOf6.quantity || '',
+                    notes: sizes.familyOf6.notes || ''
+                },
+                familyOf7: {
+                    quantity: sizes.familyOf7.quantity || '',
+                    notes: sizes.familyOf7.notes || ''
+                },
+                familyOf8: {
+                    quantity: sizes.familyOf8.quantity || '',
+                    notes: sizes.familyOf8.notes || ''
+                },
+                familyOf9: {
+                    quantity: sizes.familyOf9.quantity || '',
+                    notes: sizes.familyOf9.notes || ''
+                },
+                familyOf10Plus: {
+                    quantity: sizes.familyOf10Plus.quantity || '',
+                    notes: sizes.familyOf10Plus.notes || ''
                 }
             }
         };
@@ -84,6 +117,7 @@ export default class ListItemForm extends React.Component {
                 quantity
             }
         };
+
         this.setState({ householdSizes });
     }
 
@@ -100,87 +134,34 @@ export default class ListItemForm extends React.Component {
     }
 
     getForm() {
+
+        const rows = columns.map(column => {
+            return (
+                <div key={ column.id } className="row-group">
+                    <h4>{ column.label }</h4>
+                    <div className="row">
+                        <label>Quantity</label>
+                        <input type="text" className="small"
+                            value={ this.state.householdSizes[column.id].quantity }
+                            onChange={ e => this.updateQuantity(e, column.id) } />
+                    </div>
+                    <div className="row">
+                        <label>Notes</label>
+                        <input type="text" className="large"
+                            value={ this.state.householdSizes[column.id].notes }
+                            onChange={ e => this.updateNotes(e, column.id) } />
+                    </div>
+                </div>
+            );
+        });
+
         return (
             <div className="item-form">
                 <div className="row">
                     <label>Description</label>
                     <input type="text" value={ this.state.description } onChange={ this.updateDescription } />
                 </div>
-                <div className="row-group">
-                    <h4>Single</h4>
-                    <div className="row">
-                        <label>Quantity</label>
-                        <input type="text" className="small"
-                            value={ this.state.householdSizes.single.quantity }
-                            onChange={ e => this.updateQuantity(e, 'single') } />
-                    </div>
-                    <div className="row">
-                        <label>Notes</label>
-                        <input type="text" className="large"
-                            value={ this.state.householdSizes.single.notes }
-                            onChange={ e => this.updateNotes(e, 'single') } />
-                    </div>
-                </div>
-                <div className="row-group">
-                    <h4>Family of 2</h4>
-                    <div className="row">
-                        <label>Quantity</label>
-                        <input type="text" className="small"
-                            value={ this.state.householdSizes.familyOf2.quantity }
-                            onChange={ e => this.updateQuantity(e, 'familyOf2') } />
-                    </div>
-                    <div className="row">
-                        <label>Notes</label>
-                        <input type="text" className="large"
-                            value={ this.state.householdSizes.familyOf2.notes }
-                            onChange={ e => this.updateNotes(e, 'familyOf2') } />
-                    </div>
-                </div>
-                <div className="row-group">
-                    <h4>Family of 3</h4>
-                    <div className="row">
-                        <label>Quantity</label>
-                        <input type="text" className="small"
-                            value={ this.state.householdSizes.familyOf3.quantity }
-                            onChange={ e => this.updateQuantity(e, 'familyOf3') } />
-                    </div>
-                    <div className="row">
-                        <label>Notes</label>
-                        <input type="text" className="large"
-                            value={ this.state.householdSizes.familyOf3.notes }
-                            onChange={ e => this.updateNotes(e, 'familyOf3') } />
-                    </div>
-                </div>
-                <div className="row-group">
-                    <h4>Family of 4</h4>
-                    <div className="row">
-                        <label>Quantity</label>
-                        <input type="text" className="small"
-                            value={ this.state.householdSizes.familyOf4.quantity }
-                            onChange={ e => this.updateQuantity(e, 'familyOf4') } />
-                    </div>
-                    <div className="row">
-                        <label>Notes</label>
-                        <input type="text" className="large"
-                            value={ this.state.householdSizes.familyOf4.notes }
-                            onChange={ e => this.updateNotes(e, 'familyOf4') } />
-                    </div>
-                </div>
-                <div className="row-group">
-                    <h4>Family of 5+</h4>
-                    <div className="row">
-                        <label>Quantity</label>
-                        <input type="text" className="small"
-                            value={ this.state.householdSizes.familyOf5Plus.quantity }
-                            onChange={ e => this.updateQuantity(e, 'familyOf5Plus') } />
-                    </div>
-                    <div className="row">
-                        <label>Notes</label>
-                        <input type="text" className="large"
-                            value={ this.state.householdSizes.familyOf5Plus.notes }
-                            onChange={ e => this.updateNotes(e, 'familyOf5Plus') } />
-                    </div>
-                </div>
+                { rows }
             </div>
         );
     }

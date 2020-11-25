@@ -8,7 +8,12 @@ LIST_NAMES = (
     "family_of_2",
     "family_of_3",
     "family_of_4",
-    "family_of_5+"
+    "family_of_5",
+    "family_of_6",
+    "family_of_7",
+    "family_of_8",
+    "family_of_9",
+    "family_of_10plus",
 )
 
 _item_description_field = fields.String(required=True, description="A description of the item", example="Eggs")

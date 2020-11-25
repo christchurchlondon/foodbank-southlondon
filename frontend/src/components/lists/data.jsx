@@ -3,6 +3,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ListItemNotes from './item-notes';
 import './styles/data.scss';
 
+const columns = [
+    'familyOf1',
+    'familyOf2',
+    'familyOf3',
+    'familyOf4',
+    'familyOf5',
+    'familyOf6',
+    'familyOf7',
+    'familyOf8',
+    'familyOf9',
+    'familyOf10Plus',
+];
 
 export default class ListsData extends React.Component {
 
@@ -86,14 +98,23 @@ export default class ListsData extends React.Component {
         const draggingId = this.state.draggingItem ? this.state.draggingItem.id : undefined; 
         const data = this.state.draggingData || this.props.data;
 
-        const tableRows = data.map((item, index) => {
-
-            const [singleSelected, twoSelected, threeSelected, fourSelected, fivePlusSelected]
-                = ['1', '2', '3', '4', '5+'].map(t => index === id && t === type);
+        const tableRows = this.props.data.map((item, rowIndex) => {
+            const isSelected = t => id === rowIndex && t === type;
+            const cells = columns.map((col, colIndex) => {
+                return (
+                    <td key={ `${rowIndex}-${colIndex}` }>
+                        { item.householdSizes[col].quantity }
+                        <ListItemNotes
+                            selected={ isSelected(col) }
+                            onToggle={ () => this.selectComment(rowIndex, col) }
+                            notes={ item.householdSizes[col].notes } />
+                    </td>
+                );
+            });
 
             return (
                 <tr
-                    key={index}
+                    key={rowIndex}
                     className={item.id === draggingId ? 'dragging-item' : ''}
                     // preventDefault calls required to get onDrop to fire
                     onDragEnter={(e) => this.onDragEnter(e, item.id)}
@@ -107,47 +128,8 @@ export default class ListsData extends React.Component {
                     >
                         <FontAwesomeIcon icon="bars" />
                     </td>
-                    <td>{item.description}</td>
-                    <td>
-                        { item.householdSizes.single.quantity }
-                        <ListItemNotes
-                            selected={singleSelected}
-                            onToggle={ () => this.selectComment(index, '1') }
-                            notes={item.householdSizes.single.notes}
-                            onSelect={ this.selectComment } />
-                    </td>
-                    <td>
-                        { item.householdSizes.familyOf2.quantity }
-                        <ListItemNotes
-                            selected={twoSelected}
-                            onToggle={ () => this.selectComment(index, '2') }
-                            notes={item.householdSizes.familyOf2.notes}
-                            onSelect={ this.selectComment } />
-                    </td>
-                    <td>
-                        { item.householdSizes.familyOf3.quantity }
-                        <ListItemNotes
-                            selected={threeSelected}
-                            onToggle={ () => this.selectComment(index, '3') }
-                            notes={item.householdSizes.familyOf3.notes}
-                            onSelect={ this.selectComment } />
-                    </td>
-                    <td>
-                        { item.householdSizes.familyOf4.quantity }
-                        <ListItemNotes
-                            selected={fourSelected}
-                            onToggle={ () => this.selectComment(index, '4') }
-                            notes={item.householdSizes.familyOf4.notes}
-                            onSelect={ this.selectComment } />
-                    </td>
-                    <td>
-                        { item.householdSizes.familyOf5Plus.quantity }
-                        <ListItemNotes
-                            selected={fivePlusSelected}
-                            onToggle={ () => this.selectComment(index, '5+') }
-                            notes={item.householdSizes.familyOf5Plus.notes}
-                            onSelect={ this.selectComment } />
-                    </td>
+                    <td>{ item.description }</td>
+                    { cells }
                     <td className="action-cell">
                         <span className="item-action primary" onClick={ () => this.edit(item) }>
                             <FontAwesomeIcon icon="edit" />
@@ -158,7 +140,7 @@ export default class ListsData extends React.Component {
                     </td>
                 </tr>
             );
-        })
+        });
 
         return (
             <table className="lists-data">
@@ -175,7 +157,12 @@ export default class ListsData extends React.Component {
                         <th>Family of 2</th>
                         <th>Family of 3</th>
                         <th>Family of 4</th>
-                        <th>Family of 5+</th>
+                        <th>Family of 5</th>
+                        <th>Family of 6</th>
+                        <th>Family of 7</th>
+                        <th>Family of 8</th>
+                        <th>Family of 9</th>
+                        <th>Family of 10+</th>
                         <th></th>
                     </tr>
                 </thead>

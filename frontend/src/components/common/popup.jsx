@@ -56,6 +56,7 @@ export default class Popup extends React.Component {
             case 27:
                 this.close();
                 break;
+            default:
         }
     }
 
