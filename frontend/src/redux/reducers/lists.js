@@ -182,7 +182,7 @@ function createBlankItem(id) {
         id: id,
         description: '',
         householdSizes: {
-            single: {
+            familyOf1: {
                 quantity: '',
                 notes: ''
             },
@@ -198,7 +198,27 @@ function createBlankItem(id) {
                 quantity: '',
                 notes: ''
             },
-            familyOf5Plus: {
+            familyOf5: {
+                quantity: '',
+                notes: ''
+            },
+            familyOf6: {
+                quantity: '',
+                notes: ''
+            },
+            familyOf7: {
+                quantity: '',
+                notes: ''
+            },
+            familyOf8: {
+                quantity: '',
+                notes: ''
+            },
+            familyOf9: {
+                quantity: '',
+                notes: ''
+            },
+            familyOf10Plus: {
                 quantity: '',
                 notes: ''
             }
