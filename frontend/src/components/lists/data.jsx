@@ -143,6 +143,12 @@ export default class ListsData extends React.Component {
                         <span className="item-action danger" onClick={ () => this.delete(item) }>
                             <FontAwesomeIcon icon="times" />
                         </span>
+                        <span className={ 'item-action' + (rowIndex === 0 ? ' disabled' : '') } onClick={ () => this.move(rowIndex, rowIndex - 1) }>
+                            <FontAwesomeIcon icon="arrow-up" />
+                        </span>
+                        <span className={ 'item-action' + (rowIndex === data.length - 1 ? ' disabled' : '') } onClick={ () => this.move(rowIndex, rowIndex + 1) }>
+                            <FontAwesomeIcon icon="arrow-down" />
+                        </span>
                     </td>
                 </tr>
             );
