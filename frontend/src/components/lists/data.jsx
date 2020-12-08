@@ -100,6 +100,7 @@ export default class ListsData extends React.Component {
     render() {
 
         const { id, type } = this.props.selectedComment || { id: null, type: null };
+        const length = this.props.data.length;
 
         const draggingId = this.state.draggingItem ? this.state.draggingItem.id : undefined; 
         const data = this.state.draggingData || this.props.data;
@@ -137,17 +138,17 @@ export default class ListsData extends React.Component {
                     <td>{ item.description }</td>
                     { cells }
                     <td className="action-cell">
+                        <span className={ 'item-action' + (rowIndex === 0 ? ' disabled' : '') } onClick={ () => this.move(rowIndex, rowIndex - 1) }>
+                            <FontAwesomeIcon icon="arrow-up" />
+                        </span>
+                        <span className={ 'item-action' + (rowIndex === length - 1 ? ' disabled' : '') } onClick={ () => this.move(rowIndex, rowIndex + 1) }>
+                            <FontAwesomeIcon icon="arrow-down" />
+                        </span>
                         <span className="item-action primary" onClick={ () => this.edit(item) }>
                             <FontAwesomeIcon icon="edit" />
                         </span>
                         <span className="item-action danger" onClick={ () => this.delete(item) }>
                             <FontAwesomeIcon icon="times" />
-                        </span>
-                        <span className={ 'item-action' + (rowIndex === 0 ? ' disabled' : '') } onClick={ () => this.move(rowIndex, rowIndex - 1) }>
-                            <FontAwesomeIcon icon="arrow-up" />
-                        </span>
-                        <span className={ 'item-action' + (rowIndex === data.length - 1 ? ' disabled' : '') } onClick={ () => this.move(rowIndex, rowIndex + 1) }>
-                            <FontAwesomeIcon icon="arrow-down" />
                         </span>
                     </td>
                 </tr>
