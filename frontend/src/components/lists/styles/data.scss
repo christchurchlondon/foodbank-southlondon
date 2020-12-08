@@ -51,5 +51,9 @@
 }
 
 .dragging-item {
-    @include shadow
+    background-color: $colour-background-primary;
+}
+
+.dragging-item:nth-child(even) {
+    background-color: $colour-background-primary;
 }
