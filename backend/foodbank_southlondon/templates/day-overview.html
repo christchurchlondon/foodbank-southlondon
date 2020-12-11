@@ -69,7 +69,12 @@
             <tr class="compact">
                 <td></td>
                 <td></td>
-                <td colspan="2">{{ request['client_full_name'] }}</td>
+                <td colspan="2">
+                    {% if request['flag_for_attention'] %}
+                        🚩
+                    {% endif %}
+                    {{ request['client_full_name'] }}
+                </td>
                 <td>{{ request['postcode'] }}</td>
                 <td colspan="2">{{ request['packing_date'] }}</td>
                 <td>{{ request['time_of_day'] }}</td>
