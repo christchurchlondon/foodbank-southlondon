@@ -48,6 +48,9 @@
             tr.compact td {
                 padding: 0.05rem 0.2rem;
             }
+            .no-wrap {
+                white-space: nowrap;
+            }
         </style>
     </head>
     <body>
@@ -57,8 +60,7 @@
         </div>
         <table>
             <tr>
-                <th>Packed?</th>
-                <th>Sent?</th>
+                <th></th>
                 <th colspan="2">Name</th>
                 <th>Post Code</th>
                 <th colspan="2">Packing Date</th>
@@ -67,15 +69,22 @@
             </tr>
             {% for request in requests_items %}
             <tr class="compact">
-                <td></td>
-                <td></td>
+                <td>
+                    <span class="no-wrap">Packed ◻</span>
+                    <br />
+                    <span class="no-wrap">Sent ◻</span>
+                </td>
                 <td colspan="2">
                     {% if request['flag_for_attention'] %}
                         🚩
                     {% endif %}
                     {{ request['client_full_name'] }}
                 </td>
-                <td>{{ request['postcode'] }}</td>
+                <td>
+                    <span class="no-wrap">
+                        {{ request['postcode'] }}
+                    </span>
+                </td>
                 <td colspan="2">{{ request['packing_date'] }}</td>
                 <td>{{ request['time_of_day'] }}</td>
                 <td colspan="8">{{ request['delivery_instructions'] or '' }}</td>
