@@ -51,6 +51,14 @@
             .no-wrap {
                 white-space: nowrap;
             }
+            .status-icons {
+                display: flex;
+                flex-direction: column;
+            }
+            .status-icon {
+                display: flex;
+                justify-content: space-between;
+            }
         </style>
     </head>
     <body>
@@ -70,9 +78,15 @@
             {% for request in requests_items %}
             <tr class="compact">
                 <td>
-                    <span class="no-wrap">Packed ◻</span>
-                    <br />
-                    <span class="no-wrap">Sent ◻</span>
+                    <div class="status-icons">
+                        <div class="status-icon">
+                            <!-- Align the checkbox to the right of the cell -->
+                            <div>Packed</div><div>◻</div>
+                        </div>
+                        <div class="status-icon">
+                            <div>Sent</div><div>◻</div>
+                        </div>
+                    </div>
                 </td>
                 <td colspan="2">
                     {% if request['flag_for_attention'] %}
