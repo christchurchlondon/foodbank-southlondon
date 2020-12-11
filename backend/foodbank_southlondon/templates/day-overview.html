@@ -13,7 +13,7 @@
             }
             body {
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                font-size: 10px;
+                font-size: 12px;
                 line-height: 1.25rem;
             }
             h1 {
@@ -59,6 +59,9 @@
                 display: flex;
                 justify-content: space-between;
             }
+            .status-icon-description {
+                font-size: 10px;
+            }
         </style>
     </head>
     <body>
@@ -80,11 +83,13 @@
                 <td>
                     <div class="status-icons">
                         <div class="status-icon">
-                            <!-- Align the checkbox to the right of the cell -->
-                            <div>Packed</div><div>◻</div>
+                            <div class="status-icon-description">Packed</div>
+                            <!-- Separate the checkbox so it is aligned to the right of the cell -->
+                            <div>◻</div>
                         </div>
                         <div class="status-icon">
-                            <div>Sent</div><div>◻</div>
+                            <div class="status-icon-description">Sent</div>
+                            <div>◻</div>
                         </div>
                     </div>
                 </td>
