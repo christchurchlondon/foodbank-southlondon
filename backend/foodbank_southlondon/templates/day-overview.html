@@ -51,16 +51,17 @@
             .no-wrap {
                 white-space: nowrap;
             }
-            .status-icons {
+            .tickboxes {
                 display: flex;
-                flex-direction: column;
+                margin-top: 0.2rem;
             }
-            .status-icon {
-                display: flex;
-                justify-content: space-between;
-            }
-            .status-icon-description {
+            .tickbox {
+                width: 11px;
+                height: 11px;
                 font-size: 10px;
+                line-height: 10px;
+                margin-right: 0.2rem;
+                border: 1px solid black;
             }
         </style>
     </head>
@@ -74,29 +75,28 @@
                 <th></th>
                 <th colspan="2">Name</th>
                 <th>Post Code</th>
-                <th colspan="2">Packing Date</th>
                 <th>Time</th>
-                <th colspan="8">Instructions</th>
+                <th colspan="7">Instructions</th>
             </tr>
             {% for request in requests_items %}
             <tr class="compact">
                 <td>
-                    <div class="status-icons">
-                        <div class="status-icon">
-                            <div class="status-icon-description">Packed</div>
-                            <!-- Separate the checkbox so it is aligned to the right of the cell -->
-                            <div>◻</div>
-                        </div>
-                        <div class="status-icon">
-                            <div class="status-icon-description">Sent</div>
-                            <div>◻</div>
-                        </div>
+                    <div class="tickboxes">
+                        <!-- Packed -->
+                        <div class="tickbox"></div>
+                        <!-- Sent -->
+                        <div class="tickbox"></div>
+                        <!-- Use a placeholder to ensure everything lines up -->
+                        {% if request['flag_for_attention'] %}
+                            <div class="tickbox">
+                                <div>🚩</div>
+                            </div>
+                        {% else %}
+                            <div class="tickbox"></div>
+                        {% endif %}
                     </div>
                 </td>
                 <td colspan="2">
-                    {% if request['flag_for_attention'] %}
-                        🚩
-                    {% endif %}
                     {{ request['client_full_name'] }}
                 </td>
                 <td>
@@ -104,9 +104,8 @@
                         {{ request['postcode'] }}
                     </span>
                 </td>
-                <td colspan="2">{{ request['packing_date'] }}</td>
                 <td>{{ request['time_of_day'] }}</td>
-                <td colspan="8">{{ request['delivery_instructions'] or '' }}</td>
+                <td colspan="7">{{ request['delivery_instructions'] or '' }}</td>
             </tr>
             {% endfor %}
         </table>
