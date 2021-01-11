@@ -58,10 +58,19 @@
             .tickbox {
                 width: 11px;
                 height: 11px;
-                font-size: 10px;
-                line-height: 10px;
                 margin-right: 0.2rem;
                 border: 1px solid black;
+            }
+            .tickbox--placeholder {
+                border: none;
+            }
+            .tickbox--flag {
+                border: none;
+                /* Not sure how to import the Font Awesome icon in this context where we have no bundler */
+                /* Also Weasyprint doesn't support inline SVG so I've hacked it into a PNG and data URL */
+                background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAASCAYAAABSO15qAAABR2lDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8rAyMDNwMUgxsCZmFxc4BgQ4ANUwgCjUcG3a0DVQHBZF2RWZc4CtxnaqndkhBRSL+4XD8FUjwK4UlKLk4H0HyBOSy4oKmFgYEwBspXLSwpA7A4gW6QI6Cggew6InQ5hbwCxkyDsI2A1IUHOQPYNIFsgOSMRaAbjCyBbJwlJPB2JDbUXBHh8XP0UQoyMMnUNDQg4l3RQklpRAqKd8wsqizLTM0oUHIGhlKrgmZesp6NgZGBkyMAACnOI6s9B4LBkFNuHEMtfwsBg8Y2BgXkiQixpCgPD9jYGBolbCDGVeQwM/C0MDNsOFSQWJcIdwPiNpTjN2AjC5rFnYGC9+///Zw0GBvaJDAx/J/7//3vx//9/FwPNv83AcKASAJIeXsw0ooHTAAAAXGVYSWZNTQAqAAAACAAEAQYAAwAAAAEAAgAAARIAAwAAAAEAAQAAASgAAwAAAAEAAgAAh2kABAAAAAEAAAA+AAAAAAACoAIABAAAAAEAAAAQoAMABAAAAAEAAAASAAAAAJz7jTsAAAK0aVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJYTVAgQ29yZSA1LjQuMCI+CiAgIDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+CiAgICAgIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiCiAgICAgICAgICAgIHhtbG5zOnRpZmY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vdGlmZi8xLjAvIgogICAgICAgICAgICB4bWxuczpleGlmPSJodHRwOi8vbnMuYWRvYmUuY29tL2V4aWYvMS4wLyI+CiAgICAgICAgIDx0aWZmOlJlc29sdXRpb25Vbml0PjI8L3RpZmY6UmVzb2x1dGlvblVuaXQ+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgICAgIDx0aWZmOkNvbXByZXNzaW9uPjE8L3RpZmY6Q29tcHJlc3Npb24+CiAgICAgICAgIDx0aWZmOlBob3RvbWV0cmljSW50ZXJwcmV0YXRpb24+MjwvdGlmZjpQaG90b21ldHJpY0ludGVycHJldGF0aW9uPgogICAgICAgICA8ZXhpZjpQaXhlbFlEaW1lbnNpb24+MTg8L2V4aWY6UGl4ZWxZRGltZW5zaW9uPgogICAgICAgICA8ZXhpZjpQaXhlbFhEaW1lbnNpb24+MTY8L2V4aWY6UGl4ZWxYRGltZW5zaW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KBGHbEgAAAMlJREFUOBFj+H//5v//mf4QDGKTCJgYVs1mYHj9HIJBbBIB4/+Vs/4zrJ4D0cbFw8DAzQsxDMRWVGNgMLUHYjsGBjEpiJoHtxgYTh9iYNi/BaiWh4ER5GKGUHMS7UUoZ0IwyWONGsDAMPBhwIIRefKq4ATCICbJwPAKmEKvncdQAhbg4mZgiC9iQDVg6npEikPWdvIgA8NDYAoEpUJg6mNQAKZQex8GBh5etJS4+iSyNqLYFAcixAsgf5MJIAY8vE2mdgZoIFLgAgCg6mjvyjLLaQAAAABJRU5ErkJggg==);
+                background-size: contain;
+                background-repeat: no-repeat;
             }
         </style>
     </head>
@@ -74,7 +83,7 @@
             <tr>
                 <th></th>
                 <th colspan="2">Name</th>
-                <th>Post Code</th>
+                <th colspan="2">Post Code</th>
                 <th>Time</th>
                 <th colspan="7">Instructions</th>
             </tr>
@@ -86,20 +95,17 @@
                         <div class="tickbox"></div>
                         <!-- Sent -->
                         <div class="tickbox"></div>
-                        <!-- Use a placeholder to ensure everything lines up -->
                         {% if request['flag_for_attention'] %}
-                            <div class="tickbox">
-                                <div>🚩</div>
-                            </div>
+                            <div class="tickbox tickbox--flag"></div>
                         {% else %}
-                            <div class="tickbox"></div>
+                            <div class="tickbox tickbox--placeholder"></div>
                         {% endif %}
                     </div>
                 </td>
                 <td colspan="2">
                     {{ request['client_full_name'] }}
                 </td>
-                <td>
+                <td colspan="2">
                     <span class="no-wrap">
                         {{ request['postcode'] }}
                     </span>
