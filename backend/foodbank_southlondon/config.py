@@ -7,6 +7,11 @@ _heroku_app_name = os.environ.get("HEROKU_APP_NAME")
 _port = os.environ.get("PORT")
 
 
+def _congestion_zone_data():
+    with open("congestion-zones.txt") as f:
+        return f.readlines()
+
+
 class _Config(object):
     BUNDLE_ERRORS = True
     DEBUG: Optional[bool] = None
@@ -18,7 +23,7 @@ class _Config(object):
     FBSL_BASE_DOMAIN = ""
     FBSL_CACHE_TTL_SECONDS = 120
     FBSL_CATCH_ALL_LIST = "family_of_10plus"
-    FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_ID = ""
+    FBSL_CONGESTION_ZONE_POSTCODES = _congestion_zone_data()
     FBSL_EVENTS_GSHEET_ID = ""
     FBSL_FORM_EDIT_URL_TEMPLATE = "https://docs.google.com/forms/d/e/{form_id}/viewform?edit2={request_id}"
     FBSL_FORM_ID = ""
@@ -53,7 +58,6 @@ class DevelopmentConfig(_Config):
     PREFERRED_URL_SCHEME = "http"
 
     FBSL_BASE_DOMAIN = f"localhost:{_port}"
-    FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_ID = "12DJtBIalZ5yHUK9-vm5Fq1U9tJuksHFAnSbd3SwBKok"
     FBSL_EVENTS_GSHEET_ID = "1GfD-YA_9eMSMqu9eTZlCEC0wvsV6c0CRlMLRPOvWM48"
     FBSL_FORM_ID = "1FAIpQLSf-JswF1YjIpqEflEkNPK5RQAnt_2v1kyoDgm0-LRi2jVNhwQ"
     FBSL_GSUITE_IMPERSONATE_ADDRESS = "ac@adamcunnington.info"
@@ -69,7 +73,6 @@ class ProductionConfig(_Config):
     PREFERRED_URL_SCHEME = "https"
 
     FBSL_BASE_DOMAIN = f"{_heroku_app_name}.herokuapp.com" if _heroku_app_name else f"localhost:{_port}"
-    FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_ID = "1sPFqWRX2cyW1zIBvqYBOg_y46DN7doh3v-2ZusraJ70"
     FBSL_EVENTS_GSHEET_ID = "1OAluin8tOIpYUxcm18gHJSc0z1tx4EdxY9I2bdB4zj4"
     FBSL_FORM_ID = "1FAIpQLSfyLJH5_Im0C_XEifpD5CUzR5zZyu_9NEXGFY364qPu5JEFrw"
     FBSL_GSUITE_IMPERSONATE_ADDRESS = "ed@christchurchlondon.org"

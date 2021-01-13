@@ -42,7 +42,7 @@ class Status(enum.Enum):
     READY_TO_DISPATCH = Event("Ready to Dispatch", True, False, False, False, False)
     DELIVERED = Event("Delivered", True, True, False, False, False, "What date were the parcels delivered?")
     DELIVERY_FAILED = Event("Delivery Failed", True, True, False, False, False, "What date did the delivery fail?")
-    CLIENT_CONTACT_REQUIRED = Event("Client Contact Required", True, False, False, False, False)
+    # CLIENT_CONTACT_REQUIRED = Event("Client Contact Required", True, False, False, False, False) removed following foodbank request 13/01
     DELIVERY_CANCELLED = Event("Delivery Cancelled", True, True, False, False, False, "What date was the delivery marked as cancelled?")
     FULFILLED_WITH_TRUSSELL_TRUST = Event("Fulfilled with Trussell Trust", True, True, False, False, False,
                                           "What date was Trussel Trust updated as fulfilled for this request?")

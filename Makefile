@@ -20,7 +20,7 @@ dist: ## push the latest foodbank-southlondon docker image to Heroku Container R
 .PHONY: docker
 docker: ## run the application locally with production settings using gunicorn inside docker (docker build & docker run)
 	docker build -t foodbank-southlondon:latest .
-	docker run --rm -p 80:8080 -e FLASK_ENV=production -e PORT=8080 --env-file backend/production.env foodbank-southlondon:latest
+	docker run --rm -p 80:8080 -e FLASK_ENV=development -e PORT=8080 --env-file backend/development.env foodbank-southlondon:latest
 
 .PHONY: install
 install:  ## install the frontend and backend applications' dependencies locally (FRONTEND make install & BACKEND make install)
