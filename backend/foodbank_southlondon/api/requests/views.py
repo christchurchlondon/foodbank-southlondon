@@ -11,7 +11,7 @@ from foodbank_southlondon.api.requests import models, namespace, parsers
 
 
 # CONFIG VARIABLES
-_FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_ID = "FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_ID"
+_FBSL_CONGESTION_ZONE_POSTCODES = "FBSL_CONGESTION_ZONE_POSTCODES"
 _FBSL_FORM_EDIT_URL_TEMPLATE = "FBSL_FORM_EDIT_URL_TEMPLATE"
 _FBSL_FUZZY_SEARCH_THRESHOLD = "FBSL_FUZZY_SEARCH_THRESHOLD"
 _FBSL_FORM_ID = "FBSL_FORM_ID"
@@ -95,7 +95,7 @@ class DistinctRequestsValues(flask_restx.Resource):
 
 
 def _congestion_zone_postcodes() -> pd.DataFrame:
-    return utils.cache("congestion_zone_postcodes", flask.current_app.config[_FBSL_CONGESTION_ZONE_POSTCODES_GSHEET_ID])
+    return pd.DataFrame(flask.current_app.config[_FBSL_CONGESTION_ZONE_POSTCODES], columns=["Postcode"])
 
 
 def _edit_details_url(request_id: str) -> str:
