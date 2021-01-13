@@ -114,7 +114,7 @@ export function getRequests(filters = {}, page = 1) {
     const dates = filters.dates || {};
     const params = {
         page: page,
-        per_page: 100,
+        per_page: 50,
         start_date: formatDate(dates.start),
         end_date: formatDate(dates.end),
         client_full_names: filters.name,
