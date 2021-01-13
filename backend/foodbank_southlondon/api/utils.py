@@ -90,7 +90,7 @@ def paginate(*sort_by: str, ascending: bool = True) -> Callable:
         per_page = max(min(per_page, flask.current_app.config[_FBSL_MAX_PAGE_SIZE]), 0)
         offset = (page - 1) * per_page
         total_items = len(data.index)
-        data = data.sort_values(list(sort_by), ascending=ascending).iloc[offset: offset + per_page]
+        data = data.sort_values(list(sort_by), ascending=ascending, key=lambda col: col.str.lower()).iloc[offset: offset + per_page]
         return {
             "page": page,
             "per_page": per_page,

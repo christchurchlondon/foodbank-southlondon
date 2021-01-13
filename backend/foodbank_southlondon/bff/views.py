@@ -168,7 +168,7 @@ class Actions(flask_restx.Resource):
                 return_value = self._generate_driver_overview_pdf(items, event_data)
             elif event_name == events_models.Action.PRINT_DAY_OVERVIEW.value.event_name:
                 df = pd.DataFrame(requests_items)
-                df = df.sort_values(by=["time_of_day", "postcode"])
+                df = df.sort_values(by=["time_of_day", "postcode"], key=lambda col: col.str.lower())
                 items = df.to_dict("records")
                 return self._generate_day_overview_pdf(items)
             _post_event(api_base_url, request_ids, action_status_name, event_data)
