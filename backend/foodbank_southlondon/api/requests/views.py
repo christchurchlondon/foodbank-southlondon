@@ -95,7 +95,7 @@ class DistinctRequestsValues(flask_restx.Resource):
 
 
 def _congestion_zone_postcodes() -> pd.DataFrame:
-    return pd.DataFrame(flask.current_app.config[_FBSL_CONGESTION_ZONE_POSTCODES])
+    return pd.DataFrame(flask.current_app.config[_FBSL_CONGESTION_ZONE_POSTCODES], columns=["Postcode"])
 
 
 def _edit_details_url(request_id: str) -> str:

@@ -9,7 +9,7 @@ _port = os.environ.get("PORT")
 
 def _congestion_zone_data():
     with open("congestion-zones.txt") as f:
-        return f.readlines()
+        return f.read().splitlines()
 
 
 class _Config(object):
