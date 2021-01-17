@@ -70,6 +70,7 @@ export default class RequestsEventDialog extends React.Component {
             return (
                 <div className="field-row">
                     <label>Date</label>
+                    {/* Don't try to autoFocus the date as we assume it has a sensible default */}
                     <DatePicker
                         selected={ this.state.date }
                         dateFormat={ DATE_FORMAT_UI }
@@ -83,7 +84,7 @@ export default class RequestsEventDialog extends React.Component {
             return (
                 <div className="field-row">
                     <label>Name</label>
-                    <input type="text" onChange={ this.updateName } />
+                    <input type="text" autoFocus={!this.requiresQuantity()} onChange={ this.updateName } />
                 </div>
             );
         }
@@ -91,7 +92,7 @@ export default class RequestsEventDialog extends React.Component {
             return (
                 <div className="field-row">
                     <label>Quantity</label>
-                    <input type="number" onChange={ this.updateQuantity } />
+                    <input type="number" autoFocus={!this.requiresName()} onChange={ this.updateQuantity } />
                 </div>
             );
         }

@@ -159,7 +159,7 @@ export default class ListItemForm extends React.Component {
             <div className="item-form">
                 <div className="row">
                     <label>Description</label>
-                    <input type="text" value={ this.state.description } onChange={ this.updateDescription } />
+                    <input autoFocus type="text" value={ this.state.description } onChange={ this.updateDescription } />
                 </div>
                 { rows }
             </div>
