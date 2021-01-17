@@ -143,6 +143,10 @@ table {
         text-align: center;
         color: $colour-text-secondary;
     }
+
+    .row-with-divider-below {
+        border-bottom: $pad-half solid $colour-main-bold;
+    }
 }
 
 button, .button {
