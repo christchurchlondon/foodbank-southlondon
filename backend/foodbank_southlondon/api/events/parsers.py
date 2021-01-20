@@ -1,7 +1,6 @@
 from flask_restx import inputs  # type:ignore
 
 from foodbank_southlondon.api.parsers import pagination_params
-from foodbank_southlondon.api.events import models as event_models
 
 
 events_params = pagination_params.copy()
