@@ -34,8 +34,8 @@ class Requests(flask_restx.Resource):
         packing_dates = set(packing_date.strip() for packing_date in (params["packing_dates"] or ()))
         client_full_names = set(client_full_name.strip() for client_full_name in (params["client_full_names"] or ()))
         postcodes = set(postcode.upper().strip() for postcode in (params["postcodes"] or ()))
-        time_of_days = params["time_of_days"]
-        voucher_numbers = set("" if voucher_number.strip() == "?" else voucher_number.strip() for voucher_number in (params["voucher_numbers"] or ()))
+        time_of_days = set(params["time_of_days"] or ())
+        voucher_numbers = set("" if voucher_number == "?" else voucher_number for voucher_number in (params["voucher_numbers"] or ()))
         last_request_only = params["last_request_only"]
         df = cache(force_refresh=refresh_cache)
         if packing_dates:
