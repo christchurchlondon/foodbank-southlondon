@@ -34,7 +34,7 @@ class Requests(flask_restx.Resource):
         packing_dates = set(packing_date.strip() for packing_date in (params["packing_dates"] or ()))
         client_full_names = set(client_full_name.strip() for client_full_name in (params["client_full_names"] or ()))
         postcodes = set(postcode.upper().strip() for postcode in (params["postcodes"] or ()))
-        time_of_days = set(time_of_day.upper().strip() for time_of_day in (params["time_of_days"] or ()))
+        time_of_days = params["time_of_days"]
         voucher_numbers = set("" if voucher_number.strip() == "?" else voucher_number.strip() for voucher_number in (params["voucher_numbers"] or ()))
         last_request_only = params["last_request_only"]
         df = cache(force_refresh=refresh_cache)
@@ -50,7 +50,7 @@ class Requests(flask_restx.Resource):
             df = df.loc[df[postcode_attribute].str.upper().str.startswith(tuple(postcodes)) |
                         df[postcode_attribute].str.upper().str.endswith(tuple(postcodes))]
         if time_of_days:
-            df = df.loc[df["Time of Day"].str.upper().isin(time_of_days)]
+            df = df.loc[df["Time of Day"].isin(time_of_days)]
         if last_request_only:
             df = df.assign(rank=df.groupby([name_attribute]).cumcount(ascending=False) + 1).query("rank == 1").drop("rank", axis=1)
         df = df.assign(edit_details_url=df["request_id"].map(_edit_details_url),
