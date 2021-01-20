@@ -33,9 +33,9 @@ class Requests(flask_restx.Resource):
         refresh_cache = params["refresh_cache"]
         packing_dates = set(packing_date.strip() for packing_date in (params["packing_dates"] or ()))
         client_full_names = set(client_full_name.strip() for client_full_name in (params["client_full_names"] or ()))
-        postcodes = set(postcode.upper().strip() for postcode in (params["postcodes"] or ()))
-        time_of_days = set(params["time_of_days"] or ())
-        voucher_numbers = set("" if voucher_number == "?" else voucher_number for voucher_number in (params["voucher_numbers"] or ()))
+        postcodes = set(postcode.strip() for postcode in (params["postcodes"] or ()))
+        time_of_days = set(time_of_day.strip() for time_of_day in (params["time_of_days"] or ()))
+        voucher_numbers = set("" if voucher_number.strip() == "?" else voucher_number.strip() for voucher_number in (params["voucher_numbers"] or ()))
         last_request_only = params["last_request_only"]
         df = cache(force_refresh=refresh_cache)
         if packing_dates:
@@ -47,8 +47,8 @@ class Requests(flask_restx.Resource):
             df = df.loc[df[name_attribute].map(functools.partial(fuzzy_match, choices=client_full_names))]
         postcode_attribute = "Postcode"
         if postcodes:
-            df = df.loc[df[postcode_attribute].str.upper().str.startswith(tuple(postcodes)) |
-                        df[postcode_attribute].str.upper().str.endswith(tuple(postcodes))]
+            df = df.loc[df[postcode_attribute].str.lower().str.startswith(tuple(postcodes)) |
+                        df[postcode_attribute].str.lower().str.endswith(tuple(postcodes))]
         if time_of_days:
             df = df.loc[df["Time of Day"].isin(time_of_days)]
         if last_request_only:

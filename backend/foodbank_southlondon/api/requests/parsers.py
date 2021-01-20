@@ -12,8 +12,8 @@ requests_params.add_argument("packing_dates", type=str, required=False, action="
                              "on - if provided, this filter applies first")
 requests_params.add_argument("client_full_names", type=str, required=False, action="split", help="A comma separated list of Client Full Names to "
                              "filter on (a fuzzy match will be attempted)")
-requests_params.add_argument("postcodes", type=str, required=False, action="split", help="A comma separated list of Postcodes to filter on (case "
-                             "insensitive and can be a prefix)")
+requests_params.add_argument("postcodes", type=str, required=False, action="split", case_sensitive=False, help="A comma separated list of Postcodes "
+                             "to filter on (case insensitive and can be a prefix)")
 requests_params.add_argument("time_of_days", type=str, required=False, action="split", help="A comma separated list of Times of Day to filter on.")
 requests_params.add_argument("voucher_numbers", type=str, required=False, action="split", help="A comma separated list of Voucher Numbers to "
                              "filter on")
