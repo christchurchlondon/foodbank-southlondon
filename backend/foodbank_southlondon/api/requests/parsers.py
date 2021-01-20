@@ -1,6 +1,10 @@
 from flask_restx import inputs  # type:ignore
 
 from foodbank_southlondon.api.parsers import cache_params, pagination_params  # noqa: F401
+from foodbank_southlondon.api.events.parsers import events_params  # noqa: F401
+
+
+_events_params_args = {arg.name: arg for arg in events_params.args}
 
 
 requests_params = pagination_params.copy()
@@ -13,6 +17,7 @@ requests_params.add_argument("postcodes", type=str, required=False, action="spli
 requests_params.add_argument("time_of_days", type=str, required=False, action="split", help="A comma separated list of Times of Day to filter on.")
 requests_params.add_argument("voucher_numbers", type=str, required=False, action="split", help="A comma separated list of Voucher Numbers to "
                              "filter on")
+requests_params.add_argument(_events_params_args["event_names"])
 requests_params.add_argument("last_request_only", type=inputs.boolean, required=False, help="Whether only the most recent request per Client Full "
                              "Name will be fetched")
 

@@ -18,3 +18,4 @@ summary_params.add_argument("end_date", type=lambda x: datetime.date.fromisoform
 summary_params.add_argument(_requests_params_args["client_full_names"])
 summary_params.add_argument(_requests_params_args["postcodes"])
 summary_params.add_argument(_requests_params_args["voucher_numbers"])
+summary_params.add_argument(_requests_params_args["event_names"])
