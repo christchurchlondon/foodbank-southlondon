@@ -55,22 +55,26 @@
                 display: flex;
                 margin-top: 0.2rem;
             }
-            .tickbox {
+            .icon {
                 width: 11px;
                 height: 11px;
                 margin-right: 0.2rem;
+                background-size: contain;
+                background-repeat: no-repeat;
+            }
+            .icon--inline {
+                display: inline-block;
+            }
+            .icon--empty {
                 border: 1px solid black;
             }
-            .tickbox--placeholder {
-                border: none;
-            }
-            .tickbox--flag {
-                border: none;
+            .icon--flag {
                 /* Not sure how to import the Font Awesome icon in this context where we have no bundler */
                 /* Also Weasyprint doesn't support inline SVG so I've hacked it into a PNG and data URL */
                 background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAASCAYAAABSO15qAAABR2lDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8rAyMDNwMUgxsCZmFxc4BgQ4ANUwgCjUcG3a0DVQHBZF2RWZc4CtxnaqndkhBRSL+4XD8FUjwK4UlKLk4H0HyBOSy4oKmFgYEwBspXLSwpA7A4gW6QI6Cggew6InQ5hbwCxkyDsI2A1IUHOQPYNIFsgOSMRaAbjCyBbJwlJPB2JDbUXBHh8XP0UQoyMMnUNDQg4l3RQklpRAqKd8wsqizLTM0oUHIGhlKrgmZesp6NgZGBkyMAACnOI6s9B4LBkFNuHEMtfwsBg8Y2BgXkiQixpCgPD9jYGBolbCDGVeQwM/C0MDNsOFSQWJcIdwPiNpTjN2AjC5rFnYGC9+///Zw0GBvaJDAx/J/7//3vx//9/FwPNv83AcKASAJIeXsw0ooHTAAAAXGVYSWZNTQAqAAAACAAEAQYAAwAAAAEAAgAAARIAAwAAAAEAAQAAASgAAwAAAAEAAgAAh2kABAAAAAEAAAA+AAAAAAACoAIABAAAAAEAAAAQoAMABAAAAAEAAAASAAAAAJz7jTsAAAK0aVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJYTVAgQ29yZSA1LjQuMCI+CiAgIDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+CiAgICAgIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiCiAgICAgICAgICAgIHhtbG5zOnRpZmY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vdGlmZi8xLjAvIgogICAgICAgICAgICB4bWxuczpleGlmPSJodHRwOi8vbnMuYWRvYmUuY29tL2V4aWYvMS4wLyI+CiAgICAgICAgIDx0aWZmOlJlc29sdXRpb25Vbml0PjI8L3RpZmY6UmVzb2x1dGlvblVuaXQ+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgICAgIDx0aWZmOkNvbXByZXNzaW9uPjE8L3RpZmY6Q29tcHJlc3Npb24+CiAgICAgICAgIDx0aWZmOlBob3RvbWV0cmljSW50ZXJwcmV0YXRpb24+MjwvdGlmZjpQaG90b21ldHJpY0ludGVycHJldGF0aW9uPgogICAgICAgICA8ZXhpZjpQaXhlbFlEaW1lbnNpb24+MTg8L2V4aWY6UGl4ZWxZRGltZW5zaW9uPgogICAgICAgICA8ZXhpZjpQaXhlbFhEaW1lbnNpb24+MTY8L2V4aWY6UGl4ZWxYRGltZW5zaW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KBGHbEgAAAMlJREFUOBFj+H//5v//mf4QDGKTCJgYVs1mYHj9HIJBbBIB4/+Vs/4zrJ4D0cbFw8DAzQsxDMRWVGNgMLUHYjsGBjEpiJoHtxgYTh9iYNi/BaiWh4ER5GKGUHMS7UUoZ0IwyWONGsDAMPBhwIIRefKq4ATCICbJwPAKmEKvncdQAhbg4mZgiC9iQDVg6npEikPWdvIgA8NDYAoEpUJg6mNQAKZQex8GBh5etJS4+iSyNqLYFAcixAsgf5MJIAY8vE2mdgZoIFLgAgCg6mjvyjLLaQAAAABJRU5ErkJggg==);
-                background-size: contain;
-                background-repeat: no-repeat;
+            }
+            .icon--congestion-charge-icon {
+                background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAIGNIUk0AAG4nAABzrwAA9AMAAIS4AAB5tgAA7swAADMNAAAOJxYhAXkAAAHaUExURQAAANwALtwALtwALtwALtwALtwALtwALtwALtwALtwALtwALtwALtwALtwALtwALtwALtwALtwALtwALtwALv/////+/v/9/f/8/f77/P76+/75+v73+P72+P719/309v3y9P3x9P3w8/3v8v3u8fzr7/zq7vzp7fzm6/vk6fvj6Pvi5/vg5vrc4vrb4frY3/nW3fnU3PnS2vnR2fjP2PjN1vjM1fjK1PfG0PfFz/fEz/fCzfbAy/a/y/W5xvW0wvWzwfSxv/SwvvSvvfOpufOouPOnt/KjtPKdr/GarPGZq/GYq/GXqvCUp/CTpvCSpvCRpfCPo++Moe+Jnu+Hne6GnO6Emu6Cme6Al+1/lu15kex0jexzjOxxi+tuiOtth+pog+pkgOlgfelee+ldeulceehaeOhYduhXdehWdOhVdOdObuZMbOZLa+ZKa+ZIaeVFZ+VEZuVDZeVCZOU/YuQ8X+Q7XuQ6XuQ5XeM1WeM0WeMzWOMxVuIvVeIsUuIrUeIqUOIpUOEoT+EmTeAgSOAfR+AeR+AdRuAcReAbROAaQ98VP98UPt8TPt4SPd4RPN4QO94POt4OOd4NOd4MON0JNd0INd0HNN0GM90FMt0EMdwCMNwBL9wALvSuHJ4AAAAVdFJOUwAKER0oKTpkaYedpK64w8XT4uj09RN4vusAAAKGSURBVHjanZb5VxMxEMdTWqAtUKAlFgUVpOKN4gUqKiJVwAtvRfEo3iiiFC9UvAAVQauVKnT+V183yWyyp2/nl7ST/bwc852ZEGKyQDAcicYAYtFIOBggrlYcqgbFqkPFjkBJBVhYRYkt4C8HGyv3WxOlNWBrNaUWgK8MHK3MZySKKvXZP+PXTiS7unouD89JTGWRgagSM/nHR1ZRYcv23MgiU6UwPlxjZCdVrWlgAdeR9ybO8e0wNduWcTyPdFfc9XIDtbL4FcHgvfn57Y6upDZ2Ks/vWsSHR/C5LUHpeRFTrhL272szdbDbnGHaYbrK73ci6OoprjdNu+z3EHW2Tr5MQdchFvFN8nzLmTtPhgf2KkyaISFCCMuPm9Lkxrv8gibaJe9Bnj+EBNgvabJ9HjWy2Ceca3pFQAMkqI1TOrE1I2kxnyy4lnc+yKErSMLamNKRZ4rmM+to2/VZ2RMmEW08btwyWvq9wREhUW3UgzIELhYlMW3chsgnNyRG2LgZkZwbAiYk646wjem5OOm+MXb8Q4gMuh+fXfJZRHYsqV9M/DZdMgvlQz2UKeWDj3UNR0f+qqFkgvlZj0ijfJrM9oIrcWxsSRIMl2W3vkzzC5z+3Cac6/tfoSy5+NOSzGv7ptnSgwnJ24/i5ykGHUo+7e69cPqAUj7qZ/QU44n8Ou6cyBelROblAs45Eq05qVyIorS4z4Fo/KAUJVH6vrfaEitG1dKHBXZ2l10RGwNDgcUy/itpSbS8MZVxvVnALXOVjZ/MWjQLqSX9uJRQgNrud2DZkqTGBwv3k2v593UdV7+ATeNT2yvAzNN7qdSjt4qCje3VSxP38lTw9CDx8uzx9Lj6ryfcPyU3/r7bs5T6AAAAAElFTkSuQmCC);
             }
         </style>
     </head>
@@ -102,13 +106,14 @@
                     <td>
                         <div class="tickboxes">
                             <!-- Packed -->
-                            <div class="tickbox"></div>
+                            <div class="icon icon--empty"></div>
                             <!-- Sent -->
-                            <div class="tickbox"></div>
+                            <div class="icon icon--empty"></div>
                             {% if request['flag_for_attention'] %}
-                                <div class="tickbox tickbox--flag"></div>
+                                <div class="icon icon--flag"></div>
                             {% else %}
-                                <div class="tickbox tickbox--placeholder"></div>
+                                <!-- placeholder to ensure the column is big enough -->
+                                <div class="icon"></div>
                             {% endif %}
                         </div>
                     </td>
@@ -118,6 +123,10 @@
                     <td>
                         <span class="no-wrap">
                             {{ request['postcode'] }}
+                            {% if request['congestion_zone'] %}
+                                <div class="icon icon--inline icon--congestion-charge-icon"></div>
+                                <!-- TODO: Replace with <img src="{{ url_for('static', filename='congestion-charge.png', _external=True)}}"> but add styling -->
+                            {% endif %}
                         </span>
                     </td>
                     <td>{{ request['time_of_day'] }}</td>
