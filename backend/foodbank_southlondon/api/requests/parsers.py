@@ -7,13 +7,13 @@ requests_params = pagination_params.copy()
 requests_params.add_argument("packing_dates", type=str, required=False, action="split", help="A comma separated list of Packing Dates to filter "
                              "on - if provided, this filter applies first")
 requests_params.add_argument("client_full_names", type=str, required=False, action="split", help="A comma separated list of Client Full Names to "
-                             "filter on (a fuzzy match will be attempted) - if provided alongside postcodes and/or voucher_numbers, the result will "
-                             "be based on an OR filter")
+                             "filter on (a fuzzy match will be attempted)")
 requests_params.add_argument("postcodes", type=str, required=False, action="split", help="A comma separated list of Postcodes to filter on (case "
-                             "insensitive and can be a prefix) - if provided alongside client_full_names and/or voucher_numbers, the result will be "
-                             "based on an OR filter")
+                             "insensitive and can be a prefix)")
+requests_params.add_argument("time_of_days", type=str, required=False, action="split", help="A comma separated list of Times of Day to filter on "
+                             "(case insensitive)")
 requests_params.add_argument("voucher_numbers", type=str, required=False, action="split", help="A comma separated list of Voucher Numbers to "
-                             "filter on - if provided alongside client_full_names and/or packing_dates, the result will be based on an OR filter")
+                             "filter on")
 requests_params.add_argument("last_request_only", type=inputs.boolean, required=False, help="Whether only the most recent request per Client Full "
                              "Name will be fetched")
 
