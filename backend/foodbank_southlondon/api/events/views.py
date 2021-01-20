@@ -32,8 +32,6 @@ class Events(flask_restx.Resource):
         request_ids = set(params["request_ids"] or ())
         event_names = set(params["event_names"] or ())
         latest_event_only = params["latest_event_only"]
-        if event_names and latest_event_only:
-            rest.abort(400, "Only one of 'event_names' and 'latest_event_only' can be passed.")
         df = cache(force_refresh=refresh_cache)
         request_id_attribute = "request_id"
         if request_ids:
