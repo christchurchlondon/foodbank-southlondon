@@ -3,6 +3,7 @@ import datetime
 
 import flask
 import flask_restx  # type:ignore
+import json
 import numpy as np  # type:ignore
 import pandas as pd  # type:ignore
 import pytz
@@ -27,6 +28,7 @@ _FBSL_FORM_SUBMIT_URL_TEMPLATE = "FBSL_FORM_SUBMIT_URL_TEMPLATE"
 _FBSL_MAX_ACTION_REQUEST_IDS = "FBSL_MAX_ACTION_REQUEST_IDS"
 _FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
 _FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
+_FBSL_STAFF_MOBILES = "FBSL_STAFF_MOBILES"
 _PREFERRED_URL_SCHEME = "PREFERRED_URL_SCHEME"
 
 
@@ -67,8 +69,9 @@ class Actions(flask_restx.Resource):
     def _generate_driver_overview_pdf(items: List, driver_name: str) -> flask.Response:
         template_name = "driver-overview"
         today = datetime.datetime.now().strftime("%Y-%m-%d")
-        html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", items=items, date=today,
-                                                            driver_name=driver_name), encoding="utf8")
+        staff_mobiles = " | ".join(f"{staff} - {mobile}" for staff, mobile in json.loads(flask.current_app.config[_FBSL_STAFF_MOBILES]).items())
+        html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", items=items, date=today, driver_name=driver_name,
+                                                            staff_mobiles=staff_mobiles), encoding="utf8")
         document = html.render()
         return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, template_name)
 
