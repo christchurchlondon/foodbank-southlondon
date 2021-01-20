@@ -31,6 +31,9 @@ class Events(flask_restx.Resource):
         refresh_cache = params["refresh_cache"]
         request_ids = set(params["request_ids"] or ())
         event_names = set(params["event_names"] or ())
+        invalid_event_names = event_names.difference(models.EVENT_NAMES)
+        if invalid_event_names:
+            rest.abort(400, f"The following event names are invalid options: {invalid_event_names}. Valid options are: {event_names}.")
         latest_event_only = params["latest_event_only"]
         df = cache(force_refresh=refresh_cache)
         request_id_attribute = "request_id"
