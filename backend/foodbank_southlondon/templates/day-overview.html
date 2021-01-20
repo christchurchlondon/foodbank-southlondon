@@ -125,6 +125,7 @@
                             {{ request['postcode'] }}
                             {% if request['congestion_zone'] %}
                                 <div class="icon icon--inline icon--congestion-charge-icon"></div>
+                                <!-- TODO: Replace with <img src="{{ url_for('static', filename='congestion-charge.png', _external=True)}}"> but add styling -->
                             {% endif %}
                         </span>
                     </td>
