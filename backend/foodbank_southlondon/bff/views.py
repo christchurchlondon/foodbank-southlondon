@@ -257,7 +257,9 @@ class Summary(flask_restx.Resource):
             packing_dates = ",".join((start_date + datetime.timedelta(days=i)).strftime("%d/%m/%Y") for i in range((end_date - start_date).days + 1))
         client_full_names = ",".join(params["client_full_names"] or ()) or None
         postcodes = ",".join(params["postcodes"] or ()) or None
+        time_of_days = ",".join(params["time_of_days"] or ()) or None
         voucher_numbers = ",".join(params["voucher_numbers"] or ()) or None
+        event_names = ",".join(params["event_names"] or ()) or None
         per_page = params["per_page"]
         api_base_url = _api_base_url()
         items = []
@@ -265,8 +267,8 @@ class Summary(flask_restx.Resource):
                              headers={"X-Fields": "items{request_id, client_full_name, voucher_number, postcode, packing_date, time_of_day, "
                                       "household_size, congestion_zone, flag_for_attention}, page, per_page, total_items, total_pages"},
                              params={"client_full_names": client_full_names, "packing_dates": packing_dates, "page": params["page"],
-                                     "per_page": per_page, "postcodes": postcodes, "voucher_numbers": voucher_numbers,
-                                     "refresh_cache": refresh_cache})
+                                     "per_page": per_page, "postcodes": postcodes, "time_of_days": time_of_days, "voucher_numbers": voucher_numbers,
+                                     "event_names": event_names, "refresh_cache": refresh_cache})
         requests_df = pd.DataFrame(requests_data["items"])
         if not requests_df.empty:
             request_ids = requests_df["request_id"].unique()
