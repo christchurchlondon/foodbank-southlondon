@@ -43,12 +43,18 @@ export default class RequestsList extends React.Component {
 
         const data = this.props.requests;
 
-        const tableRows = data.map(item => {
+        const tableRows = data.map((item, ix) => {
             const request = item.data;
             const disabled = !request.id.length;
+
+            const nextRequest = this.props.requests[ix + 1] ? this.props.requests[ix + 1].data : undefined;
+            const showDivider = nextRequest && nextRequest.timeOfDay !== request.timeOfDay;
+
+            const className = (disabled ? 'disabled' : '') + (showDivider ? 'row-with-divider-below' : '');
             const onClick = disabled ? undefined : () => this.props.onSelect(request.id);
+
             return (
-                <tr key={request.id} onClick={ onClick } className={ disabled ? 'disabled' : '' }>
+                <tr key={request.id} onClick={ onClick } className={className}>
                     <td className="selection-cell" onClick={ this.handleCheckboxCellClick }>
                         <input type="checkbox"
                             disabled={disabled}
