@@ -44,6 +44,10 @@ class _Config(object):
         return os.environ.get("FBSL_SA_KEY")
 
     @property
+    def FBSL_STAFF_MOBILES(self):
+        return os.environ.get("FBSL_STAFF_MOBILES")
+
+    @property
     def GOOGLE_CLIENT_SECRET(self):
         return os.environ.get("FBSL_CLIENT_SECRET")
 
