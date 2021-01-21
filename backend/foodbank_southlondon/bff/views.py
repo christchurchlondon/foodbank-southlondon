@@ -3,6 +3,7 @@ import datetime
 
 import flask
 import flask_restx  # type:ignore
+import itertools
 import json
 import numpy as np  # type:ignore
 import pandas as pd  # type:ignore
@@ -27,6 +28,7 @@ _FBSL_FORM_ID = "FBSL_FORM_ID"
 _FBSL_FORM_SUBMIT_URL_TEMPLATE = "FBSL_FORM_SUBMIT_URL_TEMPLATE"
 _FBSL_MAX_ACTION_REQUEST_IDS = "FBSL_MAX_ACTION_REQUEST_IDS"
 _FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
+_FBSL_MAX_REQUEST_IDS_PER_URL = "FBSL_MAX_REQUEST_IDS_PER_URL"
 _FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
 _FBSL_STAFF_MOBILES = "FBSL_STAFF_MOBILES"
 _PREFERRED_URL_SCHEME = "PREFERRED_URL_SCHEME"
@@ -273,12 +275,13 @@ class Summary(flask_restx.Resource):
         if not requests_df.empty:
             request_ids = requests_df["request_id"].unique()
             event_attributes = ("request_id", "event_timestamp", "event_name", "event_data")
-            events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
-                               headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
-                               params={"latest_event_only": True, "per_page": per_page, "refresh_cache": refresh_cache,
-                                       "request_ids": ",".join(request_ids)})
-            events_df = pd.DataFrame(events_data["items"], columns=event_attributes)
-            df = pd.merge(requests_df, events_df, on="request_id", how="left").replace({np.nan: None})
+            for chunk in _chunk(request_ids, flask.current_app.config[_FBSL_MAX_REQUEST_IDS_PER_URL]):
+                events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
+                                headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
+                                params={"latest_event_only": True, "per_page": per_page, "refresh_cache": refresh_cache,
+                                        "request_ids": ",".join(request_ids)})
+                events_df = pd.DataFrame(events_data["items"], columns=event_attributes)
+                df = pd.merge(requests_df, events_df, on="request_id", how="left").replace({np.nan: None})
             items = df.to_dict("records")
         return {
             "page": requests_data["page"],
@@ -288,3 +291,8 @@ class Summary(flask_restx.Resource):
             "form_submit_url": flask.current_app.config[_FBSL_FORM_SUBMIT_URL_TEMPLATE].format(form_id=flask.current_app.config[_FBSL_FORM_ID]),
             "items": items
         }
+
+
+def _chunk(iterable, size):
+    iterator = iter(iterable)
+    return iter(lambda: tuple(itertools.islice(iterator, size)), ())
