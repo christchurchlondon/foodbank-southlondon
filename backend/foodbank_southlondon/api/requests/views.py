@@ -7,6 +7,7 @@ import flask_restx  # type:ignore
 import pandas as pd  # type:ignore
 
 from foodbank_southlondon.api import rest, utils
+from foodbank_southlondon.api.events import models as events_models
 from foodbank_southlondon.api.requests import models, namespace, parsers
 
 
@@ -39,6 +40,9 @@ class Requests(flask_restx.Resource):
         time_of_days = set(time_of_day.strip() for time_of_day in (params["time_of_days"] or ()))
         voucher_numbers = set("" if voucher_number.strip() == "?" else voucher_number.strip() for voucher_number in (params["voucher_numbers"] or ()))
         event_names = set(event_name.strip() for event_name in (params["event_names"] or ()))
+        invalid_event_names = event_names.difference(events_models.EVENT_NAMES)
+        if invalid_event_names:
+            rest.abort(400, f"The following event names are invalid options: {invalid_event_names}. Valid options are: {events_models.EVENT_NAMES}.")
         last_request_only = params["last_request_only"]
         df = cache(force_refresh=refresh_cache)
         request_id_attribute = "request_id"
