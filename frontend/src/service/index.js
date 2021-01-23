@@ -109,7 +109,7 @@ function parseTimestamp(timestamp) {
     return parse(timestamp.substr(0, 19).replace('T', ' '), DATE_FORMAT_TIMESTAMP, new Date());
 }
 
-export function getRequests(filters = {}, page = 1) {
+export function getRequests(filters = {}, page = 1, refreshCache=false) {
 
     const dates = filters.dates || {};
     const params = {
@@ -119,7 +119,8 @@ export function getRequests(filters = {}, page = 1) {
         end_date: formatDate(dates.end),
         client_full_names: filters.name,
         voucher_numbers: filters.referenceNumber,
-        postcodes: filters.postcode
+        postcodes: filters.postcode,
+        refresh_cache: refreshCache
     };
 
     const url = endpoints.GET_REQUESTS + encodeParams(params);

@@ -58,9 +58,9 @@ class Requests extends React.Component {
         this.fetchRequests(this.state.filters, page);
     }
 
-    fetchRequests(filters = {}, page = 1) {
+    fetchRequests(filters = {}, page = 1, refreshCache = false) {
         this.setState({ filters });
-        this.props.fetchRequests(filters, page);
+        this.props.fetchRequests(filters, page, refreshCache);
     }
 
     fetchEvents() {
@@ -143,7 +143,7 @@ class Requests extends React.Component {
                     onSelect={ id => this.selectRequest(id) }
                     onToggle={ id => this.toggleRequest(id) }
                     onToggleAll={ () => this.toggleAllRequests() }
-                    onRefresh={() => this.fetchRequests(this.props.filters) } />
+                    onRefresh={() => this.fetchRequests(this.props.filters, this.props.paging.page, true) } />
                 <div className="requests-controls">
                     <Paginator
                         selectedPage={ this.props.paging.page }
