@@ -103,7 +103,7 @@ export default class RequestsList extends React.Component {
                         <th>Time</th>
                         <th className="cell-with-actions">
                             Last Status
-                            <button>
+                            <button onClick={this.props.onRefresh}>
                                 <Sync />
                             </button>
                         </th>

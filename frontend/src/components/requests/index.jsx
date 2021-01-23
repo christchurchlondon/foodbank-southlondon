@@ -142,7 +142,8 @@ class Requests extends React.Component {
                     requests={ this.props.items }
                     onSelect={ id => this.selectRequest(id) }
                     onToggle={ id => this.toggleRequest(id) }
-                    onToggleAll={ () => this.toggleAllRequests() } />
+                    onToggleAll={ () => this.toggleAllRequests() }
+                    onRefresh={() => this.fetchRequests(this.props.filters) } />
                 <div className="requests-controls">
                     <Paginator
                         selectedPage={ this.props.paging.page }
