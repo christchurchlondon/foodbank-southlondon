@@ -17,7 +17,8 @@ import {
     faSpinner,
     faTimes,
     faUser,
-    faBars
+    faBars,
+    faSync
 } from '@fortawesome/free-solid-svg-icons'
 import {
     faSave
@@ -45,7 +46,8 @@ export default function setupIcons() {
         faSpinner,
         faTimes,
         faUser,
-        faBars
+        faBars,
+        faSync
     );
 
     // Regular icons

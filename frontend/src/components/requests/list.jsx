@@ -2,6 +2,7 @@ import React from 'react';
 import { format } from 'date-fns';
 import { DATE_FORMAT_UI } from '../../constants';
 import Flag from './flag';
+import Sync from './sync';
 import CongestionCharge from '../common/congestion-charge';
 import './styles/list.scss';
 
@@ -100,7 +101,12 @@ export default class RequestsList extends React.Component {
                         <th>Postcode</th>
                         <th>Packing Date</th>
                         <th>Time</th>
-                        <th>Last Status</th>
+                        <th className="cell-with-actions">
+                            Last Status
+                            <button onClick={this.props.onRefresh}>
+                                <Sync />
+                            </button>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
