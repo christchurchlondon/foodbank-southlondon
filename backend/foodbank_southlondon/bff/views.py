@@ -279,7 +279,7 @@ class Summary(flask_restx.Resource):
                 events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
                                 headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
                                 params={"latest_event_only": True, "per_page": per_page, "refresh_cache": refresh_cache,
-                                        "request_ids": ",".join(request_ids)})
+                                        "request_ids": ",".join(chunk)})
                 events_df = pd.DataFrame(events_data["items"], columns=event_attributes)
                 df = pd.merge(requests_df, events_df, on="request_id", how="left").replace({np.nan: None})
             items = df.to_dict("records")
