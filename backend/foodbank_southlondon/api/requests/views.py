@@ -7,11 +7,13 @@ import flask_restx  # type:ignore
 import pandas as pd  # type:ignore
 
 from foodbank_southlondon.api import rest, utils
+from foodbank_southlondon.api.events import models as events_models
 from foodbank_southlondon.api.requests import models, namespace, parsers
 
 
 # CONFIG VARIABLES
 _FBSL_CONGESTION_ZONE_POSTCODES = "FBSL_CONGESTION_ZONE_POSTCODES"
+_FBSL_EVENTS_GSHEET_ID = "FBSL_EVENTS_GSHEET_ID"
 _FBSL_FORM_EDIT_URL_TEMPLATE = "FBSL_FORM_EDIT_URL_TEMPLATE"
 _FBSL_FUZZY_SEARCH_THRESHOLD = "FBSL_FUZZY_SEARCH_THRESHOLD"
 _FBSL_FORM_ID = "FBSL_FORM_ID"
@@ -19,6 +21,7 @@ _FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
 
 # INTERNALS
 _CACHE_NAME = "requests"
+_EVENTS_CACHE_NAME = "events"
 
 
 @namespace.route("/")
@@ -33,10 +36,16 @@ class Requests(flask_restx.Resource):
         refresh_cache = params["refresh_cache"]
         packing_dates = set(packing_date.strip() for packing_date in (params["packing_dates"] or ()))
         client_full_names = set(client_full_name.strip() for client_full_name in (params["client_full_names"] or ()))
-        postcodes = set(postcode.upper().strip() for postcode in (params["postcodes"] or ()))
+        postcodes = set(postcode.strip() for postcode in (params["postcodes"] or ()))
+        time_of_days = set(time_of_day.strip() for time_of_day in (params["time_of_days"] or ()))
         voucher_numbers = set("" if voucher_number.strip() == "?" else voucher_number.strip() for voucher_number in (params["voucher_numbers"] or ()))
+        event_names = set(event_name.strip() for event_name in (params["event_names"] or ()))
+        invalid_event_names = event_names.difference(events_models.EVENT_NAMES)
+        if invalid_event_names:
+            rest.abort(400, f"The following event names are invalid options: {invalid_event_names}. Valid options are: {events_models.EVENT_NAMES}.")
         last_request_only = params["last_request_only"]
         df = cache(force_refresh=refresh_cache)
+        request_id_attribute = "request_id"
         if packing_dates:
             df = df.loc[df["Packing Date"].isin(packing_dates)]
         if voucher_numbers:
@@ -46,11 +55,21 @@ class Requests(flask_restx.Resource):
             df = df.loc[df[name_attribute].map(functools.partial(fuzzy_match, choices=client_full_names))]
         postcode_attribute = "Postcode"
         if postcodes:
-            df = df.loc[df[postcode_attribute].str.upper().str.startswith(tuple(postcodes)) |
-                        df[postcode_attribute].str.upper().str.endswith(tuple(postcodes))]
+            df = df.loc[df[postcode_attribute].str.lower().str.startswith(tuple(postcodes)) |
+                        df[postcode_attribute].str.lower().str.endswith(tuple(postcodes))]
+        if time_of_days:
+            df = df.loc[df["Time of Day"].isin(time_of_days)]
         if last_request_only:
             df = df.assign(rank=df.groupby([name_attribute]).cumcount(ascending=False) + 1).query("rank == 1").drop("rank", axis=1)
-        df = df.assign(edit_details_url=df["request_id"].map(_edit_details_url),
+        if event_names:
+            events_df = events_cache(force_refresh=refresh_cache)
+            events_df = (
+                events_df.assign(rank=events_df.sort_values("event_timestamp").groupby([request_id_attribute]).cumcount(ascending=False) + 1)
+                .query("rank == 1").drop("rank", axis=1)
+            )
+            events_df = events_df.loc[events_df["event_name"].isin(event_names)]
+            df = df.loc[df[request_id_attribute].isin(events_df[request_id_attribute].values)]
+        df = df.assign(edit_details_url=df[request_id_attribute].map(_edit_details_url),
                        congestion_zone=df[postcode_attribute].isin(_congestion_zone_postcodes()[postcode_attribute].values))
         return (df, params["page"], params["per_page"])
 
@@ -107,6 +126,10 @@ def _edit_details_url(request_id: str) -> str:
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
     return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], force_refresh=force_refresh)
+
+
+def events_cache(force_refresh: bool = False) -> pd.DataFrame:
+    return utils.cache(_EVENTS_CACHE_NAME, flask.current_app.config[_FBSL_EVENTS_GSHEET_ID], force_refresh=force_refresh)
 
 
 def fuzzy_match(text: str, choices: Iterable) -> bool:

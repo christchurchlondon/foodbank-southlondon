@@ -3,6 +3,7 @@ import datetime
 
 import flask
 import flask_restx  # type:ignore
+import itertools
 import json
 import numpy as np  # type:ignore
 import pandas as pd  # type:ignore
@@ -27,6 +28,7 @@ _FBSL_FORM_ID = "FBSL_FORM_ID"
 _FBSL_FORM_SUBMIT_URL_TEMPLATE = "FBSL_FORM_SUBMIT_URL_TEMPLATE"
 _FBSL_MAX_ACTION_REQUEST_IDS = "FBSL_MAX_ACTION_REQUEST_IDS"
 _FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
+_FBSL_MAX_REQUEST_IDS_PER_URL = "FBSL_MAX_REQUEST_IDS_PER_URL"
 _FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
 _FBSL_STAFF_MOBILES = "FBSL_STAFF_MOBILES"
 _PREFERRED_URL_SCHEME = "PREFERRED_URL_SCHEME"
@@ -154,7 +156,7 @@ class Actions(flask_restx.Resource):
             elif event_name == events_models.Action.PRINT_SHIPPING_LABEL.value.event_name:
                 action_status_name = events_models.ActionStatus.SHIPPING_LABEL_PRINTED.value.event_name
                 if not event_data.isdigit():
-                    rest.abort(400, f"The quantity must be a whole number.")
+                    rest.abort(400, "The quantity must be a whole number.")
                 return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
             elif event_name == events_models.Action.PRINT_DRIVER_OVERVIEW.value.event_name:
                 requests_df = pd.DataFrame(requests_items)
@@ -162,7 +164,7 @@ class Actions(flask_restx.Resource):
                 event_attributes = ("request_id", "event_data")
                 events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
                                    headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
-                                   params={"event_name": events_models.ActionStatus.SHIPPING_LABEL_PRINTED.value.event_name,
+                                   params={"event_names": events_models.ActionStatus.SHIPPING_LABEL_PRINTED.value.event_name,
                                            "latest_event_only": True, "per_page": len(request_ids), "request_ids": ",".join(request_ids)})
                 events_df = pd.DataFrame(events_data["items"], columns=event_attributes)
                 df = pd.merge(requests_df, events_df, on="request_id", how="left").replace({np.nan: None})
@@ -257,7 +259,9 @@ class Summary(flask_restx.Resource):
             packing_dates = ",".join((start_date + datetime.timedelta(days=i)).strftime("%d/%m/%Y") for i in range((end_date - start_date).days + 1))
         client_full_names = ",".join(params["client_full_names"] or ()) or None
         postcodes = ",".join(params["postcodes"] or ()) or None
+        time_of_days = ",".join(params["time_of_days"] or ()) or None
         voucher_numbers = ",".join(params["voucher_numbers"] or ()) or None
+        event_names = ",".join(params["event_names"] or ()) or None
         per_page = params["per_page"]
         api_base_url = _api_base_url()
         items = []
@@ -265,18 +269,19 @@ class Summary(flask_restx.Resource):
                              headers={"X-Fields": "items{request_id, client_full_name, voucher_number, postcode, packing_date, time_of_day, "
                                       "household_size, congestion_zone, flag_for_attention}, page, per_page, total_items, total_pages"},
                              params={"client_full_names": client_full_names, "packing_dates": packing_dates, "page": params["page"],
-                                     "per_page": per_page, "postcodes": postcodes, "voucher_numbers": voucher_numbers,
-                                     "refresh_cache": refresh_cache})
+                                     "per_page": per_page, "postcodes": postcodes, "time_of_days": time_of_days, "voucher_numbers": voucher_numbers,
+                                     "event_names": event_names, "refresh_cache": refresh_cache})
         requests_df = pd.DataFrame(requests_data["items"])
         if not requests_df.empty:
             request_ids = requests_df["request_id"].unique()
             event_attributes = ("request_id", "event_timestamp", "event_name", "event_data")
-            events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
-                               headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
-                               params={"latest_event_only": True, "per_page": per_page, "refresh_cache": refresh_cache,
-                                       "request_ids": ",".join(request_ids)})
-            events_df = pd.DataFrame(events_data["items"], columns=event_attributes)
-            df = pd.merge(requests_df, events_df, on="request_id", how="left").replace({np.nan: None})
+            for chunk in _chunk(request_ids, flask.current_app.config[_FBSL_MAX_REQUEST_IDS_PER_URL]):
+                events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
+                                headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
+                                params={"latest_event_only": True, "per_page": per_page, "refresh_cache": refresh_cache,
+                                        "request_ids": ",".join(request_ids)})
+                events_df = pd.DataFrame(events_data["items"], columns=event_attributes)
+                df = pd.merge(requests_df, events_df, on="request_id", how="left").replace({np.nan: None})
             items = df.to_dict("records")
         return {
             "page": requests_data["page"],
@@ -286,3 +291,8 @@ class Summary(flask_restx.Resource):
             "form_submit_url": flask.current_app.config[_FBSL_FORM_SUBMIT_URL_TEMPLATE].format(form_id=flask.current_app.config[_FBSL_FORM_ID]),
             "items": items
         }
+
+
+def _chunk(iterable, size):
+    iterator = iter(iterable)
+    return iter(lambda: tuple(itertools.islice(iterator, size)), ())

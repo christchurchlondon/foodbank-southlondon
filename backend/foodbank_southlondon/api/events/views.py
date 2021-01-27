@@ -29,15 +29,18 @@ class Events(flask_restx.Resource):
         """List all Events."""
         params = parsers.events_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
-        request_ids = set(request_id for request_id in (params["request_ids"] or ()))
-        event_name = params["event_name"]
+        request_ids = set(request_id.strip() for request_id in (params["request_ids"] or ()))
+        event_names = set(event_name.strip() for event_name in (params["event_names"] or ()))
+        invalid_event_names = event_names.difference(models.EVENT_NAMES)
+        if invalid_event_names:
+            rest.abort(400, f"The following event names are invalid options: {invalid_event_names}. Valid options are: {models.EVENT_NAMES}.")
         latest_event_only = params["latest_event_only"]
         df = cache(force_refresh=refresh_cache)
         request_id_attribute = "request_id"
         if request_ids:
             df = df.loc[df[request_id_attribute].isin(request_ids)]
-        if event_name:
-            df = df.loc[df["event_name"] == event_name]
+        if event_names:
+            df = df.loc[df["event_name"].isin(event_names)]
         if latest_event_only:
             df = (
                 df.assign(rank=df.sort_values("event_timestamp").groupby([request_id_attribute]).cumcount(ascending=False) + 1).query("rank == 1")

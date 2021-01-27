@@ -1,7 +1,7 @@
 from flask_restx import inputs, reqparse  # type:ignore
 
 
-cache_params = reqparse.RequestParser()
+cache_params = reqparse.RequestParser(trim=True)
 cache_params.add_argument("refresh_cache", type=inputs.boolean, required=False, help="Whether the cache should be force refreshed")
 
 pagination_params = cache_params.copy()
