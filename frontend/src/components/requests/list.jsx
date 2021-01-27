@@ -2,6 +2,7 @@ import React from 'react';
 import { format } from 'date-fns';
 import { DATE_FORMAT_UI } from '../../constants';
 import Flag from './flag';
+import Sync from './sync';
 import CongestionCharge from '../common/congestion-charge';
 import './styles/list.scss';
 
@@ -48,7 +49,10 @@ export default class RequestsList extends React.Component {
             const disabled = !request.id.length;
 
             const nextRequest = this.props.requests[ix + 1] ? this.props.requests[ix + 1].data : undefined;
-            const showDivider = nextRequest && nextRequest.timeOfDay !== request.timeOfDay;
+
+            const showDivider = nextRequest &&
+                (nextRequest.timeOfDay !== request.timeOfDay ||
+                 nextRequest.packingDate.getTime() !== request.packingDate.getTime());
 
             const className = (disabled ? 'disabled' : '') + (showDivider ? 'row-with-divider-below' : '');
             const onClick = disabled ? undefined : () => this.props.onSelect(request.id);
@@ -100,7 +104,12 @@ export default class RequestsList extends React.Component {
                         <th>Postcode</th>
                         <th>Packing Date</th>
                         <th>Time</th>
-                        <th>Last Status</th>
+                        <th className="cell-with-actions">
+                            Last Status
+                            <button onClick={this.props.onRefresh}>
+                                <Sync />
+                            </button>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>

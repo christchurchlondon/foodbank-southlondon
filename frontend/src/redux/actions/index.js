@@ -50,10 +50,10 @@ import {
 
 // Requests
 
-export const fetchRequests = (filters, page) => {
+export const fetchRequests = (filters, page, refreshCache) => {
     return dispatch => {
         dispatch(loadRequests(filters, page));
-        return getRequests(filters, page)
+        return getRequests(filters, page, refreshCache)
             .then(({ result, paging, editUrl }) => dispatch(requestsLoaded(result, paging, editUrl)))
             .catch(() => dispatch(loadRequestsFailed()));
     };

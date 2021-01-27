@@ -135,6 +135,12 @@ table {
         vertical-align: middle;
     }
 
+    .cell-with-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
     .disabled {
         color: $colour-text-secondary;
     }
