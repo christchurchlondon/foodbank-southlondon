@@ -59,7 +59,7 @@ class Events(flask_restx.Resource):
         if not items:
             rest.abort(400, "The body, items must not be empty.")
         items_df = pd.DataFrame(items)
-        requests_df = requests_views.cache(force_refresh=True)
+        requests_df = requests_views.cache()
         missing_request_ids = set(items_df["request_id"].unique()).difference(requests_df["request_id"].unique())
         if missing_request_ids:
             rest.abort(400, f"the following Request ID values {missing_request_ids} were not found.")
