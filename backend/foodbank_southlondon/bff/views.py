@@ -273,6 +273,7 @@ class Summary(flask_restx.Resource):
                                      "event_names": event_names, "refresh_cache": refresh_cache})
         requests_df = pd.DataFrame(requests_data["items"])
         if not requests_df.empty:
+            events_df = None
             request_ids = requests_df["request_id"].unique()
             event_attributes = ("request_id", "event_timestamp", "event_name", "event_data")
             for chunk in _chunk(request_ids, flask.current_app.config[_FBSL_MAX_REQUEST_IDS_PER_URL]):
@@ -280,8 +281,12 @@ class Summary(flask_restx.Resource):
                                    headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
                                    params={"latest_event_only": True, "per_page": per_page, "refresh_cache": refresh_cache,
                                            "request_ids": ",".join(chunk)})
-                events_df = pd.DataFrame(events_data["items"], columns=event_attributes)
-                df = pd.merge(requests_df, events_df, on="request_id", how="left").replace({np.nan: None})
+                events_chunk_df = pd.DataFrame(events_data["items"], columns=event_attributes)
+                if events_df is None:
+                    events_df = events_chunk_df
+                else:
+                    events_df = pd.concat([events_df, events_chunk_df])
+            df = pd.merge(requests_df, events_df, on="request_id", how="left").replace({np.nan: None})
             items = df.to_dict("records")
         return {
             "page": requests_data["page"],

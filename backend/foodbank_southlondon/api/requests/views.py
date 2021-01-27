@@ -44,12 +44,12 @@ class Requests(flask_restx.Resource):
         last_request_only = params["last_request_only"]
         df = cache(force_refresh=refresh_cache)
         request_id_attribute = "request_id"
+        name_attribute = "Client Full Name"
         if packing_dates:
             df = df.loc[df["Packing Date"].isin(packing_dates)]
         if voucher_numbers:
             df = df.loc[df["Voucher Number"].isin(voucher_numbers)]
         if client_full_names:
-            name_attribute = "Client Full Name"
             df = df.loc[df[name_attribute].map(functools.partial(fuzzy_match, choices=client_full_names))]
         postcode_attribute = "Postcode"
         if postcodes:
