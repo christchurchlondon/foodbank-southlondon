@@ -155,8 +155,8 @@ class Actions(flask_restx.Resource):
                 return_value = self._generate_shopping_list_pdf(requests_items, api_base_url, flask.request.cookies)
             elif event_name == events_models.Action.PRINT_SHIPPING_LABEL.value.event_name:
                 action_status_name = events_models.ActionStatus.SHIPPING_LABEL_PRINTED.value.event_name
-                if not event_data.isdigit():
-                    rest.abort(400, "The quantity must be a whole number.")
+                if not event_data.isdigit() or event_data < 1:
+                    rest.abort(400, "Invalid quantity. The quantity must be positive integer.")
                 return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
             elif event_name == events_models.Action.PRINT_DRIVER_OVERVIEW.value.event_name:
                 requests_df = pd.DataFrame(requests_items)
