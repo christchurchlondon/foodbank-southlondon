@@ -145,11 +145,15 @@ class Actions(flask_restx.Resource):
         else:
             action_status_name = None
             try:
-                requests_items = _get(f"{api_base_url}requests/{','.join(request_ids)}", cookies=flask.request.cookies,
-                                      params={"per_page": total_request_ids})["items"]
+                requests_items = []
+                for chunk in list(_chunk(request_ids, flask.current_app.config[_FBSL_MAX_REQUEST_IDS_PER_URL])):
+                    requests_items.extend(_get(f"{api_base_url}requests/{','.join(chunk)}", cookies=flask.request.cookies,
+                                          params={"per_page": len(chunk)})["items"])
             except requests.exceptions.HTTPError as error:
                 if error.response.status_code == 404:
                     rest.abort(404, error.response.json()["message"])
+                else:
+                    rest.abort(error.response.status_code, error.response.text)
             if event_name == events_models.Action.PRINT_SHOPPING_LIST.value.event_name:
                 action_status_name = events_models.ActionStatus.SHOPPING_LIST_PRINTED.value.event_name
                 return_value = self._generate_shopping_list_pdf(requests_items, api_base_url, flask.request.cookies)
