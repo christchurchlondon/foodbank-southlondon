@@ -118,7 +118,8 @@ class Requests extends React.Component {
     getFilter() {
         return <RequestsFilter
             onSubmit={ v => this.fetchRequests(v) }
-            value={ this.props.filters } />;
+            value={ this.props.filters }
+            allPossibleStatuses={ this.props.statuses } />;
     }
 
     getActions() {

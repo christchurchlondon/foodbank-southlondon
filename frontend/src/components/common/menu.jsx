@@ -41,7 +41,11 @@ export default class Menu extends React.Component {
 
     getMenu() {
         const items = this.props.options.map((option, index) => {
-            return <li key={index} onClick={ option.action }>{ option.label }</li>
+            if(React.isValidElement(option)) {
+                return <li key={index}>{option}</li>;
+            } else {
+                return <li key={index} onClick={ option.action }>{ option.label }</li>;
+            }
         });
         return (
             <ul className="menu-list right" onClick={ this.handleMenuClick }>
