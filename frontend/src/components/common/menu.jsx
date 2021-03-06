@@ -8,17 +8,16 @@ export default class Menu extends React.Component {
         super(props);
         this.toggle = this.toggle.bind(this);
         this.close = this.close.bind(this);
-        this.handleToggleClick = this.handleToggleClick.bind(this);
-        this.handleMenuClick = this.handleMenuClick.bind(this);
+        this.onClickOutside = this.onClickOutside.bind(this);
         this.state = { show: false };
     }
 
     componentDidMount() {
-        document.addEventListener('click', this.close, false);
+        document.addEventListener('click', this.onClickOutside, false);
     }
 
     componentWillUnmount() {
-        document.removeEventListener('click', this.close, false);
+        document.removeEventListener('click', this.onClickOutside, false);
     }
 
     toggle() {
@@ -29,14 +28,14 @@ export default class Menu extends React.Component {
         this.setState({ show: false });
     }
 
-    handleToggleClick(event) {
-        this.toggle();
-        event.nativeEvent.stopImmediatePropagation();
-    }
+    onClickOutside(ev) {
+        if(this.state.show && this.ref) {
+            const contains = this.ref.contains(ev.target);
 
-    handleMenuClick(event) {
-        this.close();
-        event.nativeEvent.stopImmediatePropagation();
+            if(!contains) {
+                this.close();
+            }
+        }
     }
 
     getMenu() {
@@ -44,11 +43,14 @@ export default class Menu extends React.Component {
             if(React.isValidElement(option)) {
                 return <li key={index}>{option}</li>;
             } else {
-                return <li key={index} onClick={ option.action }>{ option.label }</li>;
+                return <li key={index} onClick={ () => {
+                    option.action();
+                    this.close();
+                } }>{ option.label }</li>;
             }
         });
         return (
-            <ul className="menu-list right" onClick={ this.handleMenuClick }>
+            <ul className={`menu-list ${this.props.alignLeft ? '' : 'right'}`}>
                 { items }
             </ul>
         );
@@ -56,8 +58,8 @@ export default class Menu extends React.Component {
 
     render() {
         return (
-            <div className="menu">
-                <button className="primary toggle" disabled={ this.props.disabled || this.props.loading } onClick={ this.handleToggleClick }>
+            <div className="menu" ref={r => this.ref = r}>
+                <button className="primary toggle" disabled={ this.props.disabled || this.props.loading } onClick={ this.toggle }>
                     { this.props.label }
                     <FontAwesomeIcon
                         icon={this.props.loading ? 'circle-notch' :

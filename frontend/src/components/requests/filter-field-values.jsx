@@ -22,6 +22,7 @@ export default function FilterFieldValues({ label, allPossibleValues, values, on
     return <div className="filter-field">
         <Menu
             label={labelWithInfo}
+            alignLeft={true}
             loading={loading}
             options={allPossibleValues.map(value =>
                 <React.Fragment>

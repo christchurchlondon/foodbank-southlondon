@@ -28,11 +28,7 @@
         margin: $pad-standard 0 0;
         border-top: 1px solid $colour-border;
         padding: $pad-standard 0 0;
-
-        h4 {
-            font-size: $font-size-small;
-            text-transform: uppercase;
-        }
+        display: flex;
 
         .filter-field + .filter-field {
             border-left: 1px solid $colour-border;

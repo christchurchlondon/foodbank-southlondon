@@ -68,7 +68,6 @@ export default class RequestsFilter extends React.Component {
         return this.state.showAdditional
             ? (
                 <div className="additional-filter">
-                    <h4>Additional filters</h4>
                     <FilterFieldText label="Search names..."
                         value={ this.getValue('name', '') }
                         onChange={ this.onNameChange }
@@ -78,7 +77,7 @@ export default class RequestsFilter extends React.Component {
                         onChange={ this.onReferenceNumberChange }
                         onEnter={ this.submit } />
                     <FilterFieldValues
-                        label="Time Of Day"
+                        label="Time"
                         values={this.getValue('timeOfDay', [])}
                         onChange={timeOfDay => this.setState({ timeOfDay })}
                         loading={this.props.allPossibleTimesOfDay.loadingStatus !== STATUS_SUCCESS}
