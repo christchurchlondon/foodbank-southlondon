@@ -1,7 +1,7 @@
 import React from 'react';
 import Menu from '../common/menu';
 
-export default function FilterFieldValues({ label, allPossibleValues, values, onChange }) {
+export default function FilterFieldValues({ label, allPossibleValues, values, onChange, loading }) {
     function getUpdatedValues(value) {
         if(values.includes(value)) {
             return values.filter(v => v !== value);
@@ -22,6 +22,7 @@ export default function FilterFieldValues({ label, allPossibleValues, values, on
     return <div className="filter-field">
         <Menu
             label={labelWithInfo}
+            loading={loading}
             options={allPossibleValues.map(value =>
                 <React.Fragment>
                     <input

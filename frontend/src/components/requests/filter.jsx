@@ -4,6 +4,7 @@ import DateRangePicker from '../common/date-range-picker';
 import FilterFieldText from './filter-field-text';
 import FilterFieldValues from './filter-field-values';
 import './styles/filter.scss';
+import { STATUS_SUCCESS } from '../../constants';
 
 function statusValues(statuses) {
     return statuses.items
@@ -23,8 +24,7 @@ export default class RequestsFilter extends React.Component {
         this.submit = this.submit.bind(this);
 
         this.state = {
-            // TODO MRB: change back to false
-            showAdditional: true
+            showAdditional: false
         };
     }
 
@@ -49,6 +49,7 @@ export default class RequestsFilter extends React.Component {
     }
 
     toggleAdditional() {
+        this.props.fetchTimesOfDay();
         this.setState({ showAdditional: !this.state.showAdditional });
     }
 
@@ -80,6 +81,7 @@ export default class RequestsFilter extends React.Component {
                         label="Time Of Day"
                         values={this.getValue('timeOfDay', [])}
                         onChange={timeOfDay => this.setState({ timeOfDay })}
+                        loading={this.props.allPossibleTimesOfDay.loadingStatus !== STATUS_SUCCESS}
                         allPossibleValues={this.props.allPossibleTimesOfDay.items}
                     />
                     <FilterFieldValues

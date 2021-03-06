@@ -67,7 +67,6 @@ class Requests extends React.Component {
     fetchEvents() {
         this.props.fetchStatuses();
         this.props.fetchActions();
-        this.props.fetchTimesOfDay();
     }
 
 
@@ -119,6 +118,7 @@ class Requests extends React.Component {
 
     getFilter() {
         return <RequestsFilter
+            fetchTimesOfDay={this.props.fetchTimesOfDay}
             onSubmit={ v => this.fetchRequests(v) }
             value={ this.props.filters }
             allPossibleTimesOfDay={ this.props.timesOfDay }
