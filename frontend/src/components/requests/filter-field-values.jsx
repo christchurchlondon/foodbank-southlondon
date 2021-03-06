@@ -13,7 +13,7 @@ export default function FilterFieldValues({ label, allPossibleValues, values, on
     let labelWithInfo = label;
     if(values.length === 1) {
         labelWithInfo = `${label} (${values[0]})`;
-    } else if(values.length === allPossibleValues.length) {
+    } else if(values.length > 0 && values.length === allPossibleValues.length) {
         labelWithInfo = `${label} (ALL)`
     } else if(values.length > 0) {
         labelWithInfo = `${label} (${values.length})`

@@ -18,7 +18,8 @@ import {
     fetchActions,
     triggerSubmitEvent,
     confirmSubmitEvent,
-    cancelSubmitEvent
+    cancelSubmitEvent,
+    fetchTimesOfDay
 } from '../../redux/actions';
 import Paginator from '../common/paginator';
 import Loading from '../common/loading';
@@ -66,6 +67,7 @@ class Requests extends React.Component {
     fetchEvents() {
         this.props.fetchStatuses();
         this.props.fetchActions();
+        this.props.fetchTimesOfDay();
     }
 
 
@@ -119,6 +121,7 @@ class Requests extends React.Component {
         return <RequestsFilter
             onSubmit={ v => this.fetchRequests(v) }
             value={ this.props.filters }
+            allPossibleTimesOfDay={ this.props.timesOfDay }
             allPossibleStatuses={ this.props.statuses } />;
     }
 
@@ -221,6 +224,7 @@ export default connect(
         clearRequestSelection,
         fetchStatuses,
         fetchActions,
+        fetchTimesOfDay,
         triggerSubmitEvent,
         confirmSubmitEvent,
         cancelSubmitEvent

@@ -5,14 +5,10 @@ import FilterFieldText from './filter-field-text';
 import FilterFieldValues from './filter-field-values';
 import './styles/filter.scss';
 
-// TODO: get this from the bff
-const TIME_OF_DAY_VALUES = ["AM", "PM"];
-
 function statusValues(statuses) {
     return statuses.items
         .map(({ name }) => name)
         .filter(name => name !== '');
-
 }
 
 export default class RequestsFilter extends React.Component {
@@ -84,7 +80,7 @@ export default class RequestsFilter extends React.Component {
                         label="Time Of Day"
                         values={this.getValue('timeOfDay', [])}
                         onChange={timeOfDay => this.setState({ timeOfDay })}
-                        allPossibleValues={TIME_OF_DAY_VALUES}
+                        allPossibleValues={this.props.allPossibleTimesOfDay.items}
                     />
                     <FilterFieldValues
                         label="Status"

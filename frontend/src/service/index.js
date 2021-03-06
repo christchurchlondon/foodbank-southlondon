@@ -8,6 +8,7 @@ const endpoints = {
     GET_LISTS: 'api/lists/',
     GET_ACTIONS: 'api/events/distinct/actions',
     GET_STATUSES: 'api/events/distinct/statuses',
+    GET_TIMES_OF_DAY: 'api/requests/distinct/?attribute=Time%20of%20Day',
     SUBMIT_ACTION: 'bff/actions/',
     SUBMIT_STATUS: 'bff/statuses/',
     SUBMIT_LISTS: 'api/lists/'
@@ -167,6 +168,11 @@ export function getSingleRequest(id) {
             return { details, events };
         });
     // TODO error if response.items is empty?
+}
+
+export function getTimesOfDay() {
+    return performFetch(endpoints.GET_TIMES_OF_DAY)
+        .then(({ values }) => values);
 }
 
 export function getLists() {
