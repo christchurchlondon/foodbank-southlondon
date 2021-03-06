@@ -51,6 +51,8 @@ request = rest.model("ClientRequest", {
                                         description="Additional, non-dietary requirements or season-specific asks", example="Christmas Presents"),
     "flag_for_attention": StrBoolean(attribute="Flag for Attention", required=True, default="",
                                      description="Whether or not this request should be flagged for attention", example=True),
+    "signposting_call": StrBoolean(attribute="Signposting Call", required=True, default="",
+                                   description="Whether or not this request should be labelled as a signposted call", example=True),
     "extra_information": fields.String(attribute="Extra Information", required=False, description="Any extra information to be noted",
                                        example="No dairy"),
     "edit_details_url": fields.String(required=True, description="The Google Forms edit response URL that can be used to update details of the Client"

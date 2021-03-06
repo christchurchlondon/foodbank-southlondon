@@ -7,13 +7,12 @@ import flask_restx  # type:ignore
 import pandas as pd  # type:ignore
 
 from foodbank_southlondon.api import rest, utils
-from foodbank_southlondon.api.events import models as events_models
+from foodbank_southlondon.api.events import models as events_models, views as events_views
 from foodbank_southlondon.api.requests import models, namespace, parsers
 
 
 # CONFIG VARIABLES
 _FBSL_CONGESTION_ZONE_POSTCODES = "FBSL_CONGESTION_ZONE_POSTCODES"
-_FBSL_EVENTS_GSHEET_ID = "FBSL_EVENTS_GSHEET_ID"
 _FBSL_FORM_EDIT_URL_TEMPLATE = "FBSL_FORM_EDIT_URL_TEMPLATE"
 _FBSL_FUZZY_SEARCH_THRESHOLD = "FBSL_FUZZY_SEARCH_THRESHOLD"
 _FBSL_FORM_ID = "FBSL_FORM_ID"
@@ -21,7 +20,6 @@ _FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
 
 # INTERNALS
 _CACHE_NAME = "requests"
-_EVENTS_CACHE_NAME = "events"
 
 
 @namespace.route("/")
@@ -46,12 +44,12 @@ class Requests(flask_restx.Resource):
         last_request_only = params["last_request_only"]
         df = cache(force_refresh=refresh_cache)
         request_id_attribute = "request_id"
+        name_attribute = "Client Full Name"
         if packing_dates:
             df = df.loc[df["Packing Date"].isin(packing_dates)]
         if voucher_numbers:
             df = df.loc[df["Voucher Number"].isin(voucher_numbers)]
         if client_full_names:
-            name_attribute = "Client Full Name"
             df = df.loc[df[name_attribute].map(functools.partial(fuzzy_match, choices=client_full_names))]
         postcode_attribute = "Postcode"
         if postcodes:
@@ -62,7 +60,7 @@ class Requests(flask_restx.Resource):
         if last_request_only:
             df = df.assign(rank=df.groupby([name_attribute]).cumcount(ascending=False) + 1).query("rank == 1").drop("rank", axis=1)
         if event_names:
-            events_df = events_cache(force_refresh=refresh_cache)
+            events_df = events_views.cache(force_refresh=refresh_cache)
             events_df = (
                 events_df.assign(rank=events_df.sort_values("event_timestamp").groupby([request_id_attribute]).cumcount(ascending=False) + 1)
                 .query("rank == 1").drop("rank", axis=1)
@@ -126,10 +124,6 @@ def _edit_details_url(request_id: str) -> str:
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
     return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], force_refresh=force_refresh)
-
-
-def events_cache(force_refresh: bool = False) -> pd.DataFrame:
-    return utils.cache(_EVENTS_CACHE_NAME, flask.current_app.config[_FBSL_EVENTS_GSHEET_ID], force_refresh=force_refresh)
 
 
 def fuzzy_match(text: str, choices: Iterable) -> bool:

@@ -145,18 +145,22 @@ class Actions(flask_restx.Resource):
         else:
             action_status_name = None
             try:
-                requests_items = _get(f"{api_base_url}requests/{','.join(request_ids)}", cookies=flask.request.cookies,
-                                      params={"per_page": total_request_ids})["items"]
+                requests_items = []
+                for chunk in list(_chunk(request_ids, flask.current_app.config[_FBSL_MAX_REQUEST_IDS_PER_URL])):
+                    requests_items.extend(_get(f"{api_base_url}requests/{','.join(chunk)}", cookies=flask.request.cookies,
+                                          params={"per_page": len(chunk)})["items"])
             except requests.exceptions.HTTPError as error:
                 if error.response.status_code == 404:
                     rest.abort(404, error.response.json()["message"])
+                else:
+                    rest.abort(error.response.status_code, error.response.text)
             if event_name == events_models.Action.PRINT_SHOPPING_LIST.value.event_name:
                 action_status_name = events_models.ActionStatus.SHOPPING_LIST_PRINTED.value.event_name
                 return_value = self._generate_shopping_list_pdf(requests_items, api_base_url, flask.request.cookies)
             elif event_name == events_models.Action.PRINT_SHIPPING_LABEL.value.event_name:
                 action_status_name = events_models.ActionStatus.SHIPPING_LABEL_PRINTED.value.event_name
-                if not event_data.isdigit():
-                    rest.abort(400, "The quantity must be a whole number.")
+                if not event_data.isdigit() or int(event_data) < 1:
+                    rest.abort(400, "Invalid quantity. The quantity must be positive integer.")
                 return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
             elif event_name == events_models.Action.PRINT_DRIVER_OVERVIEW.value.event_name:
                 requests_df = pd.DataFrame(requests_items)
@@ -273,15 +277,20 @@ class Summary(flask_restx.Resource):
                                      "event_names": event_names, "refresh_cache": refresh_cache})
         requests_df = pd.DataFrame(requests_data["items"])
         if not requests_df.empty:
+            events_df = None
             request_ids = requests_df["request_id"].unique()
             event_attributes = ("request_id", "event_timestamp", "event_name", "event_data")
             for chunk in _chunk(request_ids, flask.current_app.config[_FBSL_MAX_REQUEST_IDS_PER_URL]):
                 events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
-                                headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
-                                params={"latest_event_only": True, "per_page": per_page, "refresh_cache": refresh_cache,
-                                        "request_ids": ",".join(request_ids)})
-                events_df = pd.DataFrame(events_data["items"], columns=event_attributes)
-                df = pd.merge(requests_df, events_df, on="request_id", how="left").replace({np.nan: None})
+                                   headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
+                                   params={"latest_event_only": True, "per_page": per_page, "refresh_cache": refresh_cache,
+                                           "request_ids": ",".join(chunk)})
+                events_chunk_df = pd.DataFrame(events_data["items"], columns=event_attributes)
+                if events_df is None:
+                    events_df = events_chunk_df
+                else:
+                    events_df = pd.concat([events_df, events_chunk_df])
+            df = pd.merge(requests_df, events_df, on="request_id", how="left").replace({np.nan: None})
             items = df.to_dict("records")
         return {
             "page": requests_data["page"],

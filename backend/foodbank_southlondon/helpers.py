@@ -23,7 +23,7 @@ def drive_files_resource() -> discovery.Resource:
     drive_files_resource = flask.g.get("drive_files_resource")
     if drive_files_resource is None:
         creds = credentials("https://www.googleapis.com/auth/drive.metadata.readonly")
-        drive_files_resource = flask.g.drive_files_resource = discovery.build("drive", "v3", credentials=creds).files()
+        drive_files_resource = flask.g.drive_files_resource = discovery.build("drive", "v3", credentials=creds, cache_discovery=False).files()
     return drive_files_resource
 
 
@@ -40,7 +40,8 @@ def gsuite_members_resource() -> discovery.Resource:
     if gsuite_members_resource is None:
         creds = credentials("https://www.googleapis.com/auth/admin.directory.group.member.readonly")
         delegated_creds = creds.with_subject(flask.current_app.config[_FBSL_GSUITE_IMPERSONATE_ADDRESS])
-        gsuite_members_resource = flask.g.gsuite_members_resource = discovery.build("admin", "directory_v1", credentials=delegated_creds).members()
+        gsuite_members_resource = flask.g.gsuite_members_resource = discovery.build("admin", "directory_v1", credentials=delegated_creds,
+                                                                                    cache_discovery=False).members()
     return gsuite_members_resource
 
 
