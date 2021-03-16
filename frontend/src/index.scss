@@ -203,6 +203,11 @@ button, .button {
         &:hover {
             color: $colour-text;
         }
+
+        svg {
+            // TODO Michael: why does the icon appear above the menu at z-index: 0 (the menu is z-index: 1)
+            z-index: -1;
+        }
     }
 
     &.btn-small {
