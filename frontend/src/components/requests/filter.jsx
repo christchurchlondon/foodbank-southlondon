@@ -1,16 +1,9 @@
 import React from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import DateRangePicker from '../common/date-range-picker';
-import FilterFieldText from './filter-field-text';
-import FilterFieldValues from './filter-field-values';
+import FilterField from './filter-field';
 import './styles/filter.scss';
-import { STATUS_SUCCESS } from '../../constants';
 
-function statusValues(statuses) {
-    return statuses.items
-        .map(({ name }) => name)
-        .filter(name => name !== '');
-}
 
 export default class RequestsFilter extends React.Component {
 
@@ -24,12 +17,12 @@ export default class RequestsFilter extends React.Component {
         this.submit = this.submit.bind(this);
 
         this.state = {
-            showAdditional: false
+            showAdditional: false,
+            dates: props.value.dates || {},
+            name: props.value.name || '',
+            referenceNumber: props.value.referenceNumber || '',
+            postcode: props.value.postcode || ''
         };
-    }
-
-    getValue(field, defaultValue) {
-        return this.state[field] || this.props.value[field] || defaultValue;
     }
 
     onDatePickerChange(dates) {
@@ -49,18 +42,15 @@ export default class RequestsFilter extends React.Component {
     }
 
     toggleAdditional() {
-        this.props.fetchTimesOfDay();
         this.setState({ showAdditional: !this.state.showAdditional });
     }
 
     submit() {
         this.props.onSubmit({
-            dates: this.getValue('dates', {}),
-            name: this.getValue('name', ''),
-            referenceNumber: this.getValue('referenceNumber', ''),
-            postcode: this.getValue('postcode', ''),
-            timeOfDay: this.getValue('timeOfDay', []),
-            statuses: this.getValue('statuses', [])
+            dates: this.state.dates,
+            name: this.state.name,
+            referenceNumber: this.state.referenceNumber,
+            postcode: this.state.postcode
         });
     }
 
@@ -68,35 +58,21 @@ export default class RequestsFilter extends React.Component {
         return this.state.showAdditional
             ? (
                 <div className="additional-filter">
-                    <FilterFieldText label="Search names..."
-                        value={ this.getValue('name', '') }
+                    <h4>Additional filters</h4>
+                    <FilterField label="Search names..."
+                        value={ this.state.name }
                         onChange={ this.onNameChange }
                         onEnter={ this.submit } />
-                    <FilterFieldText label="Search vouchers..."
-                        value={ this.getValue('referenceNumber', '') }
+                    <FilterField label="Search vouchers..."
+                        value={ this.state.referenceNumber }
                         onChange={ this.onReferenceNumberChange }
                         onEnter={ this.submit } />
-                    <FilterFieldValues
-                        label="Time"
-                        values={this.getValue('timeOfDay', [])}
-                        onChange={timeOfDay => this.setState({ timeOfDay })}
-                        loading={this.props.allPossibleTimesOfDay.loadingStatus !== STATUS_SUCCESS}
-                        allPossibleValues={this.props.allPossibleTimesOfDay.items}
-                    />
-                    <FilterFieldValues
-                        label="Status"
-                        values={this.getValue('statuses', [])}
-                        onChange={statuses => this.setState({ statuses })}
-                        allPossibleValues={statusValues(this.props.allPossibleStatuses)}
-                    />
                 </div>
             )
             : null;
     }
 
     render() {
-        const { start, end } = this.getValue('dates', {});
-
         return (
             <div className="requests-filter panel">
                 <div className="standard-filter">
@@ -104,12 +80,11 @@ export default class RequestsFilter extends React.Component {
                         <DateRangePicker
                             onChange={ this.onDatePickerChange }
                             onEnter={ this.submit }
-                            start={start}
-                            end={end}
-                        />
+                            start={ this.state.dates.start }
+                            end={ this.state.dates.end } />
                     </div>
-                    <FilterFieldText label="Search postcodes..."
-                        value={ this.getValue('postcode', '') }
+                    <FilterField label="Search postcodes..."
+                        value={ this.state.postcode }
                         onChange={ this.onPostcodeChange }
                         onEnter={ this.submit } />
                     <span className="anchor toggle-more" onClick={ this.toggleAdditional }>
