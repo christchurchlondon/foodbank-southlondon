@@ -4,13 +4,12 @@
     display: inline-flex;
     align-items: center;
     padding: 0 $pad-standard 0 0;
-    flex: 1 1 auto;
+
+    input[type=text] {
+        width: 180px;
+    }
 
     .search-icon {
         margin-right: $pad-standard - .2rem;
-    }
-
-    .value {
-        flex: 1 1 auto;
     }
 }

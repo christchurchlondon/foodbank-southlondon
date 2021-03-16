@@ -19,7 +19,6 @@ import {
     faUser,
     faBars,
     faSync,
-    faCircleNotch,
     faFilter
 } from '@fortawesome/free-solid-svg-icons'
 import {
@@ -50,7 +49,6 @@ export default function setupIcons() {
         faUser,
         faBars,
         faSync,
-        faCircleNotch,
         faFilter
     );
 
