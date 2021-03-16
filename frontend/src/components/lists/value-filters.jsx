@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Menu from '../common/menu';
 import { fetchRequests, fetchTimesOfDay } from '../../redux/actions';
+import { STATUS_LOADING } from '../../constants';
 
-export function FilterFieldValues({ allPossibleValues, values, onChange }) {
+export function FilterFieldValues({ allPossibleValues, values, onChange, onOpen, loading }) {
     function getUpdatedValues(value) {
         if(values.includes(value)) {
             return values.filter(v => v !== value);
@@ -19,6 +20,8 @@ export function FilterFieldValues({ allPossibleValues, values, onChange }) {
             alignLeft={true}
             icon="filter"
             className="icon"
+            loading={loading}
+            onOpen={onOpen}
             options={allPossibleValues.map(value =>
                 <React.Fragment>
                     <input
@@ -38,14 +41,12 @@ export function FilterTimeOfDay() {
     const dispatch = useDispatch();
     const { filters, timesOfDay } = useSelector(state => state.requests);
 
-    useEffect(() => {
-        dispatch(fetchTimesOfDay());
-    }, [dispatch]);
-
     return <FilterFieldValues
+        loading={timesOfDay.loadingStatus === STATUS_LOADING}
         allPossibleValues={timesOfDay.items}
         values={filters['timeOfDay'] || []}
         onChange={(timeOfDay) => dispatch(fetchRequests({ ...filters, timeOfDay }, 1, false)) }
+        onOpen={() => dispatch(fetchTimesOfDay())}
     />;
 }
 
@@ -58,6 +59,7 @@ export function FilterStatus() {
         .filter(name => name !== '');
 
     return <FilterFieldValues
+        icon="filter"
         allPossibleValues={allPossibleValues}
         values={filters['statuses'] || []}
         onChange={(statuses) => dispatch(fetchRequests({ ...filters, statuses }, 1, false)) }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Loading from '../common/loading';
 import './styles/menu.scss';
 
 export default class Menu extends React.Component {
@@ -21,7 +22,13 @@ export default class Menu extends React.Component {
     }
 
     toggle() {
-        this.setState({ show: !this.state.show });
+        const show = !this.state.show;
+
+        this.setState({ show });
+
+        if(show && this.props.onOpen) {
+            this.props.onOpen();
+        }
     }
 
     close() {
@@ -49,9 +56,15 @@ export default class Menu extends React.Component {
                 } }>{ option.label }</li>;
             }
         });
+
         return (
             <ul className={`menu-list ${this.props.alignLeft ? '' : 'right'}`}>
-                { items }
+                { this.props.loading ?
+                    <li>
+                        <Loading />
+                    </li> :
+                    items
+                }
             </ul>
         );
     }
