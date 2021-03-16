@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Menu from '../common/menu';
-import { STATUS_SUCCESS } from '../../constants';
 import { fetchRequests, fetchTimesOfDay } from '../../redux/actions';
 
-export function FilterFieldValues({ allPossibleValues, values, onChange, loading }) {
+export function FilterFieldValues({ allPossibleValues, values, onChange }) {
     function getUpdatedValues(value) {
         if(values.includes(value)) {
             return values.filter(v => v !== value);
@@ -13,10 +12,13 @@ export function FilterFieldValues({ allPossibleValues, values, onChange, loading
         return [...values, value];
     }
 
+    const label = values.length > 0 ? `(${values.length})` : '';
+
     return <div className="filter-field">
         <Menu
             alignLeft={true}
-            loading={loading}
+            icon="filter"
+            className="icon"
             options={allPossibleValues.map(value =>
                 <React.Fragment>
                     <input
@@ -26,8 +28,9 @@ export function FilterFieldValues({ allPossibleValues, values, onChange, loading
                     ></input>
                     <label>{value}</label>
                 </React.Fragment>    
-            )} 
+            )}
         />
+        {label}
     </div>;
 }
 
@@ -43,24 +46,20 @@ export function FilterTimeOfDay() {
         allPossibleValues={timesOfDay.items}
         values={filters['timeOfDay'] || []}
         onChange={(timeOfDay) => dispatch(fetchRequests({ ...filters, timeOfDay }, 1, false)) }
-        loading={timesOfDay.loadingStatus !== STATUS_SUCCESS}
     />;
-}
-
-function statusValues(statuses) {
-    return statuses.items
-        .map(({ name }) => name)
-        .filter(name => name !== '');
 }
 
 export function FilterStatus() {
     const dispatch = useDispatch();
     const { filters, statuses } = useSelector(state => state.requests);
 
+    const allPossibleValues = statuses.items
+        .map(({ name }) => name)
+        .filter(name => name !== '');
+
     return <FilterFieldValues
-        allPossibleValues={statusValues(statuses)}
+        allPossibleValues={allPossibleValues}
         values={filters['statuses'] || []}
         onChange={(statuses) => dispatch(fetchRequests({ ...filters, statuses }, 1, false)) }
-        loading={false}
     />;
 }

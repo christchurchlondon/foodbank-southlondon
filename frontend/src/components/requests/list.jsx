@@ -105,15 +105,23 @@ export default class RequestsList extends React.Component {
                         <th>Postcode</th>
                         <th>Packing Date</th>
                         <th>
-                            Time
-                            <FilterTimeOfDay />
+                            <div className="cell-with-actions">
+                                Time
+                                <div className="cell-actions">
+                                    <FilterTimeOfDay />
+                                </div>
+                            </div>
                         </th>
-                        <th className="cell-with-actions">
-                            Last Status
-                            <FilterStatus />
-                            <button onClick={this.props.onRefresh}>
-                                <Sync />
-                            </button>
+                        <th>
+                            <div className="cell-with-actions">
+                                Last Status
+                                <div className="cell-actions">
+                                    <FilterStatus />
+                                </div>
+                                <button onClick={this.props.onRefresh}>
+                                    <Sync />
+                                </button>
+                            </div>
                         </th>
                     </tr>
                 </thead>

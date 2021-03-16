@@ -59,13 +59,13 @@ export default class Menu extends React.Component {
     render() {
         return (
             <div className="menu" ref={r => this.ref = r}>
-                <button className="primary toggle" disabled={ this.props.disabled || this.props.loading } onClick={ this.toggle }>
+                <button className={`${this.props.className || ''} toggle`} disabled={ this.props.disabled || this.props.loading } onClick={ this.toggle }>
                     { this.props.label }
                     <FontAwesomeIcon
-                        icon={this.props.loading ? 'circle-notch' :
-                            this.state.show ? 'chevron-up' : 'chevron-down'
+                        icon={
+                            this.props.icon || (this.state.show ? 'chevron-up' : 'chevron-down')
                         }
-                        className={`toggle-icon ${this.props.loading ? 'fa-spin' : ''}`}
+                        className="toggle-icon"
                     />
                 </button>
                 { this.state.show && this.getMenu() }
