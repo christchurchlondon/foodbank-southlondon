@@ -170,7 +170,7 @@ export function getSingleRequest(id) {
     // TODO error if response.items is empty?
 }
 
-export function getTimesOfDay() {
+export function getTimeOfDayFilterValues() {
     return performFetch(endpoints.GET_TIMES_OF_DAY)
         .then(({ values }) => values);
 }
