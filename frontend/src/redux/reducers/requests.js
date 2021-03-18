@@ -29,7 +29,10 @@ import {
     EVENT_SUBMIT_FAILED,
     LOAD_TIME_OF_DAY_FILTER_VALUES,
     TIME_OF_DAY_FILTER_VALUES_LOADED,
-    LOAD_TIME_OF_DAY_FILTER_VALUES_FAILED
+    LOAD_TIME_OF_DAY_FILTER_VALUES_FAILED,
+    LOAD_EVENTS_FILTER_VALUES,
+    EVENTS_FILTER_VALUES_LOADED,
+    LOAD_EVENTS_FILTER_VALUES_FAILED
 } from '../actions/types';
 
 
@@ -66,6 +69,10 @@ const initialState = {
         updateStatus: STATUS_IDLE
     },
     timeOfDayFilterValues: {
+        loadingStatus: STATUS_IDLE,
+        items: []
+    },
+    eventsFilterValues: {
         loadingStatus: STATUS_IDLE,
         items: []
     },
@@ -292,6 +299,31 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 timeOfDayFilterValues: {
+                    loadingStatus: STATUS_FAILED,
+                    items: []
+                }
+            };
+        case LOAD_EVENTS_FILTER_VALUES:
+            return {
+                ...state,
+                eventsFilterValues: {
+                    loadingStatus: STATUS_LOADING,
+                    items: []
+                }
+            }
+
+        case EVENTS_FILTER_VALUES_LOADED:
+            return {
+                ...state,
+                eventsFilterValues: {
+                    loadingStatus: STATUS_SUCCESS,
+                    items: action.payload.values
+                }
+            };
+        case LOAD_EVENTS_FILTER_VALUES_FAILED:
+            return {
+                ...state,
+                eventsFilterValues: {
                     loadingStatus: STATUS_FAILED,
                     items: []
                 }

@@ -37,7 +37,10 @@ import {
     EVENT_SUBMIT_FAILED,
     LOAD_TIME_OF_DAY_FILTER_VALUES,
     LOAD_TIME_OF_DAY_FILTER_VALUES_FAILED,
-    TIME_OF_DAY_FILTER_VALUES_LOADED
+    TIME_OF_DAY_FILTER_VALUES_LOADED,
+    LOAD_EVENTS_FILTER_VALUES,
+    LOAD_EVENTS_FILTER_VALUES_FAILED,
+    EVENTS_FILTER_VALUES_LOADED
 } from './types';
 import {
     getRequests,
@@ -47,7 +50,8 @@ import {
     getActions,
     postEvent,
     postListUpdate,
-    getTimeOfDayFilterValues
+    getTimeOfDayFilterValues,
+    getEventsFilterValues
 } from '../../service';
 
 
@@ -318,6 +322,28 @@ export const fetchTimeOfDayFilterValues = () => {
             }))
             .catch(message => dispatch({
                 type: LOAD_TIME_OF_DAY_FILTER_VALUES_FAILED,
+                payload: {
+                    message
+                }
+            }));
+    }
+}
+
+export const fetchEventsFilterValues = () => {
+    return dispatch => {
+        dispatch({
+            type: LOAD_EVENTS_FILTER_VALUES
+        });
+        
+        getEventsFilterValues()
+            .then(values => dispatch({
+                type: EVENTS_FILTER_VALUES_LOADED,
+                payload: {
+                    values
+                }
+            }))
+            .catch(message => dispatch({
+                type: LOAD_EVENTS_FILTER_VALUES_FAILED,
                 payload: {
                     message
                 }
