@@ -34,7 +34,10 @@ import {
     CLOSE_SUBMIT_DIALOG,
     SUBMIT_EVENT,
     EVENT_SUBMIT_COMPLETE,
-    EVENT_SUBMIT_FAILED
+    EVENT_SUBMIT_FAILED,
+    TIMES_OF_DAY_LOADED,
+    LOAD_TIMES_OF_DAY_FAILED,
+    LOAD_TIMES_OF_DAY
 } from './types';
 import {
     getRequests,
@@ -43,7 +46,8 @@ import {
     getStatuses,
     getActions,
     postEvent,
-    postListUpdate
+    postListUpdate,
+    getTimesOfDay
 } from '../../service';
 
 
@@ -299,6 +303,27 @@ export const loadActionsFailed = message => ({
 
 // TODO more?
 
+export const fetchTimesOfDay = () => {
+    return dispatch => {
+        dispatch({
+            type: LOAD_TIMES_OF_DAY
+        });
+        
+        getTimesOfDay()
+            .then(values => dispatch({
+                type: TIMES_OF_DAY_LOADED,
+                payload: {
+                    values
+                }
+            }))
+            .catch(message => dispatch({
+                type: LOAD_TIMES_OF_DAY_FAILED,
+                payload: {
+                    message
+                }
+            }));
+    }
+}
 
 // Events
 

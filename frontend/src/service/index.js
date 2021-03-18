@@ -8,6 +8,7 @@ const endpoints = {
     GET_LISTS: 'api/lists/',
     GET_ACTIONS: 'api/events/distinct/actions',
     GET_STATUSES: 'api/events/distinct/statuses',
+    GET_TIMES_OF_DAY: 'api/requests/distinct/?attribute=Time%20of%20Day',
     SUBMIT_ACTION: 'bff/actions/',
     SUBMIT_STATUS: 'bff/statuses/',
     SUBMIT_LISTS: 'api/lists/'
@@ -120,7 +121,9 @@ export function getRequests(filters = {}, page = 1, refreshCache=false) {
         client_full_names: filters.name,
         voucher_numbers: filters.referenceNumber,
         postcodes: filters.postcode,
-        refresh_cache: refreshCache
+        refresh_cache: refreshCache,
+        time_of_days: filters.timeOfDay ? filters.timeOfDay.join(",") : undefined,
+        event_names: filters.statuses ? filters.statuses.join(",") : undefined
     };
 
     const url = endpoints.GET_REQUESTS + encodeParams(params);
@@ -165,6 +168,11 @@ export function getSingleRequest(id) {
             return { details, events };
         });
     // TODO error if response.items is empty?
+}
+
+export function getTimesOfDay() {
+    return performFetch(endpoints.GET_TIMES_OF_DAY)
+        .then(({ values }) => values);
 }
 
 export function getLists() {

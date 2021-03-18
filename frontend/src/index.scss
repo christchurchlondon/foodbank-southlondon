@@ -137,8 +137,11 @@ table {
 
     .cell-with-actions {
         display: flex;
-        justify-content: space-between;
         align-items: center;
+    }
+
+    .cell-actions {
+        flex: 1;
     }
 
     .disabled {
@@ -189,6 +192,21 @@ button, .button {
 
         &:hover {
             color: $colour-button-text-danger;
+        }
+    }
+
+    &.icon {
+        background-color: transparent;
+        color: $colour-text;
+        padding: 0;
+
+        &:hover {
+            color: $colour-text;
+        }
+
+        svg {
+            // TODO Michael: why does the icon appear above the menu at z-index: 0 (the menu is z-index: 1)
+            z-index: -1;
         }
     }
 

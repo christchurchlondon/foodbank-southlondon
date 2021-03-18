@@ -28,9 +28,11 @@ export default class RequestsActions extends React.Component {
             <div className="requests-actions panel">
                 <label>{ label }</label>
                 <Menu options={statusOptions}
+                    className="primary"
                     label="Statuses"
                     disabled={ !this.props.recordCount } />
                 <Menu options={actionOptions}
+                    className="primary"
                     label="Actions"
                     disabled={ !this.props.recordCount } />
             </div>

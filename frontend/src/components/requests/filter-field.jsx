@@ -30,6 +30,7 @@ export default class FilterField extends React.Component {
             <div className="filter-field">
                 <Icon icon="search" className="search-icon" />
                 <input type="text"
+                    className="value"
                     placeholder={ this.props.label }
                     value={ this.state.value }
                     onChange={ this.handleChange }

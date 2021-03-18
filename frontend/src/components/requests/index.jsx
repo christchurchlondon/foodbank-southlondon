@@ -18,7 +18,8 @@ import {
     fetchActions,
     triggerSubmitEvent,
     confirmSubmitEvent,
-    cancelSubmitEvent
+    cancelSubmitEvent,
+    fetchTimesOfDay
 } from '../../redux/actions';
 import Paginator from '../common/paginator';
 import Loading from '../common/loading';
@@ -220,6 +221,7 @@ export default connect(
         clearRequestSelection,
         fetchStatuses,
         fetchActions,
+        fetchTimesOfDay,
         triggerSubmitEvent,
         confirmSubmitEvent,
         cancelSubmitEvent

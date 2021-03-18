@@ -1,3 +1,4 @@
+
 import {
     STATUS_IDLE,
     STATUS_LOADING,
@@ -25,7 +26,10 @@ import {
     CLOSE_SUBMIT_DIALOG,
     SUBMIT_EVENT,
     EVENT_SUBMIT_COMPLETE,
-    EVENT_SUBMIT_FAILED
+    EVENT_SUBMIT_FAILED,
+    LOAD_TIMES_OF_DAY,
+    TIMES_OF_DAY_LOADED,
+    LOAD_TIMES_OF_DAY_FAILED
 } from '../actions/types';
 
 
@@ -60,6 +64,10 @@ const initialState = {
     events: {
         dialog: null,
         updateStatus: STATUS_IDLE
+    },
+    timesOfDay: {
+        loadingStatus: STATUS_IDLE,
+        items: []
     },
     editUrl: ''
 };
@@ -261,6 +269,31 @@ export default function(state = initialState, action) {
                 events: {
                     ...state.events,
                     updateStatus: STATUS_FAILED
+                }
+            };
+        case LOAD_TIMES_OF_DAY:
+            return {
+                ...state,
+                timesOfDay: {
+                    loadingStatus: STATUS_LOADING,
+                    items: []
+                }
+            }
+
+        case TIMES_OF_DAY_LOADED:
+            return {
+                ...state,
+                timesOfDay: {
+                    loadingStatus: STATUS_SUCCESS,
+                    items: action.payload.values
+                }
+            };
+        case LOAD_TIMES_OF_DAY_FAILED:
+            return {
+                ...state,
+                timesOfDay: {
+                    loadingStatus: STATUS_FAILED,
+                    items: []
                 }
             };
 
