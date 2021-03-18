@@ -68,13 +68,14 @@ class Events(flask_restx.Resource):
         return ({}, 201)
 
 
+@namespace.route(f"/distinct")
 @namespace.route(f"/distinct/<any({_STATUSES},{_ACTIONS}):type>")
 class DistinctEventNameValues(flask_restx.Resource):
 
     @rest.marshal_with(models.distinct_event_types)
-    def get(self, type: str) -> Dict[str, List]:
+    def get(self, type: str = None) -> Dict[str, List]:
         """Get the distinct Event options for a given type."""
-        events = {_STATUSES: models.STATUSES, _ACTIONS: models.ACTIONS}
+        events = {_STATUSES: models.STATUSES, _ACTIONS: models.ACTIONS, None: models.EVENTS}
         return {"items": [dataclasses.asdict(event) for event in events[type]]}
 
 
