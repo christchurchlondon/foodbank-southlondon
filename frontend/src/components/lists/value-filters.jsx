@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Menu from '../common/menu';
-import { fetchRequests, fetchTimesOfDay } from '../../redux/actions';
+import { fetchRequests, fetchTimeOfDayFilterValues, fetchEventsFilterValues } from '../../redux/actions';
 import { STATUS_LOADING } from '../../constants';
 
 export function FilterFieldValues({ allPossibleValues, values, onChange, onOpen, loading }) {
@@ -39,29 +39,31 @@ export function FilterFieldValues({ allPossibleValues, values, onChange, onOpen,
 
 export function FilterTimeOfDay() {
     const dispatch = useDispatch();
-    const { filters, timesOfDay } = useSelector(state => state.requests);
+    const { filters, timeOfDayFilterValues } = useSelector(state => state.requests);
 
     return <FilterFieldValues
-        loading={timesOfDay.loadingStatus === STATUS_LOADING}
-        allPossibleValues={timesOfDay.items}
+        loading={timeOfDayFilterValues.loadingStatus === STATUS_LOADING}
+        allPossibleValues={timeOfDayFilterValues.items}
         values={filters['timeOfDay'] || []}
         onChange={(timeOfDay) => dispatch(fetchRequests({ ...filters, timeOfDay }, 1, false)) }
-        onOpen={() => dispatch(fetchTimesOfDay())}
+        onOpen={() => dispatch(fetchTimeOfDayFilterValues())}
     />;
 }
 
 export function FilterStatus() {
     const dispatch = useDispatch();
-    const { filters, statuses } = useSelector(state => state.requests);
+    const { filters, eventsFilterValues } = useSelector(state => state.requests);
 
-    const allPossibleValues = statuses.items
-        .map(({ name }) => name)
-        .filter(name => name !== '');
+    const allPossibleValues = eventsFilterValues.items
+        .map(({ event_name }) => event_name)
+        .filter(event_name => event_name !== '');
 
     return <FilterFieldValues
         icon="filter"
         allPossibleValues={allPossibleValues}
+        loading={eventsFilterValues.loadingStatus === STATUS_LOADING}
         values={filters['statuses'] || []}
         onChange={(statuses) => dispatch(fetchRequests({ ...filters, statuses }, 1, false)) }
+        onOpen={() => dispatch(fetchEventsFilterValues())}
     />;
 }

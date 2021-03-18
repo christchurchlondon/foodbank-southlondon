@@ -8,7 +8,8 @@ const endpoints = {
     GET_LISTS: 'api/lists/',
     GET_ACTIONS: 'api/events/distinct/actions',
     GET_STATUSES: 'api/events/distinct/statuses',
-    GET_TIMES_OF_DAY: 'api/requests/distinct/?attribute=Time%20of%20Day',
+    GET_TIME_OF_DAY_FILTER_VALUES: 'api/requests/distinct/?attribute=Time%20of%20Day',
+    GET_EVENT_FILTER_VALUES: 'api/events/distinct',
     SUBMIT_ACTION: 'bff/actions/',
     SUBMIT_STATUS: 'bff/statuses/',
     SUBMIT_LISTS: 'api/lists/'
@@ -170,9 +171,14 @@ export function getSingleRequest(id) {
     // TODO error if response.items is empty?
 }
 
-export function getTimesOfDay() {
-    return performFetch(endpoints.GET_TIMES_OF_DAY)
+export function getTimeOfDayFilterValues() {
+    return performFetch(endpoints.GET_TIME_OF_DAY_FILTER_VALUES)
         .then(({ values }) => values);
+}
+
+export function getEventsFilterValues() {
+    return performFetch(endpoints.GET_EVENT_FILTER_VALUES)
+        .then(({ items }) => items);
 }
 
 export function getLists() {
