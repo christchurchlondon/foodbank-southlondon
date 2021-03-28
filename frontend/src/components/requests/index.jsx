@@ -105,28 +105,29 @@ class Requests extends React.Component {
         return this.props.status === STATUS_SUCCESS;
     }
 
-    getFilter() {
+    getFilter(loading) {
         return <RequestsFilter
+            disabled={loading}
             onSubmit={ v => this.fetchRequests(v, undefined, false, true) }
             value={ this.props.filters } />;
     }
 
-    getActions() {
+    getActions(loading) {
         return <RequestsActions
             recordCount={ this.getSelectedIds().length }
             statuses={ this.props.statuses }
             actions={ this.props.actions }
+            disabled={loading}
             onAction={ (action, type) => this.triggerSubmit(action, type) } />;
     }
 
-    getContents() {
+    getContents(loading) {
         if (this.isFailed()) return <Error message={'Unable to load requests'} />;
-        return this.getRequestsContents();
+        return this.getRequestsContents(loading);
     }
 
-    getRequestsContents() {
+    getRequestsContents(loading) {
         const empty = this.props.items.length === 0;
-        const loading = this.props.status === STATUS_LOADING;
 
         return (
             <div className="requests-contents">
@@ -177,11 +178,12 @@ class Requests extends React.Component {
     }
 
     render() {
+        const loading = this.props.status === STATUS_LOADING;
 
-        const filter = this.getFilter();
-        const actions = this.getActions();
+        const filter = this.getFilter(loading);
+        const actions = this.getActions(loading);
 
-        const contents = this.getContents();
+        const contents = this.getContents(loading);
 
         const selection = this.getRequestSelection();
 
