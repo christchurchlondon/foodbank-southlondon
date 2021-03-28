@@ -53,8 +53,8 @@ class Requests extends React.Component {
         this.fetchRequests(this.props.filters, page);
     }
 
-    fetchRequests(filters = {}, page = 1, refreshCache = false) {
-        this.props.fetchRequests(filters, page, refreshCache);
+    fetchRequests(filters = {}, page = 1, refreshCache = false, clearItems = false) {
+        this.props.fetchRequests(filters, page, refreshCache, clearItems);
     }
 
     fetchEvents() {
@@ -107,7 +107,7 @@ class Requests extends React.Component {
 
     getFilter() {
         return <RequestsFilter
-            onSubmit={ v => this.fetchRequests(v) }
+            onSubmit={ v => this.fetchRequests(v, undefined, false, true) }
             value={ this.props.filters } />;
     }
 

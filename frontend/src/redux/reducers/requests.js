@@ -82,14 +82,32 @@ const initialState = {
 export default function(state = initialState, action) {
     switch (action.type) {
 
-        case LOAD_REQUESTS:
+        case LOAD_REQUESTS: {
+            // paging and items stay when editing column filters, although the
+            // UI will not allow further edits until the load is complete
+            let pagingAndItems = {};
+
+            if(action.payload.clearItems) {
+                pagingAndItems = {
+                        paging: {
+                        ...state.paging,
+                        page: action.payload.page,
+                        totalPages: 0,
+                        totalItems: 0,
+                        pageSize: 0
+                    },
+                    items: []
+                }
+            }
+
             return {
                 ...state,
+                ...pagingAndItems,
                 filters: action.payload.filters,
-                status: STATUS_LOADING,
-                // paging and items stay, although the UI will not
-                // allow edits until the load is complete
+                status: STATUS_LOADING
             };
+        }
+
         case REQUESTS_LOADED:
             return {
                 ...state,
