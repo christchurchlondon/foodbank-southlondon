@@ -40,10 +40,6 @@ class Requests extends React.Component {
         this.triggerSubmit = this.triggerSubmit.bind(this);
         this.confirmEventSubmission = this.confirmEventSubmission.bind(this);
         this.cancelEventSubmission = this.cancelEventSubmission.bind(this);
-
-        this.state = {
-            filters: {}
-        };
     }
 
     componentDidMount() {
@@ -54,11 +50,10 @@ class Requests extends React.Component {
     }
 
     selectPage(page) {
-        this.fetchRequests(this.state.filters, page);
+        this.fetchRequests(this.props.filters, page);
     }
 
     fetchRequests(filters = {}, page = 1, refreshCache = false) {
-        this.setState({ filters });
         this.props.fetchRequests(filters, page, refreshCache);
     }
 
@@ -85,11 +80,11 @@ class Requests extends React.Component {
     }
 
     triggerSubmit(event, type) {
-        this.props.triggerSubmitEvent(event, type, this.getSelectedIds(), this.state.filters, this.props.paging.page);
+        this.props.triggerSubmitEvent(event, type, this.getSelectedIds(), this.props.filters, this.props.paging.page);
     }
 
     confirmEventSubmission(event, type, data) {
-        this.props.confirmSubmitEvent(event, type, this.getSelectedIds(), data, this.state.filters, this.props.paging.page);
+        this.props.confirmSubmitEvent(event, type, this.getSelectedIds(), data, this.props.filters, this.props.paging.page);
     }
 
     cancelEventSubmission() {
