@@ -130,11 +130,15 @@ class Requests extends React.Component {
     }
 
     getRequestsContents() {
+        const empty = this.props.items.length === 0;
+        const loading = this.props.status === STATUS_LOADING;
+
         return (
-            <div>
+            <div className="requests-contents">
+                {loading && !empty ? <div className="requests-blinder"></div> : false}
                 <RequestsList
                     requests={ this.props.items }
-                    loading={ this.props.status === STATUS_LOADING }
+                    loading={ loading }
                     onSelect={ id => this.selectRequest(id) }
                     onToggle={ id => this.toggleRequest(id) }
                     onToggleAll={ () => this.toggleAllRequests() }

@@ -1,13 +1,14 @@
 @import 'include';
 
 .requests-container {
-
     .requests-header {
         position: sticky;
         top: -1px;
         display: flex;
         align-items: flex-start;
         background-color: $colour-white;
+        // Ensure the React datepicker appears above other content
+        z-index: 1;
     }
 
     .requests-controls {
@@ -21,5 +22,19 @@
                 margin-right: $pad-half;
             }
         }
+    }
+
+    .requests-contents {
+        // To support the blinder covering the entire element
+        position: relative;
+        z-index: 0;
+    }
+
+    .requests-blinder {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        background: rgba($colour-background-bold, .5);
+        z-index: 1;
     }
 }
