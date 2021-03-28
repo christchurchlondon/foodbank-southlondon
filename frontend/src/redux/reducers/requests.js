@@ -87,14 +87,8 @@ export default function(state = initialState, action) {
                 ...state,
                 filters: action.payload.filters,
                 status: STATUS_LOADING,
-                paging: {
-                    ...state.paging,
-                    page: action.payload.page,
-                    totalPages: 0,
-                    totalItems: 0,
-                    pageSize: 0
-                },
-                items: []
+                // paging and items stay, although the UI will not
+                // allow edits until the load is complete
             };
         case REQUESTS_LOADED:
             return {

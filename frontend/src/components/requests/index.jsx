@@ -4,8 +4,8 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import {
     STATUS_FAILED,
     STATUS_IDLE,
-    STATUS_LOADING,
-    STATUS_SUCCESS
+    STATUS_SUCCESS,
+    STATUS_LOADING
 } from '../../constants';
 import { getRequestsState } from '../../redux/selectors';
 import {
@@ -21,7 +21,6 @@ import {
     cancelSubmitEvent
 } from '../../redux/actions';
 import Paginator from '../common/paginator';
-import Loading from '../common/loading';
 import Error from '../common/error';
 import RequestsFilter from './filter';
 import RequestsList from './list';
@@ -103,10 +102,6 @@ class Requests extends React.Component {
             .map(item => item.data.id);
     }
 
-    isLoading() {
-        return this.props.status === STATUS_LOADING;
-    }
-
     isFailed() {
         return this.props.status === STATUS_FAILED;
     }
@@ -130,7 +125,6 @@ class Requests extends React.Component {
     }
 
     getContents() {
-        if (this.isLoading()) return <Loading />;
         if (this.isFailed()) return <Error message={'Unable to load requests'} />;
         return this.getRequestsContents();
     }
@@ -140,6 +134,7 @@ class Requests extends React.Component {
             <div>
                 <RequestsList
                     requests={ this.props.items }
+                    loading={ this.props.status === STATUS_LOADING }
                     onSelect={ id => this.selectRequest(id) }
                     onToggle={ id => this.toggleRequest(id) }
                     onToggleAll={ () => this.toggleAllRequests() }
