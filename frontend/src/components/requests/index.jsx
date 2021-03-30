@@ -4,8 +4,8 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import {
     STATUS_FAILED,
     STATUS_IDLE,
-    STATUS_LOADING,
-    STATUS_SUCCESS
+    STATUS_SUCCESS,
+    STATUS_LOADING
 } from '../../constants';
 import { getRequestsState } from '../../redux/selectors';
 import {
@@ -21,7 +21,6 @@ import {
     cancelSubmitEvent
 } from '../../redux/actions';
 import Paginator from '../common/paginator';
-import Loading from '../common/loading';
 import Error from '../common/error';
 import RequestsFilter from './filter';
 import RequestsList from './list';
@@ -41,10 +40,6 @@ class Requests extends React.Component {
         this.triggerSubmit = this.triggerSubmit.bind(this);
         this.confirmEventSubmission = this.confirmEventSubmission.bind(this);
         this.cancelEventSubmission = this.cancelEventSubmission.bind(this);
-
-        this.state = {
-            filters: {}
-        };
     }
 
     componentDidMount() {
@@ -55,12 +50,11 @@ class Requests extends React.Component {
     }
 
     selectPage(page) {
-        this.fetchRequests(this.state.filters, page);
+        this.fetchRequests(this.props.filters, page);
     }
 
-    fetchRequests(filters = {}, page = 1, refreshCache = false) {
-        this.setState({ filters });
-        this.props.fetchRequests(filters, page, refreshCache);
+    fetchRequests(filters = {}, page = 1, refreshCache = false, clearItems = false) {
+        this.props.fetchRequests(filters, page, refreshCache, clearItems);
     }
 
     fetchEvents() {
@@ -86,11 +80,11 @@ class Requests extends React.Component {
     }
 
     triggerSubmit(event, type) {
-        this.props.triggerSubmitEvent(event, type, this.getSelectedIds(), this.state.filters, this.props.paging.page);
+        this.props.triggerSubmitEvent(event, type, this.getSelectedIds(), this.props.filters, this.props.paging.page);
     }
 
     confirmEventSubmission(event, type, data) {
-        this.props.confirmSubmitEvent(event, type, this.getSelectedIds(), data, this.state.filters, this.props.paging.page);
+        this.props.confirmSubmitEvent(event, type, this.getSelectedIds(), data, this.props.filters, this.props.paging.page);
     }
 
     cancelEventSubmission() {
@@ -103,10 +97,6 @@ class Requests extends React.Component {
             .map(item => item.data.id);
     }
 
-    isLoading() {
-        return this.props.status === STATUS_LOADING;
-    }
-
     isFailed() {
         return this.props.status === STATUS_FAILED;
     }
@@ -115,31 +105,36 @@ class Requests extends React.Component {
         return this.props.status === STATUS_SUCCESS;
     }
 
-    getFilter() {
+    getFilter(loading) {
         return <RequestsFilter
-            onSubmit={ v => this.fetchRequests(v) }
+            disabled={loading}
+            onSubmit={ v => this.fetchRequests(v, undefined, false, true) }
             value={ this.props.filters } />;
     }
 
-    getActions() {
+    getActions(loading) {
         return <RequestsActions
             recordCount={ this.getSelectedIds().length }
             statuses={ this.props.statuses }
             actions={ this.props.actions }
+            disabled={loading}
             onAction={ (action, type) => this.triggerSubmit(action, type) } />;
     }
 
-    getContents() {
-        if (this.isLoading()) return <Loading />;
+    getContents(loading) {
         if (this.isFailed()) return <Error message={'Unable to load requests'} />;
-        return this.getRequestsContents();
+        return this.getRequestsContents(loading);
     }
 
-    getRequestsContents() {
+    getRequestsContents(loading) {
+        const empty = this.props.items.length === 0;
+
         return (
-            <div>
+            <div className="requests-contents">
+                {loading && !empty ? <div className="requests-blinder"></div> : false}
                 <RequestsList
                     requests={ this.props.items }
+                    loading={ loading }
                     onSelect={ id => this.selectRequest(id) }
                     onToggle={ id => this.toggleRequest(id) }
                     onToggleAll={ () => this.toggleAllRequests() }
@@ -183,11 +178,12 @@ class Requests extends React.Component {
     }
 
     render() {
+        const loading = this.props.status === STATUS_LOADING;
 
-        const filter = this.getFilter();
-        const actions = this.getActions();
+        const filter = this.getFilter(loading);
+        const actions = this.getActions(loading);
 
-        const contents = this.getContents();
+        const contents = this.getContents(loading);
 
         const selection = this.getRequestSelection();
 

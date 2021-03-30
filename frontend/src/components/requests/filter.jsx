@@ -92,7 +92,12 @@ export default class RequestsFilter extends React.Component {
                         <Icon icon={ this.state.showAdditional ? 'chevron-up' : 'chevron-down' }
                             className="toggle-more-icon" />
                     </span>
-                    <button onClick={ () => this.submit() }>Go</button>
+                    <button
+                        onClick={ () => this.submit() }
+                        disabled={this.props.disabled}
+                    >
+                        Go
+                    </button>
                 </div>
                 { this.getAdditionalFilter() }
             </div>

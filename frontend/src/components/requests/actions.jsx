@@ -30,11 +30,11 @@ export default class RequestsActions extends React.Component {
                 <Menu options={statusOptions}
                     className="primary"
                     label="Statuses"
-                    disabled={ !this.props.recordCount } />
+                    disabled={ this.props.disabled || !this.props.recordCount } />
                 <Menu options={actionOptions}
                     className="primary"
                     label="Actions"
-                    disabled={ !this.props.recordCount } />
+                    disabled={ this.props.disabled || !this.props.recordCount } />
             </div>
         );
     }

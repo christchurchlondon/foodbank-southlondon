@@ -58,20 +58,21 @@ import {
 
 // Requests
 
-export const fetchRequests = (filters, page, refreshCache) => {
+export const fetchRequests = (filters, page, refreshCache, clearItems) => {
     return dispatch => {
-        dispatch(loadRequests(filters, page));
+        dispatch(loadRequests(filters, page, clearItems));
         return getRequests(filters, page, refreshCache)
             .then(({ result, paging, editUrl }) => dispatch(requestsLoaded(result, paging, editUrl)))
             .catch(() => dispatch(loadRequestsFailed()));
     };
 };
 
-export const loadRequests = (filters, page) => ({
+export const loadRequests = (filters, page, clearItems) => ({
     type: LOAD_REQUESTS,
     payload: {
         filters,
-        page
+        page,
+        clearItems
     }
 });
 

@@ -1,11 +1,12 @@
 import React from 'react';
 import { format } from 'date-fns';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { DATE_FORMAT_UI } from '../../constants';
 import Flag from './flag';
-import Sync from './sync';
 import CongestionCharge from '../common/congestion-charge';
 import './styles/list.scss';
 import { FilterTimeOfDay, FilterStatus } from '../lists/value-filters';
+import Loading from '../common/loading';
 
 export default class RequestsList extends React.Component {
 
@@ -36,9 +37,17 @@ export default class RequestsList extends React.Component {
     getEmptyRow() {
         return (
             <tr className="empty-row">
-                <td colSpan="6">No results</td>
+                <td colSpan="6">
+                    {this.props.loading ? <Loading /> : "No results"}
+                </td>
             </tr>
         );
+    }
+
+    refresh = () => {
+        if(!this.props.loading) {
+            this.props.onRefresh();
+        }
     }
 
     render() {
@@ -118,8 +127,12 @@ export default class RequestsList extends React.Component {
                                 <div className="cell-actions">
                                     <FilterStatus />
                                 </div>
-                                <button onClick={this.props.onRefresh}>
-                                    <Sync />
+                                <button onClick={this.refresh}>
+                                    <Icon
+                                        icon="sync"
+                                        title="Refresh"
+                                        spin={this.props.loading}
+                                    />
                                 </button>
                             </div>
                         </th>
