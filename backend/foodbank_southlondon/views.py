@@ -1,5 +1,4 @@
 from typing import Tuple, Union
-import time
 
 import flask
 import googleapiclient  # type:ignore
@@ -16,8 +15,7 @@ _PREFERRED_URL_SCHEME = "PREFERRED_URL_SCHEME"
 
 @app.route("/")
 def catch_all() -> Union[flask.Response, werkzeug.Response]:
-    user = flask.session.get(flask.current_app.config[_FBSL_USER_SESSION_VAR])
-    if user is not None and user["exp"] > int(time.time()):
+    if helpers.user_authenticated():
         return app.send_static_file("index.html")
     return flask.redirect("/login")
 
