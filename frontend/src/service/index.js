@@ -71,9 +71,16 @@ function performDownload(url, data = {}) {
 }
 
 function handleErrors(response) {
+    if(response.status === 403) {
+        // Redirect to the login page, the browser should do so immediately but
+        // lets still fall through to throw the error below just in case.
+        window.location.href = '/login';
+    }
+
     if (!response.ok) {
         throw Error(response.statusText);
     }
+
     return response;
 }
 
