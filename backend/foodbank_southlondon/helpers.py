@@ -45,12 +45,14 @@ def gsuite_members_resource() -> discovery.Resource:
                                                                                     cache_discovery=False).members()
     return gsuite_members_resource
 
-def user_authenticated() -> bool:
-    user = flask.session.get(flask.current_app.config[_FBSL_USER_SESSION_VAR])
-    return user is not None and int(time.time()) < user["exp"]
 
 @wrapt.decorator
 def login_required(wrapped: Callable, instance: Any, args: List, kwargs: Dict) -> Any:
     if flask.current_app.config[_FBSL_PROTECT_API] and not user_authenticated():
         flask.abort(403, "Permission Denied.")
     return wrapped(*args, **kwargs)
+
+
+def user_authenticated() -> bool:
+    user = flask.session.get(flask.current_app.config[_FBSL_USER_SESSION_VAR])
+    return user is not None and int(time.time()) < user["exp"]
