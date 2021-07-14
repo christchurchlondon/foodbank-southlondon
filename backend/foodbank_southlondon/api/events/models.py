@@ -25,7 +25,7 @@ class Action(enum.Enum):
     PRINT_SHIPPING_LABEL = Event("Print Shipping Label", True, False, True, False, True, "How many boxes have been made for this client?")
     PRINT_DRIVER_OVERVIEW = Event("Print Driver Overview", True, False, False, True, True)
     DELETE_REQUEST = Event("Delete Request", True, False, False, False, False,
-                           "This action permanently deletes the request. This action cannot be undone.Are you sure you wish to continue?")
+                           "This action permanently deletes the request. This action cannot be undone. Are you sure you wish to continue?")
 
 
 ACTIONS = [action.value for action in Action]
