@@ -68,7 +68,7 @@ class Events(flask_restx.Resource):
         return ({}, 201)
 
 
-@namespace.route(f"/distinct")
+@namespace.route("/distinct")
 @namespace.route(f"/distinct/<any({_STATUSES},{_ACTIONS}):type>")
 class DistinctEventNameValues(flask_restx.Resource):
 
