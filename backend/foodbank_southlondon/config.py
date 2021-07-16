@@ -22,6 +22,7 @@ class _Config(object):
 
     FBSL_BASE_DOMAIN = ""
     FBSL_CACHE_TTL_SECONDS = 120
+    FBSL_CALENDAR_ID = ""
     FBSL_CATCH_ALL_LIST = "family_of_10plus"
     FBSL_CONGESTION_ZONE_POSTCODES = _congestion_zone_postcodes_data()
     FBSL_EVENTS_GSHEET_ID = ""
@@ -39,6 +40,7 @@ class _Config(object):
     FBSL_PROTECT_API: Optional[bool] = None
     FBSL_REQUESTS_GSHEET_ID = ""
     FBSL_USER_SESSION_VAR = "user"
+    FBSL_WATERMARK_CALENDAR_EVENT_ID = ""
 
     @property
     def FBSL_COLLECTION_SITES(self):
@@ -67,6 +69,7 @@ class DevelopmentConfig(_Config):
     PREFERRED_URL_SCHEME = "http"
 
     FBSL_BASE_DOMAIN = f"localhost:{_port}"
+    FBSL_CALENDAR_ID = "Y19icmFyNTRsaTVtYmN0NjFqbTljdjlqbGg5Z0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t"
     FBSL_EVENTS_GSHEET_ID = "1GfD-YA_9eMSMqu9eTZlCEC0wvsV6c0CRlMLRPOvWM48"
     FBSL_FORM_ID = "1FAIpQLSf-JswF1YjIpqEflEkNPK5RQAnt_2v1kyoDgm0-LRi2jVNhwQ"
     FBSL_GSUITE_IMPERSONATE_ADDRESS = "ac@adamcunnington.info"
@@ -74,6 +77,7 @@ class DevelopmentConfig(_Config):
     FBSL_LISTS_GSHEET_ID = "1Hor0i7K_W99LFXw-Grpf1mIY2MjDUNGnfV2ByNGf1gQ"
     FBSL_PROTECT_API = False
     FBSL_REQUESTS_GSHEET_ID = "1eMiA6DAYmYJVYwNvxj18yRiSBImCXu6WiCD-4CqM7P8"
+    FBSL_WATERMARK_CALENDAR_EVENT_ID = "MHVvaTMwdGQ5anJqdWg0czdoc2Nza2lpZWIgY19qbGg0N2c5ZGFldDlvaDk5ZmdxajN1dGd2b0Bn"
 
 
 class ProductionConfig(_Config):
@@ -82,6 +86,7 @@ class ProductionConfig(_Config):
     PREFERRED_URL_SCHEME = "https"
 
     FBSL_BASE_DOMAIN = f"{_heroku_app_name}.herokuapp.com" if _heroku_app_name else f"localhost:{_port}"
+    FBSL_CALENDAR_ID = ""
     FBSL_EVENTS_GSHEET_ID = "1OAluin8tOIpYUxcm18gHJSc0z1tx4EdxY9I2bdB4zj4"
     FBSL_FORM_ID = "1FAIpQLSfyLJH5_Im0C_XEifpD5CUzR5zZyu_9NEXGFY364qPu5JEFrw"
     FBSL_GSUITE_IMPERSONATE_ADDRESS = "ed@christchurchlondon.org"
@@ -89,3 +94,4 @@ class ProductionConfig(_Config):
     FBSL_LISTS_GSHEET_ID = "1D0TcNW7pTMGgKYDogS4YDVJqEBAavu3GfXHu_iGlSmU"
     FBSL_PROTECT_API = True
     FBSL_REQUESTS_GSHEET_ID = "1TDM35lGcVPcf0HJda-V7l2QLH9R0EMHP8mbLdZcpb5k"
+    FBSL_WATERMARK_CALENDAR_EVENT_ID = ""

@@ -16,6 +16,13 @@ _FBSL_SA_KEY = "FBSL_SA_KEY"
 _FBSL_USER_SESSION_VAR = "FBSL_USER_SESSION_VAR"
 
 
+def calendar_events_resource() -> discovery.Resource:
+    calendar_events_resource = flask.get.get("calendar_events_resource")
+    if calendar_events_resource is None:
+        creds = credentials("https://www.googleapis.com/auth/calendar.events")
+        calendar_events_resource = flask.g.calendar_events_resource = discovery.build("calendar", "v3", credentials=creds, cache_discovery=False).events()
+
+
 def credentials(*scopes: str) -> Credentials:
     return Credentials.from_service_account_info(json.loads(flask.current_app.config[_FBSL_SA_KEY]), scopes=list(scopes))
 
