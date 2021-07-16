@@ -3,7 +3,7 @@ import os
 
 import dotenv
 
-from foodbank_southlondon import api, app, bff, config, oauth
+from foodbank_southlondon import api, app, bff, config, oauth, sync
 from foodbank_southlondon.api import events, lists, requests
 import foodbank_southlondon.views  # noqa: F401
 import foodbank_southlondon.errors  # noqa: F401

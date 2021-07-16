@@ -17,11 +17,13 @@ _FBSL_USER_SESSION_VAR = "FBSL_USER_SESSION_VAR"
 
 
 def calendar_events_resource() -> discovery.Resource:
-    calendar_events_resource = flask.get.get("calendar_events_resource")
+    calendar_events_resource = flask.g.get("calendar_events_resource")
     if calendar_events_resource is None:
         creds = credentials("https://www.googleapis.com/auth/calendar.events")
-        calendar_events_resource = flask.g.calendar_events_resource = discovery.build("calendar", "v3", credentials=creds,
+        delegated_creds = creds.with_subject(flask.current_app.config[_FBSL_GSUITE_IMPERSONATE_ADDRESS])
+        calendar_events_resource = flask.g.calendar_events_resource = discovery.build("calendar", "v3", credentials=delegated_creds,
                                                                                       cache_discovery=False).events()
+    return calendar_events_resource
 
 
 def credentials(*scopes: str) -> Credentials:

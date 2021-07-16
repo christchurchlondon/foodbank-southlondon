@@ -68,7 +68,7 @@ class DevelopmentConfig(_Config):
     PREFERRED_URL_SCHEME = "http"
 
     FBSL_BASE_DOMAIN = f"localhost:{_port}"
-    FBSL_CALENDAR_ID = "Y19icmFyNTRsaTVtYmN0NjFqbTljdjlqbGg5Z0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t"
+    FBSL_CALENDAR_ID = "c_brar54li5mbct61jm9cv9jlh9g@group.calendar.google.com"
     FBSL_EVENTS_GSHEET_ID = "1GfD-YA_9eMSMqu9eTZlCEC0wvsV6c0CRlMLRPOvWM48"
     FBSL_FORM_ID = "1FAIpQLSf-JswF1YjIpqEflEkNPK5RQAnt_2v1kyoDgm0-LRi2jVNhwQ"
     FBSL_GSUITE_IMPERSONATE_ADDRESS = "ac@adamcunnington.info"
@@ -76,7 +76,7 @@ class DevelopmentConfig(_Config):
     FBSL_LISTS_GSHEET_ID = "1Hor0i7K_W99LFXw-Grpf1mIY2MjDUNGnfV2ByNGf1gQ"
     FBSL_PROTECT_API = False
     FBSL_REQUESTS_GSHEET_ID = "1eMiA6DAYmYJVYwNvxj18yRiSBImCXu6WiCD-4CqM7P8"
-    FBSL_WATERMARK_CALENDAR_EVENT_ID = "MHVvaTMwdGQ5anJqdWg0czdoc2Nza2lpZWIgY19qbGg0N2c5ZGFldDlvaDk5ZmdxajN1dGd2b0Bn"
+    FBSL_WATERMARK_CALENDAR_EVENT_ID = "0uoi30td9jrjuh4s7hscskiieb"
 
 
 class ProductionConfig(_Config):
