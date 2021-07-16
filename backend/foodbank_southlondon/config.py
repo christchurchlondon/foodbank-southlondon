@@ -1,5 +1,5 @@
 from typing import Optional
-
+import json
 import os
 
 
@@ -7,8 +7,8 @@ _heroku_app_name = os.environ.get("HEROKU_APP_NAME")
 _port = os.environ.get("PORT")
 
 
-def _congestion_zone_data():
-    with open("congestion-zones.txt") as f:
+def _congestion_zone_postcodes_data():
+    with open("congestion-zone-postcodes.txt") as f:
         return f.read().splitlines()
 
 
@@ -23,7 +23,7 @@ class _Config(object):
     FBSL_BASE_DOMAIN = ""
     FBSL_CACHE_TTL_SECONDS = 120
     FBSL_CATCH_ALL_LIST = "family_of_10plus"
-    FBSL_CONGESTION_ZONE_POSTCODES = _congestion_zone_data()
+    FBSL_CONGESTION_ZONE_POSTCODES = _congestion_zone_postcodes_data()
     FBSL_EVENTS_GSHEET_ID = ""
     FBSL_FORM_EDIT_URL_TEMPLATE = "https://docs.google.com/forms/d/e/{form_id}/viewform?edit2={request_id}"
     FBSL_FORM_ID = ""
@@ -39,6 +39,10 @@ class _Config(object):
     FBSL_PROTECT_API: Optional[bool] = None
     FBSL_REQUESTS_GSHEET_ID = ""
     FBSL_USER_SESSION_VAR = "user"
+
+    @property
+    def FBSL_COLLECTION_SITES(self):
+        return os.environ.get("FBSL_COLLECTION_SITES")
 
     @property
     def FBSL_SA_KEY(self):
