@@ -25,12 +25,12 @@ def auth() -> Union[Tuple[str, int], werkzeug.Response]:
     token = oauth.google.authorize_access_token()
     user = oauth.google.parse_id_token(token)
     try:
-        helpers.gsuite_members_resource().get(groupKey=flask.current_app.config[_FBSL_GSUITE_GROUP_ADDRESS], memberKey=user["sub"]).execute()
+        helpers.gsuite_members_resource().get(groupKey=app.config[_FBSL_GSUITE_GROUP_ADDRESS], memberKey=user["sub"]).execute()
     except googleapiclient.errors.HttpError as error:
         if error.resp.status == 404:
             return ("Permission Denied.", 403)
         raise
-    flask.session[flask.current_app.config[_FBSL_USER_SESSION_VAR]] = user
+    flask.session[app.config[_FBSL_USER_SESSION_VAR]] = user
     return flask.redirect("/")
 
 
@@ -41,5 +41,5 @@ def login() -> werkzeug.Response:
 
 @app.route("/logout")
 def logout() -> werkzeug.Response:
-    flask.session.pop(flask.current_app.config[_FBSL_USER_SESSION_VAR], None)
+    flask.session.pop(app.config[_FBSL_USER_SESSION_VAR], None)
     return flask.redirect("https://accounts.google.com/Logout")
