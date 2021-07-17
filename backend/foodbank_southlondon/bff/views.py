@@ -1,10 +1,10 @@
 from typing import Any, Dict, List, Tuple
 import datetime
+import itertools
+import json
 
 import flask
 import flask_restx  # type:ignore
-import itertools
-import json
 import numpy as np  # type:ignore
 import pandas as pd  # type:ignore
 import pytz

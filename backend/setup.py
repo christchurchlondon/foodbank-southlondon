@@ -12,7 +12,11 @@ setuptools.setup(
     extras_require={
         "dev": [
             "flake8",
-            "mypy"
+            "mypy",
+            "types-flask",
+            "types-pytz",
+            "types-requests",
+            "types-werkzeug"
         ]
     }
 )
