@@ -8,8 +8,9 @@ from foodbank_southlondon.api.requests import views as requests_views
 
 
 # CONFIG VARIABLES
-_FBSL_COLLECTION_EVENT_DURATION_MINS = "FBSL_COLLECTION_EVENT_DURATION_MINS"
 _FBSL_CALENDAR_ID = "FBSL_CALENDAR_ID"
+_FBSL_COLLECTION_EVENT_DURATION_MINS = "FBSL_COLLECTION_EVENT_DURATION_MINS"
+_FBSL_COLLECTION_SITES = "FBSL_COLLECTION_SITES"
 _FBSL_WATERMARK_CALENDAR_EVENT_ID = "FBSL_WATERMARK_CALENDAR_EVENT_ID"
 
 
@@ -25,16 +26,17 @@ def sync_calendar():
     requests_df = requests_views.cache()
     requests_df = requests_df.loc[pd.to_datetime(requests_df["Timestamp"], format="%d/%m/%Y %H:%M:%S", errors="coerce") > old_threshold]
     request_id_attribute = "request_id"
-    for row in requests_df.itertrows():
+    for index, row in requests_df.iterrows():
         old_event = next(iter(calendar_events_resource.list(calendarId=calendar_id,
-                         privateExtendedProperty=f"{request_id_attribute}={row[request_id_attribute]}").execute()["items"], {}))
+                         privateExtendedProperty=f"{request_id_attribute}={row[request_id_attribute]}").execute()["items"]), {})
         old_event_id = old_event.get("id")
         if row["Collection"]:
             collection_site = row["Collection Site"]
             new_event = {
-                "summary": f"[{row[collection_site]}] {row['Client Full Name']}",
+                "summary": f"[{collection_site}] {row['Client Full Name']}",
                 "start": {"datetime": row['Collection Time']},
-                "location": row[collection_site]
+                "location": collection_site,
+                "colorId": flask.current_app.config[_FBSL_COLLECTION_SITES].get(collection_site)
             }
             if old_event:
                 if set(new_event.items()).symmetric_difference({k: old_event[k] for k in new_event}.items()):

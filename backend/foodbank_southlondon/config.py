@@ -1,9 +1,15 @@
 from typing import Optional
+import json
 import os
 
 
 _heroku_app_name = os.environ.get("HEROKU_APP_NAME")
 _port = os.environ.get("PORT")
+
+
+def _collection_sites_data():
+    with open("collection-sites.json") as f:
+        return json.load(f)
 
 
 def _congestion_zone_postcodes_data():
@@ -23,6 +29,7 @@ class _Config(object):
     FBSL_CACHE_TTL_SECONDS = 120
     FBSL_CALENDAR_ID = ""
     FBSL_COLLECTION_EVENT_DURATION_MINS = 30
+    FBSL_COLLECTION_SITES = _collection_sites_data()
     FBSL_CATCH_ALL_LIST = "family_of_10plus"
     FBSL_CONGESTION_ZONE_POSTCODES = _congestion_zone_postcodes_data()
     FBSL_EVENTS_GSHEET_ID = ""
@@ -41,10 +48,6 @@ class _Config(object):
     FBSL_REQUESTS_GSHEET_ID = ""
     FBSL_USER_SESSION_VAR = "user"
     FBSL_WATERMARK_CALENDAR_EVENT_ID = ""
-
-    @property
-    def FBSL_COLLECTION_SITES(self):
-        return os.environ.get("FBSL_COLLECTION_SITES")
 
     @property
     def FBSL_SA_KEY(self):
