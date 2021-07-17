@@ -1,4 +1,5 @@
 import datetime
+import re
 
 import flask
 import pandas as pd  # type:ignore
@@ -12,6 +13,9 @@ _FBSL_CALENDAR_ID = "FBSL_CALENDAR_ID"
 _FBSL_COLLECTION_EVENT_DURATION_MINS = "FBSL_COLLECTION_EVENT_DURATION_MINS"
 _FBSL_COLLECTION_SITES = "FBSL_COLLECTION_SITES"
 _FBSL_WATERMARK_CALENDAR_EVENT_ID = "FBSL_WATERMARK_CALENDAR_EVENT_ID"
+
+
+_collection_method_regex = re.compile(r"^Collection - (?P<site>.*)$", flags=re.IGNORECASE)
 
 
 def _event_end_rfc3339_from_start(start_datetime):
@@ -38,8 +42,9 @@ def sync_calendar():
         old_event = next(iter(calendar_events_resource.list(calendarId=calendar_id,
                          privateExtendedProperty=f"{request_id_attribute}={request_id}").execute()["items"]), {})
         old_event_id = old_event.get("id")
-        if row["Collection"]:
-            collection_site = row["Collection Site"]
+        collection = _collection_method_regex.match(row["Shipping Method"])
+        if collection:
+            collection_site = collection.group("site")
             start_datetime = datetime.datetime.strptime(row['Collection Time'], "%d/%m/%Y %H:%M:%S").astimezone()
             new_event = {
                 "summary": f"[{collection_site}] {row['Client Full Name']}",
