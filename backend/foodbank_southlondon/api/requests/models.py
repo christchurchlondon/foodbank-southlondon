@@ -49,12 +49,30 @@ request = rest.model("ClientRequest", {
                                        example="Yes"),
     "other_requirements": fields.String(attribute="Other Requirements", required=True,
                                         description="Additional, non-dietary requirements or season-specific asks", example="Christmas Presents"),
+    "extra_information": fields.String(attribute="Extra Information", required=False, description="Any extra information to be noted",
+                                       example="No dairy"),
     "flag_for_attention": StrBoolean(attribute="Flag for Attention", required=True, default="",
                                      description="Whether or not this request should be flagged for attention", example=True),
     "signposting_call": StrBoolean(attribute="Signposting Call", required=True, default="",
                                    description="Whether or not this request should be labelled as a signposted call", example=True),
-    "extra_information": fields.String(attribute="Extra Information", required=False, description="Any extra information to be noted",
-                                       example="No dairy"),
+    "shipping_method": fields.String(attribute="Shipping Method", required=True,
+                                     description="Whether the food parcel will be delivered or collected.", example="Collection"),
+    "collection_date": fields.String(attribute="Collection Date", required=False, description="The date that the food parcel should be collected in "
+                                     "the format of DD/MM/YYYY", example="01/05/2020"),
+    "collection_site": fields.String(attribute="Collection Site", required=False,
+                                     description="The site that the client should collect the food parcel from.", example="Vauxhall"),
+    "vauxhall_collection_time": fields.String(attribute="Vauxhall Collection Time", required=False,
+                                              description="The time that the food parcel should be collected from the Vauxhall site, in the format "
+                                              "of HH:MM", example="12:30"),
+    "brixton_collection_time": fields.String(attribute="Brixton Collection Time", required=False,
+                                             description="The time that the food parcel should be collected from the Brixton site, in the format "
+                                             "of HH:MM", example="12:30"),
+    "waterloo_collection_time": fields.String(attribute="Waterloo Collection Time", required=False,
+                                              description="The time that the food parcel should be collected from the Waterloo site, in the format "
+                                              "of HH:MM", example="12:30"),
+    "clapham_park_collection_time": fields.String(attribute="Clapham, Park Collection Time", required=False,
+                                                  description="The time that the food parcel should be collected from the Clapham Park site, in the "
+                                                  "format of HH:MM", example="12:30"),
     "edit_details_url": fields.String(required=True, description="The Google Forms edit response URL that can be used to update details of the Client"
                                       "Request", example="https://docs.google.com/forms/d/e/1FAIpQLSfb94-4k-Pkf3ccBqd2WR-yzMBdmqdehYBbnN1HLrmE9caneA/"
                                       "viewform?edit2=2_ABaOnueK_9ztK8RlxxBe6Jf0wvs9rAwoi30EwATe24VtNeMhgazghzzd4pgibH-HHn_RDZQ"),
