@@ -52,7 +52,8 @@ _summary = rest.inherit("Summary", _event, {
     "time_of_day": _clone_field_without_attribute(requests_models.request["time_of_day"]),
     "household_size": _clone_field_without_attribute(requests_models.request["household_size"]),
     "congestion_zone": _clone_field_without_attribute(requests_models.request["congestion_zone"]),
-    "flag_for_attention": _clone_field_without_attribute(requests_models.request["flag_for_attention"])
+    "flag_for_attention": _clone_field_without_attribute(requests_models.request["flag_for_attention"]),
+    "collection_site": _clone_field_without_attribute(requests_models.request["collection_site"])
 })
 
 
