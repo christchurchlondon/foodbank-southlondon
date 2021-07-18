@@ -7,7 +7,7 @@ _heroku_app_name = os.environ.get("HEROKU_APP_NAME")
 _port = os.environ.get("PORT")
 
 
-def _congestion_zone_postcodes_data():
+def _congestion_zone_postcodes_data() -> list:
     with open("congestion-zone-postcodes.txt") as f:
         return f.read().splitlines()
 
@@ -44,23 +44,23 @@ class _Config(object):
     FBSL_WATERMARK_CALENDAR_EVENT_ID = ""
 
     @property
-    def FBSL_COLLECTION_SITES_CALENDAR_IDS(self):
+    def FBSL_COLLECTION_SITES_CALENDAR_IDS(self) -> dict:
         return json.loads(os.environ.get("FBSL_COLLECTION_SITES_CALENDAR_IDS"))
 
     @property
-    def FBSL_SA_KEY(self):
+    def FBSL_SA_KEY(self) -> str:
         return os.environ.get("FBSL_SA_KEY")
 
     @property
-    def FBSL_STAFF_MOBILES(self):
+    def FBSL_STAFF_MOBILES(self) -> dict:
         return json.loads(os.environ.get("FBSL_STAFF_MOBILES"))
 
     @property
-    def GOOGLE_CLIENT_SECRET(self):
+    def GOOGLE_CLIENT_SECRET(self) -> str:
         return os.environ.get("FBSL_CLIENT_SECRET")
 
     @property
-    def SECRET_KEY(self):
+    def SECRET_KEY(self) -> str:
         return os.environ.get("FBSL_CLIENT_SECRET")
 
 

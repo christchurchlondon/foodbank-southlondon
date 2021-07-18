@@ -1,6 +1,9 @@
+from collections import abc
+from typing import Optional, Tuple
 import datetime
 import time
 
+from googleapiclient import discovery  # type:ignore
 import pandas as pd  # type:ignore
 
 from foodbank_southlondon import app, helpers
@@ -16,21 +19,22 @@ _FBSL_WATERMARK_CALENDAR_EVENT_ID = "FBSL_WATERMARK_CALENDAR_EVENT_ID"
 _COLLECTION = "Collection"
 
 
-def _event_end_rfc3339_from_start(start_datetime):
+def _event_end_rfc3339_from_start(start_datetime: datetime.datetime) -> str:
     return (start_datetime + datetime.timedelta(minutes=app.config[_FBSL_COLLECTION_EVENT_DURATION_MINS])).isoformat()
 
 
-def _find_event(calendar_events_resource, calendar_ids, private_extended_property):
+def _find_event(calendar_events_resource: discovery.Resource, calendar_ids: abc.ValuesView,
+                private_extended_property_query: str) -> Tuple[Optional[str], Optional[dict]]:
     for calendar_id in calendar_ids:
         event = next(iter(calendar_events_resource.list(calendarId=calendar_id,
-                                                        privateExtendedProperty=private_extended_property).execute()["items"]), None)
+                                                        privateExtendedProperty=private_extended_property_query).execute()["items"]), None)
         if event:
             return (calendar_id, event)
     return (None, None)
 
 
 @app.cli.command()
-def sync_calendar():
+def sync_calendar() -> None:
     """Synchronise the Foodbank Google Calendar based on changes in the Request data."""
     app.logger.info("Starting the calendar synchronisation process...")
     watermark_calendar_id = app.config[_FBSL_WATERMARK_CALENDAR_ID]
