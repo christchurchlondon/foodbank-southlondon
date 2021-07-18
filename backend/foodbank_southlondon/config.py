@@ -1,4 +1,5 @@
 from typing import Optional
+import json
 import os
 
 
@@ -44,7 +45,7 @@ class _Config(object):
 
     @property
     def FBSL_COLLECTION_SITE_CALENDAR_IDS(self):
-        return os.environ("FBSL_COLLECTION_SITE_CALENDAR_IDS")
+        return json.loads(os.environ.get("FBSL_COLLECTION_SITE_CALENDAR_IDS"))
 
     @property
     def FBSL_SA_KEY(self):
@@ -52,7 +53,7 @@ class _Config(object):
 
     @property
     def FBSL_STAFF_MOBILES(self):
-        return os.environ.get("FBSL_STAFF_MOBILES")
+        return json.loads(os.environ.get("FBSL_STAFF_MOBILES"))
 
     @property
     def GOOGLE_CLIENT_SECRET(self):

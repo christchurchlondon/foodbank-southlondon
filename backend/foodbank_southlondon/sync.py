@@ -48,6 +48,7 @@ def sync_calendar():
                                                  errors="coerce") > old_threshold]
     app.logger.info(f"Found {len(requests_df.index)} potential changes.")
     calendar_ids = app.config[_FBSL_COLLECTION_SITE_CALENDAR_IDS]
+    calendar_ids_values = calendar_ids.values()
     for _, row in requests_df.iterrows():
         request_id = row[request_id_attribute]
         private_extended_property = {request_id_attribute: request_id}
@@ -69,10 +70,10 @@ def sync_calendar():
             old_event = next(iter(calendar_events_resource.list(calendarId=collection_site_calendar_id,
                                                                 privateExtendedProperty=private_extended_property_query).execute()["items"]), None)
             if not old_event:
-                calendar_id, old_event = _find_event(calendar_events_resource, calendar_ids, private_extended_property_query)
+                calendar_id, old_event = _find_event(calendar_events_resource, calendar_ids_values, private_extended_property_query)
                 if old_event:
                     app.logger.info(f"Moving event for request ID, {request_id}...")
-                    calendar_events_resource.move(calendarId=calendar_id, event_id=old_event["id"], destination=collection_site_calendar_id)
+                    calendar_events_resource.move(calendarId=calendar_id, eventId=old_event["id"], destination=collection_site_calendar_id).execute()
             if old_event:
                 changed_event_attributes = {k: v for k, v in new_event.items() if old_event[k] != v}
                 if changed_event_attributes:
@@ -82,7 +83,7 @@ def sync_calendar():
                 app.logger.info(f"Creating event for request ID, {request_id}...")
                 calendar_events_resource.insert(calendarId=collection_site_calendar_id, body=new_event).execute()
         else:
-            calendar_id, old_event = _find_event(calendar_events_resource, calendar_ids, private_extended_property_query)
+            calendar_id, old_event = _find_event(calendar_events_resource, calendar_ids_values, private_extended_property_query)
             if old_event:
                 app.logger.info(f"Deleting event for request ID, {request_id}...")
                 calendar_events_resource.delete(calendarId=calendar_id, eventId=old_event["id"]).execute()

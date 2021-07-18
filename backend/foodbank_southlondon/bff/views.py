@@ -1,7 +1,6 @@
 from typing import Any, Dict, List, Tuple
 import datetime
 import itertools
-import json
 
 import flask
 import flask_restx  # type:ignore
@@ -71,7 +70,7 @@ class Actions(flask_restx.Resource):
     def _generate_driver_overview_pdf(items: List, driver_name: str) -> flask.Response:
         template_name = "driver-overview"
         today = datetime.datetime.now().strftime("%Y-%m-%d")
-        staff_mobiles = " | ".join(f"{staff} - {mobile}" for staff, mobile in json.loads(flask.current_app.config[_FBSL_STAFF_MOBILES]).items())
+        staff_mobiles = " | ".join(f"{staff} - {mobile}" for staff, mobile in flask.current_app.config[_FBSL_STAFF_MOBILES].items())
         html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", items=items, date=today, driver_name=driver_name,
                                                             staff_mobiles=staff_mobiles), encoding="utf8")
         document = html.render()
