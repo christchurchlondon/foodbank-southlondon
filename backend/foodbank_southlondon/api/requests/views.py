@@ -37,6 +37,7 @@ class Requests(flask_restx.Resource):
         postcodes = set(postcode.strip() for postcode in (params["postcodes"] or ()))
         time_of_days = set(time_of_day.strip() for time_of_day in (params["time_of_days"] or ()))
         voucher_numbers = set("" if voucher_number.strip() == "?" else voucher_number.strip() for voucher_number in (params["voucher_numbers"] or ()))
+        collection_sites = set(collection_site.strip() for collection_site in (params["collection_sites"] or ()))
         event_names = set(event_name.strip() for event_name in (params["event_names"] or ()))
         invalid_event_names = event_names.difference(events_models.EVENT_NAMES)
         if invalid_event_names:
@@ -47,18 +48,18 @@ class Requests(flask_restx.Resource):
         name_attribute = "Client Full Name"
         if packing_dates:
             df = df.loc[df["Packing Date"].isin(packing_dates)]
-        if voucher_numbers:
-            df = df.loc[df["Voucher Number"].isin(voucher_numbers)]
         if client_full_names:
             df = df.loc[df[name_attribute].map(functools.partial(fuzzy_match, choices=client_full_names))]
         postcode_attribute = "Postcode"
         if postcodes:
             df = df.loc[df[postcode_attribute].str.lower().str.startswith(tuple(postcodes)) |
                         df[postcode_attribute].str.lower().str.endswith(tuple(postcodes))]
+        if voucher_numbers:
+            df = df.loc[df["Voucher Number"].isin(voucher_numbers)]
         if time_of_days:
             df = df.loc[df["Time of Day"].isin(time_of_days)]
-        if last_request_only:
-            df = df.assign(rank=df.groupby([name_attribute]).cumcount(ascending=False) + 1).query("rank == 1").drop("rank", axis=1)
+        if collection_sites:
+            df = df.loc[df["Collection Sites"].isin(collection_sites)]
         if event_names:
             events_df = events_views.cache(force_refresh=refresh_cache)
             events_df = (
@@ -67,6 +68,8 @@ class Requests(flask_restx.Resource):
             )
             events_df = events_df.loc[events_df["event_name"].isin(event_names)]
             df = df.loc[df[request_id_attribute].isin(events_df[request_id_attribute].values)]
+        if last_request_only:
+            df = df.assign(rank=df.groupby([name_attribute]).cumcount(ascending=False) + 1).query("rank == 1").drop("rank", axis=1)
         df = df.assign(edit_details_url=df[request_id_attribute].map(_edit_details_url),
                        congestion_zone=df[postcode_attribute].isin(_congestion_zone_postcodes()[postcode_attribute].values))
         return (df, params["page"], params["per_page"])
