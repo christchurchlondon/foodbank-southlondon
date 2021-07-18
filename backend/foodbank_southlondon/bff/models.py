@@ -55,7 +55,10 @@ _summary = rest.inherit("Summary", _event, {
     "flag_for_attention": _clone_field_without_attribute(requests_models.request["flag_for_attention"])
 })
 
+
 page_of_summary = rest.inherit("SummaryPage", _pagination, {
+    "calendar_ids": fields.List(fields.String(required=True, description="The escaped calendar ID for a given collection site.",
+                                              example="ca2ikhedkfjhawd213123@group.calendar.google.com")),
     "form_submit_url": fields.String(required=True, description="The URL that users can use to submit entries in the form.",
                                      example="https://docs.google.com/forms/d/e/asdasdasd989123123lkf_skdjfasd/viewform"),
     "items": fields.List(fields.Nested(_summary))
