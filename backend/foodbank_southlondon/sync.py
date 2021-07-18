@@ -7,7 +7,7 @@ from googleapiclient import discovery  # type:ignore
 import pandas as pd  # type:ignore
 
 from foodbank_southlondon import app, helpers
-from foodbank_southlondon.api.requests import views as requests_views
+from foodbank_southlondon.api.requests import models as requests_models, views as requests_views
 
 
 # CONFIG VARIABLES
@@ -15,8 +15,6 @@ _FBSL_COLLECTION_EVENT_DURATION_MINS = "FBSL_COLLECTION_EVENT_DURATION_MINS"
 _FBSL_COLLECTION_SITES_CALENDAR_IDS = "FBSL_COLLECTION_SITES_CALENDAR_IDS"
 _FBSL_WATERMARK_CALENDAR_ID = "FBSL_WATERMARK_CALENDAR_ID"
 _FBSL_WATERMARK_CALENDAR_EVENT_ID = "FBSL_WATERMARK_CALENDAR_EVENT_ID"
-
-_COLLECTION = "Collection"
 
 
 def _event_end_rfc3339_from_start(start_datetime: datetime.datetime) -> str:
@@ -57,7 +55,7 @@ def sync_calendar() -> None:
         request_id = row[request_id_attribute]
         private_extended_property = {request_id_attribute: request_id}
         private_extended_property_query = "&".join("=".join(item) for item in private_extended_property.items())
-        if row["Shipping Method"] == _COLLECTION:
+        if row["Shipping Method"] == requests_models.SHIPPING_METHOD_COLLECTION:
             collection_site = row["Collection Site"]
             collection_site_calendar_id = calendar_ids[collection_site]
             collection_date = datetime.datetime.strptime(row["Collection Date"], requests_date_format)

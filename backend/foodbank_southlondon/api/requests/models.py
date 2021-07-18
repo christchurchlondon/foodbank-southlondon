@@ -3,6 +3,10 @@ from flask_restx import fields  # type:ignore
 from foodbank_southlondon.api import models, rest
 
 
+# INTERNALS
+SHIPPING_METHOD_COLLECTION = "Collection"
+
+
 class StrBoolean(fields.Raw):
     def format(self, value: str) -> bool:
         if isinstance(value, bool):
@@ -73,9 +77,9 @@ request = rest.model("ClientRequest", {
     "clapham_park_collection_time": fields.String(attribute="Clapham, Park Collection Time", required=False,
                                                   description="The time that the food parcel should be collected from the Clapham Park site, in the "
                                                   "format of HH:MM", example="12:30"),
-    "edit_details_url": fields.String(required=True, description="The Google Forms edit response URL that can be used to update details of the Client"
-                                      "Request", example="https://docs.google.com/forms/d/e/1FAIpQLSfb94-4k-Pkf3ccBqd2WR-yzMBdmqdehYBbnN1HLrmE9caneA/"
-                                      "viewform?edit2=2_ABaOnueK_9ztK8RlxxBe6Jf0wvs9rAwoi30EwATe24VtNeMhgazghzzd4pgibH-HHn_RDZQ"),
+    "edit_details_url": fields.String(required=True, description="The Google Forms edit response URL that can be used to update details of the "
+                                      "Client Request", example="https://docs.google.com/forms/d/e/1FAIpQLSfb94-4k-Pkf3ccBqd2WR-yzMBdmqdehYBbnN1HLrm"
+                                      "E9caneA/viewform?edit2=2_ABaOnueK_9ztK8RlxxBe6Jf0wvs9rAwoi30EwATe24VtNeMhgazghzzd4pgibH-HHn_RDZQ"),
     "congestion_zone": fields.Boolean(required=True, description="Whether or not the postcode is in the congestion zone.", example=True)
 })
 

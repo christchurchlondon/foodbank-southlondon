@@ -59,7 +59,7 @@ class Requests(flask_restx.Resource):
         if time_of_days:
             df = df.loc[df["Time of Day"].isin(time_of_days)]
         if collection_sites:
-            df = df.loc[df["Collection Sites"].isin(collection_sites)]
+            df = df.loc[df["Shipping Method"] == models.SHIPPING_METHOD_COLLECTION & df["Collection Sites"].isin(collection_sites)]
         if event_names:
             events_df = events_views.cache(force_refresh=refresh_cache)
             events_df = (
