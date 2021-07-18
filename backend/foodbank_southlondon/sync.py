@@ -9,7 +9,7 @@ from foodbank_southlondon.api.requests import views as requests_views
 
 # CONFIG VARIABLES
 _FBSL_COLLECTION_EVENT_DURATION_MINS = "FBSL_COLLECTION_EVENT_DURATION_MINS"
-_FBSL_COLLECTION_SITE_CALENDAR_IDS = "FBSL_COLLECTION_SITE_CALENDAR_IDS"
+_FBSL_COLLECTION_SITES_CALENDAR_IDS = "FBSL_COLLECTION_SITES_CALENDAR_IDS"
 _FBSL_WATERMARK_CALENDAR_ID = "FBSL_WATERMARK_CALENDAR_ID"
 _FBSL_WATERMARK_CALENDAR_EVENT_ID = "FBSL_WATERMARK_CALENDAR_EVENT_ID"
 
@@ -47,7 +47,7 @@ def sync_calendar():
     requests_df = requests_df.loc[pd.to_datetime(requests_df["Timestamp"], format=f"{requests_date_format} %H:%M:%S",
                                                  errors="coerce") > old_threshold]
     app.logger.info(f"Found {len(requests_df.index)} potential changes.")
-    calendar_ids = app.config[_FBSL_COLLECTION_SITE_CALENDAR_IDS]
+    calendar_ids = app.config[_FBSL_COLLECTION_SITES_CALENDAR_IDS]
     calendar_ids_values = calendar_ids.values()
     for _, row in requests_df.iterrows():
         request_id = row[request_id_attribute]
