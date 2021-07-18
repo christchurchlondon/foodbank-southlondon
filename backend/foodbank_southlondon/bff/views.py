@@ -1,3 +1,4 @@
+from collections.abc import Iterable, Iterator
 from typing import Any, Dict, List, Tuple
 import datetime
 import itertools
@@ -301,6 +302,6 @@ class Summary(flask_restx.Resource):
         }
 
 
-def _chunk(iterable, size):
+def _chunk(iterable: Iterable, size: int) -> Iterator:
     iterator = iter(iterable)
     return iter(lambda: tuple(itertools.islice(iterator, size)), ())

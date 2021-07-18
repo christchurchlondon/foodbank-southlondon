@@ -1,4 +1,4 @@
-from collections import abc
+from collections.abc import ValuesView
 from typing import Optional, Tuple
 import datetime
 import time
@@ -23,7 +23,7 @@ def _event_end_rfc3339_from_start(start_datetime: datetime.datetime) -> str:
     return (start_datetime + datetime.timedelta(minutes=app.config[_FBSL_COLLECTION_EVENT_DURATION_MINS])).isoformat()
 
 
-def _find_event(calendar_events_resource: discovery.Resource, calendar_ids: abc.ValuesView,
+def _find_event(calendar_events_resource: discovery.Resource, calendar_ids: ValuesView,
                 private_extended_property_query: str) -> Tuple[Optional[str], Optional[dict]]:
     for calendar_id in calendar_ids:
         event = next(iter(calendar_events_resource.list(calendarId=calendar_id,

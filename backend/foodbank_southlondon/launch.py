@@ -2,6 +2,7 @@ import logging
 import os
 
 import dotenv
+import flask
 
 from foodbank_southlondon import api, app, bff, config, oauth, sync  # noqa: F401
 from foodbank_southlondon.api import events, lists, requests
@@ -18,7 +19,7 @@ import foodbank_southlondon.bff.views  # noqa: F401
 _FLASK_ENV_ENV_VAR = "FLASK_ENV"
 
 
-def main():
+def main() -> flask.Flask:
     environment = os.environ.get(_FLASK_ENV_ENV_VAR)
     app.logger.setLevel(logging.INFO if environment == "production" else logging.DEBUG)
     env_file_path = os.path.join(app.root_path, "..", f"{environment}.env")
