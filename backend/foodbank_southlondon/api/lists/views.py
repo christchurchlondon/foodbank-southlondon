@@ -28,8 +28,8 @@ class Lists(flask_restx.Resource):
         notes = utils.gsheet_a1(flask.current_app.config[_FBSL_LISTS_GSHEET_ID], index=1)
         return {"notes": notes, "items": df.to_dict("records")}
 
-    @rest.response(201, "Created")
     @rest.expect(models.all_lists_items)
+    @rest.response(201, "Created")
     def post(self) -> Tuple[Dict, int]:
         """Overwrite the Shopping Lists."""
         data = flask.request.json
@@ -51,8 +51,8 @@ class Lists(flask_restx.Resource):
 @namespace.doc(params={"list_name": f"The name of the list to retrieve. Should be one of: {models.LIST_NAMES}"})
 class List(flask_restx.Resource):
 
-    @rest.response(404, "Not Found")
     @rest.expect(parsers.cache_params)
+    @rest.response(404, "Not Found")
     @rest.marshal_with(models.one_list_items)
     def get(self, list_name: str) -> Dict[str, Any]:
         """Get a single Shopping List."""

@@ -116,12 +116,15 @@ class Actions(flask_restx.Resource):
         response.headers["Content-Disposition"] = f"attachment; filename=\"{template_name}.pdf\""
         return response
 
+    @rest.expect(parsers.action_params)
+    @rest.expect(models.action)
     @rest.response(201, "Created")
+    @rest.response(202, "Accepted")
     @rest.response(400, "Bad Request")
     @rest.response(404, "Not Found")
-    @rest.expect(models.action)
     def post(self) -> flask.Response:
         """Process an action."""
+        params = parsers.action_params.parse_args(flask.request)
         data = flask.request.json
         flask.current_app.logger.debug(f"Received request body, {data}")
         request_ids = data["request_ids"]
@@ -158,6 +161,12 @@ class Actions(flask_restx.Resource):
                 return_value = self._generate_shopping_list_pdf(requests_items, api_base_url, flask.request.cookies)
             elif event_name == events_models.Action.PRINT_SHIPPING_LABEL.value.event_name:
                 action_status_name = events_models.ActionStatus.SHIPPING_LABEL_PRINTED.value.event_name
+                if not params["ignore_warnings"]:
+                    events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
+                                       params={"request_ids": request_ids, "event_names": [action_status_name], "latest_event_only": True,
+                                               "refresh_cache": True, "per_page": len(request_ids)})
+                    if events_data["items"]:
+                        return ({"warning": "A shipping label has already been printed for 1 or more requests in the selection."}, 202)
                 if not event_data.isdigit() or int(event_data) < 1:
                     rest.abort(400, "Invalid quantity. The quantity must be positive integer.")
                 return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
@@ -168,7 +177,8 @@ class Actions(flask_restx.Resource):
                 events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
                                    headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
                                    params={"event_names": events_models.ActionStatus.SHIPPING_LABEL_PRINTED.value.event_name,
-                                           "latest_event_only": True, "per_page": len(request_ids), "request_ids": ",".join(request_ids)})
+                                           "request_ids": ",".join(request_ids), "latest_event_only": True, "refresh_cache": True,
+                                           "per_page": len(request_ids)})
                 events_df = pd.DataFrame(events_data["items"], columns=event_attributes)
                 df = pd.merge(requests_df, events_df, on="request_id", how="left").replace({np.nan: None})
                 items = df.to_dict("records")
@@ -186,8 +196,8 @@ class Actions(flask_restx.Resource):
 @rest.route("/details/<string:request_id>")
 class Details(flask_restx.Resource):
 
-    @rest.response(404, "Not Found")
     @rest.expect(parsers.cache_params)
+    @rest.response(404, "Not Found")
     @rest.marshal_with(models.details)
     def get(self, request_id: str) -> Dict[str, Any]:
         """Get detailed information for a single Client Request."""
@@ -204,7 +214,7 @@ class Details(flask_restx.Resource):
         request_data = requests_items[0]
         max_per_page = flask.current_app.config[_FBSL_MAX_PAGE_SIZE]
         events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
-                           params={"refresh_cache": refresh_cache, "request_ids": request_id, "per_page": max_per_page})
+                           params={"request_ids": request_id, "refresh_cache": refresh_cache, "per_page": max_per_page})
         params = {"refresh_cache": refresh_cache}
         for attribute in ("client_full_name", "postcode"):
             value = request_data[attribute]
@@ -229,10 +239,10 @@ class Details(flask_restx.Resource):
 @rest.route("/statuses/")
 class Statuses(flask_restx.Resource):
 
+    @rest.expect(models.status)
     @rest.response(201, "Created")
     @rest.response(400, "Bad Request")
     @rest.response(404, "Not Found")
-    @rest.expect(models.status)
     def post(self) -> Tuple[Dict, int]:
         """Process a status."""
         data = flask.request.json
@@ -273,9 +283,9 @@ class Summary(flask_restx.Resource):
                              headers={"X-Fields": "items{request_id, client_full_name, voucher_number, postcode, packing_date, time_of_day, "
                                       "household_size, congestion_zone, flag_for_attention, signposting_call, collection_centre}, page, per_page, "
                                       "total_items, total_pages"},
-                             params={"client_full_names": client_full_names, "packing_dates": packing_dates, "page": params["page"],
-                                     "per_page": per_page, "postcodes": postcodes, "time_of_days": time_of_days, "voucher_numbers": voucher_numbers,
-                                     "collection_centres": collection_centres, "event_names": event_names, "refresh_cache": refresh_cache})
+                             params={"client_full_names": client_full_names, "packing_dates": packing_dates, "postcodes": postcodes,
+                                     "time_of_days": time_of_days, "voucher_numbers": voucher_numbers, "collection_centres": collection_centres,
+                                     "event_names": event_names, "refresh_cache": refresh_cache, "page": params["page"], "per_page": per_page})
         requests_df = pd.DataFrame(requests_data["items"])
         if not requests_df.empty:
             events_df = None
@@ -284,8 +294,8 @@ class Summary(flask_restx.Resource):
             for chunk in _chunk(request_ids, flask.current_app.config[_FBSL_MAX_REQUEST_IDS_PER_URL]):
                 events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
                                    headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
-                                   params={"latest_event_only": True, "per_page": per_page, "refresh_cache": refresh_cache,
-                                           "request_ids": ",".join(chunk)})
+                                   params={"request_ids": ",".join(chunk), "latest_event_only": True, "refresh_cache": refresh_cache,
+                                           "per_page": per_page})
                 events_chunk_df = pd.DataFrame(events_data["items"], columns=event_attributes)
                 if events_df is None:
                     events_df = events_chunk_df

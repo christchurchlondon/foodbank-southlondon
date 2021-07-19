@@ -83,8 +83,8 @@ class Requests(flask_restx.Resource):
 @namespace.doc(params={"request_ids": "A comma separated list of request_id values to retrieve."})
 class RequestsByID(flask_restx.Resource):
 
-    @rest.response(404, "Not Found")
     @rest.expect(parsers.pagination_params)
+    @rest.response(404, "Not Found")
     @rest.marshal_with(models.page_of_requests)
     @utils.paginate("Postcode")
     def get(self, request_ids: str) -> Tuple[Dict, int, int]:
