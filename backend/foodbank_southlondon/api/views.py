@@ -1,7 +1,8 @@
 from urllib import parse
 
-import flask
 from flask_restx import fields  # type:ignore
+import flask
+import flask_restx  # type:ignore
 
 from foodbank_southlondon.api import rest
 
@@ -17,8 +18,10 @@ _calendar_model = rest.model("Calendars", {
 
 
 @rest.route("/calendars")
-@rest.marshal_with(_calendar_model)
-def get_calendars():
-    return {
-        "calendar_ids": [parse.quote(calendar_id) for calendar_id in flask.current_app.config[_FBSL_COLLECTION_CENTRES_CALENDAR_IDS].values()],
-    }
+class Calendars(flask_restx.Resource):
+
+    @rest.marshal_with(_calendar_model)
+    def get(self):
+        return {
+            "calendar_ids": [parse.quote(calendar_id) for calendar_id in flask.current_app.config[_FBSL_COLLECTION_CENTRES_CALENDAR_IDS].values()],
+        }
