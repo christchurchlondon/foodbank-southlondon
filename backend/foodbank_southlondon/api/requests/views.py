@@ -20,6 +20,9 @@ _FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
 
 # INTERNALS
 _CACHE_NAME = "requests"
+_COLLECTION_COLUMNS_TO_CLEAN = ["Collection Date", "Collection Centre", "Vauxhall Collection Time", "Brixton Collection Time",
+                                "Waterloo Collection Time", "Clapham Park Collection Time"]
+_COLLECTION_COLUMNS_CLEANED_VALUES = [""] * len(_COLLECTION_COLUMNS_TO_CLEAN)
 
 
 @namespace.route("/")
@@ -27,7 +30,7 @@ class Requests(flask_restx.Resource):
 
     @rest.expect(parsers.requests_params)
     @rest.marshal_with(models.page_of_requests)
-    @utils.paginate("Packing Date", "Time of Day", "Postcode", "request_id")
+    @utils.paginate("Packing Date", "Time of Day", "Collection Centre", "Postcode", "request_id")
     def get(self) -> Tuple[Dict, int, int]:
         """List all Client Requests."""
         params = parsers.requests_params.parse_args(flask.request)
@@ -44,6 +47,7 @@ class Requests(flask_restx.Resource):
             rest.abort(400, f"The following event names are invalid options: {invalid_event_names}. Valid options are: {events_models.EVENT_NAMES}.")
         last_request_only = params["last_request_only"]
         df = cache(force_refresh=refresh_cache)
+        df = _clean_collection_columns(df)
         request_id_attribute = "request_id"
         name_attribute = "Client Full Name"
         if packing_dates:
@@ -59,7 +63,7 @@ class Requests(flask_restx.Resource):
         if time_of_days:
             df = df.loc[df["Time of Day"].isin(time_of_days)]
         if collection_centres:
-            df = df.loc[(df["Shipping Method"] == models.SHIPPING_METHOD_COLLECTION) & (df["Collection Centre"].isin(collection_centres))]
+            df = df.loc[df["Collection Centre"].isin(collection_centres)]
         if event_names:
             events_df = events_views.cache(force_refresh=refresh_cache)
             events_df = (
@@ -90,6 +94,7 @@ class RequestsByID(flask_restx.Resource):
         refresh_cache = params["refresh_cache"]
         request_id_attribute = "request_id"
         df = cache(force_refresh=refresh_cache)
+        df = _clean_collection_columns(df)
         df = df.loc[df[request_id_attribute].isin(request_id_values)]
         missing_request_ids = request_id_values.difference(df[request_id_attribute].unique())
         if missing_request_ids:
@@ -115,6 +120,11 @@ class DistinctRequestsValues(flask_restx.Resource):
             df = df.loc[df["Packing Date"].isin(packing_dates)]
         distinct_values = df[attribute].unique()
         return {"values": sorted(distinct_values)}
+
+
+def _clean_collection_columns(df: pd.DataFrame) -> pd.DataFrame:
+    df.loc[df["Shipping Method"] != models.SHIPPING_METHOD_COLLECTION, _COLLECTION_COLUMNS_TO_CLEAN] = _COLLECTION_COLUMNS_CLEANED_VALUES
+    return df
 
 
 def _congestion_zone_postcodes() -> pd.DataFrame:
