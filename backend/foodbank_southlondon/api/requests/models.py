@@ -74,7 +74,7 @@ request = rest.model("ClientRequest", {
     "waterloo_collection_time": fields.String(attribute="Waterloo Collection Time", required=False,
                                               description="The time that the food parcel should be collected from the Waterloo centre, in the format "
                                               "of HH:MM", example="12:30"),
-    "clapham_park_collection_time": fields.String(attribute="Clapham, Park Collection Time", required=False,
+    "clapham_park_collection_time": fields.String(attribute="Clapham Park Collection Time", required=False,
                                                   description="The time that the food parcel should be collected from the Clapham Park centre, in "
                                                   "the format of HH:MM", example="12:30"),
     "edit_details_url": fields.String(required=True, description="The Google Forms edit response URL that can be used to update details of the "
