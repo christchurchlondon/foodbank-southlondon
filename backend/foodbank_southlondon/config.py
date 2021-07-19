@@ -48,6 +48,10 @@ class _Config(object):
         return json.loads(os.environ.get("FBSL_COLLECTION_CENTRES_CALENDAR_IDS"))
 
     @property
+    def FBSL_BASIC_API_KEY(self) -> str:
+        return os.environ.get("FBSL_BASIC_API_KEY")
+
+    @property
     def FBSL_SA_KEY(self) -> str:
         return os.environ.get("FBSL_SA_KEY")
 
