@@ -15,6 +15,7 @@ import wrapt  # type:ignore
 
 # CONFIG VARIABLES
 _FBSL_BASIC_API_KEY_SIGNING_SECRET = "FBSL_BASIC_API_KEY_SIGNING_SECRET"
+_FBSL_GOOGLE_MAPS_STATIC_API_BASE_URL = "FBSL_GOOGLE_MAPS_STATIC_API_BASE_URL"
 _FBSL_GSUITE_IMPERSONATE_ADDRESS = "FBSL_GSUITE_IMPERSONATE_ADDRESS"
 _FBSL_PROTECT_API = "FBSL_PROTECT_API"
 _FBSL_SA_KEY = "FBSL_SA_KEY"
@@ -41,6 +42,18 @@ def drive_files_resource() -> discovery.Resource:
         creds = credentials("https://www.googleapis.com/auth/drive.metadata.readonly")
         drive_files_resource = flask.g.drive_files_resource = discovery.build("drive", "v3", credentials=creds, cache_discovery=False).files()
     return drive_files_resource
+
+
+def google_maps_static_api_url(*postcodes: str, height: int = 500, width: int = 500, scale: int = 2, map_type: str = "roadmap",
+                               format: str = "png", marker_size: str = "mid", marker_colour: str = "red") -> str:
+    if not postcodes:
+        raise ValueError("one or more postcodes must be provided")
+    size = f"{width}x{height}"
+    markers = f"{marker_size}|{marker_colour}|{'|'.join(postcodes)}"
+    query = parse.urlencode({"size": size, "scale": scale, "format": format, "maptype": map_type, "markers": markers})
+    url_parts = (*flask.current_app.config[_FBSL_GOOGLE_MAPS_STATIC_API_BASE_URL], None, query, None)
+    url = parse.urlunparse(url_parts)
+    return sign_url(url)
 
 
 def gspread_client() -> gspread.Client:
