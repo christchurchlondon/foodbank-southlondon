@@ -56,7 +56,6 @@ def google_maps_static_api_url(*postcodes: str, height: int = 500, width: int = 
                              "key": current_app.config[_FBSL_BASIC_API_KEY]})
     url_parts = (*current_app.config[_FBSL_GOOGLE_MAPS_STATIC_API_BASE_URL], None, query, None)
     url = parse.urlunparse(url_parts)
-    print(url)
     return sign_url(url)
 
 

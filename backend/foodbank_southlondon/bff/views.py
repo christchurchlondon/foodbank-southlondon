@@ -2,6 +2,7 @@ from collections.abc import Iterable, Iterator
 from typing import Any, Dict, List, Optional, Tuple
 import datetime
 import itertools
+import io
 
 import flask
 import flask_restx  # type:ignore
@@ -112,10 +113,7 @@ class Actions(flask_restx.Resource):
     @staticmethod
     def _make_pdf_response(pages: List, metadata: Any, url_fetcher: Any, font_config: Any, template_name: str) -> flask.Response:
         pdf = weasyprint.Document(pages, metadata, url_fetcher, font_config).write_pdf()
-        response = flask.make_response((pdf, 201))
-        response.headers["Content-Type"] = "application/pdf"
-        response.headers["Content-Disposition"] = f"attachment; filename=\"{template_name}.pdf\""
-        return response
+        return flask.send_file(io.BytesIO(pdf), attachment_filename=f"{template_name}.pdf", as_attachment=True)
 
     @staticmethod
     def _process_warnings(api_base_url: str, request_ids: List, action_status_name: str) -> Optional[flask.Response]:
@@ -205,7 +203,7 @@ class Actions(flask_restx.Resource):
                 return self._generate_day_overview_pdf(items)
             elif event_name == events_models.Action.PRINT_ANNOTATED_MAP.value.event_name:
                 url = helpers.google_maps_static_api_url(*(request["postcode"] for request in requests_items))
-                print(url)
+                return flask.send_file(requests.get(url).raw, attachment_filename="annotated-map.png", as_attachment=True)
             _post_event(api_base_url, request_ids, action_status_name, event_data)
         return return_value
 
