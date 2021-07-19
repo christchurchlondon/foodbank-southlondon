@@ -275,6 +275,7 @@ class Summary(flask_restx.Resource):
     @rest.marshal_with(models.page_of_summary)
     def get(self) -> Dict[str, Any]:
         """List Client Request summary."""
+        current_app = flask.current_app
         params = parsers.summary_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         start_date = params["start_date"]
@@ -308,7 +309,7 @@ class Summary(flask_restx.Resource):
             events_df = None
             request_ids = requests_df["request_id"].unique()
             event_attributes = ("request_id", "event_timestamp", "event_name", "event_data")
-            for chunk in _chunk(request_ids, flask.current_app.config[_FBSL_MAX_REQUEST_IDS_PER_URL]):
+            for chunk in _chunk(request_ids, current_app.config[_FBSL_MAX_REQUEST_IDS_PER_URL]):
                 events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
                                    headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
                                    params={"request_ids": ",".join(chunk), "latest_event_only": True, "refresh_cache": refresh_cache,

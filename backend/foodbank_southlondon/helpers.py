@@ -51,11 +51,12 @@ def google_maps_static_api_url(*postcodes: str, height: int = 500, width: int = 
         raise ValueError("one or more postcodes must be provided")
     current_app = flask.current_app
     size = f"{width}x{height}"
-    markers = f"{marker_size}|{marker_colour}|{'|'.join(postcodes)}"
+    markers = f"size:{marker_size}|color:{marker_colour}|{'|'.join(postcodes)}"
     query = parse.urlencode({"size": size, "scale": scale, "format": format, "maptype": map_type, "markers": markers,
                              "key": current_app.config[_FBSL_BASIC_API_KEY]})
     url_parts = (*current_app.config[_FBSL_GOOGLE_MAPS_STATIC_API_BASE_URL], None, query, None)
     url = parse.urlunparse(url_parts)
+    print(url)
     return sign_url(url)
 
 
@@ -92,7 +93,8 @@ def sign_url(url: str) -> str:
     signature = hmac.new(decoded_secret, url_to_sign.encode("utf8"), hashlib.sha1)
     encoded_signature = base64.urlsafe_b64encode(signature.digest())
     query_parts["signature"] = [encoded_signature.decode()]
-    url_parts._replace(query=parse.urlencode(query_parts, doseq=True))
+    query = parse.urlencode(query_parts, doseq=True)
+    url_parts = url_parts._replace(query=query)
     return parse.urlunparse(url_parts)
 
 
