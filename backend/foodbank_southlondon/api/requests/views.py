@@ -37,7 +37,7 @@ class Requests(flask_restx.Resource):
         postcodes = set(postcode.strip() for postcode in (params["postcodes"] or ()))
         time_of_days = set(time_of_day.strip() for time_of_day in (params["time_of_days"] or ()))
         voucher_numbers = set("" if voucher_number.strip() == "?" else voucher_number.strip() for voucher_number in (params["voucher_numbers"] or ()))
-        collection_sites = set(collection_site.strip() for collection_site in (params["collection_sites"] or ()))
+        collection_centres = set(collection_centre.strip() for collection_centre in (params["collection_centres"] or ()))
         event_names = set(event_name.strip() for event_name in (params["event_names"] or ()))
         invalid_event_names = event_names.difference(events_models.EVENT_NAMES)
         if invalid_event_names:
@@ -58,8 +58,8 @@ class Requests(flask_restx.Resource):
             df = df.loc[df["Voucher Number"].isin(voucher_numbers)]
         if time_of_days:
             df = df.loc[df["Time of Day"].isin(time_of_days)]
-        if collection_sites:
-            df = df.loc[(df["Shipping Method"] == models.SHIPPING_METHOD_COLLECTION) & (df["Collection Site"].isin(collection_sites))]
+        if collection_centres:
+            df = df.loc[(df["Shipping Method"] == models.SHIPPING_METHOD_COLLECTION) & (df["Collection Centre"].isin(collection_centres))]
         if event_names:
             events_df = events_views.cache(force_refresh=refresh_cache)
             events_df = (

@@ -44,8 +44,8 @@ class _Config(object):
     FBSL_WATERMARK_CALENDAR_EVENT_ID = ""
 
     @property
-    def FBSL_COLLECTION_SITES_CALENDAR_IDS(self) -> dict:
-        return json.loads(os.environ.get("FBSL_COLLECTION_SITES_CALENDAR_IDS"))
+    def FBSL_COLLECTION_CENTRES_CALENDAR_IDS(self) -> dict:
+        return json.loads(os.environ.get("FBSL_COLLECTION_CENTRES_CALENDAR_IDS"))
 
     @property
     def FBSL_SA_KEY(self) -> str:

@@ -26,7 +26,7 @@ for field_name in LIST_NAMES:
     _all_lists_item_fields[f"{field_name}_notes"] = fields.String(required=True, description=f"Item-specific notes for the Household Size, "
                                                                   f"{field_name}", example="Free range if available")
 
-_all_lists_item = rest.model("AllShoppingListsItem", _all_lists_item_fields)
+_all_lists_item = rest.model("AllShoppingListcentrem", _all_lists_item_fields)
 
 _one_list_item = rest.model("ShoppingListItem", {
     "item_description": _item_description_field,
@@ -35,7 +35,7 @@ _one_list_item = rest.model("ShoppingListItem", {
 })
 
 
-all_lists_items = rest.model("AllShoppingListsItems", {
+all_lists_items = rest.model("AllShoppingListcentrems", {
     "notes": _notes_field,
     "items": fields.List(fields.Nested(_all_lists_item))
 })

@@ -12,7 +12,7 @@ from foodbank_southlondon.api.requests import models as requests_models, views a
 
 # CONFIG VARIABLES
 _FBSL_COLLECTION_EVENT_DURATION_MINS = "FBSL_COLLECTION_EVENT_DURATION_MINS"
-_FBSL_COLLECTION_SITES_CALENDAR_IDS = "FBSL_COLLECTION_SITES_CALENDAR_IDS"
+_FBSL_COLLECTION_CENTRES_CALENDAR_IDS = "FBSL_COLLECTION_CENTRES_CALENDAR_IDS"
 _FBSL_WATERMARK_CALENDAR_ID = "FBSL_WATERMARK_CALENDAR_ID"
 _FBSL_WATERMARK_CALENDAR_EVENT_ID = "FBSL_WATERMARK_CALENDAR_EVENT_ID"
 
@@ -49,41 +49,42 @@ def sync_calendar() -> None:
     requests_df = requests_df.loc[pd.to_datetime(requests_df["Timestamp"], format=f"{requests_date_format} %H:%M:%S",
                                                  errors="coerce") > old_threshold]
     app.logger.info(f"Found {len(requests_df.index)} potential changes.")
-    calendar_ids = app.config[_FBSL_COLLECTION_SITES_CALENDAR_IDS]
+    calendar_ids = app.config[_FBSL_COLLECTION_CENTRES_CALENDAR_IDS]
     calendar_ids_values = calendar_ids.values()
     for _, row in requests_df.iterrows():
         request_id = row[request_id_attribute]
         private_extended_property = {request_id_attribute: request_id}
         private_extended_property_query = "&".join("=".join(item) for item in private_extended_property.items())
         if row["Shipping Method"] == requests_models.SHIPPING_METHOD_COLLECTION:
-            collection_site = row["Collection Site"]
-            collection_site_calendar_id = calendar_ids[collection_site]
+            collection_centre = row["Collection Centre"]
+            collection_centre_calendar_id = calendar_ids[collection_centre]
             collection_date = datetime.datetime.strptime(row["Collection Date"], requests_date_format)
-            collection_time = time.strptime(row[f"{collection_site} Collection Time"], "%H:%M")
+            collection_time = time.strptime(row[f"{collection_centre} Collection Time"], "%H:%M")
             collection_datetime = datetime.datetime(collection_date.year, collection_date.month, collection_date.day, collection_time.tm_hour,
                                                     collection_time.tm_min).astimezone()
             new_event = {
-                "summary": f"[{collection_site}] {row['Client Full Name']}",
+                "summary": f"[{collection_centre}] {row['Client Full Name']}",
                 "start": {"dateTime": collection_datetime.isoformat()},
                 "end": {"dateTime": _event_end_rfc3339_from_start(collection_datetime)},
-                "location": collection_site,
+                "location": collection_centre,
                 "extendedProperties": {"private": private_extended_property}
             }
-            old_event = next(iter(calendar_events_resource.list(calendarId=collection_site_calendar_id,
+            old_event = next(iter(calendar_events_resource.list(calendarId=collection_centre_calendar_id,
                                                                 privateExtendedProperty=private_extended_property_query).execute()["items"]), None)
             if not old_event:
                 calendar_id, old_event = _find_event(calendar_events_resource, calendar_ids_values, private_extended_property_query)
                 if old_event:
                     app.logger.info(f"Moving event for request ID, {request_id}...")
-                    calendar_events_resource.move(calendarId=calendar_id, eventId=old_event["id"], destination=collection_site_calendar_id).execute()
+                    calendar_events_resource.move(calendarId=calendar_id, eventId=old_event["id"],
+                                                  destination=collection_centre_calendar_id).execute()
             if old_event:
                 changed_event_attributes = {k: v for k, v in new_event.items() if old_event[k] != v}
                 if changed_event_attributes:
                     app.logger.info(f"Updating event for request ID, {request_id}...")
-                    calendar_events_resource.patch(calendarId=collection_site_calendar_id, eventId=old_event["id"], body=new_event).execute()
+                    calendar_events_resource.patch(calendarId=collection_centre_calendar_id, eventId=old_event["id"], body=new_event).execute()
             else:
                 app.logger.info(f"Creating event for request ID, {request_id}...")
-                calendar_events_resource.insert(calendarId=collection_site_calendar_id, body=new_event).execute()
+                calendar_events_resource.insert(calendarId=collection_centre_calendar_id, body=new_event).execute()
         else:
             calendar_id, old_event = _find_event(calendar_events_resource, calendar_ids_values, private_extended_property_query)
             if old_event:
