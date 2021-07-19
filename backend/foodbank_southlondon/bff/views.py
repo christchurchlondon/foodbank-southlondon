@@ -1,5 +1,5 @@
 from collections.abc import Iterable, Iterator
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 import datetime
 import itertools
 
@@ -116,6 +116,15 @@ class Actions(flask_restx.Resource):
         response.headers["Content-Disposition"] = f"attachment; filename=\"{template_name}.pdf\""
         return response
 
+    @staticmethod
+    def _process_warnings(api_base_url: str, request_ids: List, action_status_name: str) -> Optional[flask.Response]:
+        events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
+                           params={"request_ids": request_ids, "event_names": [action_status_name], "latest_event_only": True, "refresh_cache": True,
+                                   "per_page": len(request_ids)})
+        if events_data["items"]:
+            return flask.make_response({"warning": "A shipping label has already been printed for 1 or more requests in the selection."}, 202)
+        return None
+
     @rest.expect(parsers.action_params)
     @rest.expect(models.action)
     @rest.response(201, "Created")
@@ -125,6 +134,7 @@ class Actions(flask_restx.Resource):
     def post(self) -> flask.Response:
         """Process an action."""
         params = parsers.action_params.parse_args(flask.request)
+        ignore_warnings = params["ignore_warnings"]
         data = flask.request.json
         flask.current_app.logger.debug(f"Received request body, {data}")
         request_ids = data["request_ids"]
@@ -158,15 +168,17 @@ class Actions(flask_restx.Resource):
                     rest.abort(error.response.status_code, error.response.text)
             if event_name == events_models.Action.PRINT_SHOPPING_LIST.value.event_name:
                 action_status_name = events_models.ActionStatus.SHOPPING_LIST_PRINTED.value.event_name
+                if not ignore_warnings:
+                    return_value = self._process_warnings(api_base_url, request_ids, action_status_name)
+                    if return_value:
+                        return return_value
                 return_value = self._generate_shopping_list_pdf(requests_items, api_base_url, flask.request.cookies)
             elif event_name == events_models.Action.PRINT_SHIPPING_LABEL.value.event_name:
                 action_status_name = events_models.ActionStatus.SHIPPING_LABEL_PRINTED.value.event_name
-                if not params["ignore_warnings"]:
-                    events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
-                                       params={"request_ids": request_ids, "event_names": [action_status_name], "latest_event_only": True,
-                                               "refresh_cache": True, "per_page": len(request_ids)})
-                    if events_data["items"]:
-                        return ({"warning": "A shipping label has already been printed for 1 or more requests in the selection."}, 202)
+                if not ignore_warnings:
+                    return_value = self._process_warnings(api_base_url, request_ids, action_status_name)
+                    if return_value:
+                        return return_value
                 if not event_data.isdigit() or int(event_data) < 1:
                     rest.abort(400, "Invalid quantity. The quantity must be positive integer.")
                 return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
