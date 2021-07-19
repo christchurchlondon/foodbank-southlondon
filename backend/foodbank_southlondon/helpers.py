@@ -14,6 +14,7 @@ import wrapt  # type:ignore
 
 
 # CONFIG VARIABLES
+_FBSL_BASIC_API_KEY = "FBSL_BASIC_API_KEY"
 _FBSL_BASIC_API_KEY_SIGNING_SECRET = "FBSL_BASIC_API_KEY_SIGNING_SECRET"
 _FBSL_GOOGLE_MAPS_STATIC_API_BASE_URL = "FBSL_GOOGLE_MAPS_STATIC_API_BASE_URL"
 _FBSL_GSUITE_IMPERSONATE_ADDRESS = "FBSL_GSUITE_IMPERSONATE_ADDRESS"
@@ -48,10 +49,12 @@ def google_maps_static_api_url(*postcodes: str, height: int = 500, width: int = 
                                format: str = "png", marker_size: str = "mid", marker_colour: str = "red") -> str:
     if not postcodes:
         raise ValueError("one or more postcodes must be provided")
+    current_app = flask.current_app
     size = f"{width}x{height}"
     markers = f"{marker_size}|{marker_colour}|{'|'.join(postcodes)}"
-    query = parse.urlencode({"size": size, "scale": scale, "format": format, "maptype": map_type, "markers": markers})
-    url_parts = (*flask.current_app.config[_FBSL_GOOGLE_MAPS_STATIC_API_BASE_URL], None, query, None)
+    query = parse.urlencode({"size": size, "scale": scale, "format": format, "maptype": map_type, "markers": markers,
+                             "key": current_app.config[_FBSL_BASIC_API_KEY]})
+    url_parts = (*current_app.config[_FBSL_GOOGLE_MAPS_STATIC_API_BASE_URL], None, query, None)
     url = parse.urlunparse(url_parts)
     return sign_url(url)
 
@@ -88,8 +91,8 @@ def sign_url(url: str) -> str:
     decoded_secret = base64.urlsafe_b64decode(flask.current_app.config[_FBSL_BASIC_API_KEY_SIGNING_SECRET])
     signature = hmac.new(decoded_secret, url_to_sign.encode("utf8"), hashlib.sha1)
     encoded_signature = base64.urlsafe_b64encode(signature.digest())
-    query_parts["signature"] = encoded_signature.decode()
-    url_parts.query = parse.urlencode(query_parts, doseq=True)
+    query_parts["signature"] = [encoded_signature.decode()]
+    url_parts._replace(query=parse.urlencode(query_parts, doseq=True))
     return parse.urlunparse(url_parts)
 
 

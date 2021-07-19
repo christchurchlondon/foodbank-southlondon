@@ -138,7 +138,8 @@ def _congestion_zone_postcodes() -> pd.DataFrame:
 
 
 def _edit_details_url(request_id: str) -> str:
-    return flask.current_app.config[_FBSL_FORM_EDIT_URL_TEMPLATE].format(form_id=flask.current_app.config[_FBSL_FORM_ID], request_id=request_id)
+    current_app = flask.current_app
+    return current_app.config[_FBSL_FORM_EDIT_URL_TEMPLATE].format(form_id=current_app.config[_FBSL_FORM_ID], request_id=request_id)
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:

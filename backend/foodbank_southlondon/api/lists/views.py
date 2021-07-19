@@ -32,9 +32,10 @@ class Lists(flask_restx.Resource):
     @rest.response(201, "Created")
     def post(self) -> Tuple[Dict, int]:
         """Overwrite the Shopping Lists."""
+        current_app = flask.current_app
         data = flask.request.json
-        flask.current_app.logger.debug(f"Received request body, {data}")
-        lists_gsheet_id = flask.current_app.config[_FBSL_LISTS_GSHEET_ID]
+        current_app.logger.debug(f"Received request body, {data}")
+        lists_gsheet_id = current_app.config[_FBSL_LISTS_GSHEET_ID]
         items = data["items"]
         if not items:
             rows = []

@@ -12,6 +12,7 @@ import requests
 import weasyprint  # type:ignore
 import werkzeug
 
+from foodbank_southlondon import helpers
 from foodbank_southlondon.api import utils
 from foodbank_southlondon.api.events import models as events_models
 from foodbank_southlondon.api.lists import models as lists_models
@@ -133,13 +134,14 @@ class Actions(flask_restx.Resource):
     @rest.response(404, "Not Found")
     def post(self) -> flask.Response:
         """Process an action."""
+        current_app = flask.current_app
         params = parsers.action_params.parse_args(flask.request)
         ignore_warnings = params["ignore_warnings"]
         data = flask.request.json
-        flask.current_app.logger.debug(f"Received request body, {data}")
+        current_app.logger.debug(f"Received request body, {data}")
         request_ids = data["request_ids"]
         total_request_ids = len(request_ids)
-        max_action_request_ids = flask.current_app.config[_FBSL_MAX_ACTION_REQUEST_IDS]
+        max_action_request_ids = current_app.config[_FBSL_MAX_ACTION_REQUEST_IDS]
         if total_request_ids > max_action_request_ids:
             rest.abort(400, f"The maximum number of clients that can be selected at one time is {max_action_request_ids}.")
         event_name = data["event_name"]
@@ -152,13 +154,13 @@ class Actions(flask_restx.Resource):
                 # leaving the operations in the wrong order - very small chance edge case that the deletion will fail but still be marked as deleted
                 # - user can just delete again.
                 _post_event(api_base_url, [request_id], events_models.ActionStatus.REQUEST_DELETED.value.event_name, event_data)
-                utils.delete_row(flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], request_id)
+                utils.delete_row(current_app.config[_FBSL_REQUESTS_GSHEET_ID], request_id)
             return_value = flask.make_response({}, 201)
         else:
             action_status_name = None
             try:
                 requests_items = []
-                for chunk in list(_chunk(request_ids, flask.current_app.config[_FBSL_MAX_REQUEST_IDS_PER_URL])):
+                for chunk in list(_chunk(request_ids, current_app.config[_FBSL_MAX_REQUEST_IDS_PER_URL])):
                     requests_items.extend(_get(f"{api_base_url}requests/{','.join(chunk)}", cookies=flask.request.cookies,
                                           params={"per_page": len(chunk)})["items"])
             except requests.exceptions.HTTPError as error:
@@ -201,6 +203,9 @@ class Actions(flask_restx.Resource):
                 df = df.sort_values(by=["time_of_day", "postcode"], key=lambda col: col.str.lower())
                 items = df.to_dict("records")
                 return self._generate_day_overview_pdf(items)
+            elif event_name == events_models.Action.PRINT_ANNOTATED_MAP.value.event_name:
+                url = helpers.google_maps_static_api_url(*(request["postcode"] for request in requests_items))
+                print(url)
             _post_event(api_base_url, request_ids, action_status_name, event_data)
         return return_value
 
@@ -320,7 +325,7 @@ class Summary(flask_restx.Resource):
             "per_page": requests_data["per_page"],
             "total_pages": requests_data["total_pages"],
             "total_items": requests_data["total_items"],
-            "form_submit_url": flask.current_app.config[_FBSL_FORM_SUBMIT_URL_TEMPLATE].format(form_id=flask.current_app.config[_FBSL_FORM_ID]),
+            "form_submit_url": current_app.config[_FBSL_FORM_SUBMIT_URL_TEMPLATE].format(form_id=current_app.config[_FBSL_FORM_ID]),
             "items": items
         }
 
