@@ -1,6 +1,5 @@
 from collections.abc import Iterable, Iterator
 from typing import Any, Dict, List, Tuple
-from urllib import parse
 import datetime
 import itertools
 
@@ -25,7 +24,6 @@ logging.getLogger("weasyprint").addHandler(logging.StreamHandler())
 # CONFIG VARIABLES
 _FBSL_BASE_DOMAIN = "FBSL_BASE_DOMAIN"
 _FBSL_CATCH_ALL_LIST = "FBSL_CATCH_ALL_LIST"
-_FBSL_COLLECTION_SITES_CALENDAR_IDS = "FBSL_COLLECTION_SITES_CALENDAR_IDS"
 _FBSL_FORM_ID = "FBSL_FORM_ID"
 _FBSL_FORM_SUBMIT_URL_TEMPLATE = "FBSL_FORM_SUBMIT_URL_TEMPLATE"
 _FBSL_MAX_ACTION_REQUEST_IDS = "FBSL_MAX_ACTION_REQUEST_IDS"
@@ -33,7 +31,6 @@ _FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
 _FBSL_MAX_REQUEST_IDS_PER_URL = "FBSL_MAX_REQUEST_IDS_PER_URL"
 _FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
 _FBSL_STAFF_MOBILES = "FBSL_STAFF_MOBILES"
-_PREFERRED_URL_SCHEME = "PREFERRED_URL_SCHEME"
 
 
 def _api_base_url() -> str:
@@ -301,7 +298,6 @@ class Summary(flask_restx.Resource):
             "per_page": requests_data["per_page"],
             "total_pages": requests_data["total_pages"],
             "total_items": requests_data["total_items"],
-            "calendar_ids": [parse.quote(calendar_id) for calendar_id in flask.current_app.config[_FBSL_COLLECTION_SITES_CALENDAR_IDS].values()],
             "form_submit_url": flask.current_app.config[_FBSL_FORM_SUBMIT_URL_TEMPLATE].format(form_id=flask.current_app.config[_FBSL_FORM_ID]),
             "items": items
         }

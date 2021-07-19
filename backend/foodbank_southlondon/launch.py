@@ -12,6 +12,7 @@ import foodbank_southlondon.api.errors  # noqa: F401
 import foodbank_southlondon.api.events.views  # noqa: F401
 import foodbank_southlondon.api.lists.views  # noqa: F401
 import foodbank_southlondon.api.requests.views  # noqa: F401
+import foodbank_southlondon.api.views  # noqa:F401
 import foodbank_southlondon.bff.views  # noqa: F401
 
 
