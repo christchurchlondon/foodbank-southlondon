@@ -52,6 +52,10 @@ class _Config(object):
         return os.environ.get("FBSL_BASIC_API_KEY")
 
     @property
+    def FBSL_BASIC_API_KEY_SIGNING_SECRET(self) -> str:
+        return os.environ.get("FBSL_BASIC_API_KEY_SIGNING_SECRET")
+
+    @property
     def FBSL_SA_KEY(self) -> str:
         return os.environ.get("FBSL_SA_KEY")
 

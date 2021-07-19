@@ -1,4 +1,8 @@
+from urllib import parse
 from typing import Any, Callable, Dict, List
+import base64
+import hashlib
+import hmac
 import json
 import time
 
@@ -10,6 +14,7 @@ import wrapt  # type:ignore
 
 
 # CONFIG VARIABLES
+_FBSL_BASIC_API_KEY_SIGNING_SECRET = "FBSL_BASIC_API_KEY_SIGNING_SECRET"
 _FBSL_GSUITE_IMPERSONATE_ADDRESS = "FBSL_GSUITE_IMPERSONATE_ADDRESS"
 _FBSL_PROTECT_API = "FBSL_PROTECT_API"
 _FBSL_SA_KEY = "FBSL_SA_KEY"
@@ -61,6 +66,18 @@ def login_required(wrapped: Callable, instance: Any, args: List, kwargs: Dict) -
     if flask.current_app.config[_FBSL_PROTECT_API] and not user_authenticated():
         flask.abort(403, "Permission Denied.")
     return wrapped(*args, **kwargs)
+
+
+def sign_url(url: str) -> str:
+    url_parts = parse.urlparse(url)
+    query_parts = parse.parse_qs(url_parts.query)
+    url_to_sign = f"{url_parts.path}?{url_parts.query}"
+    decoded_secret = base64.urlsafe_b64decode(flask.current_app.config[_FBSL_BASIC_API_KEY_SIGNING_SECRET])
+    signature = hmac.new(decoded_secret, url_to_sign.encode("utf8"), hashlib.sha1)
+    encoded_signature = base64.urlsafe_b64encode(signature.digest())
+    query_parts["signature"] = encoded_signature.decode()
+    url_parts.query = parse.urlencode(query_parts, doseq=True)
+    return parse.urlunparse(url_parts)
 
 
 def user_authenticated() -> bool:
