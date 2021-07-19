@@ -28,6 +28,12 @@ _COLLECTION_COLUMNS_CLEANED_VALUES = [""] * len(_COLLECTION_COLUMNS_TO_CLEAN)
 @namespace.route("/")
 class Requests(flask_restx.Resource):
 
+    @staticmethod
+    def fuzzy_match(text: str, choices: Iterable) -> bool:
+        search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
+        possibilities = process.extract(text, choices, scorer=fuzz.partial_ratio)
+        return any(p[1] >= search_threshold for p in possibilities)
+
     @rest.expect(parsers.requests_params)
     @rest.marshal_with(models.page_of_requests)
     @utils.paginate("Packing Date", "Time of Day", "Collection Centre", "Postcode", "request_id")
@@ -53,7 +59,7 @@ class Requests(flask_restx.Resource):
         if packing_dates:
             df = df.loc[df["Packing Date"].isin(packing_dates)]
         if client_full_names:
-            df = df.loc[df[name_attribute].map(functools.partial(fuzzy_match, choices=client_full_names))]
+            df = df.loc[df[name_attribute].map(functools.partial(self.fuzzy_match, choices=client_full_names))]
         postcode_attribute = "Postcode"
         if postcodes:
             df = df.loc[df[postcode_attribute].str.lower().str.startswith(tuple(postcodes)) |
@@ -137,9 +143,3 @@ def _edit_details_url(request_id: str) -> str:
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
     return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], force_refresh=force_refresh)
-
-
-def fuzzy_match(text: str, choices: Iterable) -> bool:
-    search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
-    possibilities = process.extract(text, choices, scorer=fuzz.partial_ratio)
-    return any(p[1] >= search_threshold for p in possibilities)
