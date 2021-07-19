@@ -17,7 +17,7 @@ _calendar_model = rest.model("Calendars", {
 })
 
 
-@rest.route("/calendars")
+@rest.route("/calendars/")
 class Calendars(flask_restx.Resource):
 
     @rest.marshal_with(_calendar_model)
