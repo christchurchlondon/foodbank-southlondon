@@ -40,6 +40,8 @@ class Status(enum.Enum):
     CALLED_CONFIRMED = Event("Called & Confirmed", True, True, False, False, False, "What date did you call the client?")
     CALLED_NO_RESPONSE = Event("Called & No Response", True, True, False, False, False, "What date did you attempt to call the client?")
     READY_TO_DISPATCH = Event("Ready to Dispatch", True, False, False, False, False)
+    RECEIVED_BY_CENTRE = Event("Received by Centre", True, True, False, False, False, "What date did the centre receive the parcel?")
+    PARCEL_COLLECTED = Event("Parcel Collected", True, True, False, False, False, "What date did the client collect the parcel?")
     DELIVERED = Event("Delivered", True, True, False, False, False, "What date were the parcels delivered?")
     DELIVERY_FAILED = Event("Delivery Failed", True, True, False, False, False, "What date did the delivery fail?")
     # CLIENT_CONTACT_REQUIRED = Event("Client Contact Required", True, False, False, False, False) removed following foodbank request 13/01
