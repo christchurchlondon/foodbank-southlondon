@@ -203,7 +203,7 @@ class Actions(flask_restx.Resource):
                 return self._generate_day_overview_pdf(items)
             elif event_name == events_models.Action.PRINT_ANNOTATED_MAP.value.event_name:
                 url = helpers.google_maps_static_api_url(*(request["postcode"] for request in requests_items))
-                return flask.send_file(requests.get(url).raw, attachment_filename="annotated-map.png", as_attachment=True)
+                return flask.send_file(requests.get(url, stream=True).raw, attachment_filename="annotated-map.png", as_attachment=True)
             _post_event(api_base_url, request_ids, action_status_name, event_data)
         return return_value
 

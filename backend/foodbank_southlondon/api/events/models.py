@@ -19,7 +19,7 @@ class Event:
 
 
 class Action(enum.Enum):
-    PRINT_ANNOTATED_MAP = Event("Print Annotated Map", True, False, False, False, False, "This action generates a google map image with location "
+    PRINT_ANNOTATED_MAP = Event("Print Annotated Map", True, False, False, False, True, "This action generates a google map image with location "
                                 "markers without logging a status.")
     PRINT_DAY_OVERVIEW = Event("Print Day Overview", True, False, False, False, True, "This action generates a driver-overview like PDF without "
                                "logging a status.")
