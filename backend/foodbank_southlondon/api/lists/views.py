@@ -1,8 +1,8 @@
 from typing import Any, Dict, Tuple
 
 import flask
-import flask_restx  # type:ignore
-import pandas as pd  # type:ignore
+import flask_restx  # type: ignore
+import pandas as pd  # type: ignore
 
 from foodbank_southlondon.api import rest, utils
 from foodbank_southlondon.api.lists import models, namespace, parsers

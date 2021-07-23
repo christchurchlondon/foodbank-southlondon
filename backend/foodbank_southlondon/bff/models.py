@@ -1,8 +1,8 @@
 from typing import Dict
 import copy
 
-from flask_restx import fields  # type:ignore
-import flask_restx  # type:ignore
+from flask_restx import fields  # type: ignore
+import flask_restx  # type: ignore
 
 from foodbank_southlondon.api import models
 from foodbank_southlondon.api.requests import models as requests_models

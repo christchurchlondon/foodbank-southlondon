@@ -1,19 +1,19 @@
 from collections.abc import Iterable, Iterator
 from typing import Any, Dict, List, Optional, Tuple
+from urllib import parse
 import datetime
 import itertools
 import io
 
 import flask
-import flask_restx  # type:ignore
-import numpy as np  # type:ignore
-import pandas as pd  # type:ignore
+import flask_restx  # type: ignore
+import numpy as np  # type: ignore
+import pandas as pd  # type: ignore
 import pytz
 import requests
-import weasyprint  # type:ignore
+import weasyprint  # type: ignore
 import werkzeug
 
-from foodbank_southlondon import helpers
 from foodbank_southlondon.api import utils
 from foodbank_southlondon.api.events import models as events_models
 from foodbank_southlondon.api.lists import models as lists_models
@@ -28,6 +28,7 @@ _FBSL_BASE_DOMAIN = "FBSL_BASE_DOMAIN"
 _FBSL_CATCH_ALL_LIST = "FBSL_CATCH_ALL_LIST"
 _FBSL_FORM_ID = "FBSL_FORM_ID"
 _FBSL_FORM_SUBMIT_URL_TEMPLATE = "FBSL_FORM_SUBMIT_URL_TEMPLATE"
+_FBSL_GOOGLE_MAPS_SEARCH_BASE_URL = "FBSL_GOOGLE_MAPS_SEARCH_BASE_URL"
 _FBSL_MAX_ACTION_REQUEST_IDS = "FBSL_MAX_ACTION_REQUEST_IDS"
 _FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
 _FBSL_MAX_REQUEST_IDS_PER_URL = "FBSL_MAX_REQUEST_IDS_PER_URL"
@@ -121,7 +122,7 @@ class Actions(flask_restx.Resource):
                            params={"request_ids": request_ids, "event_names": [action_status_name], "latest_event_only": True, "refresh_cache": True,
                                    "per_page": len(request_ids)})
         if events_data["items"]:
-            return flask.make_response({"warning": "A shipping label has already been printed for 1 or more requests in the selection."}, 202)
+            return flask.make_response({"warning": "One or more requests in the selection have already been printed."}, 202)
         return None
 
     @rest.expect(parsers.action_params)
@@ -197,13 +198,14 @@ class Actions(flask_restx.Resource):
                 action_status_name = events_models.ActionStatus.OUT_FOR_DELIVERY.value.event_name
                 return_value = self._generate_driver_overview_pdf(items, event_data)
             elif event_name == events_models.Action.PRINT_DAY_OVERVIEW.value.event_name:
-                df = pd.DataFrame(requests_items)
-                df = df.sort_values(by=["time_of_day", "postcode"], key=lambda col: col.str.lower())
-                items = df.to_dict("records")
+                requests_df = pd.DataFrame(requests_items)
+                requests_df = requests_df.sort_values(by=["time_of_day", "postcode"], key=lambda col: col.str.lower())
+                items = requests_df.to_dict("records")
                 return self._generate_day_overview_pdf(items)
-            elif event_name == events_models.Action.PRINT_ANNOTATED_MAP.value.event_name:
-                url = helpers.google_maps_static_api_url(*(request["postcode"] for request in requests_items))
-                return flask.send_file(requests.get(url, stream=True).raw, attachment_filename="annotated-map.png", as_attachment=True)
+            elif event_name == events_models.Action.GENERATE_MAP.value.event_name:
+                requests_df = pd.DataFrame(requests_items)
+                postcodes = ",".join(parse.quote_plus(postcode) for postcode in requests_df["postcode"].unique())
+                return flask.make_response({"url": _FBSL_GOOGLE_MAPS_SEARCH_BASE_URL + postcodes}, 200)
             _post_event(api_base_url, request_ids, action_status_name, event_data)
         return return_value
 

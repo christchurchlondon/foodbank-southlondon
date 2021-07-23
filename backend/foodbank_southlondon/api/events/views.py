@@ -2,8 +2,8 @@ from typing import Dict, List, Tuple
 import dataclasses
 
 import flask
-import flask_restx  # type:ignore
-import pandas as pd  # type:ignore
+import flask_restx  # type: ignore
+import pandas as pd  # type: ignore
 
 from foodbank_southlondon.api import rest, utils
 from foodbank_southlondon.api.events import models, namespace, parsers

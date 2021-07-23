@@ -30,7 +30,7 @@ class _Config(object):
     FBSL_FORM_ID = ""
     FBSL_FORM_SUBMIT_URL_TEMPLATE = "https://docs.google.com/forms/d/e/{form_id}/viewform"
     FBSL_FUZZY_SEARCH_THRESHOLD = 80
-    FBSL_GOOGLE_MAPS_STATIC_API_BASE_URL = ("https", "maps.googleapis.com", "/maps/api/staticmap")
+    FBSL_GOOGLE_MAPS_SEARCH_BASE_URL = "https://www.google.com/maps/search/"
     FBSL_GSUITE_IMPERSONATE_ADDRESS = ""
     FBSL_GSUITE_GROUP_ADDRESS = ""
     FBSL_LISTS_GSHEET_ID = ""
@@ -45,16 +45,8 @@ class _Config(object):
     FBSL_WATERMARK_CALENDAR_EVENT_ID = ""
 
     @property
-    def FBSL_COLLECTION_CENTRES_CALENDAR_IDS(self) -> dict:
-        return json.loads(os.environ.get("FBSL_COLLECTION_CENTRES_CALENDAR_IDS"))
-
-    @property
-    def FBSL_BASIC_API_KEY(self) -> str:
-        return os.environ.get("FBSL_BASIC_API_KEY")
-
-    @property
-    def FBSL_BASIC_API_KEY_SIGNING_SECRET(self) -> str:
-        return os.environ.get("FBSL_BASIC_API_KEY_SIGNING_SECRET")
+    def FBSL_COLLECTION_CENTRES(self) -> dict:
+        return json.loads(os.environ.get("FBSL_COLLECTION_CENTRES"))
 
     @property
     def FBSL_SA_KEY(self) -> str:

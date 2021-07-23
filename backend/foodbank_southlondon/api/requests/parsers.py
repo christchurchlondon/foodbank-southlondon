@@ -1,4 +1,4 @@
-from flask_restx import inputs  # type:ignore
+from flask_restx import inputs  # type: ignore
 
 from foodbank_southlondon.api.parsers import cache_params, pagination_params  # noqa: F401
 from foodbank_southlondon.api.events.parsers import events_params  # noqa: F401

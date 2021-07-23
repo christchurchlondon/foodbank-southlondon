@@ -1,6 +1,6 @@
 from typing import Callable, Dict
 
-from authlib.integrations import flask_client  # type:ignore
+from authlib.integrations import flask_client  # type: ignore
 import flask
 
 
@@ -16,6 +16,6 @@ class _ReverseProxied(object):
 
 
 app = flask.Flask(__name__, static_folder="../../frontend/build", static_url_path="/", template_folder="templates")
-app.wsgi_app = _ReverseProxied(app.wsgi_app)  # type:ignore
+app.wsgi_app = _ReverseProxied(app.wsgi_app)  # type: ignore
 
 oauth = flask_client.OAuth()

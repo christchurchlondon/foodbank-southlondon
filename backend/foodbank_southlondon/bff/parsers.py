@@ -1,6 +1,6 @@
 import datetime
 
-from flask_restx import inputs, reqparse  # type:ignore
+from flask_restx import inputs, reqparse  # type: ignore
 
 from foodbank_southlondon.api import parsers
 from foodbank_southlondon.api.parsers import cache_params  # noqa: F401

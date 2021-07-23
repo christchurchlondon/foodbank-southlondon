@@ -3,9 +3,9 @@ import math
 import datetime
 
 import flask
-import gspread  # type:ignore
-import pandas as pd  # type:ignore
-import wrapt  # type:ignore
+import gspread  # type: ignore
+import pandas as pd  # type: ignore
+import wrapt  # type: ignore
 
 from foodbank_southlondon import helpers
 

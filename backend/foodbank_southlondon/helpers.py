@@ -1,22 +1,15 @@
-from urllib import parse
 from typing import Any, Callable, Dict, List
-import base64
-import hashlib
-import hmac
 import json
 import time
 
-from google.oauth2.service_account import Credentials  # type:ignore
-from googleapiclient import discovery  # type:ignore
+from google.oauth2.service_account import Credentials  # type: ignore
+from googleapiclient import discovery  # type: ignore
 import flask
-import gspread  # type:ignore
-import wrapt  # type:ignore
+import gspread  # type: ignore
+import wrapt  # type: ignore
 
 
 # CONFIG VARIABLES
-_FBSL_BASIC_API_KEY = "FBSL_BASIC_API_KEY"
-_FBSL_BASIC_API_KEY_SIGNING_SECRET = "FBSL_BASIC_API_KEY_SIGNING_SECRET"
-_FBSL_GOOGLE_MAPS_STATIC_API_BASE_URL = "FBSL_GOOGLE_MAPS_STATIC_API_BASE_URL"
 _FBSL_GSUITE_IMPERSONATE_ADDRESS = "FBSL_GSUITE_IMPERSONATE_ADDRESS"
 _FBSL_PROTECT_API = "FBSL_PROTECT_API"
 _FBSL_SA_KEY = "FBSL_SA_KEY"
@@ -45,20 +38,6 @@ def drive_files_resource() -> discovery.Resource:
     return drive_files_resource
 
 
-def google_maps_static_api_url(*postcodes: str, height: int = 500, width: int = 500, scale: int = 2, map_type: str = "roadmap",
-                               format: str = "png", marker_size: str = "mid", marker_colour: str = "red") -> str:
-    if not postcodes:
-        raise ValueError("one or more postcodes must be provided")
-    current_app = flask.current_app
-    size = f"{width}x{height}"
-    markers = f"size:{marker_size}|color:{marker_colour}|{'|'.join(postcodes)}"
-    query = parse.urlencode({"size": size, "scale": scale, "format": format, "maptype": map_type, "markers": markers,
-                             "key": current_app.config[_FBSL_BASIC_API_KEY]})
-    url_parts = (*current_app.config[_FBSL_GOOGLE_MAPS_STATIC_API_BASE_URL], None, query, None)
-    url = parse.urlunparse(url_parts)
-    return sign_url(url)
-
-
 def gspread_client() -> gspread.Client:
     gspread_client = flask.g.get("gspread_client")
     if gspread_client is None:
@@ -82,19 +61,6 @@ def login_required(wrapped: Callable, instance: Any, args: List, kwargs: Dict) -
     if flask.current_app.config[_FBSL_PROTECT_API] and not user_authenticated():
         flask.abort(403, "Permission Denied.")
     return wrapped(*args, **kwargs)
-
-
-def sign_url(url: str) -> str:
-    url_parts = parse.urlparse(url)
-    query_parts = parse.parse_qs(url_parts.query)
-    url_to_sign = f"{url_parts.path}?{url_parts.query}"
-    decoded_secret = base64.urlsafe_b64decode(flask.current_app.config[_FBSL_BASIC_API_KEY_SIGNING_SECRET])
-    signature = hmac.new(decoded_secret, url_to_sign.encode("utf8"), hashlib.sha1)
-    encoded_signature = base64.urlsafe_b64encode(signature.digest())
-    query_parts["signature"] = [encoded_signature.decode()]
-    query = parse.urlencode(query_parts, doseq=True)
-    url_parts = url_parts._replace(query=query)
-    return parse.urlunparse(url_parts)
 
 
 def user_authenticated() -> bool:
