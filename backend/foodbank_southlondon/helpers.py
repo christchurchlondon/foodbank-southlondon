@@ -2,11 +2,11 @@ from typing import Any, Callable, Dict, List
 import json
 import time
 
-from google.oauth2.service_account import Credentials  # type:ignore
-from googleapiclient import discovery  # type:ignore
+from google.oauth2.service_account import Credentials  # type: ignore
+from googleapiclient import discovery  # type: ignore
 import flask
-import gspread  # type:ignore
-import wrapt  # type:ignore
+import gspread  # type: ignore
+import wrapt  # type: ignore
 
 
 # CONFIG VARIABLES

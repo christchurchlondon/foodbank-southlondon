@@ -1,12 +1,13 @@
 import datetime
 
+from flask_restx import inputs, reqparse  # type: ignore
+
 from foodbank_southlondon.api import parsers
 from foodbank_southlondon.api.parsers import cache_params  # noqa: F401
 from foodbank_southlondon.api.requests.parsers import requests_params
 
 
 _requests_params_args = {arg.name: arg for arg in requests_params.args}
-
 
 summary_params = parsers.pagination_params.copy()
 summary_params.add_argument("start_date", type=lambda x: datetime.date.fromisoformat(x), required=False,
@@ -21,3 +22,7 @@ summary_params.add_argument(_requests_params_args["time_of_days"])
 summary_params.add_argument(_requests_params_args["voucher_numbers"])
 summary_params.add_argument(_requests_params_args["collection_centres"])
 summary_params.add_argument(_requests_params_args["event_names"])
+
+action_params = reqparse.RequestParser(trim=True)
+action_params.add_argument("ignore_warnings", type=inputs.boolean, required=False, default=True, help="Whether warnings should be ignored or not. If "
+                           "so, a 202 response code may be returned with a warning message.")

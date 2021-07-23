@@ -1,7 +1,7 @@
 from typing import Tuple, Union
 
 import flask
-import googleapiclient  # type:ignore
+import googleapiclient  # type: ignore
 import werkzeug
 
 from foodbank_southlondon import app, oauth, helpers

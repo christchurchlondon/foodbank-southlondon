@@ -1,8 +1,8 @@
 from typing import Any, Dict, Tuple
 
 import flask
-import flask_restx  # type:ignore
-import pandas as pd  # type:ignore
+import flask_restx  # type: ignore
+import pandas as pd  # type: ignore
 
 from foodbank_southlondon.api import rest, utils
 from foodbank_southlondon.api.lists import models, namespace, parsers
@@ -28,13 +28,14 @@ class Lists(flask_restx.Resource):
         notes = utils.gsheet_a1(flask.current_app.config[_FBSL_LISTS_GSHEET_ID], index=1)
         return {"notes": notes, "items": df.to_dict("records")}
 
-    @rest.response(201, "Created")
     @rest.expect(models.all_lists_items)
+    @rest.response(201, "Created")
     def post(self) -> Tuple[Dict, int]:
         """Overwrite the Shopping Lists."""
+        current_app = flask.current_app
         data = flask.request.json
-        flask.current_app.logger.debug(f"Received request body, {data}")
-        lists_gsheet_id = flask.current_app.config[_FBSL_LISTS_GSHEET_ID]
+        current_app.logger.debug(f"Received request body, {data}")
+        lists_gsheet_id = current_app.config[_FBSL_LISTS_GSHEET_ID]
         items = data["items"]
         if not items:
             rows = []
@@ -51,8 +52,8 @@ class Lists(flask_restx.Resource):
 @namespace.doc(params={"list_name": f"The name of the list to retrieve. Should be one of: {models.LIST_NAMES}"})
 class List(flask_restx.Resource):
 
-    @rest.response(404, "Not Found")
     @rest.expect(parsers.cache_params)
+    @rest.response(404, "Not Found")
     @rest.marshal_with(models.one_list_items)
     def get(self, list_name: str) -> Dict[str, Any]:
         """Get a single Shopping List."""

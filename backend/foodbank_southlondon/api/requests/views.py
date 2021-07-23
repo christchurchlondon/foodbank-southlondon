@@ -1,10 +1,11 @@
+from collections.abc import ValuesView
 from typing import Dict, Iterable, List, Tuple
 import functools
 
-from fuzzywuzzy import fuzz, process  # type:ignore
+from fuzzywuzzy import fuzz, process  # type: ignore
 import flask
-import flask_restx  # type:ignore
-import pandas as pd  # type:ignore
+import flask_restx  # type: ignore
+import pandas as pd  # type: ignore
 
 from foodbank_southlondon.api import rest, utils
 from foodbank_southlondon.api.events import models as events_models, views as events_views
@@ -20,13 +21,18 @@ _FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
 
 # INTERNALS
 _CACHE_NAME = "requests"
-_COLLECTION_COLUMNS_TO_CLEAN = ["Collection Date", "Collection Centre", "Vauxhall Collection Time", "Brixton Collection Time",
-                                "Waterloo Collection Time", "Clapham Park Collection Time"]
-_COLLECTION_COLUMNS_CLEANED_VALUES = [""] * len(_COLLECTION_COLUMNS_TO_CLEAN)
+_COLLECTION_COLUMNS_TO_CLEAN = ["Collection Date", "Collection Centre", "Vauxhall Collection Time",
+                                "Waterloo - St George the Martyr Collection Time", "Waterloo - Oasis Collection Time"]
 
 
 @namespace.route("/")
 class Requests(flask_restx.Resource):
+
+    @staticmethod
+    def fuzzy_match(text: str, choices: Iterable) -> bool:
+        search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
+        possibilities = process.extract(text, choices, scorer=fuzz.partial_ratio)
+        return any(p[1] >= search_threshold for p in possibilities)
 
     @rest.expect(parsers.requests_params)
     @rest.marshal_with(models.page_of_requests)
@@ -47,13 +53,13 @@ class Requests(flask_restx.Resource):
             rest.abort(400, f"The following event names are invalid options: {invalid_event_names}. Valid options are: {events_models.EVENT_NAMES}.")
         last_request_only = params["last_request_only"]
         df = cache(force_refresh=refresh_cache)
-        df = _clean_collection_columns(df)
+        df.loc[df[[_COLLECTION_COLUMNS_TO_CLEAN]]] = df.apply(_clean_collection_columns, axis=1)
         request_id_attribute = "request_id"
         name_attribute = "Client Full Name"
         if packing_dates:
             df = df.loc[df["Packing Date"].isin(packing_dates)]
         if client_full_names:
-            df = df.loc[df[name_attribute].map(functools.partial(fuzzy_match, choices=client_full_names))]
+            df = df.loc[df[name_attribute].map(functools.partial(self.fuzzy_match, choices=client_full_names))]
         postcode_attribute = "Postcode"
         if postcodes:
             df = df.loc[df[postcode_attribute].str.lower().str.startswith(tuple(postcodes)) |
@@ -83,8 +89,8 @@ class Requests(flask_restx.Resource):
 @namespace.doc(params={"request_ids": "A comma separated list of request_id values to retrieve."})
 class RequestsByID(flask_restx.Resource):
 
-    @rest.response(404, "Not Found")
     @rest.expect(parsers.pagination_params)
+    @rest.response(404, "Not Found")
     @rest.marshal_with(models.page_of_requests)
     @utils.paginate("Postcode")
     def get(self, request_ids: str) -> Tuple[Dict, int, int]:
@@ -94,7 +100,7 @@ class RequestsByID(flask_restx.Resource):
         refresh_cache = params["refresh_cache"]
         request_id_attribute = "request_id"
         df = cache(force_refresh=refresh_cache)
-        df = _clean_collection_columns(df)
+        df.loc[df[[_COLLECTION_COLUMNS_TO_CLEAN]]] = df.apply(_clean_collection_columns, axis=1)
         df = df.loc[df[request_id_attribute].isin(request_id_values)]
         missing_request_ids = request_id_values.difference(df[request_id_attribute].unique())
         if missing_request_ids:
@@ -122,9 +128,13 @@ class DistinctRequestsValues(flask_restx.Resource):
         return {"values": sorted(distinct_values)}
 
 
-def _clean_collection_columns(df: pd.DataFrame) -> pd.DataFrame:
-    df.loc[df["Shipping Method"] != models.SHIPPING_METHOD_COLLECTION, _COLLECTION_COLUMNS_TO_CLEAN] = _COLLECTION_COLUMNS_CLEANED_VALUES
-    return df
+def _clean_collection_columns(row: pd.Series) -> pd.Series:
+    collection_columns = dict.fromkeys(_COLLECTION_COLUMNS_TO_CLEAN, "")
+    if row["Shipping Method"] == models.SHIPPING_METHOD_COLLECTION:
+        collection_columns["Collection Date"] = row["Collection Date"]
+        collection_time_column = f"{row['Collection Centre']} Collection Time"
+        collection_columns[collection_time_column] = row[collection_time_column]
+    return pd.Series(collection_columns)
 
 
 def _congestion_zone_postcodes() -> pd.DataFrame:
@@ -132,14 +142,9 @@ def _congestion_zone_postcodes() -> pd.DataFrame:
 
 
 def _edit_details_url(request_id: str) -> str:
-    return flask.current_app.config[_FBSL_FORM_EDIT_URL_TEMPLATE].format(form_id=flask.current_app.config[_FBSL_FORM_ID], request_id=request_id)
+    current_app = flask.current_app
+    return current_app.config[_FBSL_FORM_EDIT_URL_TEMPLATE].format(form_id=current_app.config[_FBSL_FORM_ID], request_id=request_id)
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
     return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], force_refresh=force_refresh)
-
-
-def fuzzy_match(text: str, choices: Iterable) -> bool:
-    search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
-    possibilities = process.extract(text, choices, scorer=fuzz.partial_ratio)
-    return any(p[1] >= search_threshold for p in possibilities)

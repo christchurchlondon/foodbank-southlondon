@@ -2,7 +2,7 @@ default: help
 
 # PARAMETERS
 ENV ?= development
-PYTHON3 ?= python3.8
+PYTHON3 ?= python3.9
 VENV_NAME ?= .venv
 
 # INTERNAL

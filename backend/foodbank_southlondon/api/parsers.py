@@ -1,4 +1,4 @@
-from flask_restx import inputs, reqparse  # type:ignore
+from flask_restx import inputs, reqparse  # type: ignore
 
 
 cache_params = reqparse.RequestParser(trim=True)

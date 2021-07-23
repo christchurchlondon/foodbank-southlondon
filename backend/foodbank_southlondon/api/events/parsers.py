@@ -1,4 +1,4 @@
-from flask_restx import inputs  # type:ignore
+from flask_restx import inputs  # type: ignore
 
 from foodbank_southlondon.api.parsers import pagination_params
 

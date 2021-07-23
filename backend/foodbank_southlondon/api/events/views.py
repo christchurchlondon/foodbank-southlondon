@@ -2,8 +2,8 @@ from typing import Dict, List, Tuple
 import dataclasses
 
 import flask
-import flask_restx  # type:ignore
-import pandas as pd  # type:ignore
+import flask_restx  # type: ignore
+import pandas as pd  # type: ignore
 
 from foodbank_southlondon.api import rest, utils
 from foodbank_southlondon.api.events import models, namespace, parsers
@@ -53,8 +53,9 @@ class Events(flask_restx.Resource):
     @rest.response(201, "Created")
     def post(self) -> Tuple[Dict, int]:
         """Create (log) Events."""
+        current_app = flask.current_app
         data = flask.request.json
-        flask.current_app.logger.debug(f"Received request body, {data}")
+        current_app.logger.debug(f"Received request body, {data}")
         items = data["items"]
         if not items:
             rest.abort(400, "The body, items must not be empty.")
@@ -63,7 +64,7 @@ class Events(flask_restx.Resource):
         missing_request_ids = set(items_df["request_id"].unique()).difference(requests_df["request_id"].unique())
         if missing_request_ids:
             rest.abort(400, f"the following Request ID values {missing_request_ids} were not found.")
-        utils.append_rows(flask.current_app.config[_FBSL_EVENTS_GSHEET_ID], [list(item.values()) for item in items])
+        utils.append_rows(current_app.config[_FBSL_EVENTS_GSHEET_ID], [list(item.values()) for item in items])
         utils.expire_cache(_CACHE_NAME)
         return ({}, 201)
 

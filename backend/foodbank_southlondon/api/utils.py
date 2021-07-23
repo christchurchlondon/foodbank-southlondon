@@ -3,9 +3,9 @@ import math
 import datetime
 
 import flask
-import gspread  # type:ignore
-import pandas as pd  # type:ignore
-import wrapt  # type:ignore
+import gspread  # type: ignore
+import pandas as pd  # type: ignore
+import wrapt  # type: ignore
 
 from foodbank_southlondon import helpers
 
@@ -42,14 +42,15 @@ def append_rows(spreadsheet_id: str, rows: List) -> None:
 
 def cache(name: str, spreadsheet_id: str, force_refresh: bool = False) -> pd.DataFrame:
     now = datetime.datetime.now(datetime.timezone.utc)
+    current_app = flask.current_app
     cache = _caches.get(name)
     if cache is not None:
         file_metadata = helpers.drive_files_resource().get(fileId=spreadsheet_id, supportsAllDrives=True, fields="modifiedTime").execute()
         file_modified_time = datetime.datetime.fromisoformat(file_metadata["modifiedTime"].replace("Z", "+00:00"))
-        cache_max_age_time = now - datetime.timedelta(seconds=flask.current_app.config[_FBSL_CACHE_TTL_SECONDS])
+        cache_max_age_time = now - datetime.timedelta(seconds=current_app.config[_FBSL_CACHE_TTL_SECONDS])
         if not force_refresh and _caches_updated[name] >= max(file_modified_time, cache_max_age_time):
             return cache
-    flask.current_app.logger.info(f"Refreshing cache, {name}...")
+    current_app.logger.info(f"Refreshing cache, {name}...")
     _caches_updated[name] = now
     cache = _caches[name] = _gsheet_to_df(spreadsheet_id)
     return cache
