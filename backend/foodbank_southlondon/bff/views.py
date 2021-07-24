@@ -117,12 +117,18 @@ class Actions(flask_restx.Resource):
         return flask.send_file(io.BytesIO(pdf), attachment_filename=f"{template_name}.pdf", as_attachment=True)
 
     @staticmethod
-    def _process_warnings(api_base_url: str, request_ids: List, action_status_name: str) -> Optional[flask.Response]:
+    def _process_warnings(requests_items: List, api_base_url: str, request_ids: List, action_status_name: str) -> Optional[flask.Response]:
+        requests_df = pd.DataFrame(requests_items)
+        event_attributes = ("request_id", )
         events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
+                           headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
                            params={"request_ids": request_ids, "event_names": [action_status_name], "latest_event_only": True, "refresh_cache": True,
                                    "per_page": len(request_ids)})
-        if events_data["items"]:
-            return flask.make_response({"warning": "One or more requests in the selection have already been printed."}, 202)
+        events_df = pd.DataFrame(events_data["items"], columns=event_attributes)
+        df = pd.merge(events_df, requests_df, on="request_id", how="left").replace({np.nan: None})
+        if not df.empty:
+            return flask.make_response({"warning": f"The following postcodes have already been printed: {', '.join(df['postcode'].unique())}. "
+                                        "Are you sure you want to print again?"}, 202)
         return None
 
     @rest.expect(parsers.action_params)
@@ -170,14 +176,14 @@ class Actions(flask_restx.Resource):
             if event_name == events_models.Action.PRINT_SHOPPING_LIST.value.event_name:
                 action_status_name = events_models.ActionStatus.SHOPPING_LIST_PRINTED.value.event_name
                 if not ignore_warnings:
-                    return_value = self._process_warnings(api_base_url, request_ids, action_status_name)
+                    return_value = self._process_warnings(requests_items, api_base_url, request_ids, action_status_name)
                     if return_value:
                         return return_value
                 return_value = self._generate_shopping_list_pdf(requests_items, api_base_url, flask.request.cookies)
             elif event_name == events_models.Action.PRINT_SHIPPING_LABEL.value.event_name:
                 action_status_name = events_models.ActionStatus.SHIPPING_LABEL_PRINTED.value.event_name
                 if not ignore_warnings:
-                    return_value = self._process_warnings(api_base_url, request_ids, action_status_name)
+                    return_value = self._process_warnings(requests_items, api_base_url, request_ids, action_status_name)
                     if return_value:
                         return return_value
                 if not event_data.isdigit() or int(event_data) < 1:
@@ -185,7 +191,6 @@ class Actions(flask_restx.Resource):
                 return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
             elif event_name == events_models.Action.PRINT_DRIVER_OVERVIEW.value.event_name:
                 requests_df = pd.DataFrame(requests_items)
-                request_ids = requests_df["request_id"].unique()
                 event_attributes = ("request_id", "event_data")
                 events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
                                    headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
@@ -205,7 +210,7 @@ class Actions(flask_restx.Resource):
             elif event_name == events_models.Action.GENERATE_MAP.value.event_name:
                 requests_df = pd.DataFrame(requests_items)
                 postcodes = ",".join(parse.quote_plus(postcode) for postcode in requests_df["postcode"].unique())
-                return flask.make_response({"url": _FBSL_GOOGLE_MAPS_SEARCH_BASE_URL + postcodes}, 200)
+                return flask.make_response({"url": current_app.config[_FBSL_GOOGLE_MAPS_SEARCH_BASE_URL] + postcodes}, 200)
             _post_event(api_base_url, request_ids, action_status_name, event_data)
         return return_value
 
