@@ -41,6 +41,23 @@ def _find_event(calendar_events_resource: discovery.Resource, calendar_ids: Gene
 
 
 @app.cli.command()
+def clean_calendar() -> None:
+    """Delete orphaned Foodbank Google Calendar events."""
+    app.logger.info("Starting the calendar clean process...")
+    calendar_events_resource = helpers.calendar_events_resource()
+    collection_centres = app.config[_FBSL_COLLECTION_CENTRES]
+    calendar_ids = (collection_centre["calendar_id"] for collection_centre in collection_centres.values())
+    requests_df = requests_views.cache()
+    request_ids = requests_df["request_id"].unique()
+    for calendar_id in calendar_ids:
+        for event in calendar_events_resource.list(calendarId=calendar_id).execute()["items"]:
+            request_id = event.get("extendedProperties", {}).get("private", {}).get("request_id")
+            if request_id and request_id not in request_ids:
+                app.logger.info(f"Deleting event for request ID, {request_id}...")
+                calendar_events_resource.delete(calendarId=calendar_id, eventId=event["id"]).execute()
+    app.logger.info("Clean process completed successfully.")
+
+@app.cli.command()
 def sync_calendar() -> None:
     """Synchronise the Foodbank Google Calendar based on changes in the Request data."""
     app.logger.info("Starting the calendar synchronisation process...")
@@ -105,3 +122,4 @@ def sync_calendar() -> None:
     calendar_events_resource.patch(calendarId=watermark_calendar_id, eventId=watermark_event["id"],
                                    body={"start": {"dateTime": new_threshold.isoformat()},
                                          "end": {"dateTime": _event_end_rfc3339_from_start(new_threshold)}}).execute()
+    app.logger.info("Sync process completed successfully.")
