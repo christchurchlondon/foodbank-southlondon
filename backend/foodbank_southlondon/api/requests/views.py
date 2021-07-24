@@ -1,4 +1,3 @@
-from collections.abc import ValuesView
 from typing import Dict, Iterable, List, Tuple
 import functools
 
@@ -13,6 +12,7 @@ from foodbank_southlondon.api.requests import models, namespace, parsers
 
 
 # CONFIG VARIABLES
+_FBSL_COLLECTION_CENTRES = "FBSL_COLLECTION_CENTRES"
 _FBSL_CONGESTION_ZONE_POSTCODES = "FBSL_CONGESTION_ZONE_POSTCODES"
 _FBSL_FORM_EDIT_URL_TEMPLATE = "FBSL_FORM_EDIT_URL_TEMPLATE"
 _FBSL_FUZZY_SEARCH_THRESHOLD = "FBSL_FUZZY_SEARCH_THRESHOLD"
@@ -21,8 +21,7 @@ _FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
 
 # INTERNALS
 _CACHE_NAME = "requests"
-_COLLECTION_COLUMNS_TO_CLEAN = ["Collection Date", "Collection Centre", "Vauxhall Collection Time",
-                                "Waterloo - St George the Martyr Collection Time", "Waterloo - Oasis Collection Time"]
+_BASE_COLLECTION_COLUMNS = ["Collection Date", "Collection Centre"]
 
 
 @namespace.route("/")
@@ -53,7 +52,7 @@ class Requests(flask_restx.Resource):
             rest.abort(400, f"The following event names are invalid options: {invalid_event_names}. Valid options are: {events_models.EVENT_NAMES}.")
         last_request_only = params["last_request_only"]
         df = cache(force_refresh=refresh_cache)
-        df.loc[df[[_COLLECTION_COLUMNS_TO_CLEAN]]] = df.apply(_clean_collection_columns, axis=1)
+        df = _clean_collection_columns(df)
         request_id_attribute = "request_id"
         name_attribute = "Client Full Name"
         if packing_dates:
@@ -100,7 +99,7 @@ class RequestsByID(flask_restx.Resource):
         refresh_cache = params["refresh_cache"]
         request_id_attribute = "request_id"
         df = cache(force_refresh=refresh_cache)
-        df.loc[df[[_COLLECTION_COLUMNS_TO_CLEAN]]] = df.apply(_clean_collection_columns, axis=1)
+        df = _clean_collection_columns(df)
         df = df.loc[df[request_id_attribute].isin(request_id_values)]
         missing_request_ids = request_id_values.difference(df[request_id_attribute].unique())
         if missing_request_ids:
@@ -128,13 +127,18 @@ class DistinctRequestsValues(flask_restx.Resource):
         return {"values": sorted(distinct_values)}
 
 
-def _clean_collection_columns(row: pd.Series) -> pd.Series:
-    collection_columns = dict.fromkeys(_COLLECTION_COLUMNS_TO_CLEAN, "")
-    if row["Shipping Method"] == models.SHIPPING_METHOD_COLLECTION:
-        collection_columns["Collection Date"] = row["Collection Date"]
-        collection_time_column = f"{row['Collection Centre']} Collection Time"
-        collection_columns[collection_time_column] = row[collection_time_column]
-    return pd.Series(collection_columns)
+def _clean_collection_columns(df: pd.DataFrame) -> pd.DataFrame:
+    shipping_method_column = "Shipping Method"
+    collection_centres = flask.current_app.config[_FBSL_COLLECTION_CENTRES]
+    collection_time_columns = [f"{collection_centre} Collection Time" for collection_centre in collection_centres]
+    empty_collection_time_columns = [""] * (len(collection_time_columns) - 1)
+    collection_columns = _BASE_COLLECTION_COLUMNS + collection_time_columns
+    df.loc[df[shipping_method_column] != models.SHIPPING_METHOD_COLLECTION, collection_columns] = [""] * len(collection_columns)
+    for collection_centre in collection_centres:
+        df.loc[(df[shipping_method_column] == models.SHIPPING_METHOD_COLLECTION) &
+               (df["Collection Centre"] == collection_centre),
+               [x for x in collection_time_columns if x != f"{collection_centre} Collection Time"]] = empty_collection_time_columns
+    return df
 
 
 def _congestion_zone_postcodes() -> pd.DataFrame:
