@@ -77,7 +77,6 @@ export function FilterCollectionCentre() {
 
     return <FilterFieldValues
         icon='filter'
-        // TODO MRB: support filtering by delivery
         loading={collectionCentreFilterValues.loadingStatus === STATUS_LOADING}
         allPossibleValues={collectionCentreFilterValues.items}
         disabled={status !== STATUS_SUCCESS}

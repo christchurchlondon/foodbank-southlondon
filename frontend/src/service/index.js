@@ -133,9 +133,13 @@ export function getRequests(filters = {}, page = 1, refreshCache=false) {
         postcodes: filters.postcode,
         refresh_cache: refreshCache,
         time_of_days: filters.timeOfDay ? filters.timeOfDay.join(",") : undefined,
-        event_names: filters.statuses ? filters.statuses.join(",") : undefined,
-        collection_centres: filters.collectionCentres ? filters.collectionCentres.join(",") : undefined
+        event_names: filters.statuses ? filters.statuses.join(",") : undefined
     };
+
+    // Only send the filter if set to a value, as the empty string signifies filtering by delivery
+    if(filters.collectionCentres && filters.collectionCentres.length > 0) {
+        params.collection_centres = filters.collectionCentres.join(",");
+    }
 
     const url = endpoints.GET_REQUESTS + encodeParams(params);
     return performFetch(url)

@@ -297,7 +297,12 @@ class Summary(flask_restx.Resource):
         postcodes = ",".join(params["postcodes"] or ()) or None
         time_of_days = ",".join(params["time_of_days"] or ()) or None
         voucher_numbers = ",".join(params["voucher_numbers"] or ()) or None
-        collection_centres = ",".join(params["collection_centres"] or ()) or None
+        
+        # preserve the empty string to filter by delivery only
+        collection_centres = None
+        if params["collection_centres"] is not None:
+            collection_centres = ",".join(params["collection_centres"])
+        
         event_names = ",".join(params["event_names"] or ()) or None
         per_page = params["per_page"]
         api_base_url = _api_base_url()
