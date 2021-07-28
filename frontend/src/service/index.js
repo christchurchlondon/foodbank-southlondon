@@ -10,6 +10,7 @@ const endpoints = {
     GET_STATUSES: 'api/events/distinct/statuses',
     GET_TIME_OF_DAY_FILTER_VALUES: 'api/requests/distinct/?attribute=Time%20of%20Day',
     GET_EVENT_FILTER_VALUES: 'api/events/distinct',
+    GET_COLLECTION_CENTRE_VALUES: 'api/requests/distinct/?attribute=Collection%20Centre',
     SUBMIT_ACTION: 'bff/actions/',
     SUBMIT_STATUS: 'bff/statuses/',
     SUBMIT_LISTS: 'api/lists/'
@@ -189,6 +190,11 @@ export function getTimeOfDayFilterValues() {
 export function getEventsFilterValues() {
     return performFetch(endpoints.GET_EVENT_FILTER_VALUES)
         .then(({ items }) => items);
+}
+
+export function getCollectionCentreFilterValues() {
+    return performFetch(endpoints.GET_COLLECTION_CENTRE_VALUES)
+        .then(({ values }) => values);
 }
 
 export function getLists() {

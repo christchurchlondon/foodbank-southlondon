@@ -40,7 +40,10 @@ import {
     TIME_OF_DAY_FILTER_VALUES_LOADED,
     LOAD_EVENTS_FILTER_VALUES,
     LOAD_EVENTS_FILTER_VALUES_FAILED,
-    EVENTS_FILTER_VALUES_LOADED
+    EVENTS_FILTER_VALUES_LOADED,
+    LOAD_COLLECTION_CENTRE_FILTER_VALUES,
+    LOAD_COLLECTION_CENTRE_FILTER_VALUES_FAILED,
+    COLLECTION_CENTRE_FILTER_VALUES_LOADED
 } from './types';
 import {
     getRequests,
@@ -51,7 +54,8 @@ import {
     postEvent,
     postListUpdate,
     getTimeOfDayFilterValues,
-    getEventsFilterValues
+    getEventsFilterValues,
+    getCollectionCentreFilterValues
 } from '../../service';
 
 
@@ -345,6 +349,28 @@ export const fetchEventsFilterValues = () => {
             }))
             .catch(message => dispatch({
                 type: LOAD_EVENTS_FILTER_VALUES_FAILED,
+                payload: {
+                    message
+                }
+            }));
+    }
+}
+
+export const fetchCollectionCentreFilterValues = () => {
+    return dispatch => {
+        dispatch({
+            type: LOAD_COLLECTION_CENTRE_FILTER_VALUES
+        });
+        
+        getCollectionCentreFilterValues()
+            .then(values => dispatch({
+                type: COLLECTION_CENTRE_FILTER_VALUES_LOADED,
+                payload: {
+                    values
+                }
+            }))
+            .catch(message => dispatch({
+                type: LOAD_COLLECTION_CENTRE_FILTER_VALUES_FAILED,
                 payload: {
                     message
                 }

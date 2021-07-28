@@ -32,7 +32,10 @@ import {
     LOAD_TIME_OF_DAY_FILTER_VALUES_FAILED,
     LOAD_EVENTS_FILTER_VALUES,
     EVENTS_FILTER_VALUES_LOADED,
-    LOAD_EVENTS_FILTER_VALUES_FAILED
+    LOAD_EVENTS_FILTER_VALUES_FAILED,
+    LOAD_COLLECTION_CENTRE_FILTER_VALUES,
+    COLLECTION_CENTRE_FILTER_VALUES_LOADED,
+    LOAD_COLLECTION_CENTRE_FILTER_VALUES_FAILED
 } from '../actions/types';
 
 
@@ -73,6 +76,10 @@ const initialState = {
         items: []
     },
     eventsFilterValues: {
+        loadingStatus: STATUS_IDLE,
+        items: []
+    },
+    collectionCentreFilterValues: {
         loadingStatus: STATUS_IDLE,
         items: []
     },
@@ -336,6 +343,31 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 eventsFilterValues: {
+                    loadingStatus: STATUS_FAILED,
+                    items: []
+                }
+            };
+        case LOAD_COLLECTION_CENTRE_FILTER_VALUES:
+            return {
+                ...state,
+                collectionCentreFilterValues: {
+                    loadingStatus: STATUS_LOADING,
+                    items: []
+                }
+            }
+
+        case COLLECTION_CENTRE_FILTER_VALUES_LOADED:
+            return {
+                ...state,
+                collectionCentreFilterValues: {
+                    loadingStatus: STATUS_SUCCESS,
+                    items: action.payload.values
+                }
+            };
+        case LOAD_COLLECTION_CENTRE_FILTER_VALUES_FAILED:
+            return {
+                ...state,
+                collectionCentreFilterValues: {
                     loadingStatus: STATUS_FAILED,
                     items: []
                 }

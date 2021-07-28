@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Menu from '../common/menu';
-import { fetchRequests, fetchTimeOfDayFilterValues, fetchEventsFilterValues } from '../../redux/actions';
+import { fetchRequests, fetchTimeOfDayFilterValues, fetchEventsFilterValues, fetchCollectionCentreFilterValues } from '../../redux/actions';
 import { STATUS_LOADING, STATUS_SUCCESS } from '../../constants';
 
 export function FilterFieldValues({ allPossibleValues, values, onChange, onOpen, loading, disabled }) {
@@ -73,16 +73,16 @@ export function FilterStatus() {
 
 export function FilterCollectionCentre() {
     const dispatch = useDispatch();
-    const { filters, status } = useSelector(state => state.requests);
+    const { filters, collectionCentreFilterValues, status } = useSelector(state => state.requests);
 
     return <FilterFieldValues
         icon='filter'
-        // TODO MRB: needs support from get distinct values
         // TODO MRB: support filtering by delivery
-        allPossibleValues={['Vauxhall']}
-        loading={false}
+        loading={collectionCentreFilterValues.loadingStatus === STATUS_LOADING}
+        allPossibleValues={collectionCentreFilterValues.items}
         disabled={status !== STATUS_SUCCESS}
         values={filters['collectionCentres'] || []}
         onChange={(collectionCentres) => dispatch(fetchRequests({ ...filters, collectionCentres }, 1, false)) }
+        onOpen={() => dispatch(fetchCollectionCentreFilterValues())}
     />;
 }
