@@ -193,13 +193,32 @@ export function getFilterValues(attribute) {
 
     return performFetch(endpoint)
         .then((resp) => {
-            if(attribute === STATUSES_FILTER_KEY) {
-                return resp.items
-                    .map(({ event_name }) => event_name)
-                    .filter(event_name => event_name !== '');
+            // TODO MRB: could return id and display from the server?
+            switch(attribute) {
+                case STATUSES_FILTER_KEY:
+                    return resp.items
+                        .flatMap(({ event_name }) => {
+                            return event_name === ''
+                                ? []
+                                : [{ value: event_name, display: event_name }];
+                        });
+                
+                case COLLECTION_CENTRES_FILTER_KEY:
+                    return resp.values.map((value) => {
+                        return {
+                            value,
+                            display: value === '' ? 'Delivery' : value
+                        };
+                    });
+                
+                default:
+                    return resp.values.map((value) => {
+                        return {
+                            value,
+                            display: value
+                        };
+                    });
             }
-
-            return resp.values;
         });
 }
 

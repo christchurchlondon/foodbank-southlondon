@@ -6,13 +6,15 @@ import { STATUS_LOADING, STATUS_SUCCESS } from '../../constants';
 
 export function FilterFieldValues({ attribute }) {
     const dispatch = useDispatch();
-    const { filters, filterValues, status: requestListStatus } = useSelector(state => state.requests);
+    
+    const requests = useSelector(state => state.requests);
+    const { filters, filterValues: allFilterValues, status: tableLoadingStatus } = requests;
 
     const values = filters[attribute] ? filters[attribute] : [];
-    const { items: allPossibleValues, loadingStatus: filterValueStatus } = filterValues[attribute];
+    const filterValues = allFilterValues[attribute].items;
 
-    const loading = filterValueStatus === STATUS_LOADING;
-    const disabled = requestListStatus !== STATUS_SUCCESS;
+    const loading = allFilterValues[attribute].loadingStatus === STATUS_LOADING;
+    const disabled = tableLoadingStatus !== STATUS_SUCCESS;
 
     function getUpdatedValues(value) {
         if(values.includes(value)) {
@@ -40,7 +42,7 @@ export function FilterFieldValues({ attribute }) {
             className="icon"
             loading={loading}
             onOpen={onOpen}
-            options={allPossibleValues.map(value =>
+            options={filterValues.map(({ value, display }) =>
                 <React.Fragment>
                     <input
                         type="checkbox"
@@ -48,7 +50,7 @@ export function FilterFieldValues({ attribute }) {
                         checked={values.includes(value)}
                         disabled={disabled}
                     ></input>
-                    <label>{value}</label>
+                    <label>{display}</label>
                 </React.Fragment>    
             )}
         />
