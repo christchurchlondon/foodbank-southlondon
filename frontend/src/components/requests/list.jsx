@@ -3,10 +3,10 @@ import { format } from 'date-fns';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { DATE_FORMAT_UI } from '../../constants';
 import Flag from './flag';
-import CongestionCharge from '../common/congestion-charge';
 import './styles/list.scss';
 import { FilterTimeOfDay, FilterStatus } from '../lists/value-filters';
 import Loading from '../common/loading';
+import { RequestIcons } from './request-icons';
 
 export default class RequestsList extends React.Component {
 
@@ -85,7 +85,9 @@ export default class RequestsList extends React.Component {
                     <td>{ request.householdSize }</td>
                     <td>
                         { request.postcode }
-                        { request.isInCongestionZone && <CongestionCharge /> }
+                    </td>
+                    <td>
+                        <RequestIcons request={request} />
                     </td>
                     <td>{ format(request.packingDate, DATE_FORMAT_UI) }</td>
                     <td>{ request.timeOfDay }</td>
@@ -112,6 +114,7 @@ export default class RequestsList extends React.Component {
                         <th>Name</th>
                         <th>Family Size</th>
                         <th>Postcode</th>
+                        <th></th>
                         <th>Packing Date</th>
                         <th>
                             <div className="cell-with-actions">

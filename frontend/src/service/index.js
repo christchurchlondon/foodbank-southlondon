@@ -149,7 +149,8 @@ export function getRequests(filters = {}, page = 1, refreshCache=false) {
                 event: extractEvent(item),
                 postcode: item.postcode,
                 isInCongestionZone: item.congestion_zone,
-                flagForAttention: item.flag_for_attention
+                flagForAttention: item.flag_for_attention,
+                collectionCentre: item.collection_centre
             }));
 
             const paging = {
