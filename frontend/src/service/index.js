@@ -1,6 +1,6 @@
 import fetch from 'cross-fetch';
 import { format, parse } from 'date-fns';
-import { DATE_FORMAT_REQUEST, DATE_FORMAT_TIMESTAMP } from '../constants';
+import { COLLECTION_CENTRES_FILTER_KEY, TIME_OF_DAY_FILTER_KEY, STATUSES_FILTER_KEY, DATE_FORMAT_REQUEST, DATE_FORMAT_TIMESTAMP } from '../constants';
 
 const endpoints = {
     GET_REQUESTS: 'bff/summary',
@@ -8,9 +8,11 @@ const endpoints = {
     GET_LISTS: 'api/lists/',
     GET_ACTIONS: 'api/events/distinct/actions',
     GET_STATUSES: 'api/events/distinct/statuses',
-    GET_TIME_OF_DAY_FILTER_VALUES: 'api/requests/distinct/?attribute=Time%20of%20Day',
-    GET_EVENT_FILTER_VALUES: 'api/events/distinct',
-    GET_COLLECTION_CENTRE_VALUES: 'api/requests/distinct/?attribute=Collection%20Centre',
+    FILTERS: {
+        [TIME_OF_DAY_FILTER_KEY]: 'api/requests/distinct/?attribute=Time%20of%20Day',
+        [COLLECTION_CENTRES_FILTER_KEY]: 'api/requests/distinct/?attribute=Collection%20Centre',
+        [STATUSES_FILTER_KEY]: 'api/events/distinct',
+    },
     SUBMIT_ACTION: 'bff/actions/',
     SUBMIT_STATUS: 'bff/statuses/',
     SUBMIT_LISTS: 'api/lists/'
@@ -186,19 +188,19 @@ export function getSingleRequest(id) {
     // TODO error if response.items is empty?
 }
 
-export function getTimeOfDayFilterValues() {
-    return performFetch(endpoints.GET_TIME_OF_DAY_FILTER_VALUES)
-        .then(({ values }) => values);
-}
+export function getFilterValues(attribute) {
+    const endpoint = endpoints['FILTERS'][attribute];
 
-export function getEventsFilterValues() {
-    return performFetch(endpoints.GET_EVENT_FILTER_VALUES)
-        .then(({ items }) => items);
-}
+    return performFetch(endpoint)
+        .then((resp) => {
+            if(attribute === STATUSES_FILTER_KEY) {
+                return resp.items
+                    .map(({ event_name }) => event_name)
+                    .filter(event_name => event_name !== '');
+            }
 
-export function getCollectionCentreFilterValues() {
-    return performFetch(endpoints.GET_COLLECTION_CENTRE_VALUES)
-        .then(({ values }) => values);
+            return resp.values;
+        });
 }
 
 export function getLists() {

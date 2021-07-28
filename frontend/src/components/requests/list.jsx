@@ -1,10 +1,10 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { DATE_FORMAT_UI } from '../../constants';
+import { COLLECTION_CENTRES_FILTER_KEY, DATE_FORMAT_UI, STATUSES_FILTER_KEY, TIME_OF_DAY_FILTER_KEY } from '../../constants';
 import Flag from './flag';
 import './styles/list.scss';
-import { FilterTimeOfDay, FilterStatus, FilterCollectionCentre } from '../lists/value-filters';
+import { FilterFieldValues } from '../lists/value-filters';
 import Loading from '../common/loading';
 import { RequestIcons } from './request-icons';
 
@@ -115,14 +115,14 @@ export default class RequestsList extends React.Component {
                         <th>Family Size</th>
                         <th>Postcode</th>
                         <th>
-                            <FilterCollectionCentre />
+                            <FilterFieldValues attribute={COLLECTION_CENTRES_FILTER_KEY} />
                         </th>
                         <th>Packing Date</th>
                         <th>
                             <div className="cell-with-actions">
                                 Time
                                 <div className="cell-actions">
-                                    <FilterTimeOfDay />
+                                    <FilterFieldValues attribute={TIME_OF_DAY_FILTER_KEY} />
                                 </div>
                             </div>
                         </th>
@@ -130,7 +130,7 @@ export default class RequestsList extends React.Component {
                             <div className="cell-with-actions">
                                 Last Status
                                 <div className="cell-actions">
-                                    <FilterStatus />
+                                    <FilterFieldValues attribute={STATUSES_FILTER_KEY} />
                                 </div>
                                 <button onClick={this.refresh}>
                                     <Icon
