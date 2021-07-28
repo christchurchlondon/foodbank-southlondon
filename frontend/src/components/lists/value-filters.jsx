@@ -70,3 +70,19 @@ export function FilterStatus() {
         onOpen={() => dispatch(fetchEventsFilterValues())}
     />;
 }
+
+export function FilterCollectionCentre() {
+    const dispatch = useDispatch();
+    const { filters, status } = useSelector(state => state.requests);
+
+    return <FilterFieldValues
+        icon='filter'
+        // TODO MRB: needs support from get distinct values
+        // TODO MRB: support filtering by delivery
+        allPossibleValues={['Vauxhall']}
+        loading={false}
+        disabled={status !== STATUS_SUCCESS}
+        values={filters['collectionCentres'] || []}
+        onChange={(collectionCentres) => dispatch(fetchRequests({ ...filters, collectionCentres }, 1, false)) }
+    />;
+}

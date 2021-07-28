@@ -4,7 +4,7 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { DATE_FORMAT_UI } from '../../constants';
 import Flag from './flag';
 import './styles/list.scss';
-import { FilterTimeOfDay, FilterStatus } from '../lists/value-filters';
+import { FilterTimeOfDay, FilterStatus, FilterCollectionCentre } from '../lists/value-filters';
 import Loading from '../common/loading';
 import { RequestIcons } from './request-icons';
 
@@ -114,7 +114,9 @@ export default class RequestsList extends React.Component {
                         <th>Name</th>
                         <th>Family Size</th>
                         <th>Postcode</th>
-                        <th></th>
+                        <th>
+                            <FilterCollectionCentre />
+                        </th>
                         <th>Packing Date</th>
                         <th>
                             <div className="cell-with-actions">

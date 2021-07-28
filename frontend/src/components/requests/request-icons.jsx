@@ -8,13 +8,37 @@ export function RequestIcons({ request }) {
 
     if(request.collectionCentre) {
         const alt = `Collection at ${request.collectionCentre}`;
-        icons.push(<FontAwesomeIcon className='inline-icon' icon='shoe-prints' title={alt} alt={alt} />);
+        const icon = <FontAwesomeIcon
+            key='collection'
+            className='inline-icon'
+            icon='shoe-prints'
+            title={alt}
+            alt={alt}
+        />;
+        
+        icons.push(icon);
     } else {
-        icons.push(<FontAwesomeIcon className='inline-icon' icon='truck' title='Delivery' alt='Delivery' />);
+        const icon = <FontAwesomeIcon
+            key='delivery'
+            className='inline-icon'
+            icon='truck'
+            title='Delivery'
+            alt='Delivery'
+        />;
+
+        icons.push(icon);
     }
 
     if(request.isInCongestionZone && !request.collectionCentre) {
-        icons.push(<img className="inline-icon" src={congestionChargeLogo} alt="Congestion charge" title="Congestion charge applies" />);
+        const icon = <img
+            key='congestion_charge'
+            className='inline-icon'
+            src={congestionChargeLogo}
+            alt='Congestion charge'
+            title='Congestion charge applies'
+        />;
+
+        icons.push(icon);
     }
 
     return <React.Fragment>

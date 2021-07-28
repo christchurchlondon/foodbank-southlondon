@@ -132,7 +132,8 @@ export function getRequests(filters = {}, page = 1, refreshCache=false) {
         postcodes: filters.postcode,
         refresh_cache: refreshCache,
         time_of_days: filters.timeOfDay ? filters.timeOfDay.join(",") : undefined,
-        event_names: filters.statuses ? filters.statuses.join(",") : undefined
+        event_names: filters.statuses ? filters.statuses.join(",") : undefined,
+        collection_centres: filters.collectionCentres ? filters.collectionCentres.join(",") : undefined
     };
 
     const url = endpoints.GET_REQUESTS + encodeParams(params);
