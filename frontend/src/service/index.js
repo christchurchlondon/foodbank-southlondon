@@ -1,6 +1,6 @@
 import fetch from 'cross-fetch';
 import { format, parse } from 'date-fns';
-import { DATE_FORMAT_REQUEST, DATE_FORMAT_TIMESTAMP } from '../constants';
+import { COLLECTION_CENTRES_FILTER_KEY, TIME_OF_DAY_FILTER_KEY, STATUSES_FILTER_KEY, DATE_FORMAT_REQUEST, DATE_FORMAT_TIMESTAMP } from '../constants';
 
 const endpoints = {
     GET_REQUESTS: 'bff/summary',
@@ -8,8 +8,11 @@ const endpoints = {
     GET_LISTS: 'api/lists/',
     GET_ACTIONS: 'api/events/distinct/actions',
     GET_STATUSES: 'api/events/distinct/statuses',
-    GET_TIME_OF_DAY_FILTER_VALUES: 'api/requests/distinct/?attribute=Time%20of%20Day',
-    GET_EVENT_FILTER_VALUES: 'api/events/distinct',
+    FILTERS: {
+        [TIME_OF_DAY_FILTER_KEY]: 'api/requests/distinct/?attribute=Time%20of%20Day',
+        [COLLECTION_CENTRES_FILTER_KEY]: 'api/requests/distinct/?attribute=Collection%20Centre',
+        [STATUSES_FILTER_KEY]: 'api/events/distinct',
+    },
     SUBMIT_ACTION: 'bff/actions/',
     SUBMIT_STATUS: 'bff/statuses/',
     SUBMIT_LISTS: 'api/lists/'
@@ -135,6 +138,11 @@ export function getRequests(filters = {}, page = 1, refreshCache=false) {
         event_names: filters.statuses ? filters.statuses.join(",") : undefined
     };
 
+    // Only send the filter if set to a value, as the empty string signifies filtering by delivery
+    if(filters.collectionCentres && filters.collectionCentres.length > 0) {
+        params.collection_centres = filters.collectionCentres.join(",");
+    }
+
     const url = endpoints.GET_REQUESTS + encodeParams(params);
     return performFetch(url)
         .then(response => {
@@ -149,7 +157,8 @@ export function getRequests(filters = {}, page = 1, refreshCache=false) {
                 event: extractEvent(item),
                 postcode: item.postcode,
                 isInCongestionZone: item.congestion_zone,
-                flagForAttention: item.flag_for_attention
+                flagForAttention: item.flag_for_attention,
+                collectionCentre: item.collection_centre
             }));
 
             const paging = {
@@ -179,14 +188,38 @@ export function getSingleRequest(id) {
     // TODO error if response.items is empty?
 }
 
-export function getTimeOfDayFilterValues() {
-    return performFetch(endpoints.GET_TIME_OF_DAY_FILTER_VALUES)
-        .then(({ values }) => values);
-}
+export function getFilterValues(attribute) {
+    const endpoint = endpoints['FILTERS'][attribute];
 
-export function getEventsFilterValues() {
-    return performFetch(endpoints.GET_EVENT_FILTER_VALUES)
-        .then(({ items }) => items);
+    return performFetch(endpoint)
+        .then((resp) => {
+            // TODO MRB: could return id and display from the server?
+            switch(attribute) {
+                case STATUSES_FILTER_KEY:
+                    return resp.items
+                        .flatMap(({ event_name }) => {
+                            return event_name === ''
+                                ? []
+                                : [{ value: event_name, display: event_name }];
+                        });
+                
+                case COLLECTION_CENTRES_FILTER_KEY:
+                    return resp.values.map((value) => {
+                        return {
+                            value,
+                            display: value === '' ? 'Delivery' : value
+                        };
+                    });
+                
+                default:
+                    return resp.values.map((value) => {
+                        return {
+                            value,
+                            display: value
+                        };
+                    });
+            }
+        });
 }
 
 export function getLists() {

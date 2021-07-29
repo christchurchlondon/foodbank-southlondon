@@ -27,4 +27,4 @@ distinct_requests_params = cache_params.copy()
 distinct_requests_params.add_argument("packing_dates", type=str, required=False, action="split", help="A comma separated list of Packing Dates in "
                                       "the format of DD/MM/YYYY to filter on - before fetching distinct values")
 distinct_requests_params.add_argument("attribute", type=str, required=True, help="The attribute to get distinct values for.",
-                                      choices=["Client Full Name", "Packing Date", "Postcode", "Time of Day", "Voucher Number"])
+                                      choices=["Client Full Name", "Collection Centre", "Packing Date", "Postcode", "Time of Day", "Voucher Number"])

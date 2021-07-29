@@ -35,12 +35,9 @@ import {
     SUBMIT_EVENT,
     EVENT_SUBMIT_COMPLETE,
     EVENT_SUBMIT_FAILED,
-    LOAD_TIME_OF_DAY_FILTER_VALUES,
-    LOAD_TIME_OF_DAY_FILTER_VALUES_FAILED,
-    TIME_OF_DAY_FILTER_VALUES_LOADED,
-    LOAD_EVENTS_FILTER_VALUES,
-    LOAD_EVENTS_FILTER_VALUES_FAILED,
-    EVENTS_FILTER_VALUES_LOADED
+    LOAD_FILTER_VALUES,
+    LOAD_FILTER_VALUES_FAILED,
+    FILTER_VALUES_LOADED,
 } from './types';
 import {
     getRequests,
@@ -50,8 +47,7 @@ import {
     getActions,
     postEvent,
     postListUpdate,
-    getTimeOfDayFilterValues,
-    getEventsFilterValues
+    getFilterValues
 } from '../../service';
 
 
@@ -308,44 +304,27 @@ export const loadActionsFailed = message => ({
 
 // TODO more?
 
-export const fetchTimeOfDayFilterValues = () => {
+export const fetchFilterValues = (attribute) => {
     return dispatch => {
         dispatch({
-            type: LOAD_TIME_OF_DAY_FILTER_VALUES
+            type: LOAD_FILTER_VALUES,
+            payload: {
+                attribute
+            }
         });
         
-        getTimeOfDayFilterValues()
+        getFilterValues(attribute)
             .then(values => dispatch({
-                type: TIME_OF_DAY_FILTER_VALUES_LOADED,
+                type: FILTER_VALUES_LOADED,
                 payload: {
+                    attribute,
                     values
                 }
             }))
             .catch(message => dispatch({
-                type: LOAD_TIME_OF_DAY_FILTER_VALUES_FAILED,
+                type: LOAD_FILTER_VALUES_FAILED,
                 payload: {
-                    message
-                }
-            }));
-    }
-}
-
-export const fetchEventsFilterValues = () => {
-    return dispatch => {
-        dispatch({
-            type: LOAD_EVENTS_FILTER_VALUES
-        });
-        
-        getEventsFilterValues()
-            .then(values => dispatch({
-                type: EVENTS_FILTER_VALUES_LOADED,
-                payload: {
-                    values
-                }
-            }))
-            .catch(message => dispatch({
-                type: LOAD_EVENTS_FILTER_VALUES_FAILED,
-                payload: {
+                    attribute,
                     message
                 }
             }));
