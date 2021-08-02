@@ -74,6 +74,20 @@ function performDownload(url, data = {}) {
         });
 }
 
+function performOpenInNewTab(url, data = {}) {
+    // Try to avoid pop-up blockers by opening the new tab whilst still in stack frames from the
+    // user click then updating the URL once known
+    const newTab = window.open('about:blank');
+
+    return performPost(url, data).then(({ url }) => {
+        newTab.location = url;
+        newTab.focus();
+    }).catch(err => {
+        newTab.close();
+        return Promise.reject(err);
+    });
+}
+
 function handleErrors(response) {
     if(response.status === 403) {
         // Redirect to the login page, the browser should do so immediately but
@@ -287,7 +301,7 @@ export function getStatuses() {
             requiresDate: v.date_expected,
             requiresName: v.name_expected,
             requiresQuantity: v.quantity_expected,
-            isDownload: v.returns_pdf
+            responseType: v.response_type
         })));
 }
 
@@ -300,12 +314,11 @@ export function getActions() {
             requiresDate: v.date_expected,
             requiresName: v.name_expected,
             requiresQuantity: v.quantity_expected,
-            isDownload: v.returns_pdf
+            responseType: v.response_type
         })));
 }
 
 export function postEvent(event, ids, type, data = {}) {
-
     const url = (type === 'status')
         ? endpoints.SUBMIT_STATUS
         : endpoints.SUBMIT_ACTION;
@@ -319,10 +332,15 @@ export function postEvent(event, ids, type, data = {}) {
         event_data: eventData || ''
     };
 
-    if (event.isDownload) {
-        return performDownload(url, requestBody);
-    } else {
-        return performPost(url, requestBody);
+    switch(event.responseType) {
+        case 'DOWNLOAD':
+            return performDownload(url, requestBody);
+
+        case 'URL':
+            return performOpenInNewTab(url, requestBody);
+
+        default:
+            return performPost(url, requestBody);
     }
 }
 
