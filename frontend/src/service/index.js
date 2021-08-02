@@ -99,6 +99,15 @@ function handleErrors(response) {
         throw Error(response.statusText);
     }
 
+    if (response.status === 202) {
+        return response.json().then(({ warning }) => {
+            const error = new Error(warning);
+            error.warning = warning;
+
+            throw error;
+        });
+    }
+
     return response;
 }
 
@@ -318,7 +327,7 @@ export function getActions() {
         })));
 }
 
-export function postEvent(event, ids, type, data = {}) {
+export function postEvent(event, ids, type, data = {}, ignoreWarnings) {
     const url = (type === 'status')
         ? endpoints.SUBMIT_STATUS
         : endpoints.SUBMIT_ACTION;
@@ -329,7 +338,8 @@ export function postEvent(event, ids, type, data = {}) {
     const requestBody = {
         event_name: event.name,
         request_ids: ids,
-        event_data: eventData || ''
+        event_data: eventData || '',
+        ignore_warnings: ignoreWarnings || false
     };
 
     switch(event.responseType) {

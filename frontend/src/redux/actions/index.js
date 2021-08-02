@@ -343,17 +343,19 @@ export const triggerSubmitEvent = (event, type, ids, filters, page) => {
     };
 };
 
-export const openSubmitDialog = (event, type) => ({
+export const openSubmitDialog = (event, type, message, ignoreWarnings) => ({
     type: OPEN_SUBMIT_DIALOG,
     payload: {
         event,
-        type
+        type,
+        message,
+        ignoreWarnings
     }
 });
 
-export const confirmSubmitEvent = (event, type, ids, data, filters = {}, page = 1) => {
+export const confirmSubmitEvent = (event, type, ids, data, filters = {}, page = 1, ignoreWarnings) => {
     return dispatch => {
-        dispatch(sendEvent(event, type, ids, data, filters, page));
+        dispatch(sendEvent(event, type, ids, data, filters, page, ignoreWarnings));
     };
 };
 
@@ -367,16 +369,22 @@ export const closeSubmitDialog = () => ({
     type: CLOSE_SUBMIT_DIALOG
 });
 
-export const sendEvent = (event, type, ids, data, filters, page) => {
+export const sendEvent = (event, type, ids, data, filters, page, ignoreWarnings) => {
     return dispatch => {
         dispatch(submitEvent(event));
-        return postEvent(event, ids, type, data)
+        return postEvent(event, ids, type, data, ignoreWarnings)
             .then(() => {
                 dispatch(eventSubmitComplete());
                 dispatch(closeSubmitDialog())
                 dispatch(fetchRequests(filters, page));
             })
-            .catch(() => dispatch(eventSubmitFailed()));
+            .catch((err) => {
+                if(err.warning) {
+                    dispatch(openSubmitDialog(event, type, err.warning, true));
+                } else {
+                    dispatch(eventSubmitFailed());
+                }
+            });
     };
 };
 

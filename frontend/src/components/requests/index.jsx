@@ -83,8 +83,8 @@ class Requests extends React.Component {
         this.props.triggerSubmitEvent(event, type, this.getSelectedIds(), this.props.filters, this.props.paging.page);
     }
 
-    confirmEventSubmission(event, type, data) {
-        this.props.confirmSubmitEvent(event, type, this.getSelectedIds(), data, this.props.filters, this.props.paging.page);
+    confirmEventSubmission(event, type, data, ignoreWarnings) {
+        this.props.confirmSubmitEvent(event, type, this.getSelectedIds(), data, this.props.filters, this.props.paging.page, ignoreWarnings);
     }
 
     cancelEventSubmission() {
