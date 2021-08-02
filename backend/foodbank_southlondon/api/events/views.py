@@ -5,6 +5,8 @@ import flask
 import flask_restx  # type: ignore
 import pandas as pd  # type: ignore
 
+from pandas.core.common import flatten
+
 from foodbank_southlondon.api import rest, utils
 from foodbank_southlondon.api.events import models, namespace, parsers
 from foodbank_southlondon.api.requests import views as requests_views
@@ -29,8 +31,8 @@ class Events(flask_restx.Resource):
         """List all Events."""
         params = parsers.events_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
-        request_ids = set(request_id.strip() for request_id in (params["request_ids"] or ()))
-        event_names = set(event_name.strip() for event_name in (params["event_names"] or ()))
+        request_ids = set(request_id.strip() for request_id in flatten((params["request_ids"] or ())))
+        event_names = set(event_name.strip() for event_name in flatten((params["event_names"] or ())))
         invalid_event_names = event_names.difference(models.EVENT_NAMES)
         if invalid_event_names:
             rest.abort(400, f"The following event names are invalid options: {invalid_event_names}. Valid options are: {models.EVENT_NAMES}.")
