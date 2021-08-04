@@ -8,6 +8,7 @@ const endpoints = {
     GET_LISTS: 'api/lists/',
     GET_ACTIONS: 'api/events/distinct/actions',
     GET_STATUSES: 'api/events/distinct/statuses',
+    GET_CALENDARS: 'api/calendars/',
     FILTERS: {
         [TIME_OF_DAY_FILTER_KEY]: 'api/requests/distinct/?attribute=Time%20of%20Day',
         [COLLECTION_CENTRES_FILTER_KEY]: 'api/requests/distinct/?attribute=Collection%20Centre',
@@ -326,13 +327,15 @@ export function postEvent(event, ids, type, data = {}) {
     }
 }
 
-
-
 export function postListUpdate(list, notes) {
     const items = listToRequestPayload(list);
     const requestBody = { notes, items };
 
     return performPost(endpoints.SUBMIT_LISTS, requestBody);
+}
+
+export function getCalendars() {
+    return performFetch(endpoints.GET_CALENDARS);
 }
 
 function responseItemToRequest(item) {
