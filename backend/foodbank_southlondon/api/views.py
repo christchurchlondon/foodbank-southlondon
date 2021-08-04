@@ -1,5 +1,3 @@
-from urllib import parse
-
 from flask_restx import fields  # type: ignore
 import flask
 import flask_restx  # type: ignore
