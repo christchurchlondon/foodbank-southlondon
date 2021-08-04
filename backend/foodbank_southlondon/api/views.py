@@ -23,5 +23,5 @@ class Calendars(flask_restx.Resource):
     @rest.marshal_with(_calendar_model)
     def get(self):
         return {
-            "calendar_ids": [parse.quote(calendar["calendar_id"]) for calendar in flask.current_app.config[_FBSL_COLLECTION_CENTRES].values()],
+            "calendar_ids": [calendar["calendar_id"] for calendar in flask.current_app.config[_FBSL_COLLECTION_CENTRES].values()],
         }

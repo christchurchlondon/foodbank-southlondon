@@ -38,6 +38,9 @@ import {
     LOAD_FILTER_VALUES,
     LOAD_FILTER_VALUES_FAILED,
     FILTER_VALUES_LOADED,
+    LOAD_CALENDARS,
+    CALENDARS_LOADED,
+    LOAD_CALENDARS_FAILED
 } from './types';
 import {
     getRequests,
@@ -47,7 +50,8 @@ import {
     getActions,
     postEvent,
     postListUpdate,
-    getFilterValues
+    getFilterValues,
+    getCalendars
 } from '../../service';
 
 
@@ -391,3 +395,21 @@ export const eventSubmitComplete = () => ({
 export const eventSubmitFailed = () => ({
     type: EVENT_SUBMIT_FAILED
 });
+
+// Calendars
+
+export const fetchCalendars = () => {
+    return dispatch => {
+        dispatch({ type: LOAD_CALENDARS })
+        getCalendars().then(({ calendar_ids }) => {
+            dispatch({
+                type: CALENDARS_LOADED,
+                payload: {
+                    calendar_ids
+                }
+            });
+        }).catch(() => {
+            dispatch({ type: LOAD_CALENDARS_FAILED });
+        })
+    };
+}

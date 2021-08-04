@@ -3,7 +3,8 @@ import Tab from './tab';
 
 const tabDefinitions = [
     { path: '/clients', label: 'Clients' },
-    { path: '/lists', label: 'Lists' }
+    { path: '/lists', label: 'Lists' },
+    { path: '/calendar', label: 'Calendar' }
 ];
 
 export default function Tabs() {
