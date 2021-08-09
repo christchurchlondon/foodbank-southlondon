@@ -38,7 +38,8 @@ export default class RequestsEventDialog extends React.Component {
         this.props.onConfirm(
             this.props.details.event,
             this.props.details.type,
-            params
+            params,
+            this.props.details.ignoreWarnings
         );
     }
 
@@ -155,6 +156,10 @@ export default class RequestsEventDialog extends React.Component {
 
         const inputFields = this.getInputFields();
 
+        const message = this.props.details.message ||
+            this.props.details.event.confirmationLabel ||
+            'Are you sure you want to submit this action?';
+
         return (
             <Popup title="Confirm submission"
                 buttons={ buttons }
@@ -162,7 +167,7 @@ export default class RequestsEventDialog extends React.Component {
                 onClose={ this.close }
             >
                 <div className="event-dialog-contents">
-                    <p>{ this.props.details.event.confirmationLabel || 'Are you sure you want to submit this action?' }</p>
+                    <p>{ message }</p>
                     { inputFields }
                 </div>
             </Popup>

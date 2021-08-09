@@ -252,9 +252,12 @@ export default function(state = initialState, action) {
                 ...state,
                 events: {
                     ...state.events,
+                    updateStatus: STATUS_IDLE,
                     dialog: {
                         event: action.payload.event,
-                        type: action.payload.type
+                        type: action.payload.type,
+                        message: action.payload.message,
+                        ignoreWarnings: action.payload.ignoreWarnings
                     }
                 }
             };

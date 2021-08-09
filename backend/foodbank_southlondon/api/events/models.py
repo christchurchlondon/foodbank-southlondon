@@ -6,6 +6,11 @@ from flask_restx import fields  # type: ignore
 from foodbank_southlondon.api import models, rest
 from foodbank_southlondon.api.requests import models as requests_models
 
+class ResponseType(enum.Enum):
+    NO_CONTENT = "NO_CONTENT"
+    DOWNLOAD = "DOWNLOAD"
+    URL = "URL"
+
 
 @dataclasses.dataclass
 class Event:
@@ -14,19 +19,20 @@ class Event:
     date_expected: bool
     quantity_expected: bool
     name_expected: bool
-    returns_pdf: bool
+    response_type: str
     confirmation_label: str = None
 
 
 class Action(enum.Enum):
-    GENERATE_MAP = Event("Generate Map", False, False, False, False, False, "This action generates a google map URL with location markers "
-                         "without logging a status.")
-    PRINT_DAY_OVERVIEW = Event("Print Day Overview", True, False, False, False, True, "This action generates a driver-overview like PDF without "
-                               "logging a status.")
-    PRINT_SHOPPING_LIST = Event("Print Shopping List", True, False, False, False, True)
-    PRINT_SHIPPING_LABEL = Event("Print Shipping Label", True, False, True, False, True, "How many boxes have been made for this client?")
-    PRINT_DRIVER_OVERVIEW = Event("Print Driver Overview", True, False, False, True, True)
-    DELETE_REQUEST = Event("Delete Request", True, False, False, False, False,
+    GENERATE_MAP = Event("Generate Map", False, False, False, False, ResponseType.URL.value,
+                         "This action generates a google map URL with location markers without logging a status.")
+    PRINT_DAY_OVERVIEW = Event("Print Day Overview", True, False, False, False, ResponseType.DOWNLOAD.value,
+                         "This action generates a driver-overview like PDF without logging a status.")
+    PRINT_SHOPPING_LIST = Event("Print Shopping List", True, False, False, False, ResponseType.DOWNLOAD.value)
+    PRINT_SHIPPING_LABEL = Event("Print Shipping Label", True, False, True, False, ResponseType.DOWNLOAD.value,
+                                 "How many boxes have been made for this client?")
+    PRINT_DRIVER_OVERVIEW = Event("Print Driver Overview", True, False, False, True, ResponseType.DOWNLOAD.value)
+    DELETE_REQUEST = Event("Delete Request", True, False, False, False, ResponseType.NO_CONTENT.value,
                            "This action permanently deletes the request. This action cannot be undone. Are you sure you wish to continue?")
 
 
@@ -74,7 +80,7 @@ _distinct_event_type = rest.model("DistinctEventType", {
     "date_expected": fields.Boolean(required=True, description="Whether this event_name expects a date to be captured.", example=True),
     "quantity_expected": fields.Boolean(required=True, description="Whether this event_name expects a quantity to be captured.", example=True),
     "name_expected": fields.Boolean(required=True, description="Whether this event_name expects a driver name to be captured.", example=False),
-    "returns_pdf": fields.Boolean(required=True, description="Whether a POST of this event_name would return a PDF or not.", example=False),
+    "response_type": fields.String(required=True, description="The type of response returned from submitting the action.", example=ResponseType.DOWNLOAD.value),
     "confirmation_label": fields.String(required=True, description="The label to show when requesting confirmation.",
                                         example=Status.REQUEST_DENIED.value.confirmation_label)
 })
