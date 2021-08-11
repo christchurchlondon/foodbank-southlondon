@@ -10,6 +10,7 @@ import Header from '../header';
 import Footer from '../footer';
 import Requests from '../requests';
 import Lists from '../lists';
+import Calendar from '../calendar';
 import './styles/index.scss';
 
 
@@ -33,6 +34,7 @@ function Contents(props) {
             <Switch>
                 <Route path="/clients" component={ Requests } />
                 <Route path="/lists" component={ Lists } />
+                <Route path="/calendar" component={ Calendar } />
             </Switch>
         </section>
     );

@@ -3,9 +3,9 @@ import math
 import datetime
 
 import flask
-import gspread  # type:ignore
-import pandas as pd  # type:ignore
-import wrapt  # type:ignore
+import gspread  # type: ignore
+import pandas as pd  # type: ignore
+import wrapt  # type: ignore
 
 from foodbank_southlondon import helpers
 
@@ -28,7 +28,7 @@ def _gsheet(spreadsheet_id: str, index: int = 0) -> gspread.Worksheet:
 
 def _gsheet_to_df(spreadsheet_id: str) -> pd.DataFrame:
     sheet = _gsheet(spreadsheet_id)
-    flask.current_app.logger.info(f"Download gSheet, {sheet.spreadsheet.title} ({sheet.url}) ...")
+    flask.current_app.logger.info(f"Download gSheet, {sheet.spreadsheet.title} ({sheet.url})...")
     data = sheet.get_all_values()
     headers = data.pop(0)
     return pd.DataFrame(data, columns=headers)
@@ -36,20 +36,21 @@ def _gsheet_to_df(spreadsheet_id: str) -> pd.DataFrame:
 
 def append_rows(spreadsheet_id: str, rows: List) -> None:
     sheet = _gsheet(spreadsheet_id)
-    flask.current_app.logger.info(f"Writing {len(rows)} rows, in {sheet.spreadsheet.title} ({sheet.url}) ...")
+    flask.current_app.logger.info(f"Writing {len(rows)} rows, in {sheet.spreadsheet.title} ({sheet.url})...")
     sheet.append_rows(rows, value_input_option="USER_ENTERED")
 
 
 def cache(name: str, spreadsheet_id: str, force_refresh: bool = False) -> pd.DataFrame:
     now = datetime.datetime.now(datetime.timezone.utc)
+    current_app = flask.current_app
     cache = _caches.get(name)
     if cache is not None:
         file_metadata = helpers.drive_files_resource().get(fileId=spreadsheet_id, supportsAllDrives=True, fields="modifiedTime").execute()
         file_modified_time = datetime.datetime.fromisoformat(file_metadata["modifiedTime"].replace("Z", "+00:00"))
-        cache_max_age_time = now - datetime.timedelta(seconds=flask.current_app.config[_FBSL_CACHE_TTL_SECONDS])
+        cache_max_age_time = now - datetime.timedelta(seconds=current_app.config[_FBSL_CACHE_TTL_SECONDS])
         if not force_refresh and _caches_updated[name] >= max(file_modified_time, cache_max_age_time):
             return cache
-    flask.current_app.logger.info(f"Refreshing cache, {name} ...")
+    current_app.logger.info(f"Refreshing cache, {name}...")
     _caches_updated[name] = now
     cache = _caches[name] = _gsheet_to_df(spreadsheet_id)
     return cache
@@ -75,7 +76,7 @@ def gsheet_a1(spreadsheet_id: str, index: int = 0) -> str:
 def overwrite_rows(spreadsheet_id: str, rows: List, index: int = 0) -> None:
     sheet = _gsheet(spreadsheet_id, index)
     new_row_count = len(rows)
-    flask.current_app.logger.info(f"Overwriting all rows with {new_row_count} new rows in {sheet.spreadsheet.title} ({sheet.url}) ...")
+    flask.current_app.logger.info(f"Overwriting all rows with {new_row_count} new rows in {sheet.spreadsheet.title} ({sheet.url})...")
     existing_row_count = sheet.row_count
     if rows:
         sheet.update(rows, value_input_option="USER_ENTERED")

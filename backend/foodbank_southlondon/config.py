@@ -1,5 +1,5 @@
 from typing import Optional
-
+import json
 import os
 
 
@@ -7,8 +7,8 @@ _heroku_app_name = os.environ.get("HEROKU_APP_NAME")
 _port = os.environ.get("PORT")
 
 
-def _congestion_zone_data():
-    with open("congestion-zones.txt") as f:
+def _congestion_zone_postcodes_data() -> list:
+    with open("congestion-zone-postcodes.txt") as f:
         return f.read().splitlines()
 
 
@@ -22,13 +22,15 @@ class _Config(object):
 
     FBSL_BASE_DOMAIN = ""
     FBSL_CACHE_TTL_SECONDS = 120
+    FBSL_COLLECTION_EVENT_DURATION_MINS = 30
     FBSL_CATCH_ALL_LIST = "family_of_10plus"
-    FBSL_CONGESTION_ZONE_POSTCODES = _congestion_zone_data()
+    FBSL_CONGESTION_ZONE_POSTCODES = _congestion_zone_postcodes_data()
     FBSL_EVENTS_GSHEET_ID = ""
     FBSL_FORM_EDIT_URL_TEMPLATE = "https://docs.google.com/forms/d/e/{form_id}/viewform?edit2={request_id}"
     FBSL_FORM_ID = ""
     FBSL_FORM_SUBMIT_URL_TEMPLATE = "https://docs.google.com/forms/d/e/{form_id}/viewform"
     FBSL_FUZZY_SEARCH_THRESHOLD = 80
+    FBSL_GOOGLE_MAPS_SEARCH_BASE_URL = "https://www.google.com/maps/search/"
     FBSL_GSUITE_IMPERSONATE_ADDRESS = ""
     FBSL_GSUITE_GROUP_ADDRESS = ""
     FBSL_LISTS_GSHEET_ID = ""
@@ -39,21 +41,27 @@ class _Config(object):
     FBSL_PROTECT_API: Optional[bool] = None
     FBSL_REQUESTS_GSHEET_ID = ""
     FBSL_USER_SESSION_VAR = "user"
+    FBSL_WATERMARK_CALENDAR_ID = ""
+    FBSL_WATERMARK_CALENDAR_EVENT_ID = ""
 
     @property
-    def FBSL_SA_KEY(self):
+    def FBSL_COLLECTION_CENTRES(self) -> dict:
+        return json.loads(os.environ.get("FBSL_COLLECTION_CENTRES"))
+
+    @property
+    def FBSL_SA_KEY(self) -> str:
         return os.environ.get("FBSL_SA_KEY")
 
     @property
-    def FBSL_STAFF_MOBILES(self):
-        return os.environ.get("FBSL_STAFF_MOBILES")
+    def FBSL_STAFF_MOBILES(self) -> dict:
+        return json.loads(os.environ.get("FBSL_STAFF_MOBILES"))
 
     @property
-    def GOOGLE_CLIENT_SECRET(self):
+    def GOOGLE_CLIENT_SECRET(self) -> str:
         return os.environ.get("FBSL_CLIENT_SECRET")
 
     @property
-    def SECRET_KEY(self):
+    def SECRET_KEY(self) -> str:
         return os.environ.get("FBSL_CLIENT_SECRET")
 
 
@@ -70,6 +78,8 @@ class DevelopmentConfig(_Config):
     FBSL_LISTS_GSHEET_ID = "1Hor0i7K_W99LFXw-Grpf1mIY2MjDUNGnfV2ByNGf1gQ"
     FBSL_PROTECT_API = False
     FBSL_REQUESTS_GSHEET_ID = "1eMiA6DAYmYJVYwNvxj18yRiSBImCXu6WiCD-4CqM7P8"
+    FBSL_WATERMARK_CALENDAR_ID = "c_brar54li5mbct61jm9cv9jlh9g@group.calendar.google.com"
+    FBSL_WATERMARK_CALENDAR_EVENT_ID = "0uoi30td9jrjuh4s7hscskiieb"
 
 
 class ProductionConfig(_Config):
@@ -85,3 +95,5 @@ class ProductionConfig(_Config):
     FBSL_LISTS_GSHEET_ID = "1D0TcNW7pTMGgKYDogS4YDVJqEBAavu3GfXHu_iGlSmU"
     FBSL_PROTECT_API = True
     FBSL_REQUESTS_GSHEET_ID = "1TDM35lGcVPcf0HJda-V7l2QLH9R0EMHP8mbLdZcpb5k"
+    FBSL_WATERMARK_CALENDAR_ID = "c_357m2d2kpir4vonta5i7q22bhs@group.calendar.google.com"
+    FBSL_WATERMARK_CALENDAR_EVENT_ID = "0clgo5gj7fne2apg68d775r7bd"

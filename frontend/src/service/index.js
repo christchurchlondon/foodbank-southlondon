@@ -1,6 +1,6 @@
 import fetch from 'cross-fetch';
 import { format, parse } from 'date-fns';
-import { DATE_FORMAT_REQUEST, DATE_FORMAT_TIMESTAMP } from '../constants';
+import { COLLECTION_CENTRES_FILTER_KEY, TIME_OF_DAY_FILTER_KEY, STATUSES_FILTER_KEY, DATE_FORMAT_REQUEST, DATE_FORMAT_TIMESTAMP } from '../constants';
 
 const endpoints = {
     GET_REQUESTS: 'bff/summary',
@@ -8,8 +8,12 @@ const endpoints = {
     GET_LISTS: 'api/lists/',
     GET_ACTIONS: 'api/events/distinct/actions',
     GET_STATUSES: 'api/events/distinct/statuses',
-    GET_TIME_OF_DAY_FILTER_VALUES: 'api/requests/distinct/?attribute=Time%20of%20Day',
-    GET_EVENT_FILTER_VALUES: 'api/events/distinct',
+    GET_CALENDARS: 'api/calendars/',
+    FILTERS: {
+        [TIME_OF_DAY_FILTER_KEY]: 'api/requests/distinct/?attribute=Time%20of%20Day',
+        [COLLECTION_CENTRES_FILTER_KEY]: 'api/requests/distinct/?attribute=Collection%20Centre',
+        [STATUSES_FILTER_KEY]: 'api/events/distinct',
+    },
     SUBMIT_ACTION: 'bff/actions/',
     SUBMIT_STATUS: 'bff/statuses/',
     SUBMIT_LISTS: 'api/lists/'
@@ -42,12 +46,13 @@ function performDownload(url, data = {}) {
         .then(handleErrors)
         .then(async response => ({
             name: extractFileNameFromResponse(response),
+            type: response.headers.get('Content-Type'),
             blob: await response.blob()
         }))
-        .then(({ name, blob }) => {
+        .then(({ name, type, blob }) => {
 
             // It is necessary to create a new blob object with mime-type explicitly set for all browsers except Chrome, but it works for Chrome too.
-            const newBlob = new Blob([blob], { type: 'application/pdf' });
+            const newBlob = new Blob([blob], { type });
 
             // MS Edge and IE don't allow using a blob object directly as link href, instead it is necessary to use msSaveOrOpenBlob
             if (window.navigator && window.navigator.msSaveOrOpenBlob) {
@@ -70,6 +75,20 @@ function performDownload(url, data = {}) {
         });
 }
 
+function performOpenInNewTab(url, data = {}) {
+    // Try to avoid pop-up blockers by opening the new tab whilst still in stack frames from the
+    // user click then updating the URL once known
+    const newTab = window.open('about:blank');
+
+    return performPost(url, data).then(({ url }) => {
+        newTab.location = url;
+        newTab.focus();
+    }).catch(err => {
+        newTab.close();
+        return Promise.reject(err);
+    });
+}
+
 function handleErrors(response) {
     if(response.status === 403) {
         // Redirect to the login page, the browser should do so immediately but
@@ -79,6 +98,15 @@ function handleErrors(response) {
 
     if (!response.ok) {
         throw Error(response.statusText);
+    }
+
+    if (response.status === 202) {
+        return response.json().then(({ warning }) => {
+            const error = new Error(warning);
+            error.warning = warning;
+
+            throw error;
+        });
     }
 
     return response;
@@ -134,6 +162,11 @@ export function getRequests(filters = {}, page = 1, refreshCache=false) {
         event_names: filters.statuses ? filters.statuses.join(",") : undefined
     };
 
+    // Only send the filter if set to a value, as the empty string signifies filtering by delivery
+    if(filters.collectionCentres && filters.collectionCentres.length > 0) {
+        params.collection_centres = filters.collectionCentres.join(",");
+    }
+
     const url = endpoints.GET_REQUESTS + encodeParams(params);
     return performFetch(url)
         .then(response => {
@@ -148,7 +181,8 @@ export function getRequests(filters = {}, page = 1, refreshCache=false) {
                 event: extractEvent(item),
                 postcode: item.postcode,
                 isInCongestionZone: item.congestion_zone,
-                flagForAttention: item.flag_for_attention
+                flagForAttention: item.flag_for_attention,
+                collectionCentre: item.collection_centre
             }));
 
             const paging = {
@@ -178,14 +212,38 @@ export function getSingleRequest(id) {
     // TODO error if response.items is empty?
 }
 
-export function getTimeOfDayFilterValues() {
-    return performFetch(endpoints.GET_TIME_OF_DAY_FILTER_VALUES)
-        .then(({ values }) => values);
-}
+export function getFilterValues(attribute) {
+    const endpoint = endpoints['FILTERS'][attribute];
 
-export function getEventsFilterValues() {
-    return performFetch(endpoints.GET_EVENT_FILTER_VALUES)
-        .then(({ items }) => items);
+    return performFetch(endpoint)
+        .then((resp) => {
+            // TODO MRB: could return id and display from the server?
+            switch(attribute) {
+                case STATUSES_FILTER_KEY:
+                    return resp.items
+                        .flatMap(({ event_name }) => {
+                            return event_name === ''
+                                ? []
+                                : [{ value: event_name, display: event_name }];
+                        });
+                
+                case COLLECTION_CENTRES_FILTER_KEY:
+                    return resp.values.map((value) => {
+                        return {
+                            value,
+                            display: value === '' ? 'Delivery' : value
+                        };
+                    });
+                
+                default:
+                    return resp.values.map((value) => {
+                        return {
+                            value,
+                            display: value
+                        };
+                    });
+            }
+        });
 }
 
 export function getLists() {
@@ -253,7 +311,7 @@ export function getStatuses() {
             requiresDate: v.date_expected,
             requiresName: v.name_expected,
             requiresQuantity: v.quantity_expected,
-            isDownload: v.returns_pdf
+            responseType: v.response_type
         })));
 }
 
@@ -266,12 +324,11 @@ export function getActions() {
             requiresDate: v.date_expected,
             requiresName: v.name_expected,
             requiresQuantity: v.quantity_expected,
-            isDownload: v.returns_pdf
+            responseType: v.response_type
         })));
 }
 
-export function postEvent(event, ids, type, data = {}) {
-
+export function postEvent(event, ids, type, data = {}, ignoreWarnings) {
     const url = (type === 'status')
         ? endpoints.SUBMIT_STATUS
         : endpoints.SUBMIT_ACTION;
@@ -282,23 +339,31 @@ export function postEvent(event, ids, type, data = {}) {
     const requestBody = {
         event_name: event.name,
         request_ids: ids,
-        event_data: eventData || ''
+        event_data: eventData || '',
+        ignore_warnings: ignoreWarnings || false
     };
 
-    if (event.isDownload) {
-        return performDownload(url, requestBody);
-    } else {
-        return performPost(url, requestBody);
+    switch(event.responseType) {
+        case 'DOWNLOAD':
+            return performDownload(url, requestBody);
+
+        case 'URL':
+            return performOpenInNewTab(url, requestBody);
+
+        default:
+            return performPost(url, requestBody);
     }
 }
-
-
 
 export function postListUpdate(list, notes) {
     const items = listToRequestPayload(list);
     const requestBody = { notes, items };
 
     return performPost(endpoints.SUBMIT_LISTS, requestBody);
+}
+
+export function getCalendars() {
+    return performFetch(endpoints.GET_CALENDARS);
 }
 
 function responseItemToRequest(item) {

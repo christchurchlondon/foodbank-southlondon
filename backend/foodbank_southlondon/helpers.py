@@ -2,11 +2,11 @@ from typing import Any, Callable, Dict, List
 import json
 import time
 
-from google.oauth2.service_account import Credentials  # type:ignore
-from googleapiclient import discovery  # type:ignore
+from google.oauth2.service_account import Credentials  # type: ignore
+from googleapiclient import discovery  # type: ignore
 import flask
-import gspread  # type:ignore
-import wrapt  # type:ignore
+import gspread  # type: ignore
+import wrapt  # type: ignore
 
 
 # CONFIG VARIABLES
@@ -14,6 +14,16 @@ _FBSL_GSUITE_IMPERSONATE_ADDRESS = "FBSL_GSUITE_IMPERSONATE_ADDRESS"
 _FBSL_PROTECT_API = "FBSL_PROTECT_API"
 _FBSL_SA_KEY = "FBSL_SA_KEY"
 _FBSL_USER_SESSION_VAR = "FBSL_USER_SESSION_VAR"
+
+
+def calendar_events_resource() -> discovery.Resource:
+    calendar_events_resource = flask.g.get("calendar_events_resource")
+    if calendar_events_resource is None:
+        creds = credentials("https://www.googleapis.com/auth/calendar.events")
+        delegated_creds = creds.with_subject(flask.current_app.config[_FBSL_GSUITE_IMPERSONATE_ADDRESS])
+        calendar_events_resource = flask.g.calendar_events_resource = discovery.build("calendar", "v3", credentials=delegated_creds,
+                                                                                      cache_discovery=False).events()
+    return calendar_events_resource
 
 
 def credentials(*scopes: str) -> Credentials:

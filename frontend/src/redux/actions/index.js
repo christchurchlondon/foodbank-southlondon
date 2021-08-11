@@ -35,12 +35,12 @@ import {
     SUBMIT_EVENT,
     EVENT_SUBMIT_COMPLETE,
     EVENT_SUBMIT_FAILED,
-    LOAD_TIME_OF_DAY_FILTER_VALUES,
-    LOAD_TIME_OF_DAY_FILTER_VALUES_FAILED,
-    TIME_OF_DAY_FILTER_VALUES_LOADED,
-    LOAD_EVENTS_FILTER_VALUES,
-    LOAD_EVENTS_FILTER_VALUES_FAILED,
-    EVENTS_FILTER_VALUES_LOADED
+    LOAD_FILTER_VALUES,
+    LOAD_FILTER_VALUES_FAILED,
+    FILTER_VALUES_LOADED,
+    LOAD_CALENDARS,
+    CALENDARS_LOADED,
+    LOAD_CALENDARS_FAILED
 } from './types';
 import {
     getRequests,
@@ -50,8 +50,8 @@ import {
     getActions,
     postEvent,
     postListUpdate,
-    getTimeOfDayFilterValues,
-    getEventsFilterValues
+    getFilterValues,
+    getCalendars
 } from '../../service';
 
 
@@ -308,44 +308,27 @@ export const loadActionsFailed = message => ({
 
 // TODO more?
 
-export const fetchTimeOfDayFilterValues = () => {
+export const fetchFilterValues = (attribute) => {
     return dispatch => {
         dispatch({
-            type: LOAD_TIME_OF_DAY_FILTER_VALUES
+            type: LOAD_FILTER_VALUES,
+            payload: {
+                attribute
+            }
         });
         
-        getTimeOfDayFilterValues()
+        getFilterValues(attribute)
             .then(values => dispatch({
-                type: TIME_OF_DAY_FILTER_VALUES_LOADED,
+                type: FILTER_VALUES_LOADED,
                 payload: {
+                    attribute,
                     values
                 }
             }))
             .catch(message => dispatch({
-                type: LOAD_TIME_OF_DAY_FILTER_VALUES_FAILED,
+                type: LOAD_FILTER_VALUES_FAILED,
                 payload: {
-                    message
-                }
-            }));
-    }
-}
-
-export const fetchEventsFilterValues = () => {
-    return dispatch => {
-        dispatch({
-            type: LOAD_EVENTS_FILTER_VALUES
-        });
-        
-        getEventsFilterValues()
-            .then(values => dispatch({
-                type: EVENTS_FILTER_VALUES_LOADED,
-                payload: {
-                    values
-                }
-            }))
-            .catch(message => dispatch({
-                type: LOAD_EVENTS_FILTER_VALUES_FAILED,
-                payload: {
+                    attribute,
                     message
                 }
             }));
@@ -364,17 +347,19 @@ export const triggerSubmitEvent = (event, type, ids, filters, page) => {
     };
 };
 
-export const openSubmitDialog = (event, type) => ({
+export const openSubmitDialog = (event, type, message, ignoreWarnings) => ({
     type: OPEN_SUBMIT_DIALOG,
     payload: {
         event,
-        type
+        type,
+        message,
+        ignoreWarnings
     }
 });
 
-export const confirmSubmitEvent = (event, type, ids, data, filters = {}, page = 1) => {
+export const confirmSubmitEvent = (event, type, ids, data, filters = {}, page = 1, ignoreWarnings) => {
     return dispatch => {
-        dispatch(sendEvent(event, type, ids, data, filters, page));
+        dispatch(sendEvent(event, type, ids, data, filters, page, ignoreWarnings));
     };
 };
 
@@ -388,16 +373,22 @@ export const closeSubmitDialog = () => ({
     type: CLOSE_SUBMIT_DIALOG
 });
 
-export const sendEvent = (event, type, ids, data, filters, page) => {
+export const sendEvent = (event, type, ids, data, filters, page, ignoreWarnings) => {
     return dispatch => {
         dispatch(submitEvent(event));
-        return postEvent(event, ids, type, data)
+        return postEvent(event, ids, type, data, ignoreWarnings)
             .then(() => {
                 dispatch(eventSubmitComplete());
                 dispatch(closeSubmitDialog())
                 dispatch(fetchRequests(filters, page));
             })
-            .catch(() => dispatch(eventSubmitFailed()));
+            .catch((err) => {
+                if(err.warning) {
+                    dispatch(openSubmitDialog(event, type, err.warning, true));
+                } else {
+                    dispatch(eventSubmitFailed());
+                }
+            });
     };
 };
 
@@ -412,3 +403,21 @@ export const eventSubmitComplete = () => ({
 export const eventSubmitFailed = () => ({
     type: EVENT_SUBMIT_FAILED
 });
+
+// Calendars
+
+export const fetchCalendars = () => {
+    return dispatch => {
+        dispatch({ type: LOAD_CALENDARS })
+        getCalendars().then(({ calendar_ids }) => {
+            dispatch({
+                type: CALENDARS_LOADED,
+                payload: {
+                    calendar_ids
+                }
+            });
+        }).catch(() => {
+            dispatch({ type: LOAD_CALENDARS_FAILED });
+        })
+    };
+}

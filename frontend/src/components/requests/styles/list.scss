@@ -1,4 +1,10 @@
+@import 'include';
 
 .requests-list td {
     white-space: pre;
+}
+
+.requests-list .inline-icon {
+    height: 14px;
+    margin: 0 0 -1px $pad-half;   
 }

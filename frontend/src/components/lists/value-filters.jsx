@@ -1,16 +1,36 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Menu from '../common/menu';
-import { fetchRequests, fetchTimeOfDayFilterValues, fetchEventsFilterValues } from '../../redux/actions';
+import { fetchRequests, fetchFilterValues } from '../../redux/actions';
 import { STATUS_LOADING, STATUS_SUCCESS } from '../../constants';
 
-export function FilterFieldValues({ allPossibleValues, values, onChange, onOpen, loading, disabled }) {
+export function FilterFieldValues({ attribute }) {
+    const dispatch = useDispatch();
+    
+    const requests = useSelector(state => state.requests);
+    const { filters, filterValues: allFilterValues, status: tableLoadingStatus } = requests;
+
+    const values = filters[attribute] ? filters[attribute] : [];
+    const filterValues = allFilterValues[attribute].items;
+
+    const loading = allFilterValues[attribute].loadingStatus === STATUS_LOADING;
+    const disabled = tableLoadingStatus !== STATUS_SUCCESS;
+
     function getUpdatedValues(value) {
         if(values.includes(value)) {
             return values.filter(v => v !== value);
         }
 
         return [...values, value];
+    }
+
+    function onChange(updatedValues) {
+        const updatedFilters = { ...filters, [attribute]: updatedValues }; 
+        dispatch(fetchRequests(updatedFilters, 1, false));
+    }
+
+    function onOpen() {
+        dispatch(fetchFilterValues(attribute));
     }
 
     const label = values.length > 0 ? `(${values.length})` : '';
@@ -22,7 +42,7 @@ export function FilterFieldValues({ allPossibleValues, values, onChange, onOpen,
             className="icon"
             loading={loading}
             onOpen={onOpen}
-            options={allPossibleValues.map(value =>
+            options={filterValues.map(({ value, display }) =>
                 <React.Fragment>
                     <input
                         type="checkbox"
@@ -30,43 +50,10 @@ export function FilterFieldValues({ allPossibleValues, values, onChange, onOpen,
                         checked={values.includes(value)}
                         disabled={disabled}
                     ></input>
-                    <label>{value}</label>
+                    <label>{display}</label>
                 </React.Fragment>    
             )}
         />
         {label}
     </div>;
-}
-
-export function FilterTimeOfDay() {
-    const dispatch = useDispatch();
-    const { filters, timeOfDayFilterValues, status } = useSelector(state => state.requests);
-
-    return <FilterFieldValues
-        loading={timeOfDayFilterValues.loadingStatus === STATUS_LOADING}
-        disabled={status !== STATUS_SUCCESS}
-        allPossibleValues={timeOfDayFilterValues.items}
-        values={filters['timeOfDay'] || []}
-        onChange={(timeOfDay) => dispatch(fetchRequests({ ...filters, timeOfDay }, 1, false)) }
-        onOpen={() => dispatch(fetchTimeOfDayFilterValues())}
-    />;
-}
-
-export function FilterStatus() {
-    const dispatch = useDispatch();
-    const { filters, eventsFilterValues, status } = useSelector(state => state.requests);
-
-    const allPossibleValues = eventsFilterValues.items
-        .map(({ event_name }) => event_name)
-        .filter(event_name => event_name !== '');
-
-    return <FilterFieldValues
-        icon="filter"
-        allPossibleValues={allPossibleValues}
-        loading={eventsFilterValues.loadingStatus === STATUS_LOADING}
-        disabled={status !== STATUS_SUCCESS}
-        values={filters['statuses'] || []}
-        onChange={(statuses) => dispatch(fetchRequests({ ...filters, statuses }, 1, false)) }
-        onOpen={() => dispatch(fetchEventsFilterValues())}
-    />;
 }

@@ -77,7 +77,7 @@
             </tr>
             <tr class="bottom">
                 <td><h2>{{ request['postcode'] }}</h2></td>
-                <td><h3>{{ request['time_of_day'] }}</h3></td>
+                <td><h3>{{ request['time_of_day'] }} | {{ request['collection_centre'] if request['shipping_method'] == 'Collection' else 'Delivery' }}</h3></td>
                 <td class="right"><h3>Parcel {{ page }} / {{ total_pages }}</h3></td>
             </tr>
         </table>

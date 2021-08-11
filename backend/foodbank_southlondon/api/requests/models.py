@@ -1,6 +1,10 @@
-from flask_restx import fields  # type:ignore
+from flask_restx import fields  # type: ignore
 
 from foodbank_southlondon.api import models, rest
+
+
+# INTERNALS
+SHIPPING_METHOD_COLLECTION = "Collection"
 
 
 class StrBoolean(fields.Raw):
@@ -49,15 +53,30 @@ request = rest.model("ClientRequest", {
                                        example="Yes"),
     "other_requirements": fields.String(attribute="Other Requirements", required=True,
                                         description="Additional, non-dietary requirements or season-specific asks", example="Christmas Presents"),
+    "extra_information": fields.String(attribute="Extra Information", required=False, description="Any extra information to be noted",
+                                       example="No dairy"),
     "flag_for_attention": StrBoolean(attribute="Flag for Attention", required=True, default="",
                                      description="Whether or not this request should be flagged for attention", example=True),
     "signposting_call": StrBoolean(attribute="Signposting Call", required=True, default="",
                                    description="Whether or not this request should be labelled as a signposted call", example=True),
-    "extra_information": fields.String(attribute="Extra Information", required=False, description="Any extra information to be noted",
-                                       example="No dairy"),
-    "edit_details_url": fields.String(required=True, description="The Google Forms edit response URL that can be used to update details of the Client"
-                                      "Request", example="https://docs.google.com/forms/d/e/1FAIpQLSfb94-4k-Pkf3ccBqd2WR-yzMBdmqdehYBbnN1HLrmE9caneA/"
-                                      "viewform?edit2=2_ABaOnueK_9ztK8RlxxBe6Jf0wvs9rAwoi30EwATe24VtNeMhgazghzzd4pgibH-HHn_RDZQ"),
+    "shipping_method": fields.String(attribute="Shipping Method", required=True,
+                                     description="Whether the food parcel will be delivered or collected.", example="Collection"),
+    "collection_date": fields.String(attribute="Collection Date", required=False, description="The date that the food parcel should be collected in "
+                                     "the format of DD/MM/YYYY", example="01/05/2020"),
+    "collection_centre": fields.String(attribute="Collection Centre", required=False,
+                                       description="The centre that the client should collect the food parcel from.", example="Vauxhall"),
+    "vauxhall_collection_time": fields.String(attribute="Vauxhall Collection Time", required=False,
+                                              description="The time that the food parcel should be collected from the Vauxhall centre, in the format "
+                                              "of HH:MM", example="12:30"),
+    "waterloo_st_george_the_martyr_collection_time": fields.String(attribute="Waterloo - St George the Martyr Collection Time", required=False,
+                                                                   description="The time that the food parcel should be collected from the Brixton "
+                                                                   "centre, in the format of HH:MM", example="12:30"),
+    "waterloo_oasis_collection_time": fields.String(attribute="Waterloo - Oasis Collection Time", required=False,
+                                                    description="The time that the food parcel should be collected from the Waterloo centre, in the "
+                                                    "format of HH:MM", example="12:30"),
+    "edit_details_url": fields.String(required=True, description="The Google Forms edit response URL that can be used to update details of the "
+                                      "Client Request", example="https://docs.google.com/forms/d/e/1FAIpQLSfb94-4k-Pkf3ccBqd2WR-yzMBdmqdehYBbnN1HLrm"
+                                      "E9caneA/viewform?edit2=2_ABaOnueK_9ztK8RlxxBe6Jf0wvs9rAwoi30EwATe24VtNeMhgazghzzd4pgibH-HHn_RDZQ"),
     "congestion_zone": fields.Boolean(required=True, description="Whether or not the postcode is in the congestion zone.", example=True)
 })
 

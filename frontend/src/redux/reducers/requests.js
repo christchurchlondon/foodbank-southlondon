@@ -3,7 +3,10 @@ import {
     STATUS_IDLE,
     STATUS_LOADING,
     STATUS_SUCCESS,
-    STATUS_FAILED
+    STATUS_FAILED,
+    TIME_OF_DAY_FILTER_KEY,
+    STATUSES_FILTER_KEY,
+    COLLECTION_CENTRES_FILTER_KEY
 } from '../../constants';
 import { today } from '../../helpers';
 import {
@@ -27,14 +30,15 @@ import {
     SUBMIT_EVENT,
     EVENT_SUBMIT_COMPLETE,
     EVENT_SUBMIT_FAILED,
-    LOAD_TIME_OF_DAY_FILTER_VALUES,
-    TIME_OF_DAY_FILTER_VALUES_LOADED,
-    LOAD_TIME_OF_DAY_FILTER_VALUES_FAILED,
-    LOAD_EVENTS_FILTER_VALUES,
-    EVENTS_FILTER_VALUES_LOADED,
-    LOAD_EVENTS_FILTER_VALUES_FAILED
+    LOAD_FILTER_VALUES,
+    LOAD_FILTER_VALUES_FAILED,
+    FILTER_VALUES_LOADED,
 } from '../actions/types';
 
+const idleFilterValue = {
+    loadingStatus: STATUS_IDLE,
+    items: []
+};
 
 const initialState = {
     filters: {
@@ -68,13 +72,10 @@ const initialState = {
         dialog: null,
         updateStatus: STATUS_IDLE
     },
-    timeOfDayFilterValues: {
-        loadingStatus: STATUS_IDLE,
-        items: []
-    },
-    eventsFilterValues: {
-        loadingStatus: STATUS_IDLE,
-        items: []
+    filterValues: {
+        [TIME_OF_DAY_FILTER_KEY]: idleFilterValue,
+        [STATUSES_FILTER_KEY]: idleFilterValue,
+        [COLLECTION_CENTRES_FILTER_KEY]: idleFilterValue
     },
     editUrl: ''
 };
@@ -251,9 +252,12 @@ export default function(state = initialState, action) {
                 ...state,
                 events: {
                     ...state.events,
+                    updateStatus: STATUS_IDLE,
                     dialog: {
                         event: action.payload.event,
-                        type: action.payload.type
+                        type: action.payload.type,
+                        message: action.payload.message,
+                        ignoreWarnings: action.payload.ignoreWarnings
                     }
                 }
             };
@@ -290,52 +294,34 @@ export default function(state = initialState, action) {
                     updateStatus: STATUS_FAILED
                 }
             };
-        case LOAD_TIME_OF_DAY_FILTER_VALUES:
+        case LOAD_FILTER_VALUES:
             return {
                 ...state,
-                timeOfDayFilterValues: {
-                    loadingStatus: STATUS_LOADING,
-                    items: []
+                filterValues: {
+                    ...state.filterValues,
+                    [action.payload.attribute]: {
+                        loadingStatus: STATUS_LOADING,
+                        items: []
+                    }
                 }
             }
 
-        case TIME_OF_DAY_FILTER_VALUES_LOADED:
+        case FILTER_VALUES_LOADED:
             return {
                 ...state,
-                timeOfDayFilterValues: {
-                    loadingStatus: STATUS_SUCCESS,
-                    items: action.payload.values
+                filterValues: {
+                    ...state.filterValues,
+                    [action.payload.attribute]: {
+                        loadingStatus: STATUS_SUCCESS,
+                        items: action.payload.values
+                    }
                 }
             };
-        case LOAD_TIME_OF_DAY_FILTER_VALUES_FAILED:
+        case LOAD_FILTER_VALUES_FAILED:
             return {
                 ...state,
-                timeOfDayFilterValues: {
-                    loadingStatus: STATUS_FAILED,
-                    items: []
-                }
-            };
-        case LOAD_EVENTS_FILTER_VALUES:
-            return {
-                ...state,
-                eventsFilterValues: {
-                    loadingStatus: STATUS_LOADING,
-                    items: []
-                }
-            }
-
-        case EVENTS_FILTER_VALUES_LOADED:
-            return {
-                ...state,
-                eventsFilterValues: {
-                    loadingStatus: STATUS_SUCCESS,
-                    items: action.payload.values
-                }
-            };
-        case LOAD_EVENTS_FILTER_VALUES_FAILED:
-            return {
-                ...state,
-                eventsFilterValues: {
+                filterValues: {
+                    ...state.filterValues,
                     loadingStatus: STATUS_FAILED,
                     items: []
                 }

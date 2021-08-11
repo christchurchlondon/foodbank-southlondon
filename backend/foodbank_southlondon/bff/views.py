@@ -1,15 +1,17 @@
-from typing import Any, Dict, List, Tuple
+from collections.abc import Iterable, Iterator
+from typing import Any, Dict, List, Optional, Tuple
+from urllib import parse
 import datetime
+import itertools
+import io
 
 import flask
-import flask_restx  # type:ignore
-import itertools
-import json
-import numpy as np  # type:ignore
-import pandas as pd  # type:ignore
+import flask_restx  # type: ignore
+import numpy as np  # type: ignore
+import pandas as pd  # type: ignore
 import pytz
 import requests
-import weasyprint  # type:ignore
+import weasyprint  # type: ignore
 import werkzeug
 
 from foodbank_southlondon.api import utils
@@ -26,12 +28,12 @@ _FBSL_BASE_DOMAIN = "FBSL_BASE_DOMAIN"
 _FBSL_CATCH_ALL_LIST = "FBSL_CATCH_ALL_LIST"
 _FBSL_FORM_ID = "FBSL_FORM_ID"
 _FBSL_FORM_SUBMIT_URL_TEMPLATE = "FBSL_FORM_SUBMIT_URL_TEMPLATE"
+_FBSL_GOOGLE_MAPS_SEARCH_BASE_URL = "FBSL_GOOGLE_MAPS_SEARCH_BASE_URL"
 _FBSL_MAX_ACTION_REQUEST_IDS = "FBSL_MAX_ACTION_REQUEST_IDS"
 _FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
 _FBSL_MAX_REQUEST_IDS_PER_URL = "FBSL_MAX_REQUEST_IDS_PER_URL"
 _FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
 _FBSL_STAFF_MOBILES = "FBSL_STAFF_MOBILES"
-_PREFERRED_URL_SCHEME = "PREFERRED_URL_SCHEME"
 
 
 def _api_base_url() -> str:
@@ -71,7 +73,7 @@ class Actions(flask_restx.Resource):
     def _generate_driver_overview_pdf(items: List, driver_name: str) -> flask.Response:
         template_name = "driver-overview"
         today = datetime.datetime.now().strftime("%Y-%m-%d")
-        staff_mobiles = " | ".join(f"{staff} - {mobile}" for staff, mobile in json.loads(flask.current_app.config[_FBSL_STAFF_MOBILES]).items())
+        staff_mobiles = " | ".join(f"{staff} - {mobile}" for staff, mobile in flask.current_app.config[_FBSL_STAFF_MOBILES].items())
         html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", items=items, date=today, driver_name=driver_name,
                                                             staff_mobiles=staff_mobiles), encoding="utf8")
         document = html.render()
@@ -112,22 +114,39 @@ class Actions(flask_restx.Resource):
     @staticmethod
     def _make_pdf_response(pages: List, metadata: Any, url_fetcher: Any, font_config: Any, template_name: str) -> flask.Response:
         pdf = weasyprint.Document(pages, metadata, url_fetcher, font_config).write_pdf()
-        response = flask.make_response((pdf, 201))
-        response.headers["Content-Type"] = "application/pdf"
-        response.headers["Content-Disposition"] = f"attachment; filename=\"{template_name}.pdf\""
-        return response
+        return flask.send_file(io.BytesIO(pdf), attachment_filename=f"{template_name}.pdf", as_attachment=True)
 
+    @staticmethod
+    def _process_warnings(requests_items: List, api_base_url: str, request_ids: List, action_status_name: str) -> Optional[flask.Response]:
+        requests_df = pd.DataFrame(requests_items)
+        event_attributes = ("request_id", )
+        events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
+                           headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
+                           params={"request_ids": ",".join(request_ids), "event_names": [action_status_name], "latest_event_only": True, "refresh_cache": True,
+                                   "per_page": len(request_ids)})
+        events_df = pd.DataFrame(events_data["items"], columns=event_attributes)
+        df = pd.merge(events_df, requests_df, on="request_id", how="left").replace({np.nan: None})
+        if not df.empty:
+            return flask.make_response({"warning": f"The following postcodes have already been printed: {', '.join(df['postcode'].unique())}. "
+                                        "Are you sure you want to print again?"}, 202)
+        return None
+
+    @rest.expect(parsers.action_params)
+    @rest.expect(models.action)
     @rest.response(201, "Created")
+    @rest.response(202, "Accepted")
     @rest.response(400, "Bad Request")
     @rest.response(404, "Not Found")
-    @rest.expect(models.action)
     def post(self) -> flask.Response:
         """Process an action."""
+        current_app = flask.current_app
+        params = parsers.action_params.parse_args(flask.request)
+        ignore_warnings = params["ignore_warnings"]
         data = flask.request.json
-        flask.current_app.logger.debug(f"Received request body, {data}")
+        current_app.logger.debug(f"Received request body, {data}")
         request_ids = data["request_ids"]
         total_request_ids = len(request_ids)
-        max_action_request_ids = flask.current_app.config[_FBSL_MAX_ACTION_REQUEST_IDS]
+        max_action_request_ids = current_app.config[_FBSL_MAX_ACTION_REQUEST_IDS]
         if total_request_ids > max_action_request_ids:
             rest.abort(400, f"The maximum number of clients that can be selected at one time is {max_action_request_ids}.")
         event_name = data["event_name"]
@@ -140,13 +159,13 @@ class Actions(flask_restx.Resource):
                 # leaving the operations in the wrong order - very small chance edge case that the deletion will fail but still be marked as deleted
                 # - user can just delete again.
                 _post_event(api_base_url, [request_id], events_models.ActionStatus.REQUEST_DELETED.value.event_name, event_data)
-                utils.delete_row(flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], request_id)
+                utils.delete_row(current_app.config[_FBSL_REQUESTS_GSHEET_ID], request_id)
             return_value = flask.make_response({}, 201)
         else:
             action_status_name = None
             try:
                 requests_items = []
-                for chunk in list(_chunk(request_ids, flask.current_app.config[_FBSL_MAX_REQUEST_IDS_PER_URL])):
+                for chunk in list(_chunk(request_ids, current_app.config[_FBSL_MAX_REQUEST_IDS_PER_URL])):
                     requests_items.extend(_get(f"{api_base_url}requests/{','.join(chunk)}", cookies=flask.request.cookies,
                                           params={"per_page": len(chunk)})["items"])
             except requests.exceptions.HTTPError as error:
@@ -156,30 +175,42 @@ class Actions(flask_restx.Resource):
                     rest.abort(error.response.status_code, error.response.text)
             if event_name == events_models.Action.PRINT_SHOPPING_LIST.value.event_name:
                 action_status_name = events_models.ActionStatus.SHOPPING_LIST_PRINTED.value.event_name
+                if not ignore_warnings:
+                    return_value = self._process_warnings(requests_items, api_base_url, request_ids, action_status_name)
+                    if return_value:
+                        return return_value
                 return_value = self._generate_shopping_list_pdf(requests_items, api_base_url, flask.request.cookies)
             elif event_name == events_models.Action.PRINT_SHIPPING_LABEL.value.event_name:
                 action_status_name = events_models.ActionStatus.SHIPPING_LABEL_PRINTED.value.event_name
+                if not ignore_warnings:
+                    return_value = self._process_warnings(requests_items, api_base_url, request_ids, action_status_name)
+                    if return_value:
+                        return return_value
                 if not event_data.isdigit() or int(event_data) < 1:
                     rest.abort(400, "Invalid quantity. The quantity must be positive integer.")
                 return_value = self._generate_shipping_label_pdf(requests_items, int(event_data))
             elif event_name == events_models.Action.PRINT_DRIVER_OVERVIEW.value.event_name:
                 requests_df = pd.DataFrame(requests_items)
-                request_ids = requests_df["request_id"].unique()
                 event_attributes = ("request_id", "event_data")
                 events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
                                    headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
                                    params={"event_names": events_models.ActionStatus.SHIPPING_LABEL_PRINTED.value.event_name,
-                                           "latest_event_only": True, "per_page": len(request_ids), "request_ids": ",".join(request_ids)})
+                                           "request_ids": ",".join(request_ids), "latest_event_only": True, "refresh_cache": True,
+                                           "per_page": len(request_ids)})
                 events_df = pd.DataFrame(events_data["items"], columns=event_attributes)
                 df = pd.merge(requests_df, events_df, on="request_id", how="left").replace({np.nan: None})
                 items = df.to_dict("records")
                 action_status_name = events_models.ActionStatus.OUT_FOR_DELIVERY.value.event_name
                 return_value = self._generate_driver_overview_pdf(items, event_data)
             elif event_name == events_models.Action.PRINT_DAY_OVERVIEW.value.event_name:
-                df = pd.DataFrame(requests_items)
-                df = df.sort_values(by=["time_of_day", "postcode"], key=lambda col: col.str.lower())
-                items = df.to_dict("records")
+                requests_df = pd.DataFrame(requests_items)
+                requests_df = requests_df.sort_values(by=["time_of_day", "postcode"], key=lambda col: col.str.lower())
+                items = requests_df.to_dict("records")
                 return self._generate_day_overview_pdf(items)
+            elif event_name == events_models.Action.GENERATE_MAP.value.event_name:
+                requests_df = pd.DataFrame(requests_items)
+                postcodes = ",".join(parse.quote_plus(postcode) for postcode in requests_df["postcode"].unique())
+                return flask.make_response({"url": current_app.config[_FBSL_GOOGLE_MAPS_SEARCH_BASE_URL] + postcodes}, 200)
             _post_event(api_base_url, request_ids, action_status_name, event_data)
         return return_value
 
@@ -187,8 +218,8 @@ class Actions(flask_restx.Resource):
 @rest.route("/details/<string:request_id>")
 class Details(flask_restx.Resource):
 
-    @rest.response(404, "Not Found")
     @rest.expect(parsers.cache_params)
+    @rest.response(404, "Not Found")
     @rest.marshal_with(models.details)
     def get(self, request_id: str) -> Dict[str, Any]:
         """Get detailed information for a single Client Request."""
@@ -205,7 +236,7 @@ class Details(flask_restx.Resource):
         request_data = requests_items[0]
         max_per_page = flask.current_app.config[_FBSL_MAX_PAGE_SIZE]
         events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
-                           params={"refresh_cache": refresh_cache, "request_ids": request_id, "per_page": max_per_page})
+                           params={"request_ids": request_id, "refresh_cache": refresh_cache, "per_page": max_per_page})
         params = {"refresh_cache": refresh_cache}
         for attribute in ("client_full_name", "postcode"):
             value = request_data[attribute]
@@ -230,10 +261,10 @@ class Details(flask_restx.Resource):
 @rest.route("/statuses/")
 class Statuses(flask_restx.Resource):
 
+    @rest.expect(models.status)
     @rest.response(201, "Created")
     @rest.response(400, "Bad Request")
     @rest.response(404, "Not Found")
-    @rest.expect(models.status)
     def post(self) -> Tuple[Dict, int]:
         """Process a status."""
         data = flask.request.json
@@ -249,6 +280,7 @@ class Summary(flask_restx.Resource):
     @rest.marshal_with(models.page_of_summary)
     def get(self) -> Dict[str, Any]:
         """List Client Request summary."""
+        current_app = flask.current_app
         params = parsers.summary_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         start_date = params["start_date"]
@@ -265,26 +297,30 @@ class Summary(flask_restx.Resource):
         postcodes = ",".join(params["postcodes"] or ()) or None
         time_of_days = ",".join(params["time_of_days"] or ()) or None
         voucher_numbers = ",".join(params["voucher_numbers"] or ()) or None
+        # Preserve the empty string to filter by delivery only
+        _collection_centres = params["collection_centres"]
+        collection_centres = ",".join(_collection_centres) if _collection_centres is not None else None
         event_names = ",".join(params["event_names"] or ()) or None
         per_page = params["per_page"]
         api_base_url = _api_base_url()
         items = []
         requests_data = _get(f"{api_base_url}requests/", cookies=flask.request.cookies,
                              headers={"X-Fields": "items{request_id, client_full_name, voucher_number, postcode, packing_date, time_of_day, "
-                                      "household_size, congestion_zone, flag_for_attention}, page, per_page, total_items, total_pages"},
-                             params={"client_full_names": client_full_names, "packing_dates": packing_dates, "page": params["page"],
-                                     "per_page": per_page, "postcodes": postcodes, "time_of_days": time_of_days, "voucher_numbers": voucher_numbers,
-                                     "event_names": event_names, "refresh_cache": refresh_cache})
+                                      "household_size, congestion_zone, flag_for_attention, signposting_call, collection_centre}, page, per_page, "
+                                      "total_items, total_pages"},
+                             params={"client_full_names": client_full_names, "packing_dates": packing_dates, "postcodes": postcodes,
+                                     "time_of_days": time_of_days, "voucher_numbers": voucher_numbers, "collection_centres": collection_centres,
+                                     "event_names": event_names, "refresh_cache": refresh_cache, "page": params["page"], "per_page": per_page})
         requests_df = pd.DataFrame(requests_data["items"])
         if not requests_df.empty:
             events_df = None
             request_ids = requests_df["request_id"].unique()
             event_attributes = ("request_id", "event_timestamp", "event_name", "event_data")
-            for chunk in _chunk(request_ids, flask.current_app.config[_FBSL_MAX_REQUEST_IDS_PER_URL]):
+            for chunk in _chunk(request_ids, current_app.config[_FBSL_MAX_REQUEST_IDS_PER_URL]):
                 events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
                                    headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
-                                   params={"latest_event_only": True, "per_page": per_page, "refresh_cache": refresh_cache,
-                                           "request_ids": ",".join(chunk)})
+                                   params={"request_ids": ",".join(chunk), "latest_event_only": True, "refresh_cache": refresh_cache,
+                                           "per_page": per_page})
                 events_chunk_df = pd.DataFrame(events_data["items"], columns=event_attributes)
                 if events_df is None:
                     events_df = events_chunk_df
@@ -297,11 +333,11 @@ class Summary(flask_restx.Resource):
             "per_page": requests_data["per_page"],
             "total_pages": requests_data["total_pages"],
             "total_items": requests_data["total_items"],
-            "form_submit_url": flask.current_app.config[_FBSL_FORM_SUBMIT_URL_TEMPLATE].format(form_id=flask.current_app.config[_FBSL_FORM_ID]),
+            "form_submit_url": current_app.config[_FBSL_FORM_SUBMIT_URL_TEMPLATE].format(form_id=current_app.config[_FBSL_FORM_ID]),
             "items": items
         }
 
 
-def _chunk(iterable, size):
+def _chunk(iterable: Iterable, size: int) -> Iterator:
     iterator = iter(iterable)
     return iter(lambda: tuple(itertools.islice(iterator, size)), ())

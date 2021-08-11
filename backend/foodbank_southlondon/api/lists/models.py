@@ -1,4 +1,4 @@
-from flask_restx import fields  # type:ignore
+from flask_restx import fields  # type: ignore
 
 from foodbank_southlondon.api import rest
 
