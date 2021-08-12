@@ -26,6 +26,7 @@ logging.getLogger("weasyprint").addHandler(logging.StreamHandler())
 # CONFIG VARIABLES
 _FBSL_BASE_DOMAIN = "FBSL_BASE_DOMAIN"
 _FBSL_CATCH_ALL_LIST = "FBSL_CATCH_ALL_LIST"
+_FBSL_COLLECTION_CENTRES = "FBSL_COLLECTION_CENTRES"
 _FBSL_FORM_ID = "FBSL_FORM_ID"
 _FBSL_FORM_SUBMIT_URL_TEMPLATE = "FBSL_FORM_SUBMIT_URL_TEMPLATE"
 _FBSL_GOOGLE_MAPS_SEARCH_BASE_URL = "FBSL_GOOGLE_MAPS_SEARCH_BASE_URL"
@@ -105,8 +106,9 @@ class Actions(flask_restx.Resource):
         document = None
         for request in request_items:
             for index in range(quantity):
-                html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", request=request, page=index + 1, total_pages=quantity),
-                                       encoding="utf8")
+                html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", request=request,
+                                                                    collection_centres=flask.current_app.config[_FBSL_COLLECTION_CENTRES],
+                                                                    page=index + 1, total_pages=quantity), encoding="utf8")
                 document = html.render()
                 pages.extend(document.pages)
         return Actions._make_pdf_response(pages, document.metadata, document.url_fetcher, document._font_config, template_name)
