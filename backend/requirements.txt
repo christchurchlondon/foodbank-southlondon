@@ -10,6 +10,6 @@ pandas
 python-dotenv
 pytz
 requests
-weasyprint
+weasyprint==52.2
 werkzeug
 wrapt
