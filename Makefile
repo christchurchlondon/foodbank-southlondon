@@ -1,5 +1,8 @@
 default: help
 
+# PARAMETERS
+ENV ?= development
+
 .PHONY: help
 help: ## display this help message
 	@echo "Please use \`make <target>\` where <target> is one of:"
@@ -18,9 +21,9 @@ dist: ## push the latest foodbank-southlondon docker image to Heroku Container R
 	heroku container:release -a foodbank-southlondon web
 
 .PHONY: docker
-docker: ## run the application locally with production settings using gunicorn inside docker (docker build & docker run)
+docker:  ## ENV= (run the application locally using gunicorn inside docker [docker build & docker run]; ENV defaults to development)
 	docker build -t foodbank-southlondon:latest .
-	docker run --rm -p 80:8080 -e FLASK_ENV=production -e PORT=8080 --env-file backend/production.env foodbank-southlondon:latest
+	docker run --rm -p 80:8080 -e FLASK_ENV=$(ENV) -e PORT=8080 --env-file backend/$(ENV).env foodbank-southlondon:latest
 
 .PHONY: install
 install:  ## install the frontend and backend applications' dependencies locally (FRONTEND make install & BACKEND make install)

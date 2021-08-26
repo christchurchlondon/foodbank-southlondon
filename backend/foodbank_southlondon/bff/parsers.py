@@ -24,5 +24,5 @@ summary_params.add_argument(_requests_params_args["collection_centres"])
 summary_params.add_argument(_requests_params_args["event_names"])
 
 action_params = reqparse.RequestParser(trim=True)
-action_params.add_argument("ignore_warnings", type=inputs.boolean, required=False, default=False, help="Whether warnings should be ignored or not. If "
-                           "so, a 202 response code may be returned with a warning message.")
+action_params.add_argument("ignore_warnings", type=inputs.boolean, required=False, default=False, help="Whether warnings should be ignored or not. "
+                           "If so, a 202 response code may be returned with a warning message.")

@@ -68,7 +68,8 @@ class Actions(flask_restx.Resource):
         today = datetime.datetime.now().strftime("%Y-%m-%d")
         html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", requests_items=requests_items, date=today), encoding="utf8")
         document = html.render()
-        return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, template_name)
+        return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, document.optimize_size,
+                                          template_name)
 
     @staticmethod
     def _generate_driver_overview_pdf(items: List, driver_name: str) -> flask.Response:
@@ -78,7 +79,8 @@ class Actions(flask_restx.Resource):
         html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", items=items, date=today, driver_name=driver_name,
                                                             staff_mobiles=staff_mobiles), encoding="utf8")
         document = html.render()
-        return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, template_name)
+        return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, document.optimize_size,
+                                          template_name)
 
     @staticmethod
     def _generate_shopping_list_pdf(requests_items: List, api_base_url: str,
@@ -97,7 +99,8 @@ class Actions(flask_restx.Resource):
             data.append({"request": request, "list": list})
         html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", data=data), encoding="utf8")
         document = html.render()
-        return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, template_name)
+        return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, document.optimize_size,
+                                          template_name)
 
     @staticmethod
     def _generate_shipping_label_pdf(request_items: List, quantity: int) -> flask.Response:
@@ -111,11 +114,12 @@ class Actions(flask_restx.Resource):
                                                                     page=index + 1, total_pages=quantity), encoding="utf8")
                 document = html.render()
                 pages.extend(document.pages)
-        return Actions._make_pdf_response(pages, document.metadata, document.url_fetcher, document._font_config, template_name)
+        return Actions._make_pdf_response(pages, document.metadata, document.url_fetcher, document._font_config, document.optimize_size,
+                                          template_name)
 
     @staticmethod
-    def _make_pdf_response(pages: List, metadata: Any, url_fetcher: Any, font_config: Any, template_name: str) -> flask.Response:
-        pdf = weasyprint.Document(pages, metadata, url_fetcher, font_config).write_pdf()
+    def _make_pdf_response(pages: List, metadata: Any, url_fetcher: Any, font_config: Any, optimize_size: Any, template_name: str) -> flask.Response:
+        pdf = weasyprint.Document(pages, metadata, url_fetcher, font_config, optimize_size).write_pdf()
         return flask.send_file(io.BytesIO(pdf), attachment_filename=f"{template_name}.pdf", as_attachment=True)
 
     @staticmethod
@@ -124,8 +128,8 @@ class Actions(flask_restx.Resource):
         event_attributes = ("request_id", )
         events_data = _get(f"{api_base_url}events/", cookies=flask.request.cookies,
                            headers={"X-Fields": f"items{{{', '.join(event_attributes)}}}"},
-                           params={"request_ids": ",".join(request_ids), "event_names": [action_status_name], "latest_event_only": True, "refresh_cache": True,
-                                   "per_page": len(request_ids)})
+                           params={"request_ids": ",".join(request_ids), "event_names": [action_status_name], "latest_event_only": True,
+                                   "refresh_cache": True, "per_page": len(request_ids)})
         events_df = pd.DataFrame(events_data["items"], columns=event_attributes)
         df = pd.merge(events_df, requests_df, on="request_id", how="left").replace({np.nan: None})
         if not df.empty:
