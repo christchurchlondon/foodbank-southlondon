@@ -1,5 +1,5 @@
 authlib
-flask==1.1.2
+flask
 flask-restx
 fuzzywuzzy[speedup]
 google-api-python-client
@@ -10,6 +10,6 @@ pandas
 python-dotenv
 pytz
 requests
-weasyprint==52.2
+weasyprint
 werkzeug
 wrapt
