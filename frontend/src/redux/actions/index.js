@@ -409,11 +409,11 @@ export const eventSubmitFailed = () => ({
 export const fetchCalendars = () => {
     return dispatch => {
         dispatch({ type: LOAD_CALENDARS })
-        getCalendars().then(({ calendar_ids }) => {
+        getCalendars().then(({ calendars }) => {
             dispatch({
                 type: CALENDARS_LOADED,
                 payload: {
-                    calendar_ids
+                    calendars
                 }
             });
         }).catch(() => {

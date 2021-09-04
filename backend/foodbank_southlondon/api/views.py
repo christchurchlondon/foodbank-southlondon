@@ -8,10 +8,14 @@ from foodbank_southlondon.api import rest
 # CONFIG VARIABLES
 _FBSL_COLLECTION_CENTRES = "FBSL_COLLECTION_CENTRES"
 
+calendar = rest.model("Calendar", {
+    "id": fields.String(required=True, description="The calendar ID for a given collection centre",
+                        example="ca2ikhedkfjhawd213123@group.calendar.google.com"),
+    "colour": fields.String(required=True, description="Hex code colour for the calendar events")
+})
 
 _calendar_model = rest.model("Calendars", {
-    "calendar_ids": fields.List(fields.String(required=True, description="The escaped calendar ID for a given collection centre.",
-                                              example="ca2ikhedkfjhawd213123@group.calendar.google.com"))
+    "calendars": fields.List(fields.Nested(calendar))
 })
 
 
@@ -20,6 +24,10 @@ class Calendars(flask_restx.Resource):
 
     @rest.marshal_with(_calendar_model)
     def get(self):
+        centres = flask.current_app.config[_FBSL_COLLECTION_CENTRES].values()
+
         return {
-            "calendar_ids": [calendar["calendar_id"] for calendar in flask.current_app.config[_FBSL_COLLECTION_CENTRES].values()],
+            "calendars": [
+                {"id": centre["calendar_id"], "colour": centre["calendar_colour"]} for centre in centres
+            ]
         }

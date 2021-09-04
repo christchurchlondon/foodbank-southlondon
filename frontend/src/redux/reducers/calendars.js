@@ -8,7 +8,7 @@ import { CALENDARS_LOADED, LOAD_CALENDARS, LOAD_CALENDARS_FAILED } from "../acti
 
 const initialState = {
     status: STATUS_IDLE,
-    ids: []
+    calendars: []
 };
 
 export default function(state = initialState, action) {
@@ -20,7 +20,7 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 status: STATUS_SUCCESS,
-                ids: action.payload.calendar_ids
+                calendars: action.payload.calendars
             };
 
         case LOAD_CALENDARS_FAILED:
