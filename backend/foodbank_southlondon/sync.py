@@ -17,6 +17,7 @@ _FBSL_WATERMARK_CALENDAR_EVENT_ID = "FBSL_WATERMARK_CALENDAR_EVENT_ID"
 
 
 # INTERNALS
+_EUROPE_LONDON_TIMEZONE = "Europe/London"
 _EVENT_DESCRIPTION = """
 {Client Full Name}
 {Phone Number}
@@ -89,12 +90,12 @@ def sync_calendar() -> None:
             collection_date = datetime.datetime.strptime(row["Collection Date"], requests_date_format)
             collection_time = time.strptime(row[f"{collection_centre} Collection Time"], "%H:%M")
             collection_datetime = datetime.datetime(collection_date.year, collection_date.month, collection_date.day, collection_time.tm_hour,
-                                                    collection_time.tm_min).astimezone()
+                                                    collection_time.tm_min)
             new_event = {
                 "summary": f"{row['Client Full Name']} [{collection_centre_abbr}]",
                 "description": _EVENT_DESCRIPTION.format(**row),
-                "start": {"dateTime": collection_datetime.isoformat()},
-                "end": {"dateTime": _event_end_rfc3339_from_start(collection_datetime)},
+                "start": {"dateTime": collection_datetime.isoformat(), "timeZone": _EUROPE_LONDON_TIMEZONE},
+                "end": {"dateTime": _event_end_rfc3339_from_start(collection_datetime), "timeZone": _EUROPE_LONDON_TIMEZONE},
                 "extendedProperties": {"private": private_extended_property}
             }
             old_event = next(iter(calendar_events_resource.list(calendarId=collection_centre_calendar_id,
