@@ -7,15 +7,19 @@ import Loading from '../common/loading';
 
 import './styles/index.scss';
 
-function CalendarEmbed({ ids }) {
+function CalendarEmbed({ calendars }) {
     const url = new URL("https://calendar.google.com/calendar/embed");
     
     url.searchParams.append('mode', 'WEEK');
     url.searchParams.append('hl', 'en_GB');
     url.searchParams.append('showTitle', '0');
 
-    for(const id of ids) {
-        url.searchParams.append('src', id);
+    for(const calendar of calendars) {
+        url.searchParams.append('src', calendar.id);
+    }
+
+    for(const calendar of calendars) {
+        url.searchParams.append('color', calendar.colour);
     }
 
     return <iframe
@@ -30,7 +34,7 @@ function CalendarEmbed({ ids }) {
 
 export default function Calendar() {
     const dispatch = useDispatch();
-    const { status, ids } = useSelector(({ calendars }) => calendars);
+    const { status, calendars } = useSelector(({ calendars }) => calendars);
 
     useEffect(() => {
         dispatch(fetchCalendars());
@@ -40,8 +44,8 @@ export default function Calendar() {
         return <span>Error loading calendars</span>;
     }
 
-    if(ids.length > 0) {
-        return <CalendarEmbed ids={ids} />;
+    if(calendars.length > 0) {
+        return <CalendarEmbed calendars={calendars} />;
     }
 
     return <Loading />;
