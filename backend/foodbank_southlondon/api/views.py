@@ -25,9 +25,6 @@ class Calendars(flask_restx.Resource):
     @rest.marshal_with(_calendar_model)
     def get(self):
         centres = flask.current_app.config[_FBSL_COLLECTION_CENTRES].values()
-
         return {
-            "calendars": [
-                {"id": centre["calendar_id"], "colour": centre["calendar_colour"]} for centre in centres
-            ]
+            "calendars": [{"id": centre["calendar_id"], "colour": centre["calendar_colour"]} for centre in centres]
         }
