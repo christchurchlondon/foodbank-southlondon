@@ -41,6 +41,10 @@ def _find_event(calendar_events_resource: discovery.Resource, calendar_ids: Tupl
     return (None, None)
 
 
+def _naive_datetime_rfc3339(rfc3339_datetime: str) -> str:
+    return datetime.datetime.fromisoformat(rfc3339_datetime).replace(tzinfo=None).isoformat()
+
+
 @app.cli.command()
 def clean_calendar() -> None:
     """Delete orphaned Foodbank Google Calendar events."""
@@ -107,6 +111,8 @@ def sync_calendar() -> None:
                     calendar_events_resource.move(calendarId=calendar_id, eventId=old_event["id"],
                                                   destination=collection_centre_calendar_id).execute()
             if old_event:
+                old_event["start"]["dateTime"] = _naive_datetime_rfc3339(old_event["start"]["dateTime"])
+                old_event["end"]["dateTime"] = _naive_datetime_rfc3339(old_event["end"]["dateTime"])
                 changed_event_attributes = {k: v for k, v in new_event.items() if old_event.get(k) != v}
                 if changed_event_attributes:
                     app.logger.info(f"Updating event for request ID, {request_id}...")
