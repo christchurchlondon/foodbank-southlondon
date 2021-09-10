@@ -1,4 +1,4 @@
-from typing import Generator, Optional, Tuple
+from typing import Optional, Tuple
 import datetime
 import time
 
@@ -31,7 +31,7 @@ def _event_end_rfc3339_from_start(start_datetime: datetime.datetime) -> str:
     return (start_datetime + datetime.timedelta(minutes=app.config[_FBSL_COLLECTION_EVENT_DURATION_MINS])).isoformat()
 
 
-def _find_event(calendar_events_resource: discovery.Resource, calendar_ids: Generator,
+def _find_event(calendar_events_resource: discovery.Resource, calendar_ids: Tuple,
                 private_extended_property_query: str) -> Tuple[Optional[str], Optional[dict]]:
     for calendar_id in calendar_ids:
         event = next(iter(calendar_events_resource.list(calendarId=calendar_id,
@@ -77,7 +77,7 @@ def sync_calendar() -> None:
                                                  errors="coerce") > old_threshold]
     app.logger.info(f"Found {len(requests_df.index)} potential changes.")
     collection_centres = app.config[_FBSL_COLLECTION_CENTRES]
-    calendar_ids = (collection_centre["calendar_id"] for collection_centre in collection_centres.values())
+    calendar_ids = tuple(collection_centre["calendar_id"] for collection_centre in collection_centres.values())
     for _, row in requests_df.iterrows():
         request_id = row[request_id_attribute]
         private_extended_property = {request_id_attribute: request_id}
