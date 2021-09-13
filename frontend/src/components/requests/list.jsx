@@ -6,7 +6,7 @@ import Flag from './flag';
 import './styles/list.scss';
 import { FilterFieldValues } from '../lists/value-filters';
 import Loading from '../common/loading';
-import { RequestIcons } from './request-icons';
+import { RequestIconCell } from './request-icons';
 
 export default class RequestsList extends React.Component {
 
@@ -86,9 +86,7 @@ export default class RequestsList extends React.Component {
                     <td>
                         { request.postcode }
                     </td>
-                    <td>
-                        <RequestIcons request={request} />
-                    </td>
+                    <RequestIconCell request={request} />
                     <td>{ format(request.packingDate, DATE_FORMAT_UI) }</td>
                     <td>{ request.timeOfDay }</td>
                     <td>{ this.extractEvent(request.event) }</td>
