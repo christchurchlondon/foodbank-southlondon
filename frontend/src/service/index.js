@@ -366,15 +366,29 @@ export function getCalendars() {
     return performFetch(endpoints.GET_CALENDARS);
 }
 
+function collectionTime(item) {
+    if(item.collection_centre) {
+        return item[`${item.collection_centre.toLowerCase()}_collection_time`] || '???';
+    }
+
+    return undefined;
+}
+
 function responseItemToRequest(item) {
     return {
         id: item.request_id,
         voucherNumber: item.voucher_number,
         fullName: item.client_full_name,
         phoneNumber: item.phone_number,
+        shippingMethod: item.shipping_method,
         delivery: {
             date: item.packing_date,
             instructions: item.delivery_instructions
+        },
+        collection: {
+            date: item.collection_date,
+            centre: item.collection_centre,
+            time: collectionTime(item)
         },
         address: {
             line1: item.address_line_1,

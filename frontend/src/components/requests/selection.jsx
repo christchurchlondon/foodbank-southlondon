@@ -42,6 +42,25 @@ export default class RequestSelection extends React.Component {
         return this.getRequestDetails();
     }
 
+    getDeliveryInstructions(item) {
+        switch(item.shippingMethod) {
+            case 'Collection': {
+                const { centre, date, time } = item.collection;
+
+                return <React.Fragment>
+                    <label>Collection</label>
+                    <p>{centre} on {date} at {time}</p>
+                </React.Fragment>;
+            }
+
+            default:
+                return <React.Fragment>
+                    <label>Delivery Instructions</label>
+                    <p>{ item.delivery.instructions }</p>
+                </React.Fragment>;
+        }
+    }
+
     getRequestDetails() {
         const item = this.props.item.details;
         return (
@@ -66,8 +85,7 @@ export default class RequestSelection extends React.Component {
                     <p>{ item.delivery.date }</p>
                 </div>
                 <div className="row">
-                    <label>Delivery Instructions</label>
-                    <p>{ item.delivery.instructions }</p>
+                    {this.getDeliveryInstructions(item)}
                 </div>
                 <div className="row">
                     <label>Address</label>
