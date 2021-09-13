@@ -18,6 +18,16 @@ export default class RequestSelection extends React.Component {
     constructor(props) {
         super(props);
         this.close = this.close.bind(this);
+
+        // eg Monday, 13/09/21
+        this.collectionDateFormatter = new Intl.DateTimeFormat('en-GB', {
+            weekday: 'long',
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     }
 
     isIdle() {
@@ -42,27 +52,25 @@ export default class RequestSelection extends React.Component {
         return this.getRequestDetails();
     }
 
-    getDeliveryInstructions(item) {
-        switch(item.shippingMethod) {
-            case 'Collection': {
-                const { centre, date, time } = item.collection;
+    getCollectionDateTime(item) {
+        const { centre, date, time } = item.collection;
 
-                return <React.Fragment>
-                    <label>Collection</label>
-                    <p>{centre} on {date} at {time}</p>
-                </React.Fragment>;
-            }
+        // guard against any unexpected changes in format
+        try {
+            const [day, month, year] = date.split("/");
+            const isoDatetime = Date.parse(`${year}-${month}-${day}T${time}`);
+            const formattedDateTime = this.collectionDateFormatter.format(isoDatetime);
 
-            default:
-                return <React.Fragment>
-                    <label>Delivery Instructions</label>
-                    <p>{ item.delivery.instructions }</p>
-                </React.Fragment>;
+            return `${centre} ${formattedDateTime}`;
+        } catch {
+            return `${centre} on ${date} at ${time}`;
         }
     }
 
     getRequestDetails() {
         const item = this.props.item.details;
+        const isCollection = item.shippingMethod === 'Collection';
+
         return (
             <div className="request-details">
                 <div className="top-controls">
@@ -85,7 +93,8 @@ export default class RequestSelection extends React.Component {
                     <p>{ item.delivery.date }</p>
                 </div>
                 <div className="row">
-                    {this.getDeliveryInstructions(item)}
+                    <label>{isCollection ? 'Collection' : 'Delivery Instructions'}</label>
+                    <p>{isCollection ? this.getCollectionDateTime(item) : item.delivery.instructions}</p>
                 </div>
                 <div className="row">
                     <label>Address</label>
