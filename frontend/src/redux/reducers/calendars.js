@@ -11,7 +11,7 @@ const initialState = {
     calendars: []
 };
 
-export default function(state = initialState, action) {
+export default function calendars(state = initialState, action) {
     switch(action.type) {
         case LOAD_CALENDARS:
             return { ...state, status: STATUS_LOADING };

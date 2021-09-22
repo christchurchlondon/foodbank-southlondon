@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 @import 'include';
 @import 'fontawesome/fontawesome.scss';
 @import 'fontawesome/regular.scss';
@@ -211,7 +213,7 @@ button, .button {
     }
 
     &.btn-small {
-        padding: $pad-half / 2 $pad-half;
+        padding: math.div($pad-half, 2) $pad-half;
     }
 
     &:disabled {

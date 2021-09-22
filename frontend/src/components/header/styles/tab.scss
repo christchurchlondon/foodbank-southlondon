@@ -1,13 +1,15 @@
+@use 'sass:math';
+
 @import 'include';
 
 .tab {
     display: flex;
-    margin-right: $pad-half / 2;
+    margin-right: math.div($pad-half, 2);
     background-color: $colour-tab;
     color: $colour-tab-text;
     cursor: pointer;
-    border-top-right-radius: $pad-half / 2;
-    border-top-left-radius: $pad-half / 2;
+    border-top-right-radius: math.div($pad-half, 2);
+    border-top-left-radius: math.div($pad-half, 2);
     font-size: 1.25rem;
 
     &:hover {
@@ -30,8 +32,8 @@
     a {
         display: inline-block;
         padding: $pad-standard $pad-standard .8rem;
-        border-top-right-radius: $pad-half / 2;
-        border-top-left-radius: $pad-half / 2;
+        border-top-right-radius: math.div($pad-half, 2);
+        border-top-left-radius: math.div($pad-half, 2);
         color: inherit;
         background-color: inherit;
     }

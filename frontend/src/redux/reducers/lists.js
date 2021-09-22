@@ -35,7 +35,7 @@ const initialState = {
     unsaved: false
 };
 
-export default function(state = initialState, action) {
+export default function lists(state = initialState, action) {
     switch (action.type) {
 
         case LOAD_LISTS:

@@ -80,7 +80,7 @@ const initialState = {
     editUrl: ''
 };
 
-export default function(state = initialState, action) {
+export default function requests(state = initialState, action) {
     switch (action.type) {
 
         case LOAD_REQUESTS: {
