@@ -21,7 +21,9 @@ When running locally, you have two options:
 
 #### Prerequisites
 * Install **Make** - Mac (builtin in *[Xcode](https://developer.apple.com/xcode/)*) | Ubuntu (builtin)
-* Install **NodeJS & npmjs** - [Mac](https://nodejs.org/en/download/) | [Ubuntu](https://github.com/nodesource/distributions)
+* Install **NodeJS v16 or above** - [Mac](https://nodejs.org/en/download/) | [Ubuntu](https://github.com/nodesource/distributions)
+  * [nvm](https://github.com/nvm-sh/nvm) can be helpful to manage separate versions of node on Mac or Linux
+  * Once installed run `nvm install 16` and `nvm use`.
 * Install **Python 3.8** - [Mac](https://www.python.org/downloads/mac-osx/) | [Ubuntu](https://launchpad.net/~deadsnakes/+archive/ubuntu/ppa) (*python3.8 python3.8-dev python3.8-venv*)
 * Install **Git** - Mac (builtin in *[Xcode](https://developer.apple.com/xcode/)*) | Ubuntu (builtin)
 * Install **WeasyPrint's Dependencies** - [All Platforms](https://weasyprint.readthedocs.io/en/stable/install.html#)
