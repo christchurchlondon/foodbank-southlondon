@@ -1,5 +1,6 @@
-@import 'include';
+@use 'sass:math';
 
+@import 'include';
 
 .paginator {
 
@@ -8,7 +9,7 @@
     align-items: flex-end;
 
     .page {
-        margin: 0 $pad-half / 2;
+        margin: 0 math.div($pad-half, 2);
         padding: $pad-half;
         display: inline-block;
         min-width: $pad-double;
@@ -44,7 +45,7 @@
     .page-spacer {
         display: inline-block;
         min-width: $pad-double;
-        margin: 0 $pad-half / 2;
+        margin: 0 math.div($pad-half, 2);
         text-align: center;
         padding: $pad-half 0;
     }

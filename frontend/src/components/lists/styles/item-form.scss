@@ -1,5 +1,6 @@
-@import 'include';
+@use 'sass:math';
 
+@import 'include';
 
 .item-form {
 
@@ -19,7 +20,7 @@
             box-sizing: border-box;
             border: 1px solid $colour-border;
             border-radius: 2px;
-            padding: $pad-half / 2;
+            padding: math.div($pad-half, 2);
             font-size: 14px;
 
             &:focus {

@@ -1,4 +1,3 @@
-import fetch from 'cross-fetch';
 import { format, parse } from 'date-fns';
 import { COLLECTION_CENTRES_FILTER_KEY, TIME_OF_DAY_FILTER_KEY, STATUSES_FILTER_KEY, DATE_FORMAT_REQUEST, DATE_FORMAT_TIMESTAMP } from '../constants';
 

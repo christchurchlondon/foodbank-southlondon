@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './styles/paginator.scss';
 
@@ -139,14 +138,6 @@ export default class Paginator extends React.Component {
     }
 }
 
-Paginator.propTypes = {
-    pages: PropTypes.number,
-    selectedPage: PropTypes.number,
-    pageSize: PropTypes.number,
-    totalRecords: PropTypes.number,
-    onSelect: PropTypes.func
-}
-
 function Page(props) {
     return (
         <span className={'page' + (props.selected ? ' selected' : '')}
@@ -155,8 +146,3 @@ function Page(props) {
         </span>
     );
 }
-
-Page.propTypes = {
-    page: PropTypes.number.isRequired,
-    selected: PropTypes.bool
-};
