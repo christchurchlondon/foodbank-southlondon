@@ -225,7 +225,7 @@ export function getFilterValues(attribute) {
                                 ? []
                                 : [{ value: event_name, display: event_name }];
                         });
-                
+
                 case COLLECTION_CENTRES_FILTER_KEY:
                     return resp.values.map((value) => {
                         return {
@@ -233,7 +233,7 @@ export function getFilterValues(attribute) {
                             display: value === '' ? 'Delivery' : value
                         };
                     });
-                
+
                 default:
                     return resp.values.map((value) => {
                         return {
@@ -367,7 +367,7 @@ export function getCalendars() {
 
 function collectionTime(item) {
     if(item.collection_centre) {
-        return item[`${item.collection_centre.toLowerCase()}_collection_time`] || '???';
+        return item[`${item.collection_centre.toLowerCase().replace(/[- ]/g, '_')}_collection_time`] || '???';
     }
 
     return undefined;
