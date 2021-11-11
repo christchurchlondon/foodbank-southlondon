@@ -68,18 +68,19 @@ request = rest.model("ClientRequest", {
     "vauxhall_hope_church_collection_time": fields.String(attribute="Vauxhall Hope Church Collection Time", required=False,
                                                           description="The time that the food parcel should be collected from the Vauxhall Hope "
                                                           "Church centre, in the format of HH:MM", example="12:30"),
-    "waterloo_st_george_the_martyr_collection_time": fields.String(attribute="Waterloo - St George the Martyr Collection Time", required=False,
-                                                                   description="The time that the food parcel should be collected from the Waterloo "
-                                                                   "- St George the Martyr centre, in the format of HH:MM", example="12:30"),
-    "waterloo_oasis_collection_time": fields.String(attribute="Waterloo - Oasis Collection Time", required=False,
-                                                    description="The time that the food parcel should be collected from the Waterloo - Oasis centre, "
+    "waterloo___st_george_the_martyr_collection_time": fields.String(attribute="Waterloo - St George the Martyr Collection Time", required=False,
+                                                                     description="The time that the food parcel should be collected from the "
+                                                                     "Waterloo - St George the Martyr centre, in the format of HH:MM",
+                                                                     example="12:30"),
+    "waterloo___oasis_collection_time": fields.String(attribute="Waterloo - Oasis Collection Time", required=False,
+                                                      description="The time that the food parcel should be collected from the Waterloo - Oasis "
+                                                      "centre, in the format of HH:MM", example="12:30"),
+    "n&b___emmanuel_church_collection_time": fields.String(attribute="N&B - Emmanuel Church Collection Time", required=False,
+                                                           description="The time that the food parcel should be collected from the N&B - Emmanuel "
+                                                           "Church centre, in the format of HH:MM", example="12:30"),
+    "n&b___st_lukes_collection_time": fields.String(attribute="N&B - St Lukes Collection Time", required=False,
+                                                    description="The time that the food parcel should be collected from the N&B - St Lukes centre, "
                                                     "in the format of HH:MM", example="12:30"),
-    "n&b_emmanuel_church_collection_time": fields.String(attribute="N&B - Emmanuel Church Collection Time", required=False,
-                                                         description="The time that the food parcel should be collected from the N&B - Emmanuel "
-                                                         "Church centre, in the format of HH:MM", example="12:30"),
-    "n&b_st_lukes_collection_time": fields.String(attribute="N&B - St Lukes Collection Time", required=False,
-                                                  description="The time that the food parcel should be collected from the N&B - St Lukes centre, in "
-                                                  "the format of HH:MM", example="12:30"),
     "edit_details_url": fields.String(required=True, description="The Google Forms edit response URL that can be used to update details of the "
                                       "Client Request", example="https://docs.google.com/forms/d/e/1FAIpQLSfb94-4k-Pkf3ccBqd2WR-yzMBdmqdehYBbnN1HLrm"
                                       "E9caneA/viewform?edit2=2_ABaOnueK_9ztK8RlxxBe6Jf0wvs9rAwoi30EwATe24VtNeMhgazghzzd4pgibH-HHn_RDZQ"),
