@@ -66,7 +66,8 @@ class Actions(flask_restx.Resource):
     def _generate_day_overview_pdf(requests_items: List) -> flask.Response:
         template_name = "day-overview"
         today = datetime.datetime.now().strftime("%Y-%m-%d")
-        html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", requests_items=requests_items, date=today), encoding="utf8")
+        html = weasyprint.HTML(string=flask.render_template(f"{template_name}.html", requests_items=requests_items, date=today,
+                                                            collection_centres=flask.current_app.config[_FBSL_COLLECTION_CENTRES]), encoding="utf8")
         document = html.render()
         return Actions._make_pdf_response(document.pages, document.metadata, document.url_fetcher, document._font_config, document.optimize_size,
                                           template_name)
