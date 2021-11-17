@@ -57,6 +57,18 @@
                 height: 20%;
                 vertical-align: top;
             }
+            .icon {
+                display: inline-block;
+                width: 21px;
+                height: 21px;
+                background-size: contain;
+                background-repeat: no-repeat;
+            }
+            .icon--feet {
+                /* Not sure how to import the Font Awesome icon in this context where we have no bundler */
+                /* Also Weasyprint doesn't support inline SVG so I've hacked it into a PNG and data URL */
+                background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAAzCAIAAABXH7wEAAAAAXNSR0IArs4c6QAAA+BJREFUaAVj/P//P8NgBUyD1WEgd406jtzYGdQhx0Kur1D0ffv27ebNGyB06zqE8e3bN4gKQQFBRUUlRUUlbR1dV1d3EWERFJ14OYwU5tZDhw7s2bNrz95d79+/x2sRVNLe3tHB3sna2kZWVo6gemIdd+nSxfUb1ty7dxdi4sIFy06dOhmfEEXQAlwKEhNTykorcclCxImK1nnz53R3t8MNMjMzh7PJZsyfP2f37p1zZi+Ql1fAZQjhDHH16hVkl+EyiAzxJ08ee3g6P3/+DJdewo67f/8eLs1UEc/Ny/zx4ztWowg77sHD+1h1Ukvw6tUrEyf2YTWNsONUVFSx6qSi4IWL57GaRthxdrYOYqJiWDVTS/DCBXIdx8XFNWHCVH5+AWo5BdMcdXUNTEEGBgaiihJDQ6MD+48uXbb40KH9yKZAypRPnz7duHEdWZxUtq+PP1YtxBbCWDXDBR8+fLBhw7olSxZ++foFLkgkw97eccb0OVgVU8dxEKPv3ruzZMmi1atX/P37F6tlmIKODk61tY2SklKYUgwMDNR0HMSC27dvrd+wdsOGtXhqW2lpGVcXdysra1tbe6zOgghS33EQc1+8fHHs2JErVy5dvnz5ypVLkpJSUpJSIEJSysHeycjIGI+b4FK0chzcAkoYhMs5SkynUO+o48gNQKIKYTyGHz9+9PHjx0+ePH767Mn79+95eXh5eHl5eXh4eHl9ffzxtNXwmAmXIj9DbN68cf2GtcePH4WbhcmwsrJxdHByc/ckr3Ymx3Hbtm2eP3/ulauXMV2DVURMVCw0LCInOx+rLB5B0hx36dLFhYvmb9u2GY+JuKSys/NIdR+6444dO/L48aPXb14zMDCYmVqYmZlPmTrx5YsXr1+/unP3ztOnT3DZTVCck5Nz86Yd0tIyBFXCFaBkiLKyos1bNsLlzBZYQNhr1q6CC5LN+P79+7nzZ0lyHKKcmzJ1IrLLyHYEHo0PHz7AI4sphXDcwYMHMKWpK6KjrUuSgQjH3b17mySdZCjW0tYhSRfCceLiEiTpJFVxRUUNqaUdwnFU6cfjcrG8vEJ8XCIuWVziCMc1NrTiUkShuImJ6Y7te8kwBOE4BgaG69fuZmfn6enpk2EQVi0SEpKVlbWLF63AKktQEL0QxtTw/Pmzs2fPnDt35uy5M7du3cRUgCkiJCTk7uZpYWFlYWHFx8eHqYBIEcKOQzbo27ev169fA6EbYPL6NbistLSMirKKioqqnZ0jtZIvaY6DO4U+DJQ0Rx8ribdl1HHEhxWqytGQQw0P4nmjIUd8WKGqHA051PAgnjcacsSHFapKACtqVQVQC0ikAAAAAElFTkSuQmCC);
+            }
         </style>
     </head>
     <body>
@@ -77,7 +89,12 @@
             </tr>
             <tr class="bottom">
                 <td><h2>{{ request['postcode'] }}</h2></td>
-                <td><h3>{{ request['time_of_day'] }} | {{ collection_centres[request['collection_centre']]["abbr"] if request['shipping_method'] == 'Collection' else 'Delivery' }}</h3></td>
+                <td><h3>
+                    {{ request['time_of_day'] }} |
+                    {% if request['shipping_method'] == 'Collection' %}
+                        <span class="icon icon--feet"></span> |
+                    {% endif %}
+                    {{ collection_centres[request['collection_centre']]["abbr"] if request['shipping_method'] == 'Collection' else 'Delivery' }}</h3></td>
                 <td class="right"><h3>Parcel {{ page }} / {{ total_pages }}</h3></td>
             </tr>
         </table>
