@@ -21,6 +21,7 @@ summary_params.add_argument(_requests_params_args["postcodes"])
 summary_params.add_argument(_requests_params_args["time_of_days"])
 summary_params.add_argument(_requests_params_args["voucher_numbers"])
 summary_params.add_argument(_requests_params_args["collection_centres"])
+summary_params.add_argument(_requests_params_args["phone_numbers"])
 summary_params.add_argument(_requests_params_args["event_names"])
 
 action_params = reqparse.RequestParser(trim=True)

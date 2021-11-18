@@ -46,6 +46,7 @@ class Requests(flask_restx.Resource):
         time_of_days = set(time_of_day.strip() for time_of_day in (params["time_of_days"] or ()))
         voucher_numbers = set("" if voucher_number.strip() == "?" else voucher_number.strip() for voucher_number in (params["voucher_numbers"] or ()))
         collection_centres = set(collection_centre.strip() for collection_centre in (params["collection_centres"] or ()))
+        phone_numbers = set(phone_number.strip() for phone_number in (params["phone_numbers"] or ()))
         event_names = set(event_name.strip() for event_name in (params["event_names"] or ()))
         invalid_event_names = event_names.difference(events_models.EVENT_NAMES)
         if invalid_event_names:
@@ -69,6 +70,8 @@ class Requests(flask_restx.Resource):
             df = df.loc[df["Time of Day"].isin(time_of_days)]
         if collection_centres:
             df = df.loc[df["Collection Centre"].isin(collection_centres)]
+        if phone_numbers:
+            df = df.loc[df["Phone Number"].isin(phone_numbers)]
         if event_names:
             events_df = events_views.cache(force_refresh=refresh_cache)
             events_df = (

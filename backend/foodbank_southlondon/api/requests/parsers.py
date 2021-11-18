@@ -17,8 +17,9 @@ requests_params.add_argument("postcodes", type=str, required=False, action="spli
 requests_params.add_argument("time_of_days", type=str, required=False, action="split", help="A comma separated list of Times of Day to filter on.")
 requests_params.add_argument("voucher_numbers", type=str, required=False, action="split", help="A comma separated list of Voucher Numbers to "
                              "filter on")
-requests_params.add_argument("collection_centres", type=str, required=False, action="split", help="A comma sepaerated list of Collection Centres to "
+requests_params.add_argument("collection_centres", type=str, required=False, action="split", help="A comma separated list of Collection Centres to "
                              "filter on.")
+requests_params.add_argument("phone_numbers", type=str, required=False, action="split", help="A comma separated list of Phone Numbers to filter on.")
 requests_params.add_argument(_events_params_args["event_names"])
 requests_params.add_argument("last_request_only", type=inputs.boolean, required=False, help="Whether only the most recent request per Client Full "
                              "Name will be fetched")
