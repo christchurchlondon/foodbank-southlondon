@@ -53,6 +53,20 @@
                 background-color: black;
                 height: 0.1rem;
             }
+            .icon {
+                display: inline-block;
+                height: 21px;
+                background-size: contain;
+                background-repeat: no-repeat;
+            }
+            .icon--feet {
+                /* Weasyprint doesn't support inline SVG so I've hacked it into a PNG and data URL */
+                background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAAzCAIAAABXH7wEAAAAAXNSR0IArs4c6QAAA+BJREFUaAVj/P//P8NgBUyD1WEgd406jtzYGdQhx0Kur1D0ffv27ebNGyB06zqE8e3bN4gKQQFBRUUlRUUlbR1dV1d3EWERFJ14OYwU5tZDhw7s2bNrz95d79+/x2sRVNLe3tHB3sna2kZWVo6gemIdd+nSxfUb1ty7dxdi4sIFy06dOhmfEEXQAlwKEhNTykorcclCxImK1nnz53R3t8MNMjMzh7PJZsyfP2f37p1zZi+Ql1fAZQjhDHH16hVkl+EyiAzxJ08ee3g6P3/+DJdewo67f/8eLs1UEc/Ny/zx4ztWowg77sHD+1h1Ukvw6tUrEyf2YTWNsONUVFSx6qSi4IWL57GaRthxdrYOYqJiWDVTS/DCBXIdx8XFNWHCVH5+AWo5BdMcdXUNTEEGBgaiihJDQ6MD+48uXbb40KH9yKZAypRPnz7duHEdWZxUtq+PP1YtxBbCWDXDBR8+fLBhw7olSxZ++foFLkgkw97eccb0OVgVU8dxEKPv3ruzZMmi1atX/P37F6tlmIKODk61tY2SklKYUgwMDNR0HMSC27dvrd+wdsOGtXhqW2lpGVcXdysra1tbe6zOgghS33EQc1+8fHHs2JErVy5dvnz5ypVLkpJSUpJSIEJSysHeycjIGI+b4FK0chzcAkoYhMs5SkynUO+o48gNQKIKYTyGHz9+9PHjx0+ePH767Mn79+95eXh5eHl5eXh4eHl9ffzxtNXwmAmXIj9DbN68cf2GtcePH4WbhcmwsrJxdHByc/ckr3Ymx3Hbtm2eP3/ulauXMV2DVURMVCw0LCInOx+rLB5B0hx36dLFhYvmb9u2GY+JuKSys/NIdR+6444dO/L48aPXb14zMDCYmVqYmZlPmTrx5YsXr1+/unP3ztOnT3DZTVCck5Nz86Yd0tIyBFXCFaBkiLKyos1bNsLlzBZYQNhr1q6CC5LN+P79+7nzZ0lyHKKcmzJ1IrLLyHYEHo0PHz7AI4sphXDcwYMHMKWpK6KjrUuSgQjH3b17mySdZCjW0tYhSRfCceLiEiTpJFVxRUUNqaUdwnFU6cfjcrG8vEJ8XCIuWVziCMc1NrTiUkShuImJ6Y7te8kwBOE4BgaG69fuZmfn6enpk2EQVi0SEpKVlbWLF63AKktQEL0QxtTw/Pmzs2fPnDt35uy5M7du3cRUgCkiJCTk7uZpYWFlYWHFx8eHqYBIEcKOQzbo27ev169fA6EbYPL6NbistLSMirKKioqqnZ0jtZIvaY6DO4U+DJQ0Rx8ribdl1HHEhxWqytGQQw0P4nmjIUd8WKGqHA051PAgnjcacsSHFapKACtqVQVQC0ikAAAAAElFTkSuQmCC);
+            }
+            .icon--truck {
+                /* Weasyprint doesn't support inline SVG so I've hacked it into a PNG and data URL */
+                background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAVCAYAAABYHP4bAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAAmJLR0QA/4ePzL8AAAAHdElNRQfiCBYGGS0ICNp0AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE4LTA4LTIyVDA2OjI1OjQ1KzAwOjAwUdVd6wAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxOC0wOC0yMlQwNjoyNTo0NSswMDowMCCI5VcAAAFbSURBVEhLtZU9zoJAEIYHREw03EGOYGLoTKCks4JzcIOvNuEYWhhqDuAFoOYYJDSYsO5MFgT5ET7wSV52Z2ZnBpYVIYoipqoqA4DJ0jSNJUnCxgCbzaazyFhtt1tRahhJJMyC1xGzfmQx/pvVaiVmwyzyRHWezycoiiKsN4s3QoqiAEnC0m8W2Tp8RyjDMMgny91l6fTMUZ3j8djp53Y7cao+ORwOrRiftxOniG+TKNXEsiyKn89nshc5DL7vQ5qmwgJYr9dkXy4XOJ1O8Hg8yN+4w6VlmiY90exTN5afN8JtRPD78UezH5FlGex2O/rBtfb1er3SvuL4GevT15wwDBsO13UpocRxnEa8S2NyZNu26fNxv9+5DcD/zGgsKe0gCGhdXehDxuTghcjzvOoexzH5cCx9GP9kSk7VCPE8r1pUF/r7GJvTaITcbjem6zot3u/31Use4nsOYy+0YJHI2FHdXgAAAABJRU5ErkJggg==);
+            }
         </style>
     </head>
     <title>Shopping Lists</title>
@@ -62,12 +76,14 @@
             {% set list = item["list"] %}
             <div class="clearfix">
                 <img src="{{ url_for('static', filename='logo.png', _external=True)}}">
-                <h1>CLIENT SHOPPING LIST</h1>
+                {% set collection_centre = request['collection_centre'] %}
+                <h1>CLIENT SHOPPING LIST | </h1><span class="icon {{ 'icon--feet' if collection_centre else 'icon--truck' }}"></span>
                 {% set postcode = request['postcode'] %}
                 <h2>POSTCODE: {{ postcode }}</h2>
                 <b>VOUCHER #:</b> {{ request['voucher_number'] }}<br>
                 <b>PACKING DATE:</b> {{ request['packing_date'] }}<br>
-                <b>TIME OF DAY:</b> {{ request['time_of_day'] }}
+                <b>TIME OF DAY:</b> {{ request['time_of_day'] }}<br>
+                <b>COLLECTION SITE:</b> {{ (collection_centre ~ ' - ' ~ request['collection_date']) if collection_centre else 'N/A - Delivery' }}
             </div>
             <table>
                 <tr>
