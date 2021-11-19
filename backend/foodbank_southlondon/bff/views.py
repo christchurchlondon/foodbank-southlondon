@@ -306,6 +306,7 @@ class Summary(flask_restx.Resource):
         # Preserve the empty string to filter by delivery only
         _collection_centres = params["collection_centres"]
         collection_centres = ",".join(_collection_centres) if _collection_centres is not None else None
+        phone_numbers = ",".join(params["phone_numbers"] or ()) or None
         event_names = ",".join(params["event_names"] or ()) or None
         per_page = params["per_page"]
         api_base_url = _api_base_url()
@@ -316,7 +317,8 @@ class Summary(flask_restx.Resource):
                                       "total_items, total_pages"},
                              params={"client_full_names": client_full_names, "packing_dates": packing_dates, "postcodes": postcodes,
                                      "time_of_days": time_of_days, "voucher_numbers": voucher_numbers, "collection_centres": collection_centres,
-                                     "event_names": event_names, "refresh_cache": refresh_cache, "page": params["page"], "per_page": per_page})
+                                     "phone_numbers": phone_numbers, "event_names": event_names, "refresh_cache": refresh_cache,
+                                     "page": params["page"], "per_page": per_page})
         requests_df = pd.DataFrame(requests_data["items"])
         if not requests_df.empty:
             events_df = None
