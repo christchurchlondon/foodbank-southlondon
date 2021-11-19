@@ -110,7 +110,7 @@ export default class RequestsList extends React.Component {
                         </th>
                         <th className="cell-trim"></th>
                         <th>Name</th>
-                        <th>Family Size</th>
+                        <th>Family</th>
                         <th>Postcode</th>
                         <th>
                             <FilterFieldValues attribute={COLLECTION_CENTRES_FILTER_KEY} />

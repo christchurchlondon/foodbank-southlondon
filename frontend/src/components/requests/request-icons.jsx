@@ -7,9 +7,11 @@ export function RequestIconCell({ request }) {
     const icons = [];
 
     let title = '';
+    let text = null;
 
     if(request.collectionCentre) {
         title = `Collection at ${request.collectionCentre}`;
+        text = request.collectionCentreAbbr;
 
         const icon = <FontAwesomeIcon
             key='collection'
@@ -47,5 +49,6 @@ export function RequestIconCell({ request }) {
 
     return <td title={title}>
         { icons }
+        { text && <span className='inline-icon-text'>{text}</span> }
     </td>;
 }
