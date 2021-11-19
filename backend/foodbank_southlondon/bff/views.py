@@ -281,6 +281,13 @@ class Statuses(flask_restx.Resource):
 
 @rest.route("/summary")
 class Summary(flask_restx.Resource):
+    @staticmethod
+    def _get_collection_centre_abbr(collection_centre_name: Optional[str]) -> str:
+        collection_centre_abbr = ''
+        if collection_centre_name:
+            collection_centre = flask.current_app.config[_FBSL_COLLECTION_CENTRES][collection_centre_name]
+            collection_centre_abbr = collection_centre['abbr']
+        return collection_centre_abbr
 
     @rest.expect(parsers.summary_params)
     @rest.marshal_with(models.page_of_summary)
@@ -320,6 +327,7 @@ class Summary(flask_restx.Resource):
                                      "phone_numbers": phone_numbers, "event_names": event_names, "refresh_cache": refresh_cache,
                                      "page": params["page"], "per_page": per_page})
         requests_df = pd.DataFrame(requests_data["items"])
+        requests_df["collection_centre_abbr"] = requests_df["collection_centre"].map(self._get_collection_centre_abbr)
         if not requests_df.empty:
             events_df = None
             request_ids = requests_df["request_id"].unique()
