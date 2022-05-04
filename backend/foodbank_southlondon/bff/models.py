@@ -57,6 +57,7 @@ _summary = rest.inherit("Summary", _event, {
     "collection_centre": _clone_field_without_attribute(requests_models.request["collection_centre"]),
     "collection_centre_abbr": fields.String(required=False, description="The short name for the collection centre",
                                             example="VXH"),
+    "phone_number": _clone_field_without_attribute(requests_models.request["phone_number"])
 })
 
 

@@ -52,6 +52,7 @@ class Status(enum.Enum):
     READY_TO_DISPATCH = Event("Ready to Dispatch", True, False, False, False, ResponseType.NO_CONTENT.value)
     RECEIVED_BY_CENTRE = Event("Received by Centre", True, True, False, False, ResponseType.NO_CONTENT.value,
                                "What date did the centre receive the parcel?")
+    COLLECTION_FAILED = Event("Collection Failed", True, True, False, False, ResponseType.NO_CONTENT.value, "What date did the collection fail?")
     PARCEL_COLLECTED = Event("Parcel Collected", True, True, False, False, ResponseType.NO_CONTENT.value,
                              "What date did the client collect the parcel?")
     DELIVERED = Event("Delivered", True, True, False, False, ResponseType.NO_CONTENT.value, "What date were the parcels delivered?")

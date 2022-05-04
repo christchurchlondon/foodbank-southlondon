@@ -81,6 +81,9 @@ request = rest.model("ClientRequest", {
     "n&b___st_lukes_collection_time": fields.String(attribute="N&B - St Lukes Collection Time", required=False,
                                                     description="The time that the food parcel should be collected from the N&B - St Lukes centre, "
                                                     "in the format of HH:MM", example="12:30"),
+    "clapham___st_stephens_church_collection_time": fields.String(attribute="Clapham - St Stephens Church Collection Time", required=False,
+                                                                  description="The time that the food parcel should be collected from the Clapham - "
+                                                                  "St Stephens Church centre, in the format of HH:MM", example="12:30"),
     "edit_details_url": fields.String(required=True, description="The Google Forms edit response URL that can be used to update details of the "
                                       "Client Request", example="https://docs.google.com/forms/d/e/1FAIpQLSfb94-4k-Pkf3ccBqd2WR-yzMBdmqdehYBbnN1HLrm"
                                       "E9caneA/viewform?edit2=2_ABaOnueK_9ztK8RlxxBe6Jf0wvs9rAwoi30EwATe24VtNeMhgazghzzd4pgibH-HHn_RDZQ"),
