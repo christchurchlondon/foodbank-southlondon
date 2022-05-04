@@ -37,9 +37,22 @@ _FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
 _FBSL_STAFF_MOBILES = "FBSL_STAFF_MOBILES"
 
 
+def _abbr_from_collection_centre_name(collection_centre_name: Optional[str]) -> str:
+    collection_centre_abbr = ""
+    if collection_centre_name:
+        collection_centre = flask.current_app.config[_FBSL_COLLECTION_CENTRES][collection_centre_name]
+        collection_centre_abbr = collection_centre["abbr"]
+    return collection_centre_abbr
+
+
 def _api_base_url() -> str:
     scheme = "https" if flask.request.is_secure else "http"
     return f"{scheme}://{flask.current_app.config[_FBSL_BASE_DOMAIN]}/api/"
+
+
+def _chunk(iterable: Iterable, size: int) -> Iterator:
+    iterator = iter(iterable)
+    return iter(lambda: tuple(itertools.islice(iterator, size)), ())
 
 
 def _get(url: str, **kwargs: Any) -> Dict[str, Any]:
@@ -321,6 +334,7 @@ class Summary(flask_restx.Resource):
                                      "phone_numbers": phone_numbers, "event_names": event_names, "refresh_cache": refresh_cache,
                                      "page": params["page"], "per_page": per_page})
         requests_df = pd.DataFrame(requests_data["items"])
+        requests_df["collection_centre_abbr"] = requests_df["collection_centre"].map(_abbr_from_collection_centre_name)
         if not requests_df.empty:
             events_df = None
             request_ids = requests_df["request_id"].unique()
@@ -345,8 +359,3 @@ class Summary(flask_restx.Resource):
             "form_submit_url": current_app.config[_FBSL_FORM_SUBMIT_URL_TEMPLATE].format(form_id=current_app.config[_FBSL_FORM_ID]),
             "items": items
         }
-
-
-def _chunk(iterable: Iterable, size: int) -> Iterator:
-    iterator = iter(iterable)
-    return iter(lambda: tuple(itertools.islice(iterator, size)), ())

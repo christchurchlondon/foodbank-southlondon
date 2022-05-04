@@ -54,7 +54,9 @@ _summary = rest.inherit("Summary", _event, {
     "congestion_zone": _clone_field_without_attribute(requests_models.request["congestion_zone"]),
     "flag_for_attention": _clone_field_without_attribute(requests_models.request["flag_for_attention"]),
     "signposting_call": _clone_field_without_attribute(requests_models.request["signposting_call"]),
-    "collection_centre": _clone_field_without_attribute(requests_models.request["collection_centre"])
+    "collection_centre": _clone_field_without_attribute(requests_models.request["collection_centre"]),
+    "collection_centre_abbr": fields.String(required=False, description="The short name for the collection centre",
+                                            example="VXH"),
 })
 
 

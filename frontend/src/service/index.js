@@ -181,7 +181,8 @@ export function getRequests(filters = {}, page = 1, refreshCache=false) {
                 postcode: item.postcode,
                 isInCongestionZone: item.congestion_zone,
                 flagForAttention: item.flag_for_attention,
-                collectionCentre: item.collection_centre
+                collectionCentre: item.collection_centre,
+                collectionCentreAbbr: item.collection_centre_abbr
             }));
 
             const paging = {
