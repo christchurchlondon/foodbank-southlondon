@@ -85,11 +85,12 @@
         </div>
         <table>
             <colgroup>
-                <col style="width: 8%">
-                <col style="width: 21%">
+                <col style="width: 6%">
+                <col style="width: 20%">
                 <col style="width: 12%">
                 <col style="width: 5%">
-                <col style="width: 54%">
+                <col style="width: 8%">
+                <col style="width: 49%">
             </colgroup>
             <thead>
                 <tr>
@@ -97,6 +98,7 @@
                     <th>Name</th>
                     <th>Post Code</th>
                     <th>Time</th>
+                    <th>Collection</th>
                     <th>Instructions</th>
                 </tr>
             </thead>
@@ -105,9 +107,6 @@
                 <tr class="compact">
                     <td>
                         <div class="tickboxes">
-                            <!-- Packed -->
-                            <div class="icon icon--empty"></div>
-                            <!-- Sent -->
                             <div class="icon icon--empty"></div>
                             {% if request['flag_for_attention'] %}
                                 <div class="icon icon--flag"></div>
@@ -130,6 +129,7 @@
                         </span>
                     </td>
                     <td>{{ request['time_of_day'] }}</td>
+                    <td>{{ collection_centres[request['collection_centre']]['abbr'] if request['shipping_method'] == 'Collection' }}</td>
                     <td>{{ request['delivery_instructions'] or '' }}</td>
                 </tr>
                 {% endfor %}
