@@ -283,10 +283,10 @@ class Statuses(flask_restx.Resource):
 class Summary(flask_restx.Resource):
     @staticmethod
     def _get_collection_centre_abbr(collection_centre_name: Optional[str]) -> str:
-        collection_centre_abbr = ''
+        collection_centre_abbr = ""
         if collection_centre_name:
             collection_centre = flask.current_app.config[_FBSL_COLLECTION_CENTRES][collection_centre_name]
-            collection_centre_abbr = collection_centre['abbr']
+            collection_centre_abbr = collection_centre["abbr"]
         return collection_centre_abbr
 
     @rest.expect(parsers.summary_params)
