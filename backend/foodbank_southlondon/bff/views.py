@@ -42,6 +42,11 @@ def _api_base_url() -> str:
     return f"{scheme}://{flask.current_app.config[_FBSL_BASE_DOMAIN]}/api/"
 
 
+def _chunk(iterable: Iterable, size: int) -> Iterator:
+    iterator = iter(iterable)
+    return iter(lambda: tuple(itertools.islice(iterator, size)), ())
+
+
 def _get(url: str, **kwargs: Any) -> Dict[str, Any]:
     r = requests.get(url, **kwargs)
     if not r.ok:
@@ -352,8 +357,3 @@ class Summary(flask_restx.Resource):
             "form_submit_url": current_app.config[_FBSL_FORM_SUBMIT_URL_TEMPLATE].format(form_id=current_app.config[_FBSL_FORM_ID]),
             "items": items
         }
-
-
-def _chunk(iterable: Iterable, size: int) -> Iterator:
-    iterator = iter(iterable)
-    return iter(lambda: tuple(itertools.islice(iterator, size)), ())
