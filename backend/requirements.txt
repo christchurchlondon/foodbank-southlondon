@@ -11,5 +11,5 @@ python-dotenv
 pytz
 requests
 weasyprint
-werkzeug
+werkzeug==2.0.3
 wrapt
