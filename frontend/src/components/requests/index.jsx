@@ -28,6 +28,7 @@ import RequestsActions from './actions';
 import RequestSelection from './selection';
 import RequestsEventDialog from './event-dialog';
 import './styles/index.scss';
+import { NEW_LIST_DESIGN } from '../../features';
 
 
 class Requests extends React.Component {
@@ -132,13 +133,17 @@ class Requests extends React.Component {
         return (
             <div className="requests-contents">
                 {loading && !empty ? <div className="requests-blinder"></div> : false}
-                <RequestsList
-                    requests={ this.props.items }
-                    loading={ loading }
-                    onSelect={ id => this.selectRequest(id) }
-                    onToggle={ id => this.toggleRequest(id) }
-                    onToggleAll={ () => this.toggleAllRequests() }
-                    onRefresh={() => this.fetchRequests(this.props.filters, this.props.paging.page, true) } />
+                {this.props.newListDesignEnabled ?
+                    <>TODO: not implemented yet</>
+                :
+                    <RequestsList
+                        requests={ this.props.items }
+                        loading={ loading }
+                        onSelect={ id => this.selectRequest(id) }
+                        onToggle={ id => this.toggleRequest(id) }
+                        onToggleAll={ () => this.toggleAllRequests() }
+                        onRefresh={() => this.fetchRequests(this.props.filters, this.props.paging.page, true) } />
+                }
                 <div className="requests-controls">
                     <Paginator
                         selectedPage={ this.props.paging.page }
@@ -204,7 +209,10 @@ class Requests extends React.Component {
 }
 
 const mapStateToProps = state => {
-    return getRequestsState(state);
+    return {
+        ...getRequestsState(state),
+        newListDesignEnabled: !!state.features[NEW_LIST_DESIGN]
+    };
 }
 
 export default connect(

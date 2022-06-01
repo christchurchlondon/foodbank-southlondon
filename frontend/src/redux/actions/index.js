@@ -40,7 +40,8 @@ import {
     FILTER_VALUES_LOADED,
     LOAD_CALENDARS,
     CALENDARS_LOADED,
-    LOAD_CALENDARS_FAILED
+    LOAD_CALENDARS_FAILED,
+    SET_FEATURE_ENABLED
 } from './types';
 import {
     getRequests,
@@ -419,5 +420,17 @@ export const fetchCalendars = () => {
         }).catch(() => {
             dispatch({ type: LOAD_CALENDARS_FAILED });
         })
+    };
+}
+
+// Features
+
+export const setFeatureEnabled = (name, enabled) => {
+    return {
+        type: SET_FEATURE_ENABLED,
+        payload: {
+            name,
+            enabled
+        }
     };
 }
