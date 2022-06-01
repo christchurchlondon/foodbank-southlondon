@@ -156,6 +156,7 @@ export function getRequests(filters = {}, page = 1, refreshCache=false) {
         client_full_names: filters.name,
         voucher_numbers: filters.referenceNumber,
         postcodes: filters.postcode,
+        phone_numbers: filters.phoneNumber,
         refresh_cache: refreshCache,
         time_of_days: filters.timeOfDay ? filters.timeOfDay.join(",") : undefined,
         event_names: filters.statuses ? filters.statuses.join(",") : undefined
