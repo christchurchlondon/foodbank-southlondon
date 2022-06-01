@@ -24,6 +24,7 @@ import Paginator from '../common/paginator';
 import Error from '../common/error';
 import RequestsFilter from './filter';
 import RequestsList from './list';
+import NewRequestsList from './new-list';
 import RequestsActions from './actions';
 import RequestSelection from './selection';
 import RequestsEventDialog from './event-dialog';
@@ -134,7 +135,13 @@ class Requests extends React.Component {
             <div className="requests-contents">
                 {loading && !empty ? <div className="requests-blinder"></div> : false}
                 {this.props.newListDesignEnabled ?
-                    <>TODO: not implemented yet</>
+                    <NewRequestsList
+                        requests={ this.props.items }
+                        loading={ loading }
+                        onSelect={ id => this.selectRequest(id) }
+                        onToggle={ id => this.toggleRequest(id) }
+                        onToggleAll={ () => this.toggleAllRequests() }
+                        onRefresh={() => this.fetchRequests(this.props.filters, this.props.paging.page, true) } />
                 :
                     <RequestsList
                         requests={ this.props.items }

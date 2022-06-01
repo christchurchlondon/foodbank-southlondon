@@ -12,3 +12,8 @@
 .requests-list .inline-icon-text {
     margin-left: $pad-standard;
 }
+
+.requests-list .inline-header {
+    position: sticky;
+    top: $toolbar-height;
+}
