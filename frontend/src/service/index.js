@@ -181,6 +181,7 @@ export function getRequests(filters = {}, page = 1, refreshCache=false) {
                 postcode: item.postcode,
                 isInCongestionZone: item.congestion_zone,
                 flagForAttention: item.flag_for_attention,
+                signpostingCall: item.signposting_call,
                 collectionCentre: item.collection_centre,
                 collectionCentreAbbr: item.collection_centre_abbr
             }));

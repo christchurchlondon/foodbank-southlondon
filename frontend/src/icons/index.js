@@ -21,7 +21,8 @@ import {
     faSync,
     faFilter,
     faShoePrints,
-    faTruck
+    faTruck,
+    faPhone
 } from '@fortawesome/free-solid-svg-icons'
 import {
     faSave
@@ -53,7 +54,8 @@ export default function setupIcons() {
         faSync,
         faFilter,
         faShoePrints,
-        faTruck
+        faTruck,
+        faPhone
     );
 
     // Regular icons
