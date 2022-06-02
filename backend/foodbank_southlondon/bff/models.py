@@ -82,3 +82,12 @@ details = rest.model("ClientRequestDetails", {
     "events": fields.List(fields.Nested(_event)),
     "similar_request_ids": fields.List(fields.Nested(_similar_request_summary))
 })
+
+search_result = rest.model("SearchResult", {
+    "key": fields.String(required=True),
+    "value": fields.String(required=True) 
+})
+
+search_results = rest.model("SearchResults", {
+    "results": fields.List(fields.Nested(search_result))
+})

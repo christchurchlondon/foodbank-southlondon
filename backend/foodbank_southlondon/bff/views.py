@@ -359,3 +359,18 @@ class Summary(flask_restx.Resource):
             "form_submit_url": current_app.config[_FBSL_FORM_SUBMIT_URL_TEMPLATE].format(form_id=current_app.config[_FBSL_FORM_ID]),
             "items": items
         }
+
+@rest.route("/search")
+class Search(flask_restx.Resource):
+    
+    @rest.expect(parsers.search_params)
+    @rest.marshal_with(models.search_results)
+    def get(self):
+        api_base_url = _api_base_url()
+        events_data = _get(f"{api_base_url}events/distinct", cookies=flask.request.cookies)
+        results=[]
+        for event in events_data['items']:
+            results.append({ 'key': 'event_names', 'value': event['event_name'] })
+        return {
+            "results": results
+        }

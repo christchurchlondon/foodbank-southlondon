@@ -23,9 +23,36 @@
         align-items: center;
         margin: 0 0.5rem 0 0;
 
+        position: relative;
+
         input[type=text] {
             flex: 1;
             margin: 0 0 0 0.5rem;
+        }
+
+        .suggestions {
+            position: absolute;
+            width: 200%;
+            top: 100%;
+
+            @include shadow;
+
+            background: $colour-white;
+            border: 1px solid $colour-border;
+
+            padding: 0;
+
+            li {
+                padding: $pad-half;
+                cursor: pointer;
+                white-space: nowrap;
+                display: flex;
+                align-items: center;
+    
+                &.highlighted {
+                    background-color: lighten($colour-accent, 50);
+                }
+            }
         }
     }
 
