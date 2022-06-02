@@ -3,6 +3,13 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import DateRangePicker from '../common/date-range-picker';
 import { performSearch } from '../../service';
 
+// TODO:
+//  - replace the input with a div that highlights on focus
+//  - render the existing filters as pills, pushing the input to the right
+//  - focus the input when a suggestion is selected
+//  - filter suggestions by q on the server
+//  - remove Go button and automatically update on enter or date change
+
 export function NewFilter({ disabled, filters, onSubmit }) {
     const [state, setState] = useState(filters);
     const [search, setSearch] = useState('');
@@ -14,18 +21,39 @@ export function NewFilter({ disabled, filters, onSubmit }) {
     const { dates: { start, end } } = state;
 
     function onFocus() {
-        if(suggestions.length > 0) {
+        if(search !== '' && suggestions.length > 0) {
             setHighlightedSuggestion(0);
             setShowSuggestions(true);
         }
     }
 
     function onBlur() {
-        // setShowSuggestions(false);
+        setShowSuggestions(false);
     }
 
     function onChange(e) {
         setSearch(e.target.value);
+    }
+
+    function buildSuggestionMouseEnter(ix) {
+        return () => {
+            setHighlightedSuggestion(ix);
+        }
+    }
+
+    function buildSuggestionClick(ix) {
+        return () => {
+            const { key, value } = suggestions[ix];
+
+            setState({
+                ...state,
+                [key]: value
+            });
+
+            setShowSuggestions(false);
+            setHighlightedSuggestion(0);
+            setSearch('');
+        }
     }
 
     function onKeyDown(e) {
@@ -45,6 +73,10 @@ export function NewFilter({ disabled, filters, onSubmit }) {
             if(showSuggestions) {
                 const nextHighlightedSuggestion = highlightedSuggestion - 1;
                 setHighlightedSuggestion(nextHighlightedSuggestion >= 0 ? nextHighlightedSuggestion : (suggestions.length - 1));
+            }
+        } else if(e.key === 'Enter') {
+            if(showSuggestions) {
+                buildSuggestionClick(highlightedSuggestion)();
             }
         }
     }
@@ -82,6 +114,7 @@ export function NewFilter({ disabled, filters, onSubmit }) {
 
                 <div className="search-field">
                     <Icon icon="search" className="search-icon" />
+
                     <input type="text"
                         className="value"
                         placeholder="Search..."
@@ -95,7 +128,11 @@ export function NewFilter({ disabled, filters, onSubmit }) {
                     {suggestions.length > 0 && showSuggestions ?
                         <ul className="suggestions panel">
                             {suggestions.map(({ key, value }, ix) =>
-                                <li key={key + value} className={highlightedSuggestion === ix ? 'highlighted' : ''}>
+                                <li
+                                    key={key + value} className={highlightedSuggestion === ix ? 'highlighted' : ''}
+                                    onClick={buildSuggestionClick(ix)}
+                                    onMouseEnter={buildSuggestionMouseEnter(ix)}
+                                >
                                     {key}: {value}
                                 </li>
                             )}
