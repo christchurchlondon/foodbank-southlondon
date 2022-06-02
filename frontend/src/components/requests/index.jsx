@@ -30,6 +30,7 @@ import RequestSelection from './selection';
 import RequestsEventDialog from './event-dialog';
 import './styles/index.scss';
 import { NEW_LIST_DESIGN } from '../../features';
+import { NewFilter } from './new-filter';
 
 
 class Requests extends React.Component {
@@ -108,9 +109,20 @@ class Requests extends React.Component {
     }
 
     getFilter(loading) {
+        const onSubmit = (v) => {
+            this.fetchRequests(v, undefined, false, true);
+        };
+
+        if(this.props.newListDesignEnabled) {
+            return <NewFilter
+                disabled={ loading }
+                onSubmit={ onSubmit }
+                filters={ this.props.filters } />;
+        }
+
         return <RequestsFilter
-            disabled={loading}
-            onSubmit={ v => this.fetchRequests(v, undefined, false, true) }
+            disabled={ loading }
+            onSubmit={ onSubmit }
             value={ this.props.filters } />;
     }
 

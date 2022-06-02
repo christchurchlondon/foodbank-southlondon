@@ -8,12 +8,25 @@
     .standard-filter {
         display: flex;
         align-items: center;
+        flex: 1;
     }
 
     .date-field {
         margin-right: $pad-standard;
         border-right: 1px solid $colour-border;
         padding-right: $pad-standard;
+    }
+
+    .search-field {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        margin: 0 0.5rem 0 0;
+
+        input[type=text] {
+            flex: 1;
+            margin: 0 0 0 0.5rem;
+        }
     }
 
     .toggle-more {

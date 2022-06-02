@@ -2,8 +2,6 @@ import React from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import DateRangePicker from '../common/date-range-picker';
 import FilterField from './filter-field';
-import { COLLECTION_CENTRES_FILTER_KEY, STATUSES_FILTER_KEY, TIME_OF_DAY_FILTER_KEY } from '../../constants';
-import { FilterFieldValues } from '../lists/value-filters';
 import './styles/filter.scss';
 
 
@@ -60,11 +58,7 @@ export default class RequestsFilter extends React.Component {
         return this.state.showAdditional
             ? (
                 <div className="additional-filter">
-                    <h4>Filter</h4>
-                    Collection Centres: <FilterFieldValues attribute={COLLECTION_CENTRES_FILTER_KEY} />
-                    Time Of Day: <FilterFieldValues attribute={TIME_OF_DAY_FILTER_KEY} />
-                    Statuses: <FilterFieldValues attribute={STATUSES_FILTER_KEY} />
-                    <h4>Search</h4>
+                    <h4>Additional filters</h4>
                     <FilterField label="Search names..."
                         value={ this.state.name }
                         onChange={ this.onNameChange }
