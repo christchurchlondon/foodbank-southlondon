@@ -63,7 +63,10 @@ export default class RequestsList extends React.Component {
                 (nextRequest.timeOfDay !== request.timeOfDay ||
                  nextRequest.packingDate.getTime() !== request.packingDate.getTime());
 
-            const className = (disabled ? 'disabled' : '') + (showDivider ? 'row-with-divider-below' : '');
+            const className = (disabled ? 'disabled' : '')
+                + (showDivider ? 'row-with-divider-below' : '')
+                + (item.checked ? 'checked' : '');
+
             const onClick = disabled ? undefined : () => this.props.onSelect(request.id);
 
             return (
