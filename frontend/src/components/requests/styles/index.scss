@@ -9,6 +9,7 @@
         background-color: $colour-white;
         // Ensure the React datepicker appears above other content
         z-index: 1;
+        height: $toolbar-height;
     }
 
     .requests-controls {
