@@ -334,7 +334,8 @@ class Summary(flask_restx.Resource):
                                      "phone_numbers": phone_numbers, "event_names": event_names, "refresh_cache": refresh_cache,
                                      "page": params["page"], "per_page": per_page})
         requests_df = pd.DataFrame(requests_data["items"])
-        requests_df["collection_centre_abbr"] = requests_df["collection_centre"].map(_abbr_from_collection_centre_name)
+        if "collection_centre" in requests_df:
+            requests_df["collection_centre_abbr"] = requests_df["collection_centre"].map(_abbr_from_collection_centre_name)
         if not requests_df.empty:
             events_df = None
             request_ids = requests_df["request_id"].unique()

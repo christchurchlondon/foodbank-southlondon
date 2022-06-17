@@ -133,6 +133,10 @@ table {
         }
     }
 
+    tr.checked {
+        background: rgba(91, 159, 227, 0.6);
+    }
+
     .selection-cell {
         vertical-align: middle;
     }

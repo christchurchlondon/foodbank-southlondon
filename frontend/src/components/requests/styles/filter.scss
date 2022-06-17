@@ -73,6 +73,10 @@
             font-size: $font-size-small;
             text-transform: uppercase;
         }
+    }
+
+    .additional-filter-list {
+        display: flex;
 
         .filter-field + .filter-field {
             border-left: 1px solid $colour-border;
