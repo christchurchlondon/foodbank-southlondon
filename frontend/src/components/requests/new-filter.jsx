@@ -1,14 +1,38 @@
-import React, { useEffect, useState, useReducer } from 'react';
+import React, { useEffect, useState, useReducer, useRef } from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import DateRangePicker from '../common/date-range-picker';
 import { performSearch } from '../../service';
 
-// TODO:
-//  - replace the input with a div that highlights on focus
-//  - render the existing filters as pills, pushing the input to the right
-//  - focus the input when a suggestion is selected
-//  - filter suggestions by q on the server
-//  - remove Go button and automatically update on enter or date change
+
+function filtersToPills(filters) {
+    const pills = [];
+
+    for(const [key, values] of Object.entries(filters)) {
+        if(key !== 'dates') {
+            for(const value of values) {
+                pills.push({ key, value });
+            }
+        }
+    }
+
+    return {
+        dates: filters.dates,
+        pills
+    }
+}
+
+function pillsToFilters(pills) {
+    const filters = {};
+
+    for(const { key, value } of pills) {
+        const before = filters[key] ?? [];
+        const after = [...before, value];
+
+        filters[key] = after;
+    }
+
+    return filters;
+}
 
 function reducer(state, action) {
     switch(action.type) {
@@ -19,23 +43,21 @@ function reducer(state, action) {
             };
 
         case 'add_filter': {
-            const before = state[action.key] ?? [];
-            const after = [...before, action.value];
+            const { key, value } = action;
 
             return {
                 ...state,
-                [action.key]: after
+                pills: [...state.pills, { key, value }]
             };
         }
         
         case 'remove_filter': {
-            const before = state[action.key] ?? [];
-            const after = before.filter(v => v !== action.value);
-
             return {
                 ...state,
-                [action.key]: after
-            };
+                pills: state.pills.filter(({ key, value }) =>
+                    !(action.key === key && action.value === value) 
+                )
+            }
         }
 
         default:
@@ -44,14 +66,23 @@ function reducer(state, action) {
 }
 
 export function NewFilter({ disabled, filters, onSubmit }) {
-    const [state, dispatch] = useReducer(reducer, filters);
+    const [state, dispatch] = useReducer(reducer, filtersToPills(filters));
     const [search, setSearch] = useState('');
 
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [highlightedSuggestion, setHighlightedSuggestion] = useState(0);
 
+    const inputRef = useRef();
+
     const { dates: { start, end } } = state;
+
+    function submit() {
+        onSubmit({
+            dates: state.dates,
+            ...pillsToFilters(state.pills)
+        });
+    }
 
     function onFocus() {
         if(search !== '' && suggestions.length > 0) {
@@ -92,42 +123,62 @@ export function NewFilter({ disabled, filters, onSubmit }) {
 
     function buildPillRemove(key, value) {
         return () => {
-            const newState = { ...state };
-            delete newState[key];
-
             dispatch({
                 type: 'remove_filter',
                 key,
                 value
             });
+
+            if(inputRef.current) {
+                inputRef.current.focus();
+            }
         }
     }
 
     function onKeyDown(e) {
-        if(e.key === 'ArrowDown') {
-            if(search === '' && suggestions.length === 0) {
-                performSearch(search).then(({ results }) => {
-                    setSuggestions(results);
-                });
-            } else if(!showSuggestions && suggestions.length > 0) {
-                setHighlightedSuggestion(0);
-                setShowSuggestions(true);
-            } else if(showSuggestions) {
-                const nextHighlightedSuggestion = (highlightedSuggestion + 1) % suggestions.length;
-                setHighlightedSuggestion(nextHighlightedSuggestion);
-            }
-        } else if(e.key === 'ArrowUp') {
-            if(showSuggestions) {
-                const nextHighlightedSuggestion = highlightedSuggestion - 1;
-                setHighlightedSuggestion(nextHighlightedSuggestion >= 0 ? nextHighlightedSuggestion : (suggestions.length - 1));
-            }
-        } else if(e.key === 'Enter') {
-            if(showSuggestions) {
-                buildSuggestionClick(highlightedSuggestion)();
-            } else if(!search) {
-                console.log(state);
-                onSubmit(state);
-            }
+        switch(e.key) {
+            case 'ArrowDown':
+                if(search === '' && suggestions.length === 0) {
+                    performSearch(search).then(({ results }) => {
+                        setSuggestions(results);
+                    });
+                } else if(!showSuggestions && suggestions.length > 0) {
+                    setHighlightedSuggestion(0);
+                    setShowSuggestions(true);
+                } else if(showSuggestions) {
+                    const nextHighlightedSuggestion = (highlightedSuggestion + 1) % suggestions.length;
+                    setHighlightedSuggestion(nextHighlightedSuggestion);
+                }
+
+                break;
+            
+            case 'ArrowUp':
+                if(showSuggestions) {
+                    const nextHighlightedSuggestion = highlightedSuggestion - 1;
+                    setHighlightedSuggestion(nextHighlightedSuggestion >= 0 ? nextHighlightedSuggestion : (suggestions.length - 1));
+                }
+
+                break;
+            
+            case 'Enter':
+                if(showSuggestions) {
+                    buildSuggestionClick(highlightedSuggestion)();
+                } else if(!search) {
+                    submit();
+                }
+
+                break;
+            
+            case 'Backspace':
+                if(!search && state.pills.length > 0) {
+                    const { key, value } = state.pills[state.pills.length - 1];
+                    buildPillRemove(key, value)();
+                }
+
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -151,10 +202,6 @@ export function NewFilter({ disabled, filters, onSubmit }) {
         }
     }, [suggestions]);
 
-    const filtersToDisplay = Object.entries({ ...state })
-        .filter(([key]) => key !== 'dates')
-        .flatMap(([key, values]) => values.map(value => [key, value]));
-
     return (
         <div className="requests-filter panel">
             <div className="standard-filter">
@@ -173,7 +220,7 @@ export function NewFilter({ disabled, filters, onSubmit }) {
 
                     <div className="input-wrapper">
                         <dl className="pill-wrapper">
-                            {filtersToDisplay.map(([key, value]) =>
+                            {state.pills.map(({ key, value }) =>
                                 <div className='pill' key={key + value}>
                                     <dt>{key}</dt>
                                     <dd>{value}</dd>
@@ -184,12 +231,13 @@ export function NewFilter({ disabled, filters, onSubmit }) {
 
                         <input type="text"
                             className="value"
-                            placeholder={filtersToDisplay.length === 0 ? "Search..." : undefined}
+                            placeholder={state.pills.length === 0 ? "Search..." : undefined}
                             value={search || ""}
                             onFocus={onFocus}
                             onBlur={onBlur}
                             onChange={onChange}
                             onKeyDown={onKeyDown}
+                            ref={inputRef}
                         />
                     </div>
 
@@ -209,7 +257,7 @@ export function NewFilter({ disabled, filters, onSubmit }) {
                 </div>
 
                 <button
-                    onClick={() => onSubmit(state)}
+                    onClick={submit}
                     disabled={disabled}
                 >
                     Go
