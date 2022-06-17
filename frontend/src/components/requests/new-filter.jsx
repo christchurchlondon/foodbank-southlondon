@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import DateRangePicker from '../common/date-range-picker';
 import { performSearch } from '../../service';
@@ -10,8 +10,41 @@ import { performSearch } from '../../service';
 //  - filter suggestions by q on the server
 //  - remove Go button and automatically update on enter or date change
 
+function reducer(state, action) {
+    switch(action.type) {
+        case 'set_dates':
+            return {
+                ...state,
+                dates: action.dates
+            };
+
+        case 'add_filter': {
+            const before = state[action.key] ?? [];
+            const after = [...before, action.value];
+
+            return {
+                ...state,
+                [action.key]: after
+            };
+        }
+        
+        case 'remove_filter': {
+            const before = state[action.key] ?? [];
+            const after = before.filter(v => v !== action.value);
+
+            return {
+                ...state,
+                [action.key]: after
+            };
+        }
+
+        default:
+            return state;
+    }
+}
+
 export function NewFilter({ disabled, filters, onSubmit }) {
-    const [state, setState] = useState(filters);
+    const [state, dispatch] = useReducer(reducer, filters);
     const [search, setSearch] = useState('');
 
     const [suggestions, setSuggestions] = useState([]);
@@ -44,10 +77,11 @@ export function NewFilter({ disabled, filters, onSubmit }) {
     function buildSuggestionClick(ix) {
         return () => {
             const { key, value } = suggestions[ix];
-
-            setState({
-                ...state,
-                [key]: value
+            
+            dispatch({
+                type: 'add_filter',
+                key,
+                value
             });
 
             setShowSuggestions(false);
@@ -56,12 +90,16 @@ export function NewFilter({ disabled, filters, onSubmit }) {
         }
     }
 
-    function buildPillRemove(key) {
+    function buildPillRemove(key, value) {
         return () => {
             const newState = { ...state };
             delete newState[key];
 
-            setState(newState);
+            dispatch({
+                type: 'remove_filter',
+                key,
+                value
+            });
         }
     }
 
@@ -86,6 +124,9 @@ export function NewFilter({ disabled, filters, onSubmit }) {
         } else if(e.key === 'Enter') {
             if(showSuggestions) {
                 buildSuggestionClick(highlightedSuggestion)();
+            } else if(!search) {
+                console.log(state);
+                onSubmit(state);
             }
         }
     }
@@ -111,14 +152,17 @@ export function NewFilter({ disabled, filters, onSubmit }) {
     }, [suggestions]);
 
     const filtersToDisplay = Object.entries({ ...state })
-        .filter(([key]) => key !== 'dates');
+        .filter(([key]) => key !== 'dates')
+        .flatMap(([key, values]) => values.map(value => [key, value]));
 
     return (
         <div className="requests-filter panel">
             <div className="standard-filter">
                 <div className="date-field">
                     <DateRangePicker
-                        onChange={(dates) => setState({ ...state, dates })}
+                        onChange={(dates) =>
+                            dispatch({ type: 'set_dates', dates })
+                        }
                         onEnter={() => {}}
                         start={start}
                         end={end} />
@@ -128,12 +172,12 @@ export function NewFilter({ disabled, filters, onSubmit }) {
                     <Icon icon="search" className="search-icon" />
 
                     <div className="input-wrapper">
-                        <dl>
+                        <dl className="pill-wrapper">
                             {filtersToDisplay.map(([key, value]) =>
                                 <div className='pill' key={key + value}>
                                     <dt>{key}</dt>
                                     <dd>{value}</dd>
-                                    <Icon icon="times" className="clear-icon" onClick={buildPillRemove(key)} />
+                                    <Icon icon="times" className="clear-icon" onClick={buildPillRemove(key, value)} />
                                 </div>
                             )}
                         </dl>

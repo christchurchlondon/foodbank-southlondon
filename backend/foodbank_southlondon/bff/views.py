@@ -371,7 +371,7 @@ class Search(flask_restx.Resource):
         events_data = _get(f"{api_base_url}events/distinct", cookies=flask.request.cookies)
         results=[]
         for event in events_data['items']:
-            results.append({ 'key': 'event_names', 'value': event['event_name'] })
+            results.append({ 'key': 'statuses', 'value': event['event_name'] })
         return {
             "results": results
         }

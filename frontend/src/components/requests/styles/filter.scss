@@ -29,6 +29,7 @@
             display: flex;
             background-color: white;
             align-items: center;
+            overflow: hidden;
 
             input[type=text] {
                 border: none;
@@ -45,6 +46,10 @@
 
             dl {
                 flex: 0 0 auto;
+            }
+
+            .pill-wrapper {
+                display: flex;
             }
 
             .pill {
