@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Tuple, Optional
 import math
 import datetime
 
@@ -40,7 +40,17 @@ def append_rows(spreadsheet_id: str, rows: List) -> None:
     sheet.append_rows(rows, value_input_option="USER_ENTERED")
 
 
-def cache(name: str, spreadsheet_id: str, force_refresh: bool = False) -> pd.DataFrame:
+def build_search_data(df, search_columns) -> pd.DataFrame:
+    frames = []
+    for column_name in search_columns:
+        column = df[column_name]
+        key_values = pd.DataFrame(data = {'value': column.unique() })
+        key_values['key'] = column
+        frames.append(key_values)
+    return pd.concat(frames, ignore_index=True)
+
+
+def cache(name: str, spreadsheet_id: str, force_refresh: bool = False, search_columns: List[str] = []) -> Tuple[pd.DataFrame, Optional[pd.DataFrame]]:
     now = datetime.datetime.now(datetime.timezone.utc)
     current_app = flask.current_app
     cache = _caches.get(name)
@@ -52,7 +62,11 @@ def cache(name: str, spreadsheet_id: str, force_refresh: bool = False) -> pd.Dat
             return cache
     current_app.logger.info(f"Refreshing cache, {name}...")
     _caches_updated[name] = now
-    cache = _caches[name] = _gsheet_to_df(spreadsheet_id)
+    raw_data = _gsheet_to_df(spreadsheet_id)
+    search_data = None 
+    if search_columns:
+        search_data = build_search_data(raw_data, search_columns)
+    cache = _caches[name] = [raw_data, search_data]
     return cache
 
 

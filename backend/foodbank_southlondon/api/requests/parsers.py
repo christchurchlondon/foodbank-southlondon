@@ -1,4 +1,4 @@
-from flask_restx import inputs  # type: ignore
+from flask_restx import inputs, reqparse  # type: ignore
 
 from foodbank_southlondon.api.parsers import cache_params, pagination_params  # noqa: F401
 from foodbank_southlondon.api.events.parsers import events_params  # noqa: F401
@@ -29,3 +29,6 @@ distinct_requests_params.add_argument("packing_dates", type=str, required=False,
                                       "the format of DD/MM/YYYY to filter on - before fetching distinct values")
 distinct_requests_params.add_argument("attribute", type=str, required=True, help="The attribute to get distinct values for.",
                                       choices=["Client Full Name", "Collection Centre", "Packing Date", "Postcode", "Time of Day", "Voucher Number"])
+
+search_params = reqparse.RequestParser(trim=True)
+search_params.add_argument("q", required=False)

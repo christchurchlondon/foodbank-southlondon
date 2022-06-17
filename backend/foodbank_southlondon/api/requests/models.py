@@ -97,3 +97,12 @@ page_of_requests = rest.inherit("ClientRequestsPage", models.pagination, {
 distinct_request_values = rest.model("DistinctClientRequestValues", {
     "values": fields.List(fields.String(required=True, description="A distinct value of the requested attribute across the Requests data"))
 })
+
+search_result = rest.model("SearchResult", {
+    "key": fields.String(required=True),
+    "value": fields.String(required=True) 
+})
+
+search_results = rest.model("SearchResults", {
+    "results": fields.List(fields.Nested(search_result))
+})
