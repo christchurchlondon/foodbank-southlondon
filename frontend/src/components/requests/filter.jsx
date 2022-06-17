@@ -2,8 +2,6 @@ import React from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import DateRangePicker from '../common/date-range-picker';
 import FilterField from './filter-field';
-import { COLLECTION_CENTRES_FILTER_KEY, STATUSES_FILTER_KEY, TIME_OF_DAY_FILTER_KEY } from '../../constants';
-import { FilterFieldValues } from '../lists/value-filters';
 import './styles/filter.scss';
 
 
