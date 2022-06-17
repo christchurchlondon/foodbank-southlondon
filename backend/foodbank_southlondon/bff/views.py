@@ -368,6 +368,8 @@ class Search(flask_restx.Resource):
     @rest.marshal_with(models.search_results)
     def get(self):
         api_base_url = _api_base_url()
+        # TODO MRB: add search endpoint to events too
+        # then sort by score here and return the top N
         events_data = _get(f"{api_base_url}events/distinct", cookies=flask.request.cookies)
         results=[]
         for event in events_data['items']:

@@ -45,7 +45,7 @@ def build_search_data(df, search_columns) -> pd.DataFrame:
     for column_name in search_columns:
         column = df[column_name]
         key_values = pd.DataFrame(data = {'value': column.unique() })
-        key_values['key'] = column
+        key_values['key'] = column_name
         frames.append(key_values)
     return pd.concat(frames, ignore_index=True)
 

@@ -23,6 +23,8 @@ _FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
 _CACHE_NAME = "requests"
 _BASE_COLLECTION_COLUMNS = ["Collection Date", "Collection Centre"]
 
+MAX_NUMBER_OF_SEARCH_RESULTS = 20
+scorer = fuzz.partial_ratio
 
 @namespace.route("/")
 class Requests(flask_restx.Resource):
@@ -30,7 +32,7 @@ class Requests(flask_restx.Resource):
     @staticmethod
     def fuzzy_match(text: str, choices: Iterable) -> bool:
         search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
-        possibilities = process.extract(text, choices, scorer=fuzz.partial_ratio)
+        possibilities = process.extract(text, choices, scorer=scorer)
         return any(p[1] >= search_threshold for p in possibilities)
 
     @rest.expect(parsers.requests_params)
@@ -133,19 +135,20 @@ class DistinctRequestsValues(flask_restx.Resource):
 @namespace.route("/search/")
 class Search(flask_restx.Resource):
 
+    # TODO MRB: add score as a field
+    # and map the keys to their API keys rather than dataframe keys
     @rest.expect(parsers.search_params)
     @rest.marshal_with(models.search_results)
     def get(self) -> List:
         """Free text search for values"""
         params = parsers.search_params.parse_args(flask.request)
-        # client full name
-        # postcode
-        # voucher number (exact?)
-        # collection centre
-        # phone number
-        # time of day
-        print(params)
-        return []
+        search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
+        df = cache()[1]
+        df["score"] = df["value"].map(lambda v: scorer(params.q, v))
+        df = df.sort_values(by="score", ascending=False)
+        df = df.loc[df["score"] > search_threshold]
+        df = df.head(MAX_NUMBER_OF_SEARCH_RESULTS)
+        return {"results": df.to_dict('records')}
 
 
 def _clean_collection_columns(df: pd.DataFrame) -> pd.DataFrame:
