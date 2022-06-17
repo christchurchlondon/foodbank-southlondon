@@ -125,7 +125,7 @@ tbody tr:nth-child(even) {
 
 table {
 
-    &.selectable tbody tr:not(.empty-row):not(.disabled) {
+    &.selectable tbody tr:not(.empty-row):not(.disabled):not(.inline-header-row) {
         cursor: pointer;
 
         &:hover {
@@ -144,6 +144,7 @@ table {
     .cell-with-actions {
         display: flex;
         align-items: center;
+        justify-content: space-between;
     }
 
     .cell-actions {
@@ -161,6 +162,12 @@ table {
 
     .row-with-divider-below {
         border-bottom: $pad-half solid $colour-main-bold;
+    }
+
+    .inline-header {
+        background-color: $colour-main-bold;
+        text-transform: uppercase;
+        color: $colour-white;
     }
 }
 

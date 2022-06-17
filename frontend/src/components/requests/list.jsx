@@ -7,6 +7,14 @@ import { FilterFieldValues } from '../lists/value-filters';
 import Loading from '../common/loading';
 import { RequestIconCell } from './request-icons';
 
+export function extractEvent(event) {
+    if (!event.name) return '';
+    const date = format(event.date, DATE_FORMAT_UI);
+    return !!event.data
+        ? `${ event.name } (${ event.data }) @ ${ date }`
+        : `${ event.name } @ ${ date }`;
+}
+
 export default class RequestsList extends React.Component {
 
     toggle(id) {
@@ -23,14 +31,6 @@ export default class RequestsList extends React.Component {
 
     handleCheckboxClick(event) {
         event.stopPropagation();
-    }
-
-    extractEvent(event) {
-        if (!event.name) return '';
-        const date = format(event.date, DATE_FORMAT_UI);
-        return !!event.data
-            ? `${ event.name } (${ event.data }) @ ${ date }`
-            : `${ event.name } @ ${ date }`;
     }
 
     getEmptyRow() {
@@ -96,7 +96,7 @@ export default class RequestsList extends React.Component {
                     <RequestIconCell request={request} />
                     <td>{ format(request.packingDate, DATE_FORMAT_UI) }</td>
                     <td>{ request.timeOfDay }</td>
-                    <td>{ this.extractEvent(request.event) }</td>
+                    <td>{ extractEvent(request.event) }</td>
                 </tr>
             );
         });

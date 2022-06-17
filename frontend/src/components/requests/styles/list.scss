@@ -13,6 +13,11 @@
     margin-left: $pad-standard;
 }
 
+.requests-list .inline-header {
+    position: sticky;
+    top: $toolbar-height;
+}
+
 .flag {
     color: $colour-danger;
 }
