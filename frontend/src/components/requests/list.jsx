@@ -63,14 +63,24 @@ export default class RequestsList extends React.Component {
                 (nextRequest.timeOfDay !== request.timeOfDay ||
                  nextRequest.packingDate.getTime() !== request.packingDate.getTime());
 
-            const className = (disabled ? 'disabled' : '')
-                + (showDivider ? 'row-with-divider-below' : '')
-                + (item.checked ? 'checked' : '');
+            const classNames = [];
+
+            if(disabled) {
+                classNames.push('disabled');
+            }
+
+            if(showDivider) {
+                classNames.push('row-with-divider-below');
+            }
+
+            if(item.checked) {
+                classNames.push('checked');
+            }
 
             const onClick = disabled ? undefined : () => this.props.onSelect(request.id);
 
             return (
-                <tr key={request.id} onClick={ onClick } className={className}>
+                <tr key={request.id} onClick={ onClick } className={classNames.join(' ')}>
                     <td className="selection-cell" onClick={ this.handleCheckboxCellClick }>
                         <input type="checkbox"
                             disabled={disabled}
