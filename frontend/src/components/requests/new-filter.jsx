@@ -56,6 +56,15 @@ export function NewFilter({ disabled, filters, onSubmit }) {
         }
     }
 
+    function buildPillRemove(key) {
+        return () => {
+            const newState = { ...state };
+            delete newState[key];
+
+            setState(newState);
+        }
+    }
+
     function onKeyDown(e) {
         if(e.key === 'ArrowDown') {
             if(search === '' && suggestions.length === 0) {
@@ -101,6 +110,9 @@ export function NewFilter({ disabled, filters, onSubmit }) {
         }
     }, [suggestions]);
 
+    const filtersToDisplay = Object.entries({ ...state })
+        .filter(([key]) => key !== 'dates');
+
     return (
         <div className="requests-filter panel">
             <div className="standard-filter">
@@ -115,15 +127,27 @@ export function NewFilter({ disabled, filters, onSubmit }) {
                 <div className="search-field">
                     <Icon icon="search" className="search-icon" />
 
-                    <input type="text"
-                        className="value"
-                        placeholder="Search..."
-                        value={search || ""}
-                        onFocus={onFocus}
-                        onBlur={onBlur}
-                        onChange={onChange}
-                        onKeyDown={onKeyDown}
-                    />
+                    <div className="input-wrapper">
+                        <dl>
+                            {filtersToDisplay.map(([key, value]) =>
+                                <div className='pill' key={key + value}>
+                                    <dt>{key}</dt>
+                                    <dd>{value}</dd>
+                                    <Icon icon="times" className="clear-icon" onClick={buildPillRemove(key)} />
+                                </div>
+                            )}
+                        </dl>
+
+                        <input type="text"
+                            className="value"
+                            placeholder={filtersToDisplay.length === 0 ? "Search..." : undefined}
+                            value={search || ""}
+                            onFocus={onFocus}
+                            onBlur={onBlur}
+                            onChange={onChange}
+                            onKeyDown={onKeyDown}
+                        />
+                    </div>
 
                     {suggestions.length > 0 && showSuggestions ?
                         <ul className="suggestions panel">

@@ -45,7 +45,7 @@ input, textarea {
     }
 }
 
-input[type=text], textarea {
+input[type=text], textarea, .input-wrapper {
 
     border: 1px solid $colour-border;
     border-radius: 2px;
