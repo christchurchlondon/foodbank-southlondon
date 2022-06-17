@@ -2,7 +2,6 @@ import React from 'react';
 import { format } from 'date-fns';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { COLLECTION_CENTRES_FILTER_KEY, DATE_FORMAT_UI, STATUSES_FILTER_KEY, TIME_OF_DAY_FILTER_KEY } from '../../constants';
-import Flag from './flag';
 import './styles/list.scss';
 import { FilterFieldValues } from '../lists/value-filters';
 import Loading from '../common/loading';
@@ -64,7 +63,10 @@ export default class RequestsList extends React.Component {
                 (nextRequest.timeOfDay !== request.timeOfDay ||
                  nextRequest.packingDate.getTime() !== request.packingDate.getTime());
 
-            const className = (disabled ? 'disabled' : '') + (showDivider ? 'row-with-divider-below' : '');
+            const className = (disabled ? 'disabled' : '')
+                + (showDivider ? 'row-with-divider-below' : '')
+                + (item.checked ? 'checked' : '');
+
             const onClick = disabled ? undefined : () => this.props.onSelect(request.id);
 
             return (
@@ -77,7 +79,12 @@ export default class RequestsList extends React.Component {
                             checked={ item.checked } />
                     </td>
                     <td className="cell-trim">
-                        { request.flagForAttention && <Flag /> }
+                        { request.flagForAttention &&
+                            <Icon icon="flag" className="flag inline-icon" title="Flagged for attention" />
+                        }
+                        { request.signpostingCall &&
+                            <Icon icon="phone" className="phone inline-icon" title="Requires follow up phone call" />
+                        }
                     </td>
                     <td>
                         { request.fullName }

@@ -15,6 +15,7 @@ export default class RequestsFilter extends React.Component {
         this.onNameChange = this.onNameChange.bind(this);
         this.onReferenceNumberChange = this.onReferenceNumberChange.bind(this);
         this.onPostcodeChange = this.onPostcodeChange.bind(this);
+        this.onPhoneNumberChange = this.onPhoneNumberChange.bind(this);
         this.toggleAdditional = this.toggleAdditional.bind(this);
         this.submit = this.submit.bind(this);
 
@@ -23,7 +24,8 @@ export default class RequestsFilter extends React.Component {
             dates: props.value.dates || {},
             name: props.value.name || '',
             referenceNumber: props.value.referenceNumber || '',
-            postcode: props.value.postcode || ''
+            postcode: props.value.postcode || '',
+            phoneNumber: props.value.phoneNumber || '',
         };
     }
 
@@ -43,6 +45,10 @@ export default class RequestsFilter extends React.Component {
         this.setState({ postcode });
     }
 
+    onPhoneNumberChange(phoneNumber) {
+        this.setState({ phoneNumber });
+    }
+
     toggleAdditional() {
         this.setState({ showAdditional: !this.state.showAdditional });
     }
@@ -52,7 +58,8 @@ export default class RequestsFilter extends React.Component {
             dates: this.state.dates,
             name: this.state.name,
             referenceNumber: this.state.referenceNumber,
-            postcode: this.state.postcode
+            postcode: this.state.postcode,
+            phoneNumber: this.state.phoneNumber,
         });
     }
 
@@ -60,19 +67,21 @@ export default class RequestsFilter extends React.Component {
         return this.state.showAdditional
             ? (
                 <div className="additional-filter">
-                    <h4>Filter</h4>
-                    Collection Centres: <FilterFieldValues attribute={COLLECTION_CENTRES_FILTER_KEY} />
-                    Time Of Day: <FilterFieldValues attribute={TIME_OF_DAY_FILTER_KEY} />
-                    Statuses: <FilterFieldValues attribute={STATUSES_FILTER_KEY} />
-                    <h4>Search</h4>
-                    <FilterField label="Search names..."
-                        value={ this.state.name }
-                        onChange={ this.onNameChange }
-                        onEnter={ this.submit } />
-                    <FilterField label="Search vouchers..."
-                        value={ this.state.referenceNumber }
-                        onChange={ this.onReferenceNumberChange }
-                        onEnter={ this.submit } />
+                    <h4>Additional filters</h4>
+                    <div className="additional-filter-list">
+                        <FilterField label="Search names..."
+                            value={ this.state.name }
+                            onChange={ this.onNameChange }
+                            onEnter={ this.submit } />
+                        <FilterField label="Search vouchers..."
+                            value={ this.state.referenceNumber }
+                            onChange={ this.onReferenceNumberChange }
+                            onEnter={ this.submit } />
+                        <FilterField label="Search phone numbers..."
+                            value={ this.state.phoneNumber }
+                            onChange={ this.onPhoneNumberChange }
+                            onEnter={ this.submit } />
+                    </div>
                 </div>
             )
             : null;
