@@ -54,10 +54,10 @@ export default class RequestsFilter extends React.Component {
     submit() {
         this.props.onSubmit({
             dates: this.state.dates,
-            name: this.state.name,
-            referenceNumber: this.state.referenceNumber,
-            postcode: this.state.postcode,
-            phoneNumber: this.state.phoneNumber,
+            client_full_names: [this.state.name],
+            voucher_numbers: [this.state.referenceNumber],
+            postcodes: [this.state.postcode],
+            phone_numbers: [this.state.phoneNumber],
         });
     }
 

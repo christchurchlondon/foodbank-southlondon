@@ -146,6 +146,10 @@ function parseTimestamp(timestamp) {
     return parse(timestamp.substr(0, 19).replace('T', ' '), DATE_FORMAT_TIMESTAMP, new Date());
 }
 
+function buildFilter(filters) {
+    return filters ? filters.join(", ") : undefined;
+}
+
 export function getRequests(filters = {}, page = 1, refreshCache=false) {
 
     const dates = filters.dates || {};
@@ -154,13 +158,13 @@ export function getRequests(filters = {}, page = 1, refreshCache=false) {
         per_page: 100,
         start_date: formatDate(dates.start),
         end_date: formatDate(dates.end),
-        client_full_names: filters.name,
-        voucher_numbers: filters.referenceNumber,
-        postcodes: filters.postcode,
-        phone_numbers: filters.phoneNumber,
+        client_full_names: buildFilter(filters.client_full_names),
+        voucher_numbers: buildFilter(filters.voucher_numbers),
+        postcodes: buildFilter(filters.postcode),
+        phone_numbers: buildFilter(filters.phoneNumber),
         refresh_cache: refreshCache,
-        time_of_days: filters.timeOfDay ? filters.timeOfDay.join(",") : undefined,
-        event_names: filters.statuses ? filters.statuses.join(",") : undefined
+        time_of_days: buildFilter(filters.time_of_days),
+        event_names: buildFilter(filters.event_names)
     };
 
     // Only send the filter if set to a value, as the empty string signifies filtering by delivery

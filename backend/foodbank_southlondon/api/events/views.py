@@ -92,7 +92,7 @@ class Suggestions(flask_restx.Resource):
         params = common_parsers.search_params.parse_args(flask.request)
         search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
         max_suggestions = flask.current_app.config[_FBSL_MAX_NUMBER_OF_SUGGESTIONS]
-        suggestions = [{"key": "statuses", "value": e.event_name, "score": 100.0} for e in models.EVENTS if e.event_name]
+        suggestions = [{"key": "event_names", "value": e.event_name, "score": 100.0} for e in models.EVENTS if e.event_name]
         if params.q:
             search = params.q.lower()
             suggestions = [{**s, "score": utils.fuzzy_scorer(search, s["value"])} for s in suggestions]

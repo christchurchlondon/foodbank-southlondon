@@ -3,6 +3,13 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import DateRangePicker from '../common/date-range-picker';
 import { performSuggestions } from '../../service';
 
+// TODO MRB:
+//  - disallow expiring cache when getting suggestions (to avoid unexpectedly long requests)
+//  - reload suggestions once the input is completely cleared but still focused
+//  - score exact matches higher and allow searching by key name (eg finding AM or Time of day, collection centre delivery etc)
+//  - reload suggestions after clear, de-focus, focus again and click down
+//  - show suggestions when you click the up arrow
+//  - allow free-style search for things not in the suggestions?
 
 function filtersToPills(filters) {
     const pills = [];

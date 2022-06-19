@@ -134,7 +134,14 @@ class DistinctRequestsValues(flask_restx.Resource):
 @namespace.route("/suggestions/")
 class Suggestions(flask_restx.Resource):
 
-    # TODO MRB: map the keys to their API keys rather than dataframe keys
+    @staticmethod
+    def map_dataframe_key_to_param(key: str) -> str:
+        for field_name in models.request:
+            if key == models.request[field_name].attribute:
+                # The filter params are plural
+                return field_name + 's'
+        return key
+
     @rest.expect(common_parsers.search_params)
     @rest.marshal_with(common_models.suggestions)
     def get(self) -> List:
@@ -150,6 +157,7 @@ class Suggestions(flask_restx.Resource):
         df = df.sort_values(by="score", ascending=False)
         df = df.loc[df["score"] > search_threshold]
         df = df.head(max_suggestions)
+        df["key"] = df["key"].map(self.map_dataframe_key_to_param)
         return {"suggestions": df.to_dict('records')}
 
 
