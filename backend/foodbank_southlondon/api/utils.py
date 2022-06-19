@@ -16,13 +16,9 @@ from foodbank_southlondon import helpers
 _FBSL_CACHE_TTL_SECONDS = "FBSL_CACHE_TTL_SECONDS"
 _FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
 
-@dataclasses.dataclass
-class CacheEntry:
-    data: pd.DataFrame
-    index: Optional[pd.DataFrame]
 
 _caches_updated: Dict[str, datetime.datetime] = {}
-_caches: Dict[str, CacheEntry] = {}
+_caches: Dict[str, pd.DataFrame] = {}
 
 
 def _gsheet(spreadsheet_id: str, index: int = 0) -> gspread.Worksheet:
@@ -46,20 +42,7 @@ def append_rows(spreadsheet_id: str, rows: List) -> None:
     sheet.append_rows(rows, value_input_option="USER_ENTERED")
 
 
-def build_index_data(df, index_columns) -> pd.DataFrame:
-    frames = []
-    for column_name in index_columns:
-        column = df[column_name]
-        column = column.unique()
-        key_values = pd.DataFrame(data = {'value': column })
-        key_values['key'] = column_name
-        frames.append(key_values)
-    ret = pd.concat(frames, ignore_index=True)
-    ret['value_lower'] = ret['value'].str.lower()
-    return ret
-
-
-def cache(name: str, spreadsheet_id: str, force_refresh: bool = False, index_columns: List[str] = []) -> CacheEntry:
+def cache(name: str, spreadsheet_id: str, force_refresh: bool = False) -> pd.DataFrame:
     now = datetime.datetime.now(datetime.timezone.utc)
     current_app = flask.current_app
     cache = _caches.get(name)
@@ -70,12 +53,8 @@ def cache(name: str, spreadsheet_id: str, force_refresh: bool = False, index_col
         if not force_refresh and _caches_updated[name] >= max(file_modified_time, cache_max_age_time):
             return cache
     current_app.logger.info(f"Refreshing cache, {name}...")
-    _caches_updated[name] = now
-    data = _gsheet_to_df(spreadsheet_id)
-    index = None 
-    if index_columns:
-        index = build_index_data(data, index_columns)
-    cache = _caches[name] = CacheEntry(data, index)
+    _caches_updated[name] = now    
+    cache = _caches[name] = _gsheet_to_df(spreadsheet_id)
     return cache
 
 

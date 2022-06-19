@@ -6,7 +6,7 @@ import flask
 import flask_restx  # type: ignore
 import pandas as pd  # type: ignore
 
-from foodbank_southlondon.api import rest, utils, models as common_models, parsers as common_parsers
+from foodbank_southlondon.api import rest, utils, models as common_models
 from foodbank_southlondon.api.events import models, namespace, parsers
 from foodbank_southlondon.api.requests import views as requests_views
 
@@ -86,11 +86,11 @@ class DistinctEventNameValues(flask_restx.Resource):
 @namespace.route("/suggestions/")
 class Suggestions(flask_restx.Resource):
 
-    @rest.expect(common_parsers.search_params)
+    @rest.expect(parsers.suggest_params)
     @rest.marshal_with(common_models.suggestions)
     def get(self) -> List:
         """Get suggested values for search filters"""
-        params = common_parsers.search_params.parse_args(flask.request)
+        params = parsers.suggest_params.parse_args(flask.request)
         search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
         max_suggestions = flask.current_app.config[_FBSL_MAX_NUMBER_OF_SUGGESTIONS]
         suggestions = [{"key": "event_names", "value": e.event_name, "score": 100.0} for e in models.EVENTS if e.event_name]
@@ -102,4 +102,4 @@ class Suggestions(flask_restx.Resource):
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
-    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_EVENTS_GSHEET_ID], force_refresh=force_refresh).data
+    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_EVENTS_GSHEET_ID], force_refresh=force_refresh)

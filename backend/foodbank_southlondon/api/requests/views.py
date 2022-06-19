@@ -6,7 +6,7 @@ import flask
 import flask_restx  # type: ignore
 import pandas as pd  # type: ignore
 
-from foodbank_southlondon.api import rest, utils, models as common_models, parsers as common_parsers
+from foodbank_southlondon.api import rest, utils, models as common_models
 from foodbank_southlondon.api.events import models as events_models, views as events_views
 from foodbank_southlondon.api.requests import models, namespace, parsers
 
@@ -53,7 +53,7 @@ class Requests(flask_restx.Resource):
         if invalid_event_names:
             rest.abort(400, f"The following event names are invalid options: {invalid_event_names}. Valid options are: {events_models.EVENT_NAMES}.")
         last_request_only = params["last_request_only"]
-        df = cache(force_refresh=refresh_cache).data
+        df = cache(force_refresh=refresh_cache)
         df = _clean_collection_columns(df)
         request_id_attribute = "request_id"
         name_attribute = "Client Full Name"
@@ -124,7 +124,7 @@ class DistinctRequestsValues(flask_restx.Resource):
         packing_dates = set(packing_date.strip() for packing_date in (params["packing_dates"] or ()))
         attribute = params["attribute"]
         refresh_cache = params["refresh_cache"]
-        df = cache(force_refresh=refresh_cache).data
+        df = cache(force_refresh=refresh_cache)
         if packing_dates:
             df = df.loc[df["Packing Date"].isin(packing_dates)]
         distinct_values = df[attribute].unique()
@@ -134,6 +134,15 @@ class DistinctRequestsValues(flask_restx.Resource):
 @namespace.route("/suggestions/")
 class Suggestions(flask_restx.Resource):
 
+    columns_to_search = [
+        'Client Full Name',
+        'Postcode',
+        'Voucher Number',
+        'Collection Centre',
+        'Phone Number',
+        'Time of Day'
+    ]
+
     @staticmethod
     def map_dataframe_key_to_param(key: str) -> str:
         for field_name in models.request:
@@ -142,23 +151,46 @@ class Suggestions(flask_restx.Resource):
                 return field_name + 's'
         return key
 
-    @rest.expect(common_parsers.search_params)
+    @staticmethod
+    def get_suggestions_from_row(row, search, search_threshold):
+        suggestions = []
+        for column_name in Suggestions.columns_to_search:
+            value = row[column_name]
+            score = fuzz.partial_token_set_ratio(search, value)
+            if score > search_threshold:
+                key = Suggestions.map_dataframe_key_to_param(column_name)
+                suggestions.append({"key": key, "value": value, "score": score})
+        return suggestions
+
+    @rest.expect(parsers.suggest_params)
     @rest.marshal_with(common_models.suggestions)
     def get(self) -> List:
         """Get suggested values for search filters"""
-        params = common_parsers.search_params.parse_args(flask.request)
+        params = parsers.suggest_params.parse_args(flask.request)
+        packing_dates = set(packing_date.strip() for packing_date in (params["packing_dates"] or ()))
         if not params.q:
             return {"suggestions": []}
         search = params.q.lower()
         search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
         max_suggestions = flask.current_app.config[_FBSL_MAX_NUMBER_OF_SUGGESTIONS]
-        df = cache().index
-        df["score"] = df["value_lower"].map(lambda v: fuzz.partial_token_set_ratio(search, v))
-        df = df.sort_values(by="score", ascending=False)
-        df = df.loc[df["score"] > search_threshold]
-        df = df.head(max_suggestions)
-        df["key"] = df["key"].map(self.map_dataframe_key_to_param)
-        return {"suggestions": df.to_dict('records')}
+        unique_suggestions = {}
+        df = cache()
+        if packing_dates:
+            df = df.loc[df["Packing Date"].isin(packing_dates)]
+        for _, row in df.iterrows():
+            suggestions = self.get_suggestions_from_row(row, search, search_threshold)
+            for suggestion in suggestions:
+                unique_key = (suggestion["key"], suggestion["value"])
+                score = suggestion["score"]
+                if unique_key in unique_suggestions:
+                    if unique_suggestions[unique_key] < score:
+                        unique_suggestions[unique_key] = score
+                else:
+                    unique_suggestions[unique_key] = score
+        suggestions = []
+        for ((key, value), score) in unique_suggestions.items():
+            suggestions.append({"key": key, "value": value, "score": score})
+        return {"suggestions": suggestions}
 
 
 def _clean_collection_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -185,12 +217,4 @@ def _edit_details_url(request_id: str) -> str:
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
-    index_columns = [
-        'Client Full Name',
-        'Postcode',
-        'Voucher Number',
-        'Collection Centre',
-        'Phone Number',
-        'Time of Day'
-    ]
-    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], force_refresh=force_refresh, index_columns=index_columns)
+    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], force_refresh=force_refresh)

@@ -375,8 +375,14 @@ export function getCalendars() {
     return performFetch(endpoints.GET_CALENDARS);
 }
 
-export function performSuggestions(q) {
-    return performFetch(`${endpoints.SUGGESTIONS}?q=${encodeURIComponent(q)}`);
+export function performSuggestions(q, start, end) {
+    const params = {
+        q,
+        start_date: formatDate(start),
+        end_date: formatDate(end)
+    }
+
+    return performFetch(endpoints.SUGGESTIONS + encodeParams(params));
 }
 
 function collectionTime(item) {

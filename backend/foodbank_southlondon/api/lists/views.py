@@ -69,4 +69,4 @@ class List(flask_restx.Resource):
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
-    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_LISTS_GSHEET_ID], force_refresh=force_refresh).data
+    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_LISTS_GSHEET_ID], force_refresh=force_refresh)

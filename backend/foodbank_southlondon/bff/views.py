@@ -14,7 +14,7 @@ import requests
 import weasyprint  # type: ignore
 import werkzeug
 
-from foodbank_southlondon.api import utils, models as common_models, parsers as common_parsers
+from foodbank_southlondon.api import utils, models as common_models
 from foodbank_southlondon.api.events import models as events_models
 from foodbank_southlondon.api.lists import models as lists_models
 from foodbank_southlondon.bff import models, parsers, rest
@@ -71,6 +71,18 @@ def _post_event(api_base_url: str, request_ids: List, event_name: str, event_dat
     if not r.ok:
         r.raise_for_status()
     return r.json()
+
+
+def _get_packing_dates_param(params):
+    start_date = params["start_date"]
+    end_date = params["end_date"]
+    if start_date or end_date:
+        today = datetime.date.today()
+        start_date = start_date or today.replace(day=1)
+        end_date = end_date or today
+        if end_date < start_date:
+            rest.abort(400, f"end_date {end_date} was before start_date, {start_date}.")
+        return ",".join((start_date + datetime.timedelta(days=i)).strftime("%d/%m/%Y") for i in range((end_date - start_date).days + 1)) 
 
 
 @rest.route("/actions/")
@@ -304,16 +316,7 @@ class Summary(flask_restx.Resource):
         current_app = flask.current_app
         params = parsers.summary_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
-        start_date = params["start_date"]
-        end_date = params["end_date"]
-        packing_dates = None
-        if start_date or end_date:
-            today = datetime.date.today()
-            start_date = start_date or today.replace(day=1)
-            end_date = end_date or today
-            if end_date < start_date:
-                rest.abort(400, f"end_date {end_date} was before start_date, {start_date}.")
-            packing_dates = ",".join((start_date + datetime.timedelta(days=i)).strftime("%d/%m/%Y") for i in range((end_date - start_date).days + 1))
+        packing_dates = _get_packing_dates_param(params)
         client_full_names = ",".join(params["client_full_names"] or ()) or None
         postcodes = ",".join(params["postcodes"] or ()) or None
         time_of_days = ",".join(params["time_of_days"] or ()) or None
@@ -365,12 +368,17 @@ class Summary(flask_restx.Resource):
 @rest.route("/suggestions")
 class Search(flask_restx.Resource):
     
-    @rest.expect(common_parsers.search_params)
+    @rest.expect(parsers.suggest_params)
     @rest.marshal_with(common_models.suggestions)
     def get(self):
         api_base_url = _api_base_url()
         max_number_of_suggestions = flask.current_app.config[_FBSL_MAX_NUMBER_OF_SUGGESTIONS]
-        params = common_parsers.search_params.parse_args(flask.request)
+        request_params = parsers.suggest_params.parse_args(flask.request)
+        packing_dates = _get_packing_dates_param(request_params)
+        params = {
+            "q": request_params.q,
+            "packing_dates": packing_dates
+        }
         event_suggestions = _get(f"{api_base_url}events/suggestions", params=params, cookies=flask.request.cookies)["suggestions"]
         request_suggestions = _get(f"{api_base_url}requests/suggestions", params=params, cookies=flask.request.cookies)["suggestions"]
         results = event_suggestions + request_suggestions

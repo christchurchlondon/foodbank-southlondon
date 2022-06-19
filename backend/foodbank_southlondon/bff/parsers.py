@@ -28,5 +28,9 @@ action_params = reqparse.RequestParser(trim=True)
 action_params.add_argument("ignore_warnings", type=inputs.boolean, required=False, default=False, help="Whether warnings should be ignored or not. "
                            "If so, a 202 response code may be returned with a warning message.")
 
-search_params = reqparse.RequestParser(trim=True)
-search_params.add_argument("q", required=False)
+suggest_params = reqparse.RequestParser(trim=True)
+suggest_params.add_argument("q", required=False)
+suggest_params.add_argument("start_date", type=lambda x: datetime.date.fromisoformat(x), required=False,
+                           help="An ISO 8601 formatted start date value to filter suggestions from.")
+suggest_params.add_argument("end_date", type=lambda x: datetime.date.fromisoformat(x), required=False,
+                           help="An ISO 8601 formatted end date value to filter suggestions until.")

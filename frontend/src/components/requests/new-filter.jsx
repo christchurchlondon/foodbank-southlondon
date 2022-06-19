@@ -10,10 +10,13 @@ import { performSuggestions } from '../../service';
 //  - add special case for collection delivery (time_of_day: '' I think?)
 //  - put the two above in the default list
 //  - score exact matches higher and allow searching by key name (eg finding AM or Time of day, collection centre delivery etc)
+//  - add a q parameter that searches everything else, set with the non-pills part of the search
 //  - reload suggestions after clear, de-focus, focus again and click down
 //  - show suggestions when you click the up arrow
 //  - allow free-style search for things not in the suggestions?
 //  - human readable key names in pills
+//  - debug and fix why the new date filtered search is slow
+//  - fix searching by collection centre
 
 function filtersToPills(filters) {
     const pills = [];
@@ -150,7 +153,7 @@ export function NewFilter({ disabled, filters, onSubmit }) {
         switch(e.key) {
             case 'ArrowDown':
                 if(search === '' && suggestions.length === 0) {
-                    performSuggestions(search).then(({ suggestions }) => {
+                    performSuggestions(search, start, end).then(({ suggestions }) => {
                         setSuggestions(suggestions);
                     });
                 } else if(!showSuggestions && suggestions.length > 0) {
@@ -196,7 +199,7 @@ export function NewFilter({ disabled, filters, onSubmit }) {
     useEffect(() => {
         const handle = setTimeout(() => {
             if(search !== '') {
-                performSuggestions(search).then(({ suggestions }) => {
+                performSuggestions(search, start, end).then(({ suggestions }) => {
                     setSuggestions(suggestions);
                 });
             }
@@ -205,7 +208,7 @@ export function NewFilter({ disabled, filters, onSubmit }) {
         return () => {
             clearTimeout(handle);
         }
-    }, [search]);
+    }, [search, start, end]);
 
     useEffect(() => {
         if(suggestions.length > 0) {
