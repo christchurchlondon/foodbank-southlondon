@@ -4,13 +4,16 @@ import DateRangePicker from '../common/date-range-picker';
 import { performSuggestions } from '../../service';
 
 // TODO MRB:
-//  - split search into tokens, score can go above 100
 //  - disallow expiring cache when getting suggestions (to avoid unexpectedly long requests)
 //  - reload suggestions once the input is completely cleared but still focused
+//  - bump up exact matches on time_of_day (eg typing AM gets you delivery slot AM)
+//  - add special case for collection delivery (time_of_day: '' I think?)
+//  - put the two above in the default list
 //  - score exact matches higher and allow searching by key name (eg finding AM or Time of day, collection centre delivery etc)
 //  - reload suggestions after clear, de-focus, focus again and click down
 //  - show suggestions when you click the up arrow
 //  - allow free-style search for things not in the suggestions?
+//  - human readable key names in pills
 
 function filtersToPills(filters) {
     const pills = [];

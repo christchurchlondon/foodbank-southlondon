@@ -123,5 +123,3 @@ def paginate(*sort_by: str, ascending: bool = True) -> Callable:
             "items": data.to_dict("records")
         }
     return wrapper
-
-fuzzy_scorer = fuzz.partial_ratio

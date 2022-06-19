@@ -1,6 +1,7 @@
 from typing import Dict, List, Tuple
 import dataclasses
 
+from fuzzywuzzy import fuzz, process  # type: ignore
 import flask
 import flask_restx  # type: ignore
 import pandas as pd  # type: ignore
@@ -95,7 +96,7 @@ class Suggestions(flask_restx.Resource):
         suggestions = [{"key": "event_names", "value": e.event_name, "score": 100.0} for e in models.EVENTS if e.event_name]
         if params.q:
             search = params.q.lower()
-            suggestions = [{**s, "score": utils.fuzzy_scorer(search, s["value"])} for s in suggestions]
+            suggestions = [{**s, "score": fuzz.partial_token_set_ratio(search, s["value"])} for s in suggestions]
         suggestions = [s for s in suggestions if s["score"] > search_threshold][:max_suggestions]
         return {"suggestions": suggestions}
 

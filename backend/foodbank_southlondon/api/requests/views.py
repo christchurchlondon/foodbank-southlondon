@@ -31,7 +31,7 @@ class Requests(flask_restx.Resource):
     @staticmethod
     def fuzzy_match(text: str, choices: Iterable) -> bool:
         search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
-        possibilities = process.extract(text, choices, scorer=utils.fuzzy_scorer)
+        possibilities = process.extract(text, choices, scorer=fuzz.partial_ratio)
         return any(p[1] >= search_threshold for p in possibilities)
 
     @rest.expect(parsers.requests_params)
@@ -153,7 +153,7 @@ class Suggestions(flask_restx.Resource):
         search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
         max_suggestions = flask.current_app.config[_FBSL_MAX_NUMBER_OF_SUGGESTIONS]
         df = cache().index
-        df["score"] = df["value_lower"].map(lambda v: utils.fuzzy_scorer(search, v))
+        df["score"] = df["value_lower"].map(lambda v: fuzz.partial_token_set_ratio(search, v))
         df = df.sort_values(by="score", ascending=False)
         df = df.loc[df["score"] > search_threshold]
         df = df.head(max_suggestions)
