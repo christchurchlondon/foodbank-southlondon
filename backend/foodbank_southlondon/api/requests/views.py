@@ -140,6 +140,8 @@ class Suggestions(flask_restx.Resource):
     def get(self) -> List:
         """Get suggested values for search filters"""
         params = common_parsers.search_params.parse_args(flask.request)
+        if not params.q:
+            return {"suggestions": []}
         search = params.q.lower()
         search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
         max_suggestions = flask.current_app.config[_FBSL_MAX_NUMBER_OF_SUGGESTIONS]

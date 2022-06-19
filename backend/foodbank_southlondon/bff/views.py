@@ -35,6 +35,7 @@ _FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
 _FBSL_MAX_REQUEST_IDS_PER_URL = "FBSL_MAX_REQUEST_IDS_PER_URL"
 _FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
 _FBSL_STAFF_MOBILES = "FBSL_STAFF_MOBILES"
+_FBSL_MAX_NUMBER_OF_SUGGESTIONS = "FBSL_MAX_NUMBER_OF_SUGGESTIONS"
 
 
 def _abbr_from_collection_centre_name(collection_centre_name: Optional[str]) -> str:
@@ -367,13 +368,15 @@ class Search(flask_restx.Resource):
     @rest.expect(common_parsers.search_params)
     @rest.marshal_with(common_models.suggestions)
     def get(self):
+        # TODO MRB: pass q to the downstream requests
         api_base_url = _api_base_url()
-        # TODO MRB: add search endpoint to events too
-        # then sort by score here and return the top N
-        events_data = _get(f"{api_base_url}events/distinct", cookies=flask.request.cookies)
-        results=[]
-        for event in events_data['items']:
-            results.append({ 'key': 'statuses', 'value': event['event_name'] })
+        max_number_of_suggestions = flask.current_app.config[_FBSL_MAX_NUMBER_OF_SUGGESTIONS]
+        event_suggestions = _get(f"{api_base_url}events/suggestions", cookies=flask.request.cookies)["suggestions"]
+        request_suggestions = _get(f"{api_base_url}requests/suggestions", cookies=flask.request.cookies)["suggestions"]
+        results = event_suggestions + request_suggestions
+        results.sort(reverse = True, key = lambda s: s["score"]) # descending
+        print(results)
+        results = results[:max_number_of_suggestions]
         return {
-            "results": results
+            "suggestions": results
         }
