@@ -4,6 +4,7 @@ import DateRangePicker from '../common/date-range-picker';
 import { performSuggestions } from '../../service';
 
 // TODO MRB:
+//  - split search into tokens, score can go above 100
 //  - disallow expiring cache when getting suggestions (to avoid unexpectedly long requests)
 //  - reload suggestions once the input is completely cleared but still focused
 //  - score exact matches higher and allow searching by key name (eg finding AM or Time of day, collection centre delivery etc)

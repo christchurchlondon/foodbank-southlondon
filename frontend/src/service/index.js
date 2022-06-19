@@ -158,13 +158,15 @@ export function getRequests(filters = {}, page = 1, refreshCache=false) {
         per_page: 100,
         start_date: formatDate(dates.start),
         end_date: formatDate(dates.end),
-        client_full_names: buildFilter(filters.client_full_names),
-        voucher_numbers: buildFilter(filters.voucher_numbers),
-        postcodes: buildFilter(filters.postcode),
-        phone_numbers: buildFilter(filters.phoneNumber),
+        // The new filters use the query parameter names directly
+        // The old filter UI used custom names so we still support them
+        client_full_names: buildFilter(filters.client_full_names) ?? filters.name,
+        voucher_numbers: buildFilter(filters.voucher_numbers) ?? filters.referenceNumber,
+        postcodes: buildFilter(filters.postcodes) ?? filters.postcode,
+        phone_numbers: buildFilter(filters.phone_numbers) ?? filters.phoneNumber,
         refresh_cache: refreshCache,
-        time_of_days: buildFilter(filters.time_of_days),
-        event_names: buildFilter(filters.event_names)
+        time_of_days: buildFilter(filters.time_of_days ?? filters.timeOfDay),
+        event_names: buildFilter(filters.event_names ?? filters.statuses)
     };
 
     // Only send the filter if set to a value, as the empty string signifies filtering by delivery
