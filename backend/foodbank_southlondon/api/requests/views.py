@@ -141,9 +141,10 @@ class Suggestions(flask_restx.Resource):
     def get(self) -> List:
         """Free text search for values"""
         params = common_parsers.search_params.parse_args(flask.request)
+        search = params.q.lower()
         search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
         df = cache().index
-        df["score"] = df["value"].map(lambda v: scorer(params.q, v))
+        df["score"] = df["value_lower"].map(lambda v: scorer(search, v))
         df = df.sort_values(by="score", ascending=False)
         df = df.loc[df["score"] > search_threshold]
         df = df.head(MAX_NUMBER_OF_SEARCH_RESULTS)

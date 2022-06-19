@@ -49,10 +49,13 @@ def build_index_data(df, index_columns) -> pd.DataFrame:
     frames = []
     for column_name in index_columns:
         column = df[column_name]
-        key_values = pd.DataFrame(data = {'value': column.unique() })
+        column = column.unique()
+        key_values = pd.DataFrame(data = {'value': column })
         key_values['key'] = column_name
         frames.append(key_values)
-    return pd.concat(frames, ignore_index=True)
+    ret = pd.concat(frames, ignore_index=True)
+    ret['value_lower'] = ret['value'].str.lower()
+    return ret
 
 
 def cache(name: str, spreadsheet_id: str, force_refresh: bool = False, index_columns: List[str] = []) -> CacheEntry:
