@@ -5,13 +5,15 @@ import flask
 import flask_restx  # type: ignore
 import pandas as pd  # type: ignore
 
-from foodbank_southlondon.api import rest, utils
+from foodbank_southlondon.api import rest, utils, models as common_models, parsers as common_parsers
 from foodbank_southlondon.api.events import models, namespace, parsers
 from foodbank_southlondon.api.requests import views as requests_views
 
 
 # CONFIG VARIABLES
 _FBSL_EVENTS_GSHEET_ID = "FBSL_EVENTS_GSHEET_ID"
+_FBSL_FUZZY_SEARCH_THRESHOLD = "FBSL_FUZZY_SEARCH_THRESHOLD"
+_FBSL_MAX_NUMBER_OF_SUGGESTIONS = "FBSL_MAX_NUMBER_OF_SUGGESTIONS"
 
 # INTERNALS
 _ACTIONS = "actions"
@@ -78,6 +80,24 @@ class DistinctEventNameValues(flask_restx.Resource):
         """Get the distinct Event options for a given type."""
         events = {_STATUSES: models.STATUSES, _ACTIONS: models.ACTIONS, None: models.EVENTS}
         return {"items": [dataclasses.asdict(event) for event in events[type]]}
+
+
+@namespace.route("/suggestions/")
+class Suggestions(flask_restx.Resource):
+
+    @rest.expect(common_parsers.search_params)
+    @rest.marshal_with(common_models.suggestions)
+    def get(self) -> List:
+        """Get suggested values for search filters"""
+        params = common_parsers.search_params.parse_args(flask.request)
+        search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
+        max_suggestions = flask.current_app.config[_FBSL_MAX_NUMBER_OF_SUGGESTIONS]
+        suggestions = [{"key": "statuses", "value": e.event_name, "score": 100.0} for e in models.EVENTS if e.event_name]
+        if params.q:
+            search = params.q.lower()
+            suggestions = [{**s, "score": utils.fuzzy_scorer(search, s["value"])} for s in suggestions]
+        suggestions = [s for s in suggestions if s["score"] > search_threshold][:max_suggestions]
+        return {"suggestions": suggestions}
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:

@@ -43,6 +43,7 @@ class _Config(object):
     FBSL_USER_SESSION_VAR = "user"
     FBSL_WATERMARK_CALENDAR_ID = ""
     FBSL_WATERMARK_CALENDAR_EVENT_ID = ""
+    FBSL_MAX_NUMBER_OF_SUGGESTIONS = 20
 
     @property
     def FBSL_COLLECTION_CENTRES(self) -> dict:

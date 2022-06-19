@@ -16,6 +16,7 @@ _FBSL_COLLECTION_CENTRES = "FBSL_COLLECTION_CENTRES"
 _FBSL_CONGESTION_ZONE_POSTCODES = "FBSL_CONGESTION_ZONE_POSTCODES"
 _FBSL_FORM_EDIT_URL_TEMPLATE = "FBSL_FORM_EDIT_URL_TEMPLATE"
 _FBSL_FUZZY_SEARCH_THRESHOLD = "FBSL_FUZZY_SEARCH_THRESHOLD"
+_FBSL_MAX_NUMBER_OF_SUGGESTIONS = "FBSL_MAX_NUMBER_OF_SUGGESTIONS"
 _FBSL_FORM_ID = "FBSL_FORM_ID"
 _FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
 
@@ -23,8 +24,6 @@ _FBSL_REQUESTS_GSHEET_ID = "FBSL_REQUESTS_GSHEET_ID"
 _CACHE_NAME = "requests"
 _BASE_COLLECTION_COLUMNS = ["Collection Date", "Collection Centre"]
 
-MAX_NUMBER_OF_SEARCH_RESULTS = 20
-scorer = fuzz.partial_ratio
 
 @namespace.route("/")
 class Requests(flask_restx.Resource):
@@ -32,7 +31,7 @@ class Requests(flask_restx.Resource):
     @staticmethod
     def fuzzy_match(text: str, choices: Iterable) -> bool:
         search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
-        possibilities = process.extract(text, choices, scorer=scorer)
+        possibilities = process.extract(text, choices, scorer=utils.fuzzy_scorer)
         return any(p[1] >= search_threshold for p in possibilities)
 
     @rest.expect(parsers.requests_params)
@@ -139,15 +138,16 @@ class Suggestions(flask_restx.Resource):
     @rest.expect(common_parsers.search_params)
     @rest.marshal_with(common_models.suggestions)
     def get(self) -> List:
-        """Free text search for values"""
+        """Get suggested values for search filters"""
         params = common_parsers.search_params.parse_args(flask.request)
         search = params.q.lower()
         search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
+        max_suggestions = flask.current_app.config[_FBSL_MAX_NUMBER_OF_SUGGESTIONS]
         df = cache().index
-        df["score"] = df["value_lower"].map(lambda v: scorer(search, v))
+        df["score"] = df["value_lower"].map(lambda v: utils.fuzzy_scorer(search, v))
         df = df.sort_values(by="score", ascending=False)
         df = df.loc[df["score"] > search_threshold]
-        df = df.head(MAX_NUMBER_OF_SEARCH_RESULTS)
+        df = df.head(max_suggestions)
         return {"suggestions": df.to_dict('records')}
 
 
