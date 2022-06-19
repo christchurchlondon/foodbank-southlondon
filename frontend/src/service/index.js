@@ -13,7 +13,7 @@ const endpoints = {
         [COLLECTION_CENTRES_FILTER_KEY]: 'api/requests/distinct/?attribute=Collection%20Centre',
         [STATUSES_FILTER_KEY]: 'api/events/distinct',
     },
-    SEARCH: 'bff/search',
+    SUGGESTIONS: 'bff/suggestions',
     SUBMIT_ACTION: 'bff/actions/',
     SUBMIT_STATUS: 'bff/statuses/',
     SUBMIT_LISTS: 'api/lists/'
@@ -369,8 +369,8 @@ export function getCalendars() {
     return performFetch(endpoints.GET_CALENDARS);
 }
 
-export function performSearch(q) {
-    return performFetch(`${endpoints.SEARCH}?q=${encodeURIComponent(q)}`);
+export function performSuggestions(q) {
+    return performFetch(`${endpoints.SUGGESTIONS}?q=${encodeURIComponent(q)}`);
 }
 
 function collectionTime(item) {

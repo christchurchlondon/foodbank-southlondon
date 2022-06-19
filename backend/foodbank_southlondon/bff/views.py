@@ -368,14 +368,13 @@ class Search(flask_restx.Resource):
     @rest.expect(common_parsers.search_params)
     @rest.marshal_with(common_models.suggestions)
     def get(self):
-        # TODO MRB: pass q to the downstream requests
         api_base_url = _api_base_url()
         max_number_of_suggestions = flask.current_app.config[_FBSL_MAX_NUMBER_OF_SUGGESTIONS]
-        event_suggestions = _get(f"{api_base_url}events/suggestions", cookies=flask.request.cookies)["suggestions"]
-        request_suggestions = _get(f"{api_base_url}requests/suggestions", cookies=flask.request.cookies)["suggestions"]
+        params = common_parsers.search_params.parse_args(flask.request)
+        event_suggestions = _get(f"{api_base_url}events/suggestions", params=params, cookies=flask.request.cookies)["suggestions"]
+        request_suggestions = _get(f"{api_base_url}requests/suggestions", params=params, cookies=flask.request.cookies)["suggestions"]
         results = event_suggestions + request_suggestions
         results.sort(reverse = True, key = lambda s: s["score"]) # descending
-        print(results)
         results = results[:max_number_of_suggestions]
         return {
             "suggestions": results

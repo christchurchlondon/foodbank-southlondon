@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useReducer, useRef } from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import DateRangePicker from '../common/date-range-picker';
-import { performSearch } from '../../service';
+import { performSuggestions } from '../../service';
 
 
 function filtersToPills(filters) {
@@ -139,8 +139,8 @@ export function NewFilter({ disabled, filters, onSubmit }) {
         switch(e.key) {
             case 'ArrowDown':
                 if(search === '' && suggestions.length === 0) {
-                    performSearch(search).then(({ results }) => {
-                        setSuggestions(results);
+                    performSuggestions(search).then(({ suggestions }) => {
+                        setSuggestions(suggestions);
                     });
                 } else if(!showSuggestions && suggestions.length > 0) {
                     setHighlightedSuggestion(0);
@@ -185,8 +185,8 @@ export function NewFilter({ disabled, filters, onSubmit }) {
     useEffect(() => {
         const handle = setTimeout(() => {
             if(search !== '') {
-                performSearch(search).then(({ results }) => {
-                    setSuggestions(results);
+                performSuggestions(search).then(({ suggestions }) => {
+                    setSuggestions(suggestions);
                 });
             }
         }, 300);
