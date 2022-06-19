@@ -54,7 +54,7 @@ class Requests(flask_restx.Resource):
         if invalid_event_names:
             rest.abort(400, f"The following event names are invalid options: {invalid_event_names}. Valid options are: {events_models.EVENT_NAMES}.")
         last_request_only = params["last_request_only"]
-        df = cache(force_refresh=refresh_cache)[0]
+        df = cache(force_refresh=refresh_cache).data
         df = _clean_collection_columns(df)
         request_id_attribute = "request_id"
         name_attribute = "Client Full Name"
@@ -103,7 +103,7 @@ class RequestsByID(flask_restx.Resource):
         params = parsers.requests_params.parse_args(flask.request)
         refresh_cache = params["refresh_cache"]
         request_id_attribute = "request_id"
-        df = cache(force_refresh=refresh_cache)[0]
+        df = cache(force_refresh=refresh_cache).data
         df = _clean_collection_columns(df)
         df = df.loc[df[request_id_attribute].isin(request_id_values)]
         missing_request_ids = request_id_values.difference(df[request_id_attribute].unique())
@@ -125,7 +125,7 @@ class DistinctRequestsValues(flask_restx.Resource):
         packing_dates = set(packing_date.strip() for packing_date in (params["packing_dates"] or ()))
         attribute = params["attribute"]
         refresh_cache = params["refresh_cache"]
-        df = cache(force_refresh=refresh_cache)[0]
+        df = cache(force_refresh=refresh_cache).data
         if packing_dates:
             df = df.loc[df["Packing Date"].isin(packing_dates)]
         distinct_values = df[attribute].unique()
@@ -143,7 +143,7 @@ class Search(flask_restx.Resource):
         """Free text search for values"""
         params = parsers.search_params.parse_args(flask.request)
         search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
-        df = cache()[1]
+        df = cache().index
         df["score"] = df["value"].map(lambda v: scorer(params.q, v))
         df = df.sort_values(by="score", ascending=False)
         df = df.loc[df["score"] > search_threshold]
@@ -175,7 +175,7 @@ def _edit_details_url(request_id: str) -> str:
 
 
 def cache(force_refresh: bool = False) -> pd.DataFrame:
-    search_columns = [
+    index_columns = [
         'Client Full Name',
         'Postcode',
         'Voucher Number',
@@ -183,4 +183,4 @@ def cache(force_refresh: bool = False) -> pd.DataFrame:
         'Phone Number',
         'Time of Day'
     ]
-    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], force_refresh=force_refresh, search_columns=search_columns)
+    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], force_refresh=force_refresh, index_columns=index_columns)

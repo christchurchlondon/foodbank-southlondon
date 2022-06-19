@@ -1,6 +1,7 @@
 from typing import Any, Callable, Dict, List, Tuple, Optional
 import math
 import datetime
+import dataclasses
 
 import flask
 import gspread  # type: ignore
@@ -14,9 +15,13 @@ from foodbank_southlondon import helpers
 _FBSL_CACHE_TTL_SECONDS = "FBSL_CACHE_TTL_SECONDS"
 _FBSL_MAX_PAGE_SIZE = "FBSL_MAX_PAGE_SIZE"
 
+@dataclasses.dataclass
+class CacheEntry:
+    data: pd.DataFrame
+    index: Optional[pd.DataFrame]
 
 _caches_updated: Dict[str, datetime.datetime] = {}
-_caches: Dict[str, pd.DataFrame] = {}
+_caches: Dict[str, CacheEntry] = {}
 
 
 def _gsheet(spreadsheet_id: str, index: int = 0) -> gspread.Worksheet:
@@ -40,9 +45,9 @@ def append_rows(spreadsheet_id: str, rows: List) -> None:
     sheet.append_rows(rows, value_input_option="USER_ENTERED")
 
 
-def build_search_data(df, search_columns) -> pd.DataFrame:
+def build_index_data(df, index_columns) -> pd.DataFrame:
     frames = []
-    for column_name in search_columns:
+    for column_name in index_columns:
         column = df[column_name]
         key_values = pd.DataFrame(data = {'value': column.unique() })
         key_values['key'] = column_name
@@ -50,7 +55,7 @@ def build_search_data(df, search_columns) -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True)
 
 
-def cache(name: str, spreadsheet_id: str, force_refresh: bool = False, search_columns: List[str] = []) -> Tuple[pd.DataFrame, Optional[pd.DataFrame]]:
+def cache(name: str, spreadsheet_id: str, force_refresh: bool = False, index_columns: List[str] = []) -> CacheEntry:
     now = datetime.datetime.now(datetime.timezone.utc)
     current_app = flask.current_app
     cache = _caches.get(name)
@@ -62,11 +67,11 @@ def cache(name: str, spreadsheet_id: str, force_refresh: bool = False, search_co
             return cache
     current_app.logger.info(f"Refreshing cache, {name}...")
     _caches_updated[name] = now
-    raw_data = _gsheet_to_df(spreadsheet_id)
-    search_data = None 
-    if search_columns:
-        search_data = build_search_data(raw_data, search_columns)
-    cache = _caches[name] = [raw_data, search_data]
+    data = _gsheet_to_df(spreadsheet_id)
+    index = None 
+    if index_columns:
+        index = build_index_data(data, index_columns)
+    cache = _caches[name] = CacheEntry(data, index)
     return cache
 
 
