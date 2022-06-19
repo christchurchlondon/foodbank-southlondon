@@ -14,7 +14,7 @@ import requests
 import weasyprint  # type: ignore
 import werkzeug
 
-from foodbank_southlondon.api import utils
+from foodbank_southlondon.api import utils, models as common_models, parsers as common_parsers
 from foodbank_southlondon.api.events import models as events_models
 from foodbank_southlondon.api.lists import models as lists_models
 from foodbank_southlondon.bff import models, parsers, rest
@@ -361,11 +361,11 @@ class Summary(flask_restx.Resource):
             "items": items
         }
 
-@rest.route("/search")
+@rest.route("/suggestions")
 class Search(flask_restx.Resource):
     
-    @rest.expect(parsers.search_params)
-    @rest.marshal_with(models.search_results)
+    @rest.expect(common_parsers.search_params)
+    @rest.marshal_with(common_models.suggestions)
     def get(self):
         api_base_url = _api_base_url()
         # TODO MRB: add search endpoint to events too

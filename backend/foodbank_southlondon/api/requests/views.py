@@ -6,7 +6,7 @@ import flask
 import flask_restx  # type: ignore
 import pandas as pd  # type: ignore
 
-from foodbank_southlondon.api import rest, utils
+from foodbank_southlondon.api import rest, utils, models as common_models, parsers as common_parsers
 from foodbank_southlondon.api.events import models as events_models, views as events_views
 from foodbank_southlondon.api.requests import models, namespace, parsers
 
@@ -132,23 +132,22 @@ class DistinctRequestsValues(flask_restx.Resource):
         return {"values": sorted(distinct_values)}
 
 
-@namespace.route("/search/")
-class Search(flask_restx.Resource):
+@namespace.route("/suggestions/")
+class Suggestions(flask_restx.Resource):
 
-    # TODO MRB: add score as a field
-    # and map the keys to their API keys rather than dataframe keys
-    @rest.expect(parsers.search_params)
-    @rest.marshal_with(models.search_results)
+    # TODO MRB: map the keys to their API keys rather than dataframe keys
+    @rest.expect(common_parsers.search_params)
+    @rest.marshal_with(common_models.suggestions)
     def get(self) -> List:
         """Free text search for values"""
-        params = parsers.search_params.parse_args(flask.request)
+        params = common_parsers.search_params.parse_args(flask.request)
         search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
         df = cache().index
         df["score"] = df["value"].map(lambda v: scorer(params.q, v))
         df = df.sort_values(by="score", ascending=False)
         df = df.loc[df["score"] > search_threshold]
         df = df.head(MAX_NUMBER_OF_SEARCH_RESULTS)
-        return {"results": df.to_dict('records')}
+        return {"suggestions": df.to_dict('records')}
 
 
 def _clean_collection_columns(df: pd.DataFrame) -> pd.DataFrame:

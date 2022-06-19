@@ -12,3 +12,13 @@ pagination_fields = {
 
 
 pagination = rest.model("ResultsPage", pagination_fields)
+
+suggestion = rest.model("Suggestion", {
+    "key": fields.String(required=True),
+    "value": fields.String(required=True), 
+    "score": fields.Float(required=True)
+})
+
+suggestions = rest.model("Suggestions", {
+    "suggestions": fields.List(fields.Nested(suggestion))
+})
