@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useReducer, useRef } from 'react';
+import React, { useEffect, useReducer, useRef, useCallback } from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import DateRangePicker from '../common/date-range-picker';
 import { performSuggestions } from '../../service';
 
 // TODO MRB:
-//  - disallow expiring cache when getting suggestions (to avoid unexpectedly long requests)
-//  - reload suggestions once the input is completely cleared but still focused
+//  - escape should close suggestions
 //  - bump up exact matches on time_of_day (eg typing AM gets you delivery slot AM)
 //  - add special case for collection delivery (time_of_day: '' I think?)
 //  - put the two above in the default list
@@ -49,6 +48,8 @@ function pillsToFilters(pills) {
 }
 
 function reducer(state, action) {
+    const { pills, search, suggestions, showSuggestions, highlightedSuggestion } = state;
+
     switch(action.type) {
         case 'set_dates':
             return {
@@ -57,21 +58,91 @@ function reducer(state, action) {
             };
 
         case 'add_filter': {
-            const { key, value } = action;
+            const { key, value } = suggestions[action.ix];
 
             return {
                 ...state,
-                pills: [...state.pills, { key, value }]
+                pills: [...pills, { key, value }],
+                suggestions: [],
+                showSuggestions: false,
+                highlightedSuggestion: 0,
+                search: '',
+                lastSearchValue: undefined
             };
         }
         
         case 'remove_filter': {
             return {
                 ...state,
-                pills: state.pills.filter(({ key, value }) =>
+                pills: pills.filter(({ key, value }) =>
                     !(action.key === key && action.value === value) 
                 )
             }
+        }
+
+        case 'on_focus': {
+            if(search !== '' && suggestions.length > 0) {
+                return {
+                    ...state,
+                    showSuggestions: true,
+                    highlightedSuggestion: 0
+                }
+            }
+
+            return state;
+        }
+
+        case 'on_blur': {
+            return {
+                ...state,
+                showSuggestions: false,
+                highlightedSuggestion: 0
+            }
+        }
+
+        case 'on_change': {
+            return {
+                ...state,
+                search: action.value,
+                lastSearchValue: state.search
+            }
+        }
+
+        case 'set_suggestions': {
+            return {
+                ...state,
+                suggestions: action.suggestions,
+                showSuggestions: action.suggestions.length > 0
+            }
+        }
+
+        case 'set_highlighted_suggestion': {
+            return {
+                ...state,
+                highlightedSuggestion: action.highlightedSuggestion
+            }
+        }
+
+        case 'on_arrow_key': {
+            const { direction } = action;
+
+            if(!showSuggestions && suggestions.length > 0) {
+                return {
+                    ...state,
+                    showSuggestions: true,
+                    highlightedSuggestion: 0
+                }
+            } else if(showSuggestions) {
+                return {
+                    ...state,
+                    highlightedSuggestion:
+                        direction === 'down' ?
+                            (highlightedSuggestion + 1) % suggestions.length :
+                            (highlightedSuggestion - 1 >= 0 ? highlightedSuggestion - 1 : (suggestions.length - 1))
+                }
+            }
+
+            return state;
         }
 
         default:
@@ -80,59 +151,28 @@ function reducer(state, action) {
 }
 
 export function NewFilter({ disabled, filters, onSubmit }) {
-    const [state, dispatch] = useReducer(reducer, filtersToPills(filters));
-    const [search, setSearch] = useState('');
-
-    const [suggestions, setSuggestions] = useState([]);
-    const [showSuggestions, setShowSuggestions] = useState(false);
-    const [highlightedSuggestion, setHighlightedSuggestion] = useState(0);
+    const [{ dates: { start, end }, pills, search, lastSearchValue, suggestions, showSuggestions, highlightedSuggestion }, dispatch] = useReducer(reducer, {
+        ...filtersToPills(filters),
+        search: '',
+        lastSearchValue: undefined,
+        suggestions: [],
+        showSuggestions: false,
+        highlightedSuggestion: 0
+    });
 
     const inputRef = useRef();
 
-    const { dates: { start, end } } = state;
+    const fetchSuggestions = useCallback(() => {
+        performSuggestions(search, start, end).then(({ suggestions }) => {
+            dispatch({ type: 'set_suggestions', suggestions });
+        });
+    }, [search, start, end]);
 
     function submit() {
         onSubmit({
-            dates: state.dates,
-            ...pillsToFilters(state.pills)
+            dates: { start, end },
+            ...pillsToFilters(pills)
         });
-    }
-
-    function onFocus() {
-        if(search !== '' && suggestions.length > 0) {
-            setHighlightedSuggestion(0);
-            setShowSuggestions(true);
-        }
-    }
-
-    function onBlur() {
-        setShowSuggestions(false);
-    }
-
-    function onChange(e) {
-        setSearch(e.target.value);
-    }
-
-    function buildSuggestionMouseEnter(ix) {
-        return () => {
-            setHighlightedSuggestion(ix);
-        }
-    }
-
-    function buildSuggestionClick(ix) {
-        return () => {
-            const { key, value } = suggestions[ix];
-            
-            dispatch({
-                type: 'add_filter',
-                key,
-                value
-            });
-
-            setShowSuggestions(false);
-            setHighlightedSuggestion(0);
-            setSearch('');
-        }
     }
 
     function buildPillRemove(key, value) {
@@ -153,30 +193,23 @@ export function NewFilter({ disabled, filters, onSubmit }) {
         switch(e.key) {
             case 'ArrowDown':
                 if(search === '' && suggestions.length === 0) {
-                    performSuggestions(search, start, end).then(({ suggestions }) => {
-                        setSuggestions(suggestions);
-                    });
-                } else if(!showSuggestions && suggestions.length > 0) {
-                    setHighlightedSuggestion(0);
-                    setShowSuggestions(true);
-                } else if(showSuggestions) {
-                    const nextHighlightedSuggestion = (highlightedSuggestion + 1) % suggestions.length;
-                    setHighlightedSuggestion(nextHighlightedSuggestion);
+                    fetchSuggestions();
                 }
 
+                dispatch({ type: 'on_arrow_key', direction: 'down' });
                 break;
             
             case 'ArrowUp':
-                if(showSuggestions) {
-                    const nextHighlightedSuggestion = highlightedSuggestion - 1;
-                    setHighlightedSuggestion(nextHighlightedSuggestion >= 0 ? nextHighlightedSuggestion : (suggestions.length - 1));
+                if(search === '' && suggestions.length === 0) {
+                    fetchSuggestions();
                 }
 
+                dispatch({ type: 'on_arrow_key', direction: 'up' });
                 break;
             
             case 'Enter':
                 if(showSuggestions) {
-                    buildSuggestionClick(highlightedSuggestion)();
+                    dispatch({ type: 'add_filter', ix: highlightedSuggestion });
                 } else if(!search) {
                     submit();
                 }
@@ -184,8 +217,8 @@ export function NewFilter({ disabled, filters, onSubmit }) {
                 break;
             
             case 'Backspace':
-                if(!search && state.pills.length > 0) {
-                    const { key, value } = state.pills[state.pills.length - 1];
+                if(!search && pills.length > 0) {
+                    const { key, value } = pills[pills.length - 1];
                     buildPillRemove(key, value)();
                 }
 
@@ -198,23 +231,15 @@ export function NewFilter({ disabled, filters, onSubmit }) {
 
     useEffect(() => {
         const handle = setTimeout(() => {
-            if(search !== '') {
-                performSuggestions(search, start, end).then(({ suggestions }) => {
-                    setSuggestions(suggestions);
-                });
+            if(search !== '' || (search === '' && lastSearchValue)) {
+                fetchSuggestions();
             }
         }, 300);
 
         return () => {
             clearTimeout(handle);
         }
-    }, [search, start, end]);
-
-    useEffect(() => {
-        if(suggestions.length > 0) {
-            setShowSuggestions(true);
-        }
-    }, [suggestions]);
+    }, [search, start, end, fetchSuggestions]);
 
     return (
         <div className="requests-filter panel">
@@ -234,7 +259,7 @@ export function NewFilter({ disabled, filters, onSubmit }) {
 
                     <div className="input-wrapper">
                         <dl className="pill-wrapper">
-                            {state.pills.map(({ key, value }) =>
+                            {pills.map(({ key, value }) =>
                                 <div className='pill' key={key + value}>
                                     <dt>{key}</dt>
                                     <dd>{value}</dd>
@@ -245,11 +270,11 @@ export function NewFilter({ disabled, filters, onSubmit }) {
 
                         <input type="text"
                             className="value"
-                            placeholder={state.pills.length === 0 ? "Search..." : undefined}
+                            placeholder={pills.length === 0 ? "Search..." : undefined}
                             value={search || ""}
-                            onFocus={onFocus}
-                            onBlur={onBlur}
-                            onChange={onChange}
+                            onFocus={() => dispatch({ type: 'on_focus' })}
+                            onBlur={() => dispatch({ type: 'on_blur' })}
+                            onChange={(e) => dispatch({ type: 'on_change', value: e.target.value })}
                             onKeyDown={onKeyDown}
                             ref={inputRef}
                         />
@@ -260,8 +285,8 @@ export function NewFilter({ disabled, filters, onSubmit }) {
                             {suggestions.map(({ key, value }, ix) =>
                                 <li
                                     key={key + value} className={highlightedSuggestion === ix ? 'highlighted' : ''}
-                                    onClick={buildSuggestionClick(ix)}
-                                    onMouseEnter={buildSuggestionMouseEnter(ix)}
+                                    onClick={() => dispatch({ type: 'add_filter', ix })}
+                                    onMouseEnter={() => dispatch({ type: 'set_highlighted_suggestion', highlightedSuggestion: ix })}
                                 >
                                     {key}: {value}
                                 </li>
