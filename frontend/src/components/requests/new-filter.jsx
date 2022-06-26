@@ -4,7 +4,6 @@ import DateRangePicker from '../common/date-range-picker';
 import { performSuggestions } from '../../service';
 
 // TODO MRB:
-//  - escape should close suggestions
 //  - bump up exact matches on time_of_day (eg typing AM gets you delivery slot AM)
 //  - add special case for collection delivery (time_of_day: '' I think?)
 //  - put the two above in the default list
@@ -145,6 +144,14 @@ function reducer(state, action) {
             return state;
         }
 
+        case 'on_escape_key': {
+            return {
+                ...state,
+                showSuggestions: false,
+                highlightedSuggestion: 0
+            }
+        }
+
         default:
             return state;
     }
@@ -222,6 +229,10 @@ export function NewFilter({ disabled, filters, onSubmit }) {
                     buildPillRemove(key, value)();
                 }
 
+                break;
+            
+            case 'Escape':
+                dispatch({ type: 'on_escape_key' });
                 break;
 
             default:
