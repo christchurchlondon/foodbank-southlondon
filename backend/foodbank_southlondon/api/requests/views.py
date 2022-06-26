@@ -174,7 +174,7 @@ class Suggestions(flask_restx.Resource):
         search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
         max_suggestions = flask.current_app.config[_FBSL_MAX_NUMBER_OF_SUGGESTIONS]
         unique_suggestions = {}
-        df = cache()
+        df = cache(disallow_refresh=True)
         if packing_dates:
             df = df.loc[df["Packing Date"].isin(packing_dates)]
         for _, row in df.iterrows():
@@ -216,5 +216,5 @@ def _edit_details_url(request_id: str) -> str:
     return current_app.config[_FBSL_FORM_EDIT_URL_TEMPLATE].format(form_id=current_app.config[_FBSL_FORM_ID], request_id=request_id)
 
 
-def cache(force_refresh: bool = False) -> pd.DataFrame:
-    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], force_refresh=force_refresh)
+def cache(force_refresh: bool = False, disallow_refresh: bool = False) -> pd.DataFrame:
+    return utils.cache(_CACHE_NAME, flask.current_app.config[_FBSL_REQUESTS_GSHEET_ID], force_refresh=force_refresh, disallow_refresh=disallow_refresh)

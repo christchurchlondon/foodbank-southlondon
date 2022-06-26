@@ -42,7 +42,7 @@ def append_rows(spreadsheet_id: str, rows: List) -> None:
     sheet.append_rows(rows, value_input_option="USER_ENTERED")
 
 
-def cache(name: str, spreadsheet_id: str, force_refresh: bool = False) -> pd.DataFrame:
+def cache(name: str, spreadsheet_id: str, force_refresh: bool = False, disallow_refresh: bool = False) -> pd.DataFrame:
     now = datetime.datetime.now(datetime.timezone.utc)
     current_app = flask.current_app
     cache = _caches.get(name)
@@ -50,7 +50,7 @@ def cache(name: str, spreadsheet_id: str, force_refresh: bool = False) -> pd.Dat
         file_metadata = helpers.drive_files_resource().get(fileId=spreadsheet_id, supportsAllDrives=True, fields="modifiedTime").execute()
         file_modified_time = datetime.datetime.fromisoformat(file_metadata["modifiedTime"].replace("Z", "+00:00"))
         cache_max_age_time = now - datetime.timedelta(seconds=current_app.config[_FBSL_CACHE_TTL_SECONDS])
-        if not force_refresh and _caches_updated[name] >= max(file_modified_time, cache_max_age_time):
+        if disallow_refresh or (not force_refresh and _caches_updated[name] >= max(file_modified_time, cache_max_age_time)):
             return cache
     current_app.logger.info(f"Refreshing cache, {name}...")
     _caches_updated[name] = now    
