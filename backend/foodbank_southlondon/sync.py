@@ -42,7 +42,7 @@ def _find_event(calendar_events_resource: discovery.Resource, calendar_ids: Tupl
 
 
 def _naive_datetime_rfc3339(rfc3339_datetime: str) -> str:
-    return datetime.datetime.fromisoformat(rfc3339_datetime).replace(tzinfo=None).isoformat()
+    return datetime.datetime.fromisoformat(rfc3339_datetime.replace("Z", "")).replace(tzinfo=None).isoformat()
 
 
 @app.cli.command()
