@@ -159,7 +159,7 @@ class Suggestions(flask_restx.Resource):
             score = fuzz.partial_token_set_ratio(search, value)
             if score > search_threshold:
                 key = Suggestions.map_dataframe_key_to_param(column_name)
-                suggestions.append({"key": key, "value": value, "score": score})
+                suggestions.append({"key": key, "displayKey": column_name, "value": value, "score": score})
         return suggestions
 
     @rest.expect(parsers.suggest_params)
@@ -174,6 +174,7 @@ class Suggestions(flask_restx.Resource):
         search_threshold = flask.current_app.config[_FBSL_FUZZY_SEARCH_THRESHOLD]
         max_suggestions = flask.current_app.config[_FBSL_MAX_NUMBER_OF_SUGGESTIONS]
         unique_suggestions = {}
+        display_keys = {}
         df = cache(disallow_refresh=True)
         if packing_dates:
             df = df.loc[df["Packing Date"].isin(packing_dates)]
@@ -181,6 +182,7 @@ class Suggestions(flask_restx.Resource):
             suggestions = self.get_suggestions_from_row(row, search, search_threshold)
             for suggestion in suggestions:
                 unique_key = (suggestion["key"], suggestion["value"])
+                display_keys[suggestion["key"]] = suggestion["displayKey"]
                 score = suggestion["score"]
                 if unique_key in unique_suggestions:
                     if unique_suggestions[unique_key] < score:
@@ -189,7 +191,7 @@ class Suggestions(flask_restx.Resource):
                     unique_suggestions[unique_key] = score
         suggestions = []
         for ((key, value), score) in unique_suggestions.items():
-            suggestions.append({"key": key, "value": value, "score": score})
+            suggestions.append({"key": key, "displayKey": display_keys[key], "value": value, "score": score})
         return {"suggestions": suggestions}
 
 

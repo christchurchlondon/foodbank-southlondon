@@ -293,13 +293,13 @@ export function NewFilter({ disabled, filters, onSubmit }) {
 
                     {suggestions.length > 0 && showSuggestions ?
                         <ul className="suggestions panel">
-                            {suggestions.map(({ key, value }, ix) =>
+                            {suggestions.map(({ key, displayKey, value }, ix) =>
                                 <li
                                     key={key + value} className={highlightedSuggestion === ix ? 'highlighted' : ''}
                                     onClick={() => dispatch({ type: 'add_filter', ix })}
                                     onMouseEnter={() => dispatch({ type: 'set_highlighted_suggestion', highlightedSuggestion: ix })}
                                 >
-                                    {key}: {value}
+                                    {displayKey || key}: {value}
                                 </li>
                             )}
                         </ul>

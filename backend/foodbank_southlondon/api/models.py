@@ -15,8 +15,9 @@ pagination = rest.model("ResultsPage", pagination_fields)
 
 suggestion_fields = {
     "key": fields.String(required=True),
+    "displayKey": fields.String(),
     "value": fields.String(required=True), 
-    "score": fields.Float(required=True)
+    "score": fields.Float(required=True) 
 }
 
 suggestion = rest.model("Suggestion", suggestion_fields)
