@@ -71,8 +71,9 @@ make dist
 Once pushed, you can manage the deployment from the [Heroku Dashboard](https://dashboard.heroku.com/apps/foodbank-southlondon/deploy/heroku-container).
 
 ### Environment Variables
-The following two variables can be set as you would normally set environment variables OR you can store them in a file called **development.env** or **production.env** inside the *backend* directory and they will be excluded from source control.
+The following variables can be set as you would normally set environment variables OR you can store them in a file called **development.env** or **production.env** inside the *backend* directory and they will be excluded from source control.
 * **FBSL_CLIENT_SECRET** - the Google Cloud Platform OAuth 2.0 Client Secret that has domain-wide delegation and permission to query the GSuite Admin SDK
+* **FBSL_COLLECTION_CENTRES** - a mapping of collection centres and their respective calendar urls and colours
 * **FBSL_SA_KEY** - the Google Cloud Platform service account key that has permission to the google sheets data storage
 * **FBSL_STAFF_MOBILES** - a mapping of staff names to mobile numbers, e.g. {"foo": "012345"}.
 
