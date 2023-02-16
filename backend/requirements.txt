@@ -69,7 +69,7 @@ uritemplate==4.1.1
 urllib3==1.26.9
 weasyprint==53.4
 webencodings==0.5.1
-Werkzeug==2.0.3
+Werkzeug==2.2.3
 wrapt==1.14.1
 zipp==3.8.0
 zopfli==0.2.1
