@@ -91,7 +91,7 @@ request = rest.model("ClientRequest", {
                                                                      description="The time that the food parcel should be collected from the "
                                                                      "Brixton Hill Methodist Church, in the format of HH:MM", example="12:30"),
     "thornton_heath_collection_time": fields.String(attribute="Thornton Heath Collection Time", required=False,
-                                                                     description="The time that the food parcel should be collected from the "
+                                                                     description="The time that the food parcel should be collected from "
                                                                      "Thornton Heath centre, in the format of HH:MM", example="12:30"),
     "edit_details_url": fields.String(required=True, description="The Google Forms edit response URL that can be used to update details of the "
                                       "Client Request", example="https://docs.google.com/forms/d/e/1FAIpQLSfb94-4k-Pkf3ccBqd2WR-yzMBdmqdehYBbnN1HLrm"
